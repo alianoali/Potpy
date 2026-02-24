@@ -270,9 +270,6 @@
             // -----------------------------------------------
             const ADMIN_ID = 7609492965; // غيّر هذا إلى معرف المشرف الخاص بك
             
-            // عنوان الـ API الخاص بالبوت (غيّره إلى رابط خادمك الفعلي)
-            const BASE_API_URL = 'https://abc123.ngrok.io/api'; // أو رابط الخادم الحقيقي'; // مثال: 'https://mybot.com/api'
-
             // -----------------------------------------------
             // الحالة المركزية (State)
             // -----------------------------------------------
@@ -406,44 +403,6 @@
                         updateStats();
                     }
                 } catch (e) {}
-            }
-
-            // -----------------------------------------------
-            // دوال جلب الرصيد من API البوت
-            // -----------------------------------------------
-            async function fetchBalance(userId) {
-                // إذا لم يكن هناك tg أو initData، نعود للقيمة الافتراضية (يمكن تعديلها)
-                if (!tg || !tg.initData) {
-                    console.warn('لا يوجد initData، استخدم القيمة الافتراضية');
-                    return null;
-                }
-
-                try {
-                    const initData = tg.initData; // سلسلة بيانات التحقق الكاملة
-
-                    const response = await fetch(`${BASE_API_URL}/getBalance`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            user_id: userId,
-                            init_data: initData  // يرسل للتحقق من صحة الطلب من تيليجرام
-                        })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`فشل الاتصال بالخادم: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    if (data.balance === undefined) {
-                        throw new Error('استجابة غير صالحة من الخادم');
-                    }
-                    return data.balance;
-                } catch (error) {
-                    console.error('خطأ في جلب الرصيد:', error);
-                    showToast('تعذر جلب الرصيد، يرجى المحاولة لاحقاً', 'error');
-                    return null; // يفشل بهدوء
-                }
             }
 
             // -----------------------------------------------
@@ -767,26 +726,20 @@
                 // زر تحديث الرصيد (للمستخدم العادي)
                 const updateBalanceBtn = document.getElementById('updateBalanceBtn');
                 if (updateBalanceBtn) {
-                    updateBalanceBtn.addEventListener('click', async () => {
+                    updateBalanceBtn.addEventListener('click', () => {
                         // زيادة العمليات اليومية
                         incrementDailyOps();
                         
-                        // إظهار حالة التحميل
+                        // محاكاة جلب رصيد جديد
                         state.loading = true;
                         render();
                         
-                        // جلب الرصيد الجديد من API
-                        const newBalance = await fetchBalance(state.user.id);
-                        if (newBalance !== null) {
-                            state.balance = newBalance;
+                        setTimeout(() => {
+                            state.balance = Math.floor(Math.random() * 5000) + 500;
+                            state.loading = false;
+                            render();
                             showToast('تم تحديث الرصيد بنجاح', 'success');
-                        } else {
-                            // في حال الفشل، نترك الرصيد القديم
-                            showToast('تعذر تحديث الرصيد، يرجى المحاولة لاحقاً', 'error');
-                        }
-                        
-                        state.loading = false;
-                        render();
+                        }, 1000);
                     });
                 }
 
@@ -879,34 +832,42 @@
                 // تسجيل المستخدم الفريد
                 registerUser(user.id);
 
-                // محاكاة تأخير الشبكة (يمكن إزالته)
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // محاكاة جلب البيانات من الخادم
+                try {
+                    // محاكاة تأخير الشبكة
+                    await new Promise(resolve => setTimeout(resolve, 1500));
 
-                // جلب الرصيد الحقيقي من API البوت
-                const realBalance = await fetchBalance(user.id);
-                state.balance = realBalance !== null ? realBalance : (state.isAdmin ? 12345 : 1234); // قيمة افتراضية إذا فشل
+                    // بيانات الرصيد (يمكن جلبها من API)
+                    state.balance = state.isAdmin ? 12345 : 1234;
 
-                // تحديث الإحصائيات الحقيقية
-                updateStats();
+                    // تحديث الإحصائيات الحقيقية
+                    updateStats();
 
-                state.loading = false;
-                render();
+                    state.loading = false;
+                    render();
 
-                // إعداد زر MainButton
-                tg.MainButton.setText(state.isAdmin ? "لوحة التحكم" : "تحديث البيانات");
-                tg.MainButton.setTextColor("#ffffff");
-                tg.MainButton.setColor("#3b82f6");
-                tg.MainButton.show();
+                    // إعداد زر MainButton
+                    tg.MainButton.setText(state.isAdmin ? "لوحة التحكم" : "تحديث البيانات");
+                    tg.MainButton.setTextColor("#ffffff");
+                    tg.MainButton.setColor("#3b82f6");
+                    tg.MainButton.show();
 
-                tg.MainButton.onClick(() => {
-                    tg.showPopup({
-                        title: state.isAdmin ? 'مرحباً أيها المدير' : 'نظام آمن',
-                        message: state.isAdmin ? 
-                            `لديك صلاحيات كاملة في النظام.` : 
-                            `أهلاً ${user.first_name}، اتصالك مشفر ومحمي بالكامل.`,
-                        buttons: [{type: 'ok', text: 'حسناً'}]
+                    tg.MainButton.onClick(() => {
+                        tg.showPopup({
+                            title: state.isAdmin ? 'مرحباً أيها المدير' : 'نظام آمن',
+                            message: state.isAdmin ? 
+                                `لديك صلاحيات كاملة في النظام.` : 
+                                `أهلاً ${user.first_name}، اتصالك مشفر ومحمي بالكامل.`,
+                            buttons: [{type: 'ok', text: 'حسناً'}]
+                        });
                     });
-                });
+
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                    showToast('حدث خطأ أثناء تحميل البيانات', 'error');
+                    state.loading = false;
+                    render();
+                }
             }
 
             // -----------------------------------------------
