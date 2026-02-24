@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بوابة تيليجرام الآمنة - رصيد حقيقي</title>
+    <title>بوابة تيليجرام الآمنة</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -113,14 +113,6 @@
             color: white;
             font-weight: bold;
         }
-
-        /* تأثيرات إضافية */
-        .balance-update {
-            transition: transform 0.2s ease;
-        }
-        .balance-update:active {
-            transform: scale(0.95);
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-5 relative">
@@ -155,12 +147,11 @@
         </a>
     </div>
 
-    <!-- STATE 3: DASHBOARD -->
+    <!-- STATE 3: USER DASHBOARD (للمستخدمين العاديين) -->
     <div id="dashboardState" class="hidden-content w-full max-w-md space-y-5 animate-enter pb-10">
         
         <!-- Header Profile Card -->
         <div class="glass-card p-5 rounded-3xl relative overflow-hidden group">
-            <!-- Decorative gradient inside card -->
             <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
 
             <div class="flex items-center gap-4 relative z-10">
@@ -184,8 +175,8 @@
                     </div>
                 </div>
 
-                <!-- Balance Card (Floating Style) مع إمكانية التحديث -->
-                <div class="flex flex-col items-end justify-center bg-slate-900/50 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/5 shadow-lg balance-update cursor-pointer" onclick="refreshBalance()" title="اضغط لتحديث الرصيد">
+                <!-- Balance Card -->
+                <div class="flex flex-col items-end justify-center bg-slate-900/50 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/5 shadow-lg">
                     <span class="text-[10px] text-gray-400 font-medium mb-0.5">الرصيد الحالي</span>
                     <div class="flex items-center gap-1.5">
                         <i class="fa-solid fa-coins text-yellow-400 text-sm drop-shadow-md"></i>
@@ -221,38 +212,16 @@
             </div>
             
             <div class="space-y-3">
-                <!-- رسالة توضيحية -->
+                <!-- رسالة توضيحية بدلاً من الزر المحذوف -->
                 <div class="bg-blue-500/5 border border-blue-500/10 rounded-xl p-4 flex items-start gap-3">
                     <i class="fa-solid fa-circle-info text-blue-400 mt-1"></i>
-                    <div class="flex-1">
+                    <div>
                         <p class="text-sm text-blue-100 font-medium">مرحباً بك في البوابة الآمنة</p>
                         <p class="text-xs text-blue-200/60 mt-1 leading-relaxed">
-                            جميع خدماتك متاحة الآن. رصيدك محدث مباشرة من قاعدة البيانات الموحدة.
+                            جميع خدماتك متاحة الآن. يمكنك متابعة آخر التحديثات من خلال القناة الرسمية.
                         </p>
                     </div>
                 </div>
-
-                <!-- زر تجريبي لزيادة الرصيد -->
-                <button onclick="addDemoBalance()" class="w-full p-4 rounded-xl flex items-center justify-between bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 hover:from-emerald-600/30 hover:to-teal-600/30 transition-all">
-                    <span class="flex items-center gap-3 text-white">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                            <i class="fa-solid fa-plus"></i>
-                        </div>
-                        <span class="font-medium">إضافة 100 نقطة تجريبية</span>
-                    </span>
-                    <i class="fa-solid fa-arrow-left text-gray-400"></i>
-                </button>
-
-                <!-- زر لوحة تحكم المشرف (يظهر فقط للمشرفين) -->
-                <button id="adminPanelBtn" onclick="openAdminPanel()" class="w-full p-4 rounded-xl flex items-center justify-between bg-gradient-to-r from-purple-600/20 to-indigo-600/20 border border-purple-500/30 hover:from-purple-600/30 hover:to-indigo-600/30 transition-all hidden">
-                    <span class="flex items-center gap-3 text-white">
-                        <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
-                            <i class="fa-solid fa-user-shield"></i>
-                        </div>
-                        <span class="font-medium">لوحة تحكم المشرف</span>
-                    </span>
-                    <i class="fa-solid fa-arrow-left text-gray-400"></i>
-                </button>
 
                 <!-- مثال على زر معطل -->
                 <button disabled class="w-full p-4 rounded-xl flex items-center justify-between opacity-50 cursor-not-allowed border border-dashed border-gray-600">
@@ -273,63 +242,118 @@
         </button>
     </div>
 
-    <!-- Admin Panel Modal (يظهر عند الضغط على زر لوحة المشرف) -->
-    <div id="adminModal" class="hidden-content fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeAdminModal(event)">
-        <div class="glass-card rounded-3xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-white">لوحة تحكم المشرف</h3>
-                <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-times text-xl"></i>
-                </button>
-            </div>
+    <!-- STATE 4: ADMIN DASHBOARD (خاص بالمشرف) -->
+    <div id="adminDashboardState" class="hidden-content w-full max-w-md space-y-5 animate-enter pb-10">
 
-            <!-- إحصائيات سريعة -->
-            <div class="grid grid-cols-2 gap-3 mb-6">
-                <div class="bg-white/5 rounded-xl p-3 text-center">
-                    <span class="text-gray-400 text-xs">إجمالي المستخدمين</span>
-                    <div class="text-xl font-bold text-white" id="totalUsers">0</div>
-                </div>
-                <div class="bg-white/5 rounded-xl p-3 text-center">
-                    <span class="text-gray-400 text-xs">إجمالي المعاملات</span>
-                    <div class="text-xl font-bold text-white" id="totalTransactions">0</div>
-                </div>
-            </div>
+        <!-- Header Profile Card (مماثل للمستخدم، لكن قد نضيف شارة المشرف) -->
+        <div class="glass-card p-5 rounded-3xl relative overflow-hidden border-2 border-yellow-500/30">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
 
-            <!-- إدارة المشرفين -->
-            <div class="mb-6">
-                <h4 class="font-bold text-white mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-user-tie text-purple-400"></i>
-                    إدارة المشرفين
-                </h4>
-                <div class="bg-white/5 rounded-xl p-4">
-                    <div class="flex gap-2 mb-4">
-                        <input type="number" id="newAdminId" placeholder="أدخل معرف المشرف (رقم)" class="flex-1 bg-slate-800 text-white rounded-xl px-4 py-2 text-sm border border-white/10 focus:border-purple-500 outline-none">
-                        <button onclick="addAdmin()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition">
-                            <i class="fa-solid fa-plus ml-1"></i>
-                            إضافة
-                        </button>
-                    </div>
-                    <div id="adminsList" class="space-y-2 max-h-40 overflow-y-auto">
-                        <!-- سيتم تعبئتها ديناميكياً -->
+            <div class="flex items-center gap-4 relative z-10">
+                <!-- Avatar (نعيد استخدام نفس العناصر ولكن بمعرفات مختلفة لتجنب التعارض) -->
+                <div class="w-16 h-16 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">
+                    <img id="adminUserPhoto" src="" alt="Admin" class="w-full h-full object-cover hidden">
+                    <div id="adminDefaultAvatar" class="w-full h-full default-avatar hidden">
+                        <span id="adminAvatarInitials">A</span>
                     </div>
                 </div>
-            </div>
 
-            <!-- إحصائيات متقدمة (اختياري) -->
-            <div>
-                <h4 class="font-bold text-white mb-3">إحصائيات النظام</h4>
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between bg-white/5 p-3 rounded-xl">
-                        <span class="text-gray-400">عدد الزيارات اليوم</span>
-                        <span class="text-white font-bold">128</span>
+                <!-- Admin Info -->
+                <div class="flex-1 min-w-0">
+                    <h2 class="text-lg font-bold text-white truncate" id="adminUserName">مشرف</h2>
+                    <p class="text-xs text-gray-400 font-mono mt-0.5" id="adminUserId">ID: 00000</p>
+                    
+                    <!-- شارة المشرف -->
+                    <div class="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-yellow-500/20 border border-yellow-500/30">
+                        <i class="fa-solid fa-crown text-yellow-400 text-[10px]"></i>
+                        <span class="text-[10px] font-bold text-yellow-300 uppercase tracking-wide">مدير النظام</span>
                     </div>
-                    <div class="flex justify-between bg-white/5 p-3 rounded-xl">
-                        <span class="text-gray-400">إجمالي الأرصدة</span>
-                        <span class="text-white font-bold">15,200</span>
+                </div>
+
+                <!-- Balance Card (يمكن إظهار رصيد وهمي أو إخفاؤه) -->
+                <div class="flex flex-col items-end justify-center bg-slate-900/50 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/5 shadow-lg">
+                    <span class="text-[10px] text-gray-400 font-medium mb-0.5">رصيد البوت</span>
+                    <div class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-coins text-yellow-400 text-sm drop-shadow-md"></i>
+                        <span class="font-bold text-white text-base tracking-tight" id="adminBalance">١٢٣٤٥</span>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- إحصائيات خاصة بالمشرف -->
+        <div class="grid grid-cols-3 gap-2">
+            <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
+                <div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-1">
+                    <i class="fa-solid fa-users text-sm"></i>
+                </div>
+                <span class="text-gray-400 text-[10px]">المستخدمين</span>
+                <span class="text-white font-bold text-base block">١٬٢٨٠</span>
+            </div>
+            <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
+                <div class="w-8 h-8 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center mx-auto mb-1">
+                    <i class="fa-solid fa-robot text-sm"></i>
+                </div>
+                <span class="text-gray-400 text-[10px]">البوتات</span>
+                <span class="text-white font-bold text-base block">١٢</span>
+            </div>
+            <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
+                <div class="w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto mb-1">
+                    <i class="fa-solid fa-chart-line text-sm"></i>
+                </div>
+                <span class="text-gray-400 text-[10px]">عمليات اليوم</span>
+                <span class="text-white font-bold text-base block">٤٢</span>
+            </div>
+        </div>
+
+        <!-- أدوات التحكم الإدارية -->
+        <div class="glass-card p-5 rounded-3xl">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-white text-lg">لوحة التحكم</h3>
+                <span class="text-xs text-yellow-400 bg-yellow-500/10 px-2 py-1 rounded-lg">مدير</span>
+            </div>
+            
+            <div class="space-y-3">
+                <!-- زر إرسال إشعار -->
+                <button class="w-full p-4 rounded-xl flex items-center justify-between bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 transition-all group">
+                    <span class="flex items-center gap-3 text-blue-200">
+                        <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                            <i class="fa-solid fa-bell"></i>
+                        </div>
+                        إرسال إشعار للمستخدمين
+                    </span>
+                    <i class="fa-solid fa-arrow-left text-blue-400 group-hover:-translate-x-1 transition-transform"></i>
+                </button>
+
+                <!-- زر عرض التقارير -->
+                <button class="w-full p-4 rounded-xl flex items-center justify-between bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 transition-all group">
+                    <span class="flex items-center gap-3 text-purple-200">
+                        <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                            <i class="fa-solid fa-file-alt"></i>
+                        </div>
+                        عرض التقارير المتقدمة
+                    </span>
+                    <i class="fa-solid fa-arrow-left text-purple-400 group-hover:-translate-x-1 transition-transform"></i>
+                </button>
+
+                <!-- زر إعدادات البوت -->
+                <button class="w-full p-4 rounded-xl flex items-center justify-between bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/30 transition-all group">
+                    <span class="flex items-center gap-3 text-gray-200">
+                        <div class="w-8 h-8 rounded-lg bg-gray-500/20 flex items-center justify-center">
+                            <i class="fa-solid fa-sliders"></i>
+                        </div>
+                        إعدادات البوت العامة
+                    </span>
+                    <i class="fa-solid fa-arrow-left text-gray-400 group-hover:-translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Logout Button (نفس الوظيفة) -->
+        <button onclick="logout()" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
+            <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
+            تسجيل الخروج
+        </button>
     </div>
 
     <script>
@@ -339,209 +363,28 @@
         const loadingState = document.getElementById('loadingState');
         const accessDeniedState = document.getElementById('accessDeniedState');
         const dashboardState = document.getElementById('dashboardState');
-        const adminModal = document.getElementById('adminModal');
-        const adminsListEl = document.getElementById('adminsList');
-        const newAdminIdInput = document.getElementById('newAdminId');
-        const totalUsersEl = document.getElementById('totalUsers');
-        const totalTransactionsEl = document.getElementById('totalTransactions');
+        const adminDashboardState = document.getElementById('adminDashboardState');
         
+        // معرف المشرف الثابت (غيّره حسب رغبتك)
+        const ADMIN_ID = 7609492965;
+
+        // عناصر المستخدم العادي
         const userNameEl = document.getElementById('userName');
         const userIdEl = document.getElementById('userId');
         const userPhotoEl = document.getElementById('userPhoto');
         const defaultAvatarEl = document.getElementById('defaultAvatar');
         const avatarInitialsEl = document.getElementById('avatarInitials');
         const userBalanceEl = document.getElementById('userBalance');
-        const adminPanelBtn = document.getElementById('adminPanelBtn');
 
-        // متغيرات عامة
-        let currentUserId = null;
-        let currentUser = null;
+        // عناصر المشرف
+        const adminUserNameEl = document.getElementById('adminUserName');
+        const adminUserIdEl = document.getElementById('adminUserId');
+        const adminUserPhotoEl = document.getElementById('adminUserPhoto');
+        const adminDefaultAvatarEl = document.getElementById('adminDefaultAvatar');
+        const adminAvatarInitialsEl = document.getElementById('adminAvatarInitials');
+        const adminBalanceEl = document.getElementById('adminBalance');
 
-        // ========================
-        // إدارة المشرفين (تخزين في localStorage)
-        // المفتاح: 'telegram_admins'
-        // يتم تهيئته بالمعرف الأساسي 7609492965
-        // ========================
-        const MASTER_ADMIN_ID = 7609492965; // المعرف الأساسي (صاحب البوت)
-
-        function getAdminsList() {
-            let admins = localStorage.getItem('telegram_admins');
-            if (!admins) {
-                // في البداية، نضع المعرف الأساسي فقط
-                admins = [MASTER_ADMIN_ID];
-                localStorage.setItem('telegram_admins', JSON.stringify(admins));
-            } else {
-                admins = JSON.parse(admins);
-                // تأكد من وجود المعرف الأساسي دائماً
-                if (!admins.includes(MASTER_ADMIN_ID)) {
-                    admins.push(MASTER_ADMIN_ID);
-                    localStorage.setItem('telegram_admins', JSON.stringify(admins));
-                }
-            }
-            return admins;
-        }
-
-        function addAdminById(adminId) {
-            if (!adminId) return false;
-            adminId = Number(adminId);
-            if (isNaN(adminId)) return false;
-            let admins = getAdminsList();
-            if (!admins.includes(adminId)) {
-                admins.push(adminId);
-                localStorage.setItem('telegram_admins', JSON.stringify(admins));
-                return true;
-            }
-            return false;
-        }
-
-        function removeAdminById(adminId) {
-            if (adminId === MASTER_ADMIN_ID) return false; // لا يمكن إزالة المشرف الأساسي
-            let admins = getAdminsList();
-            const index = admins.indexOf(adminId);
-            if (index > -1) {
-                admins.splice(index, 1);
-                localStorage.setItem('telegram_admins', JSON.stringify(admins));
-                return true;
-            }
-            return false;
-        }
-
-        function isUserAdmin(userId) {
-            const admins = getAdminsList();
-            return admins.includes(userId);
-        }
-
-        // تحديث عرض قائمة المشرفين في المودال
-        function renderAdminsList() {
-            const admins = getAdminsList();
-            adminsListEl.innerHTML = '';
-            admins.forEach(adminId => {
-                const isMaster = (adminId === MASTER_ADMIN_ID);
-                const item = document.createElement('div');
-                item.className = 'flex items-center justify-between bg-slate-800/50 rounded-lg p-2';
-                item.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-user-shield ${isMaster ? 'text-yellow-400' : 'text-purple-400'}"></i>
-                        <span class="text-sm text-white">${adminId}</span>
-                        ${isMaster ? '<span class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">أساسي</span>' : ''}
-                    </div>
-                    ${!isMaster ? `<button onclick="removeAdmin(${adminId})" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>` : ''}
-                `;
-                adminsListEl.appendChild(item);
-            });
-        }
-
-        // دوال إدارة المشرفين من الواجهة
-        window.addAdmin = function() {
-            const adminId = newAdminIdInput.value.trim();
-            if (!adminId) {
-                tg.showPopup({ title: 'تنبيه', message: 'الرجاء إدخال معرف المشرف', buttons: [{type: 'ok'}] });
-                return;
-            }
-            const success = addAdminById(adminId);
-            if (success) {
-                newAdminIdInput.value = '';
-                renderAdminsList();
-                tg.showPopup({ title: 'تم', message: 'تمت إضافة المشرف بنجاح', buttons: [{type: 'ok'}] });
-            } else {
-                tg.showPopup({ title: 'خطأ', message: 'المعرف موجود بالفعل أو غير صالح', buttons: [{type: 'ok'}] });
-            }
-        };
-
-        window.removeAdmin = function(adminId) {
-            const success = removeAdminById(adminId);
-            if (success) {
-                renderAdminsList();
-                tg.showPopup({ title: 'تم', message: 'تمت إزالة المشرف', buttons: [{type: 'ok'}] });
-            } else {
-                tg.showPopup({ title: 'خطأ', message: 'لا يمكن إزالة المشرف الأساسي', buttons: [{type: 'ok'}] });
-            }
-        };
-
-        // ========================
-        // محاكاة قاعدة البيانات للرصيد
-        // ========================
-        function getUserBalanceFromDB(userId) {
-            const key = 'balance_' + userId;
-            let balance = localStorage.getItem(key);
-            if (balance === null) {
-                balance = 500;
-                localStorage.setItem(key, balance);
-            } else {
-                balance = parseInt(balance, 10);
-            }
-            return balance;
-        }
-
-        function setUserBalanceInDB(userId, newBalance) {
-            const key = 'balance_' + userId;
-            localStorage.setItem(key, newBalance);
-            return newBalance;
-        }
-
-        // تحديث عرض الرصيد
-        async function refreshBalance() {
-            if (!currentUserId) return;
-            try {
-                const balance = getUserBalanceFromDB(currentUserId);
-                userBalanceEl.textContent = balance.toLocaleString('en-US');
-                userBalanceEl.style.transform = 'scale(1.1)';
-                setTimeout(() => userBalanceEl.style.transform = 'scale(1)', 150);
-            } catch (error) {
-                console.error('فشل تحديث الرصيد', error);
-                tg.showPopup({
-                    title: 'خطأ',
-                    message: 'تعذر تحديث الرصيد. تحقق من اتصالك.',
-                    buttons: [{type: 'ok'}]
-                });
-            }
-        }
-
-        // دالة تجريبية لزيادة الرصيد
-        async function addDemoBalance() {
-            if (!currentUserId) return;
-            try {
-                const currentBalance = getUserBalanceFromDB(currentUserId);
-                const newBalance = currentBalance + 100;
-                setUserBalanceInDB(currentUserId, newBalance);
-                await refreshBalance();
-                tg.showPopup({
-                    title: 'تم',
-                    message: 'تمت إضافة 100 نقطة إلى رصيدك.',
-                    buttons: [{type: 'ok'}]
-                });
-            } catch (error) {
-                console.error(error);
-                tg.showPopup({
-                    title: 'خطأ',
-                    message: 'لم نتمكن من إضافة الرصيد.',
-                    buttons: [{type: 'ok'}]
-                });
-            }
-        }
-
-        // فتح لوحة تحكم المشرف
-        window.openAdminPanel = function() {
-            // تحديث الإحصائيات (يمكن تحسينها لاحقاً)
-            totalUsersEl.textContent = localStorage.length; // مجرد مثال
-            totalTransactionsEl.textContent = '0';
-            renderAdminsList();
-            adminModal.classList.remove('hidden-content');
-            adminModal.style.display = 'flex';
-        };
-
-        window.closeAdminModal = function(event) {
-            if (event && event.target === adminModal) {
-                adminModal.classList.add('hidden-content');
-                adminModal.style.display = 'none';
-            } else if (!event) {
-                adminModal.classList.add('hidden-content');
-                adminModal.style.display = 'none';
-            }
-        };
-
-        // دالة التهيئة
-        async function initApp() {
+        function initApp() {
             tg.expand();
             tg.ready();
 
@@ -552,50 +395,73 @@
             }
 
             const user = tg.initDataUnsafe.user;
-            currentUserId = user.id;
-            currentUser = user;
-
-            // Set User Data
             const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
-            userNameEl.textContent = fullName || "مستخدم تيليجرام";
-            userIdEl.textContent = `ID: ${user.id}`;
             
-            // Handle Avatar
-            if (user.photo_url) {
-                userPhotoEl.src = user.photo_url;
-                userPhotoEl.classList.remove('hidden');
-                defaultAvatarEl.classList.add('hidden');
-            } else {
-                userPhotoEl.classList.add('hidden');
-                defaultAvatarEl.classList.remove('hidden');
-                const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
-                avatarInitialsEl.textContent = initials || "U";
-            }
+            // تحديد ما إذا كان المستخدم هو المشرف
+            const isAdmin = (user.id === ADMIN_ID);
 
-            // جلب الرصيد
-            try {
-                const balance = getUserBalanceFromDB(user.id);
-                userBalanceEl.textContent = balance.toLocaleString('en-US');
-            } catch (e) {
-                userBalanceEl.textContent = '٠';
-            }
-
-            // التحقق إذا كان المستخدم مشرفاً
-            if (isUserAdmin(user.id)) {
-                adminPanelBtn.classList.remove('hidden');
-            }
-
-            // Transition to Dashboard
-            setTimeout(() => {
-                loadingState.style.display = 'none';
-                dashboardState.classList.remove('hidden-content');
-                dashboardState.style.display = 'block';
+            if (isAdmin) {
+                // تعبئة بيانات المشرف
+                adminUserNameEl.textContent = fullName || "مشرف";
+                adminUserIdEl.textContent = `ID: ${user.id}`;
                 
-                tg.MainButton.setText("تحديث البيانات");
-                tg.MainButton.setTextColor("#ffffff");
-                tg.MainButton.setColor("#3b82f6");
-                tg.MainButton.show();
-            }, 1200);
+                // الصورة الرمزية للمشرف
+                if (user.photo_url) {
+                    adminUserPhotoEl.src = user.photo_url;
+                    adminUserPhotoEl.classList.remove('hidden');
+                    adminDefaultAvatarEl.classList.add('hidden');
+                } else {
+                    adminUserPhotoEl.classList.add('hidden');
+                    adminDefaultAvatarEl.classList.remove('hidden');
+                    const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
+                    adminAvatarInitialsEl.textContent = initials || "A";
+                }
+
+                // رصيد وهمي (يمكن تغييره)
+                adminBalanceEl.textContent = '١٢٣٤٥';
+
+                // إخفاء تحميل وإظهار لوحة المشرف
+                setTimeout(() => {
+                    loadingState.style.display = 'none';
+                    adminDashboardState.classList.remove('hidden-content');
+                    adminDashboardState.style.display = 'block';
+                    
+                    // إعداد زر رئيسي للمشرف (نفس الوظيفة أو يمكن تخصيصها)
+                    tg.MainButton.setText("لوحة التحكم");
+                    tg.MainButton.setTextColor("#ffffff");
+                    tg.MainButton.setColor("#3b82f6");
+                    tg.MainButton.show();
+                }, 1200);
+            } else {
+                // مستخدم عادي
+                userNameEl.textContent = fullName || "مستخدم تيليجرام";
+                userIdEl.textContent = `ID: ${user.id}`;
+                
+                if (user.photo_url) {
+                    userPhotoEl.src = user.photo_url;
+                    userPhotoEl.classList.remove('hidden');
+                    defaultAvatarEl.classList.add('hidden');
+                } else {
+                    userPhotoEl.classList.add('hidden');
+                    defaultAvatarEl.classList.remove('hidden');
+                    const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
+                    avatarInitialsEl.textContent = initials || "U";
+                }
+
+                const balance = 1234; 
+                userBalanceEl.textContent = balance.toLocaleString('en-US'); 
+
+                setTimeout(() => {
+                    loadingState.style.display = 'none';
+                    dashboardState.classList.remove('hidden-content');
+                    dashboardState.style.display = 'block';
+                    
+                    tg.MainButton.setText("تحديث البيانات");
+                    tg.MainButton.setTextColor("#ffffff");
+                    tg.MainButton.setColor("#3b82f6");
+                    tg.MainButton.show();
+                }, 1200);
+            }
         }
 
         function showAccessDenied() {
@@ -610,15 +476,24 @@
         }
 
         tg.MainButton.onClick(function() {
-            tg.showPopup({
-                title: 'نظام آمن',
-                message: `أهلاً ${currentUser?.first_name || ''}، اتصالك مشفر ومحمي بالكامل. رصيدك الحالي: ${userBalanceEl.textContent}`,
-                buttons: [{type: 'ok', text: 'حسناً'}]
-            });
+            const user = tg.initDataUnsafe.user;
+            if (!user) return;
+            
+            // رسالة منبثقة مختلفة قليلاً للمشرف
+            if (user.id === ADMIN_ID) {
+                tg.showPopup({
+                    title: 'مرحباً أيها المدير',
+                    message: `لديك صلاحيات كاملة في النظام.`,
+                    buttons: [{type: 'ok', text: 'حسناً'}]
+                });
+            } else {
+                tg.showPopup({
+                    title: 'نظام آمن',
+                    message: `أهلاً ${user.first_name}، اتصالك مشفر ومحمي بالكامل.`,
+                    buttons: [{type: 'ok', text: 'حسناً'}]
+                });
+            }
         });
-
-        // تهيئة قائمة المشرفين (للتأكد من وجود المعرف الأساسي)
-        getAdminsList();
 
         initApp();
     </script>
