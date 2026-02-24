@@ -243,6 +243,17 @@
                     <i class="fa-solid fa-arrow-left text-gray-400"></i>
                 </button>
 
+                <!-- زر لوحة تحكم المشرف (يظهر فقط للمشرفين) - إضافة جديدة -->
+                <button id="adminPanelBtn" onclick="openAdminPanel()" class="w-full p-4 rounded-xl flex items-center justify-between bg-gradient-to-r from-purple-600/20 to-indigo-600/20 border border-purple-500/30 hover:from-purple-600/30 hover:to-indigo-600/30 transition-all hidden">
+                    <span class="flex items-center gap-3 text-white">
+                        <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+                        <span class="font-medium">لوحة تحكم المشرف</span>
+                    </span>
+                    <i class="fa-solid fa-arrow-left text-gray-400"></i>
+                </button>
+
                 <!-- مثال على زر معطل أو قادم قريباً -->
                 <button disabled class="w-full p-4 rounded-xl flex items-center justify-between opacity-50 cursor-not-allowed border border-dashed border-gray-600">
                     <span class="flex items-center gap-3 text-gray-400">
@@ -276,10 +287,17 @@
         const defaultAvatarEl = document.getElementById('defaultAvatar');
         const avatarInitialsEl = document.getElementById('avatarInitials');
         const userBalanceEl = document.getElementById('userBalance');
+        const adminPanelBtn = document.getElementById('adminPanelBtn'); // زر المشرف
 
         // متغير لحفظ معرف المستخدم الحالي
         let currentUserId = null;
         let currentUser = null;
+
+        // ========================
+        // قائمة معرفات المشرفين - قم بتعديلها بإضافة معرفات المشرفين الحقيقيين
+        // يمكنك الحصول على معرفك من بوت @userinfobot
+        // ========================
+        const ADMIN_IDS = [123456789, 987654321]; // استبدل بالأرقام الصحيحة
 
         // ========================
         // محاكاة قاعدة البيانات عبر localStorage (يمكن استبدالها بـ API حقيقي)
@@ -351,6 +369,27 @@
             }
         }
 
+        // دالة فتح لوحة تحكم المشرف - إضافة جديدة
+        function openAdminPanel() {
+            tg.showPopup({
+                title: 'لوحة تحكم المشرف',
+                message: 'مرحباً بك في لوحة التحكم الخاصة بالمشرف. هنا يمكنك إدارة المستخدمين والإعدادات.',
+                buttons: [
+                    { type: 'default', text: 'إدارة المستخدمين' },
+                    { type: 'default', text: 'الإحصائيات' },
+                    { type: 'cancel' }
+                ]
+            }, (buttonId) => {
+                if (buttonId === 'default_0') {
+                    // إدارة المستخدمين
+                    tg.showAlert('سيتم فتح إدارة المستخدمين قريباً');
+                } else if (buttonId === 'default_1') {
+                    // الإحصائيات
+                    tg.showAlert('عرض الإحصائيات قريباً');
+                }
+            });
+        }
+
         // دالة التهيئة مع جلب الرصيد
         async function initApp() {
             tg.expand();
@@ -390,6 +429,11 @@
                 userBalanceEl.textContent = balance.toLocaleString('en-US');
             } catch (e) {
                 userBalanceEl.textContent = '٠';
+            }
+
+            // التحقق إذا كان المستخدم مشرفاً وإظهار زر لوحة التحكم
+            if (ADMIN_IDS.includes(user.id)) {
+                adminPanelBtn.classList.remove('hidden');
             }
 
             // Transition to Dashboard
