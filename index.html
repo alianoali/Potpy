@@ -278,7 +278,7 @@
                 isAdmin: false,
                 loading: true,
                 accessDenied: false,
-                dashboard: null,
+                telegramMissing: false,
                 balance: 0,
                 stats: {
                     users: 0,
@@ -295,7 +295,13 @@
             // -----------------------------------------------
             // المتغيرات العامة
             // -----------------------------------------------
-            const tg = window.Telegram.WebApp;
+            let tg = null;
+            try {
+                tg = window.Telegram?.WebApp;
+            } catch (e) {
+                tg = null;
+            }
+
             const appContainer = document.getElementById('app');
             
             // مراجع العناصر
@@ -305,8 +311,25 @@
             const themeIcon = document.getElementById('themeIcon');
 
             // -----------------------------------------------
-            // دوال مساعدة
+            // دوال مساعدة (مع معالجة أخطاء localStorage)
             // -----------------------------------------------
+            function safeLocalStorageGet(key, defaultValue) {
+                try {
+                    const value = localStorage.getItem(key);
+                    return value !== null ? value : defaultValue;
+                } catch (e) {
+                    return defaultValue;
+                }
+            }
+
+            function safeLocalStorageSet(key, value) {
+                try {
+                    localStorage.setItem(key, value);
+                } catch (e) {
+                    // تجاهل الخطأ
+                }
+            }
+
             function showToast(message, type = 'info') {
                 const toast = document.createElement('div');
                 toast.className = 'toast';
@@ -331,45 +354,55 @@
                     document.documentElement.style.setProperty('--tg-theme-button-text-color', '#ffffff');
                     themeIcon.className = 'fa-solid fa-moon';
                 }
-                localStorage.setItem('theme', theme);
+                safeLocalStorageSet('theme', theme);
             }
 
-            // دوال الإحصائيات الحقيقية
+            // دوال الإحصائيات الحقيقية (مع أمان localStorage)
             function getTodayDate() {
                 return new Date().toISOString().split('T')[0];
             }
 
             function updateStats() {
-                // قراءة المستخدمين المخزنين
-                let usersSet = new Set(JSON.parse(localStorage.getItem('app_users') || '[]'));
-                state.stats.users = usersSet.size;
+                try {
+                    // قراءة المستخدمين المخزنين
+                    let usersSet = new Set(JSON.parse(safeLocalStorageGet('app_users', '[]')));
+                    state.stats.users = usersSet.size;
 
-                // عدد البوتات (يمكن تعديلها يدوياً أو جلبها من API)
-                // هنا نفترض أن هناك بوت واحد هو البوت الحالي + أي بوتات أخرى مسجلة
-                let bots = JSON.parse(localStorage.getItem('app_bots') || '[{"id":123456,"name":"البوت الرسمي"}]');
-                state.stats.bots = bots.length;
+                    // عدد البوتات (يمكن تعديلها يدوياً أو جلبها من API)
+                    let bots = JSON.parse(safeLocalStorageGet('app_bots', '[{"id":123456,"name":"البوت الرسمي"}]'));
+                    state.stats.bots = bots.length;
 
-                // العمليات اليومية
-                const today = getTodayDate();
-                let dailyOpsData = JSON.parse(localStorage.getItem('daily_ops') || '{}');
-                state.stats.dailyOps = dailyOpsData[today] || 0;
+                    // العمليات اليومية
+                    const today = getTodayDate();
+                    let dailyOpsData = JSON.parse(safeLocalStorageGet('daily_ops', '{}'));
+                    state.stats.dailyOps = dailyOpsData[today] || 0;
+                } catch (e) {
+                    // في حال خطأ في JSON، نترك القيم الافتراضية
+                    state.stats.users = 0;
+                    state.stats.bots = 1;
+                    state.stats.dailyOps = 0;
+                }
             }
 
             function incrementDailyOps() {
-                const today = getTodayDate();
-                let dailyOpsData = JSON.parse(localStorage.getItem('daily_ops') || '{}');
-                dailyOpsData[today] = (dailyOpsData[today] || 0) + 1;
-                localStorage.setItem('daily_ops', JSON.stringify(dailyOpsData));
-                updateStats();
+                try {
+                    const today = getTodayDate();
+                    let dailyOpsData = JSON.parse(safeLocalStorageGet('daily_ops', '{}'));
+                    dailyOpsData[today] = (dailyOpsData[today] || 0) + 1;
+                    safeLocalStorageSet('daily_ops', JSON.stringify(dailyOpsData));
+                    updateStats();
+                } catch (e) {}
             }
 
             function registerUser(userId) {
-                let usersSet = new Set(JSON.parse(localStorage.getItem('app_users') || '[]'));
-                if (!usersSet.has(userId)) {
-                    usersSet.add(userId);
-                    localStorage.setItem('app_users', JSON.stringify([...usersSet]));
-                    updateStats();
-                }
+                try {
+                    let usersSet = new Set(JSON.parse(safeLocalStorageGet('app_users', '[]')));
+                    if (!usersSet.has(userId)) {
+                        usersSet.add(userId);
+                        safeLocalStorageSet('app_users', JSON.stringify([...usersSet]));
+                        updateStats();
+                    }
+                } catch (e) {}
             }
 
             // -----------------------------------------------
@@ -401,6 +434,24 @@
                             <a href="https://telegram.org" target="_blank" class="block w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg shadow-blue-500/20">
                                 <i class="fa-brands fa-telegram ml-2"></i>
                                 فتح تيليجرام
+                            </a>
+                        </div>
+                    `;
+                },
+
+                telegramMissing: () => {
+                    return `
+                        <div class="glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter border-orange-500/20">
+                            <div class="w-20 h-20 bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
+                                <i class="fa-solid fa-exclamation-triangle"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold mb-2">بيئة غير مدعومة</h2>
+                            <p class="text-gray-400 mb-8 leading-relaxed text-sm">
+                                لم يتم العثور على بيئة تيليجرام. يرجى فتح هذا الرابط من داخل تطبيق تيليجرام على هاتفك.
+                            </p>
+                            <a href="https://t.me/your_bot_username" target="_blank" class="block w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 transition-all shadow-lg shadow-orange-500/20">
+                                <i class="fa-brands fa-telegram ml-2"></i>
+                                فتح البوت في تيليجرام
                             </a>
                         </div>
                     `;
@@ -644,7 +695,9 @@
             // دالة التصيير (Render)
             // -----------------------------------------------
             function render() {
-                if (state.loading) {
+                if (state.telegramMissing) {
+                    appContainer.innerHTML = components.telegramMissing();
+                } else if (state.loading) {
                     appContainer.innerHTML = components.loading();
                 } else if (state.accessDenied) {
                     appContainer.innerHTML = components.accessDenied();
@@ -666,7 +719,7 @@
                 const logoutBtn = document.getElementById('logoutBtn');
                 if (logoutBtn) {
                     logoutBtn.addEventListener('click', () => {
-                        tg.close();
+                        if (tg) tg.close();
                     });
                 }
 
@@ -709,14 +762,18 @@
                         // زيادة العمليات اليومية
                         incrementDailyOps();
                         
-                        tg.showPopup({
-                            title: 'إرسال إشعار',
-                            message: 'هل تريد إرسال إشعار لجميع المستخدمين؟',
-                            buttons: [
-                                {type: 'ok', text: 'نعم'},
-                                {type: 'cancel', text: 'إلغاء'}
-                            ]
-                        });
+                        if (tg) {
+                            tg.showPopup({
+                                title: 'إرسال إشعار',
+                                message: 'هل تريد إرسال إشعار لجميع المستخدمين؟',
+                                buttons: [
+                                    {type: 'ok', text: 'نعم'},
+                                    {type: 'cancel', text: 'إلغاء'}
+                                ]
+                            });
+                        } else {
+                            showToast('هذه الميزة متاحة فقط داخل تيليجرام', 'warning');
+                        }
                     });
                 }
 
@@ -745,15 +802,20 @@
             // تهيئة التطبيق
             // -----------------------------------------------
             async function initApp() {
+                if (!tg) {
+                    state.telegramMissing = true;
+                    state.loading = false;
+                    render();
+                    return;
+                }
+
                 tg.expand();
                 tg.ready();
 
                 // استعادة السمة من localStorage
-                const savedTheme = localStorage.getItem('theme');
-                if (savedTheme) {
-                    state.theme = savedTheme;
-                    updateTheme(savedTheme);
-                }
+                const savedTheme = safeLocalStorageGet('theme', 'dark');
+                state.theme = savedTheme;
+                updateTheme(savedTheme);
 
                 // التحقق من الأمان
                 if (!tg.initData || !tg.initDataUnsafe.user) {
