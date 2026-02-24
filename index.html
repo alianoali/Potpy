@@ -294,10 +294,15 @@
         let currentUser = null;
 
         // ========================
-        // قائمة معرفات المشرفين - قم بتعديلها بإضافة معرفات المشرفين الحقيقيين
-        // يمكنك الحصول على معرفك من بوت @userinfobot
+        // قائمة معرفات المشرفين الثابتة (كخيار احتياطي) - يمكن تركها فارغة أو حذفها
         // ========================
-        const ADMIN_IDS = [123456789, 987654321]; // استبدل بالأرقام الصحيحة
+        // const ADMIN_IDS = [7609492965]; // يمكن إزالتها
+
+        // ========================
+        // رابط الخادم الخاص بالتحقق من المشرف
+        // ⚠️ استبدل هذا الرابط برابط الخادم الذي ستنشئه (مثال: https://your-server.com/check-admin)
+        // ========================
+        const CHECK_ADMIN_API_URL = "https://your-server.com/check-admin"; // ⚠️ غيّر هذا الرابط
 
         // ========================
         // محاكاة قاعدة البيانات عبر localStorage (يمكن استبدالها بـ API حقيقي)
@@ -305,12 +310,10 @@
         // ========================
         function getUserBalanceFromDB(userId) {
             // محاكاة جلب من قاعدة البيانات
-            // في الإنتاج: استخدم fetch('/api/getBalance?userId=' + userId)
             const key = 'balance_' + userId;
             let balance = localStorage.getItem(key);
             if (balance === null) {
-                // رصيد افتراضي للمستخدم الجديد
-                balance = 500; // يمكن أن يكون 0 أو قيمة افتراضية
+                balance = 500;
                 localStorage.setItem(key, balance);
             } else {
                 balance = parseInt(balance, 10);
@@ -319,8 +322,6 @@
         }
 
         function setUserBalanceInDB(userId, newBalance) {
-            // محاكاة تحديث في قاعدة البيانات
-            // في الإنتاج: استخدم fetch('/api/setBalance', { method: 'POST', body: JSON.stringify({ userId, balance }) })
             const key = 'balance_' + userId;
             localStorage.setItem(key, newBalance);
             return newBalance;
@@ -330,10 +331,8 @@
         async function refreshBalance() {
             if (!currentUserId) return;
             try {
-                // في الإنتاج: يمكن أن يكون طلباً غير متزامن
                 const balance = getUserBalanceFromDB(currentUserId);
                 userBalanceEl.textContent = balance.toLocaleString('en-US');
-                // يمكن إضافة تأثير بسيط
                 userBalanceEl.style.transform = 'scale(1.1)';
                 setTimeout(() => userBalanceEl.style.transform = 'scale(1)', 150);
             } catch (error) {
@@ -346,14 +345,14 @@
             }
         }
 
-        // دالة تجريبية لزيادة الرصيد (محاكاة لإجراء من الموقع)
+        // دالة تجريبية لزيادة الرصيد
         async function addDemoBalance() {
             if (!currentUserId) return;
             try {
                 const currentBalance = getUserBalanceFromDB(currentUserId);
                 const newBalance = currentBalance + 100;
                 setUserBalanceInDB(currentUserId, newBalance);
-                await refreshBalance(); // تحديث العرض
+                await refreshBalance();
                 tg.showPopup({
                     title: 'تم',
                     message: 'تمت إضافة 100 نقطة إلى رصيدك.',
@@ -369,7 +368,7 @@
             }
         }
 
-        // دالة فتح لوحة تحكم المشرف - إضافة جديدة
+        // دالة فتح لوحة تحكم المشرف
         function openAdminPanel() {
             tg.showPopup({
                 title: 'لوحة تحكم المشرف',
@@ -381,13 +380,32 @@
                 ]
             }, (buttonId) => {
                 if (buttonId === 'default_0') {
-                    // إدارة المستخدمين
                     tg.showAlert('سيتم فتح إدارة المستخدمين قريباً');
                 } else if (buttonId === 'default_1') {
-                    // الإحصائيات
                     tg.showAlert('عرض الإحصائيات قريباً');
                 }
             });
+        }
+
+        // دالة التحقق من المشرف عبر API
+        async function checkIfAdmin(userId) {
+            try {
+                // إرسال طلب إلى الخادم للتحقق مما إذا كان المستخدم مشرفاً
+                const response = await fetch(CHECK_ADMIN_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ user_id: userId })
+                });
+                const data = await response.json();
+                return data.is_admin === true; // نتوقع أن يعيد الخادم { is_admin: true/false }
+            } catch (error) {
+                console.error('فشل الاتصال بخادم التحقق', error);
+                // في حالة فشل الاتصال، نستخدم القائمة الثابتة كخيار احتياطي (اختياري)
+                // return ADMIN_IDS.includes(userId);
+                return false; // أو إرجاع false افتراضياً
+            }
         }
 
         // دالة التهيئة مع جلب الرصيد
@@ -418,7 +436,6 @@
             } else {
                 userPhotoEl.classList.add('hidden');
                 defaultAvatarEl.classList.remove('hidden');
-                // Set Initials
                 const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
                 avatarInitialsEl.textContent = initials || "U";
             }
@@ -431,8 +448,9 @@
                 userBalanceEl.textContent = '٠';
             }
 
-            // التحقق إذا كان المستخدم مشرفاً وإظهار زر لوحة التحكم
-            if (ADMIN_IDS.includes(user.id)) {
+            // التحقق مما إذا كان المستخدم مشرفاً عبر API
+            const isAdmin = await checkIfAdmin(user.id);
+            if (isAdmin) {
                 adminPanelBtn.classList.remove('hidden');
             }
 
@@ -442,7 +460,6 @@
                 dashboardState.classList.remove('hidden-content');
                 dashboardState.style.display = 'block';
                 
-                // Setup Main Button for interaction
                 tg.MainButton.setText("تحديث البيانات");
                 tg.MainButton.setTextColor("#ffffff");
                 tg.MainButton.setColor("#3b82f6");
@@ -468,9 +485,6 @@
                 buttons: [{type: 'ok', text: 'حسناً'}]
             });
         });
-
-        // يمكن جعل التحديث التلقائي كل دقيقة مثلاً (اختياري)
-        // setInterval(refreshBalance, 60000);
 
         initApp();
     </script>
