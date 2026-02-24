@@ -213,7 +213,7 @@
             </div>
         </div>
 
-        <!-- Main Actions Area (مع إضافة زر لزيادة الرصيد تجريبي) -->
+        <!-- Main Actions Area -->
         <div class="glass-card p-5 rounded-3xl">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-bold text-white text-lg">القائمة الرئيسية</h3>
@@ -221,7 +221,7 @@
             </div>
             
             <div class="space-y-3">
-                <!-- رسالة توضيحية مع زر زيادة الرصيد (محاكاة لتحديث الرصيد في الخادم) -->
+                <!-- رسالة توضيحية -->
                 <div class="bg-blue-500/5 border border-blue-500/10 rounded-xl p-4 flex items-start gap-3">
                     <i class="fa-solid fa-circle-info text-blue-400 mt-1"></i>
                     <div class="flex-1">
@@ -232,7 +232,7 @@
                     </div>
                 </div>
 
-                <!-- زر تجريبي لزيادة الرصيد (محاكاة لإضافة رصيد من الموقع) -->
+                <!-- زر تجريبي لزيادة الرصيد -->
                 <button onclick="addDemoBalance()" class="w-full p-4 rounded-xl flex items-center justify-between bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 hover:from-emerald-600/30 hover:to-teal-600/30 transition-all">
                     <span class="flex items-center gap-3 text-white">
                         <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
@@ -243,7 +243,7 @@
                     <i class="fa-solid fa-arrow-left text-gray-400"></i>
                 </button>
 
-                <!-- زر لوحة تحكم المشرف (يظهر فقط للمشرفين) - إضافة جديدة -->
+                <!-- زر لوحة تحكم المشرف (يظهر فقط للمشرفين) -->
                 <button id="adminPanelBtn" onclick="openAdminPanel()" class="w-full p-4 rounded-xl flex items-center justify-between bg-gradient-to-r from-purple-600/20 to-indigo-600/20 border border-purple-500/30 hover:from-purple-600/30 hover:to-indigo-600/30 transition-all hidden">
                     <span class="flex items-center gap-3 text-white">
                         <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
@@ -254,7 +254,7 @@
                     <i class="fa-solid fa-arrow-left text-gray-400"></i>
                 </button>
 
-                <!-- مثال على زر معطل أو قادم قريباً -->
+                <!-- مثال على زر معطل -->
                 <button disabled class="w-full p-4 rounded-xl flex items-center justify-between opacity-50 cursor-not-allowed border border-dashed border-gray-600">
                     <span class="flex items-center gap-3 text-gray-400">
                         <div class="w-8 h-8 rounded-lg bg-gray-700/50 flex items-center justify-center">
@@ -273,6 +273,65 @@
         </button>
     </div>
 
+    <!-- Admin Panel Modal (يظهر عند الضغط على زر لوحة المشرف) -->
+    <div id="adminModal" class="hidden-content fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeAdminModal(event)">
+        <div class="glass-card rounded-3xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">لوحة تحكم المشرف</h3>
+                <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- إحصائيات سريعة -->
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="bg-white/5 rounded-xl p-3 text-center">
+                    <span class="text-gray-400 text-xs">إجمالي المستخدمين</span>
+                    <div class="text-xl font-bold text-white" id="totalUsers">0</div>
+                </div>
+                <div class="bg-white/5 rounded-xl p-3 text-center">
+                    <span class="text-gray-400 text-xs">إجمالي المعاملات</span>
+                    <div class="text-xl font-bold text-white" id="totalTransactions">0</div>
+                </div>
+            </div>
+
+            <!-- إدارة المشرفين -->
+            <div class="mb-6">
+                <h4 class="font-bold text-white mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-user-tie text-purple-400"></i>
+                    إدارة المشرفين
+                </h4>
+                <div class="bg-white/5 rounded-xl p-4">
+                    <div class="flex gap-2 mb-4">
+                        <input type="number" id="newAdminId" placeholder="أدخل معرف المشرف (رقم)" class="flex-1 bg-slate-800 text-white rounded-xl px-4 py-2 text-sm border border-white/10 focus:border-purple-500 outline-none">
+                        <button onclick="addAdmin()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition">
+                            <i class="fa-solid fa-plus ml-1"></i>
+                            إضافة
+                        </button>
+                    </div>
+                    <div id="adminsList" class="space-y-2 max-h-40 overflow-y-auto">
+                        <!-- سيتم تعبئتها ديناميكياً -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- إحصائيات متقدمة (اختياري) -->
+            <div>
+                <h4 class="font-bold text-white mb-3">إحصائيات النظام</h4>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between bg-white/5 p-3 rounded-xl">
+                        <span class="text-gray-400">عدد الزيارات اليوم</span>
+                        <span class="text-white font-bold">128</span>
+                    </div>
+                    <div class="flex justify-between bg-white/5 p-3 rounded-xl">
+                        <span class="text-gray-400">إجمالي الأرصدة</span>
+                        <span class="text-white font-bold">15,200</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const tg = window.Telegram.WebApp;
         
@@ -280,6 +339,11 @@
         const loadingState = document.getElementById('loadingState');
         const accessDeniedState = document.getElementById('accessDeniedState');
         const dashboardState = document.getElementById('dashboardState');
+        const adminModal = document.getElementById('adminModal');
+        const adminsListEl = document.getElementById('adminsList');
+        const newAdminIdInput = document.getElementById('newAdminId');
+        const totalUsersEl = document.getElementById('totalUsers');
+        const totalTransactionsEl = document.getElementById('totalTransactions');
         
         const userNameEl = document.getElementById('userName');
         const userIdEl = document.getElementById('userId');
@@ -287,29 +351,117 @@
         const defaultAvatarEl = document.getElementById('defaultAvatar');
         const avatarInitialsEl = document.getElementById('avatarInitials');
         const userBalanceEl = document.getElementById('userBalance');
-        const adminPanelBtn = document.getElementById('adminPanelBtn'); // زر المشرف
+        const adminPanelBtn = document.getElementById('adminPanelBtn');
 
-        // متغير لحفظ معرف المستخدم الحالي
+        // متغيرات عامة
         let currentUserId = null;
         let currentUser = null;
 
         // ========================
-        // قائمة معرفات المشرفين الثابتة (كخيار احتياطي) - يمكن تركها فارغة أو حذفها
+        // إدارة المشرفين (تخزين في localStorage)
+        // المفتاح: 'telegram_admins'
+        // يتم تهيئته بالمعرف الأساسي 7609492965
         // ========================
-        // const ADMIN_IDS = [7609492965]; // يمكن إزالتها
+        const MASTER_ADMIN_ID = 7609492965; // المعرف الأساسي (صاحب البوت)
+
+        function getAdminsList() {
+            let admins = localStorage.getItem('telegram_admins');
+            if (!admins) {
+                // في البداية، نضع المعرف الأساسي فقط
+                admins = [MASTER_ADMIN_ID];
+                localStorage.setItem('telegram_admins', JSON.stringify(admins));
+            } else {
+                admins = JSON.parse(admins);
+                // تأكد من وجود المعرف الأساسي دائماً
+                if (!admins.includes(MASTER_ADMIN_ID)) {
+                    admins.push(MASTER_ADMIN_ID);
+                    localStorage.setItem('telegram_admins', JSON.stringify(admins));
+                }
+            }
+            return admins;
+        }
+
+        function addAdminById(adminId) {
+            if (!adminId) return false;
+            adminId = Number(adminId);
+            if (isNaN(adminId)) return false;
+            let admins = getAdminsList();
+            if (!admins.includes(adminId)) {
+                admins.push(adminId);
+                localStorage.setItem('telegram_admins', JSON.stringify(admins));
+                return true;
+            }
+            return false;
+        }
+
+        function removeAdminById(adminId) {
+            if (adminId === MASTER_ADMIN_ID) return false; // لا يمكن إزالة المشرف الأساسي
+            let admins = getAdminsList();
+            const index = admins.indexOf(adminId);
+            if (index > -1) {
+                admins.splice(index, 1);
+                localStorage.setItem('telegram_admins', JSON.stringify(admins));
+                return true;
+            }
+            return false;
+        }
+
+        function isUserAdmin(userId) {
+            const admins = getAdminsList();
+            return admins.includes(userId);
+        }
+
+        // تحديث عرض قائمة المشرفين في المودال
+        function renderAdminsList() {
+            const admins = getAdminsList();
+            adminsListEl.innerHTML = '';
+            admins.forEach(adminId => {
+                const isMaster = (adminId === MASTER_ADMIN_ID);
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between bg-slate-800/50 rounded-lg p-2';
+                item.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-user-shield ${isMaster ? 'text-yellow-400' : 'text-purple-400'}"></i>
+                        <span class="text-sm text-white">${adminId}</span>
+                        ${isMaster ? '<span class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">أساسي</span>' : ''}
+                    </div>
+                    ${!isMaster ? `<button onclick="removeAdmin(${adminId})" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>` : ''}
+                `;
+                adminsListEl.appendChild(item);
+            });
+        }
+
+        // دوال إدارة المشرفين من الواجهة
+        window.addAdmin = function() {
+            const adminId = newAdminIdInput.value.trim();
+            if (!adminId) {
+                tg.showPopup({ title: 'تنبيه', message: 'الرجاء إدخال معرف المشرف', buttons: [{type: 'ok'}] });
+                return;
+            }
+            const success = addAdminById(adminId);
+            if (success) {
+                newAdminIdInput.value = '';
+                renderAdminsList();
+                tg.showPopup({ title: 'تم', message: 'تمت إضافة المشرف بنجاح', buttons: [{type: 'ok'}] });
+            } else {
+                tg.showPopup({ title: 'خطأ', message: 'المعرف موجود بالفعل أو غير صالح', buttons: [{type: 'ok'}] });
+            }
+        };
+
+        window.removeAdmin = function(adminId) {
+            const success = removeAdminById(adminId);
+            if (success) {
+                renderAdminsList();
+                tg.showPopup({ title: 'تم', message: 'تمت إزالة المشرف', buttons: [{type: 'ok'}] });
+            } else {
+                tg.showPopup({ title: 'خطأ', message: 'لا يمكن إزالة المشرف الأساسي', buttons: [{type: 'ok'}] });
+            }
+        };
 
         // ========================
-        // رابط الخادم الخاص بالتحقق من المشرف
-        // ⚠️ استبدل هذا الرابط برابط الخادم الذي ستنشئه (مثال: https://your-server.com/check-admin)
-        // ========================
-        const CHECK_ADMIN_API_URL = "https://your-server.com/check-admin"; // ⚠️ غيّر هذا الرابط
-
-        // ========================
-        // محاكاة قاعدة البيانات عبر localStorage (يمكن استبدالها بـ API حقيقي)
-        // المفتاح: balance_ + userID
+        // محاكاة قاعدة البيانات للرصيد
         // ========================
         function getUserBalanceFromDB(userId) {
-            // محاكاة جلب من قاعدة البيانات
             const key = 'balance_' + userId;
             let balance = localStorage.getItem(key);
             if (balance === null) {
@@ -327,7 +479,7 @@
             return newBalance;
         }
 
-        // تحديث عرض الرصيد من قاعدة البيانات
+        // تحديث عرض الرصيد
         async function refreshBalance() {
             if (!currentUserId) return;
             try {
@@ -368,47 +520,27 @@
             }
         }
 
-        // دالة فتح لوحة تحكم المشرف
-        function openAdminPanel() {
-            tg.showPopup({
-                title: 'لوحة تحكم المشرف',
-                message: 'مرحباً بك في لوحة التحكم الخاصة بالمشرف. هنا يمكنك إدارة المستخدمين والإعدادات.',
-                buttons: [
-                    { type: 'default', text: 'إدارة المستخدمين' },
-                    { type: 'default', text: 'الإحصائيات' },
-                    { type: 'cancel' }
-                ]
-            }, (buttonId) => {
-                if (buttonId === 'default_0') {
-                    tg.showAlert('سيتم فتح إدارة المستخدمين قريباً');
-                } else if (buttonId === 'default_1') {
-                    tg.showAlert('عرض الإحصائيات قريباً');
-                }
-            });
-        }
+        // فتح لوحة تحكم المشرف
+        window.openAdminPanel = function() {
+            // تحديث الإحصائيات (يمكن تحسينها لاحقاً)
+            totalUsersEl.textContent = localStorage.length; // مجرد مثال
+            totalTransactionsEl.textContent = '0';
+            renderAdminsList();
+            adminModal.classList.remove('hidden-content');
+            adminModal.style.display = 'flex';
+        };
 
-        // دالة التحقق من المشرف عبر API
-        async function checkIfAdmin(userId) {
-            try {
-                // إرسال طلب إلى الخادم للتحقق مما إذا كان المستخدم مشرفاً
-                const response = await fetch(CHECK_ADMIN_API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ user_id: userId })
-                });
-                const data = await response.json();
-                return data.is_admin === true; // نتوقع أن يعيد الخادم { is_admin: true/false }
-            } catch (error) {
-                console.error('فشل الاتصال بخادم التحقق', error);
-                // في حالة فشل الاتصال، نستخدم القائمة الثابتة كخيار احتياطي (اختياري)
-                // return ADMIN_IDS.includes(userId);
-                return false; // أو إرجاع false افتراضياً
+        window.closeAdminModal = function(event) {
+            if (event && event.target === adminModal) {
+                adminModal.classList.add('hidden-content');
+                adminModal.style.display = 'none';
+            } else if (!event) {
+                adminModal.classList.add('hidden-content');
+                adminModal.style.display = 'none';
             }
-        }
+        };
 
-        // دالة التهيئة مع جلب الرصيد
+        // دالة التهيئة
         async function initApp() {
             tg.expand();
             tg.ready();
@@ -440,7 +572,7 @@
                 avatarInitialsEl.textContent = initials || "U";
             }
 
-            // جلب الرصيد من قاعدة البيانات (محاكاة)
+            // جلب الرصيد
             try {
                 const balance = getUserBalanceFromDB(user.id);
                 userBalanceEl.textContent = balance.toLocaleString('en-US');
@@ -448,9 +580,8 @@
                 userBalanceEl.textContent = '٠';
             }
 
-            // التحقق مما إذا كان المستخدم مشرفاً عبر API
-            const isAdmin = await checkIfAdmin(user.id);
-            if (isAdmin) {
+            // التحقق إذا كان المستخدم مشرفاً
+            if (isUserAdmin(user.id)) {
                 adminPanelBtn.classList.remove('hidden');
             }
 
@@ -485,6 +616,9 @@
                 buttons: [{type: 'ok', text: 'حسناً'}]
             });
         });
+
+        // تهيئة قائمة المشرفين (للتأكد من وجود المعرف الأساسي)
+        getAdminsList();
 
         initApp();
     </script>
