@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🎰 سلوت الملك - كازينو تيليجرام</title>
+    <title>بوابة تيليجرام المتطورة</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -25,10 +25,12 @@
                         cairo: ['Cairo', 'sans-serif'],
                     },
                     colors: {
-                        tg-bg: 'var(--tg-theme-bg-color, #0f172a)',
-                        tg-text: 'var(--tg-theme-text-color, #ffffff)',
-                        tg-button: 'var(--tg-theme-button-color, #3b82f6)',
-                        tg-button-text: 'var(--tg-theme-button-text-color, #ffffff)',
+                        tg: {
+                            bg: 'var(--tg-theme-bg-color, #0f172a)',
+                            text: 'var(--tg-theme-text-color, #ffffff)',
+                            button: 'var(--tg-theme-button-color, #3b82f6)',
+                            buttonText: 'var(--tg-theme-button-text-color, #ffffff)',
+                        }
                     }
                 }
             }
@@ -36,17 +38,26 @@
     </script>
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Cairo', sans-serif;
             background-color: var(--tg-theme-bg-color, #0f172a);
             color: var(--tg-theme-text-color, #ffffff);
             overflow-x: hidden;
-            margin: 0;
-            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* خلفية متحركة */
+        /* الخلفية المتحركة */
         .ambient-light {
             position: fixed;
             top: 0;
@@ -57,20 +68,36 @@
             z-index: -1;
             pointer-events: none;
         }
+        
         .orb {
             position: absolute;
             border-radius: 50%;
             filter: blur(80px);
             opacity: 0.4;
-            animation: float 15s infinite ease-in-out;
+            animation: float 10s infinite ease-in-out;
         }
+        
         .orb-1 { top: -10%; right: -10%; width: 300px; height: 300px; background: #3b82f6; animation-delay: 0s; }
-        .orb-2 { bottom: -10%; left: -10%; width: 350px; height: 350px; background: #8b5cf6; animation-delay: 5s; }
-        .orb-3 { top: 40%; left: 20%; width: 200px; height: 200px; background: #ec4899; animation-delay: 2.5s; }
+        .orb-2 { bottom: -10%; left: -10%; width: 250px; height: 250px; background: #8b5cf6; animation-delay: 5s; }
 
         @keyframes float {
             0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(30px, 50px); }
+            50% { transform: translate(20px, 40px); }
+        }
+
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(40, 51, 69, 0.8);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
         /* Animations */
@@ -78,17 +105,9 @@
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
         .animate-enter {
             animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        /* Glassmorphism Cards */
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
 
         /* Loader */
@@ -100,11 +119,10 @@
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
+        
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .hidden-content { display: none !important; }
-        
-        /* Avatar Placeholder */
+        /* Avatar */
         .default-avatar {
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             display: flex;
@@ -115,680 +133,661 @@
             font-weight: bold;
         }
 
-        /* Slot Reels */
-        .reel {
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 20px;
-            padding: 10px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 0 2px rgba(255,215,0,0.3);
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .symbol {
-            width: 100%;
-            aspect-ratio: 1/1;
-            background: linear-gradient(145deg, #1e293b, #0f172a);
-            border-radius: 16px;
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translate(-50%, 20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 100;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            padding: 8px 16px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: #fbbf24;
-            text-shadow: 0 0 10px #fbbf24;
-            border: 1px solid rgba(255,215,0,0.3);
-            transition: all 0.1s ease;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-        .symbol.win {
-            background: linear-gradient(145deg, #fbbf24, #d97706);
-            color: #0f172a;
-            transform: scale(1.05);
-            border-color: #ffffff;
-            box-shadow: 0 0 20px #fbbf24;
+
+        .theme-toggle:hover {
+            background: rgba(40, 51, 69, 0.8);
         }
-        .spin-button {
-            background: linear-gradient(145deg, #3b82f6, #2563eb);
-            border: none;
-            color: white;
-            font-weight: bold;
-            padding: 16px 32px;
-            border-radius: 60px;
-            font-size: 1.25rem;
-            letter-spacing: 2px;
-            box-shadow: 0 10px 0 #1e40af, 0 0 20px #3b82f6;
-            transition: all 0.1s ease;
-            width: 100%;
+
+        /* Settings panel */
+        .settings-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(20, 30, 40, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            border-radius: 30px 30px 0 0;
         }
-        .spin-button:active {
-            transform: translateY(5px);
-            box-shadow: 0 5px 0 #1e40af, 0 0 20px #3b82f6;
-        }
-        .spin-button:disabled {
-            opacity: 0.5;
+
+        .settings-panel.open {
             transform: translateY(0);
-            box-shadow: 0 5px 0 #1e40af;
         }
-        .bet-button {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,215,0,0.3);
-            border-radius: 40px;
-            padding: 8px 20px;
-            font-weight: 600;
-            transition: all 0.2s;
+
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
-        .bet-button.active {
-            background: #fbbf24;
-            color: #0f172a;
-            border-color: #fbbf24;
+
+        .settings-overlay.open {
+            opacity: 1;
+            pointer-events: all;
         }
+
+        /* Hidden class */
+        .hidden-content { display: none !important; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-5 relative">
-
+<body>
     <!-- Background Elements -->
     <div class="ambient-light">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
     </div>
 
-    <!-- STATE 1: LOADING -->
-    <div id="loadingState" class="flex flex-col items-center justify-center text-center space-y-6 animate-enter">
-        <div class="spinner"></div>
-        <div>
-            <h2 class="text-xl font-bold text-white mb-1">جاري تحميل الكازينو...</h2>
-            <p class="text-sm text-gray-400">نحن نجهز لك أفضل تجربة سلوت</p>
-        </div>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fa-solid fa-moon" id="themeIcon"></i>
+        <span class="text-sm">السمة</span>
     </div>
 
-    <!-- STATE 2: ACCESS DENIED -->
-    <div id="accessDeniedState" class="hidden-content glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter border-red-500/20">
-        <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
-            <i class="fa-solid fa-shield-halved"></i>
-        </div>
-        <h2 class="text-2xl font-bold mb-2 text-white">دخول محظور</h2>
-        <p class="text-gray-400 mb-8 leading-relaxed text-sm">
-            يجب فتح هذا التطبيق حصراً من خلال بوت تيليجرام الرسمي لضمان الأمان.
-        </p>
-        <a href="https://telegram.org" target="_blank" class="block w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg shadow-blue-500/20">
-            <i class="fa-brands fa-telegram ml-2"></i>
-            فتح تيليجرام
-        </a>
-    </div>
+    <!-- Main Container -->
+    <div id="app" class="w-full max-w-md p-5 relative"></div>
 
-    <!-- STATE 3: USER DASHBOARD - GAME SLOT (للمستخدمين العاديين) -->
-    <div id="dashboardState" class="hidden-content w-full max-w-md space-y-5 animate-enter pb-10">
-
-        <!-- رأس المستخدم مع الرصيد والرهان -->
-        <div class="glass-card p-4 rounded-3xl flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">
-                    <img id="userPhoto" src="" alt="User" class="w-full h-full object-cover hidden">
-                    <div id="defaultAvatar" class="w-full h-full default-avatar hidden">
-                        <span id="avatarInitials">U</span>
-                    </div>
-                </div>
-                <div>
-                    <h2 class="text-md font-bold text-white truncate" id="userName">مستخدم</h2>
-                    <p class="text-xs text-gray-400 font-mono" id="userId">ID: 00000</p>
-                </div>
-            </div>
-            <div class="text-left">
-                <div class="text-yellow-400 font-bold text-xl" id="balanceDisplay">5000</div>
-                <div class="text-xs text-gray-400">الرصيد</div>
-            </div>
-        </div>
-
-        <!-- ماكينة السلوت (3 بكرات × 3 رموز) -->
-        <div class="glass-card p-4 rounded-3xl">
-            <div class="grid grid-cols-3 gap-2 reel p-2">
-                <!-- الصف العلوي (غير مستخدم في خط الدفع، لكنه يضيف واقعية) -->
-                <div class="symbol" id="reel0-0">🍒</div>
-                <div class="symbol" id="reel0-1">🍒</div>
-                <div class="symbol" id="reel0-2">🍒</div>
-                <!-- الصف الأوسط (خط الدفع) -->
-                <div class="symbol" id="reel1-0">🍒</div>
-                <div class="symbol" id="reel1-1">🍒</div>
-                <div class="symbol" id="reel1-2">🍒</div>
-                <!-- الصف السفلي (غير مستخدم) -->
-                <div class="symbol" id="reel2-0">🍒</div>
-                <div class="symbol" id="reel2-1">🍒</div>
-                <div class="symbol" id="reel2-2">🍒</div>
-            </div>
-
-            <!-- رسالة الفوز / الخسارة -->
-            <div id="winMessage" class="text-center mt-3 text-sm text-yellow-300 h-6"></div>
-
-            <!-- لوحة التحكم: الرهان وزر الدوران -->
-            <div class="flex items-center justify-between mt-4 gap-2">
-                <div class="flex gap-1">
-                    <button class="bet-button text-sm" data-bet="10">10</button>
-                    <button class="bet-button text-sm active" data-bet="25">25</button>
-                    <button class="bet-button text-sm" data-bet="50">50</button>
-                    <button class="bet-button text-sm" data-bet="100">100</button>
-                </div>
-                <div class="text-white bg-slate-800 px-4 py-2 rounded-full text-sm font-bold" id="currentBetDisplay">25</div>
-            </div>
-
-            <button id="spinButton" class="spin-button mt-4">
-                <i class="fa-solid fa-rotate-right ml-2"></i> SPIN
+    <!-- Settings Panel -->
+    <div class="settings-overlay" id="settingsOverlay"></div>
+    <div class="settings-panel" id="settingsPanel">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold">الإعدادات</h3>
+            <button id="closeSettings" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                <i class="fa-solid fa-times"></i>
             </button>
         </div>
-
-        <!-- سجل سريع (آخر نتيجة) -->
-        <div class="glass-card p-3 rounded-2xl flex justify-between items-center text-xs text-gray-400">
-            <span>آخر فوز: <span id="lastWinAmount">٠</span></span>
-            <span>لفات: <span id="totalSpins">٠</span></span>
-        </div>
-
-        <!-- زر تسجيل الخروج -->
-        <button onclick="logout()" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
-            <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
-            تسجيل الخروج
-        </button>
-    </div>
-
-    <!-- STATE 4: ADMIN DASHBOARD (خاص بالمشرف) مع إحصائيات اللعبة -->
-    <div id="adminDashboardState" class="hidden-content w-full max-w-md space-y-5 animate-enter pb-10">
-
-        <!-- Header Profile Card مع شارة المشرف -->
-        <div class="glass-card p-5 rounded-3xl relative overflow-hidden border-2 border-yellow-500/30">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
-
-            <div class="flex items-center gap-4 relative z-10">
-                <div class="w-16 h-16 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">
-                    <img id="adminUserPhoto" src="" alt="Admin" class="w-full h-full object-cover hidden">
-                    <div id="adminDefaultAvatar" class="w-full h-full default-avatar hidden">
-                        <span id="adminAvatarInitials">A</span>
-                    </div>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <h2 class="text-lg font-bold text-white truncate" id="adminUserName">مشرف</h2>
-                    <p class="text-xs text-gray-400 font-mono mt-0.5" id="adminUserId">ID: 00000</p>
-                    <div class="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-yellow-500/20 border border-yellow-500/30">
-                        <i class="fa-solid fa-crown text-yellow-400 text-[10px]"></i>
-                        <span class="text-[10px] font-bold text-yellow-300 uppercase tracking-wide">مدير الكازينو</span>
-                    </div>
-                </div>
-                <div class="flex flex-col items-end justify-center bg-slate-900/50 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/5 shadow-lg">
-                    <span class="text-[10px] text-gray-400 font-medium mb-0.5">رصيد النظام</span>
-                    <div class="flex items-center gap-1.5">
-                        <i class="fa-solid fa-coins text-yellow-400 text-sm drop-shadow-md"></i>
-                        <span class="font-bold text-white text-base tracking-tight" id="adminBalance">١٢٣٤٥</span>
-                    </div>
-                </div>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <span>اللغة</span>
+                <select class="bg-white/10 rounded-lg p-2" id="languageSelect">
+                    <option value="ar">العربية</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>الإشعارات</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" id="notificationsToggle">
+                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600"></div>
+                </label>
             </div>
         </div>
-
-        <!-- إحصائيات متقدمة للعبة -->
-        <div class="grid grid-cols-2 gap-3">
-            <div class="glass-card p-4 rounded-2xl text-right">
-                <div class="text-gray-400 text-xs mb-1">إجمالي اللفات</div>
-                <div class="text-white font-bold text-2xl" id="statTotalSpins">0</div>
-            </div>
-            <div class="glass-card p-4 rounded-2xl text-right">
-                <div class="text-gray-400 text-xs mb-1">مجموع الرهانات</div>
-                <div class="text-white font-bold text-2xl" id="statTotalBets">0</div>
-            </div>
-            <div class="glass-card p-4 rounded-2xl text-right">
-                <div class="text-gray-400 text-xs mb-1">مجموع المكاسب</div>
-                <div class="text-white font-bold text-2xl" id="statTotalWins">0</div>
-            </div>
-            <div class="glass-card p-4 rounded-2xl text-right">
-                <div class="text-gray-400 text-xs mb-1">صافي الربح</div>
-                <div class="text-white font-bold text-2xl" id="statNetProfit">0</div>
-            </div>
-        </div>
-
-        <!-- أدوات التحكم الإدارية -->
-        <div class="glass-card p-5 rounded-3xl">
-            <h3 class="font-bold text-white text-lg mb-4">لوحة التحكم</h3>
-            <div class="space-y-3">
-                <button id="resetStatsBtn" class="w-full p-4 rounded-xl flex items-center justify-between bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 transition-all group">
-                    <span class="flex items-center gap-3 text-red-200">
-                        <div class="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center">
-                            <i class="fa-solid fa-rotate-left"></i>
-                        </div>
-                        إعادة تعيين الإحصائيات
-                    </span>
-                    <i class="fa-solid fa-arrow-left text-red-400 group-hover:-translate-x-1 transition-transform"></i>
-                </button>
-                <button class="w-full p-4 rounded-xl flex items-center justify-between bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 transition-all group">
-                    <span class="flex items-center gap-3 text-blue-200">
-                        <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                            <i class="fa-solid fa-bell"></i>
-                        </div>
-                        إرسال إشعار للمستخدمين
-                    </span>
-                    <i class="fa-solid fa-arrow-left text-blue-400 group-hover:-translate-x-1 transition-transform"></i>
-                </button>
-                <button class="w-full p-4 rounded-xl flex items-center justify-between bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 transition-all group">
-                    <span class="flex items-center gap-3 text-purple-200">
-                        <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                            <i class="fa-solid fa-chart-simple"></i>
-                        </div>
-                        تقارير مفصلة
-                    </span>
-                    <i class="fa-solid fa-arrow-left text-purple-400 group-hover:-translate-x-1 transition-transform"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- زر تسجيل الخروج -->
-        <button onclick="logout()" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
-            <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
-            تسجيل الخروج
-        </button>
     </div>
 
     <script>
         (function() {
+            // -----------------------------------------------
+            // إعدادات ثابتة
+            // -----------------------------------------------
+            const ADMIN_ID = 7609492965; // غيّر هذا إلى معرف المشرف الخاص بك
+            
+            // -----------------------------------------------
+            // الحالة المركزية (State)
+            // -----------------------------------------------
+            const state = {
+                user: null,
+                isAdmin: false,
+                loading: true,
+                accessDenied: false,
+                dashboard: null, // 'user' or 'admin'
+                balance: 0,
+                stats: {
+                    users: 1280,
+                    bots: 12,
+                    dailyOps: 42
+                },
+                theme: 'dark', // 'dark' or 'light'
+                settings: {
+                    language: 'ar',
+                    notifications: true
+                }
+            };
+
+            // -----------------------------------------------
+            // المتغيرات العامة
+            // -----------------------------------------------
             const tg = window.Telegram.WebApp;
+            const appContainer = document.getElementById('app');
             
-            // DOM Elements
-            const loadingState = document.getElementById('loadingState');
-            const accessDeniedState = document.getElementById('accessDeniedState');
-            const dashboardState = document.getElementById('dashboardState');
-            const adminDashboardState = document.getElementById('adminDashboardState');
-            
-            // معرف المشرف الثابت
-            const ADMIN_ID = 7609492965;
+            // مراجع العناصر (سيتم ملؤها لاحقاً)
+            const elements = new Map();
 
-            // عناصر المستخدم العادي
-            const userNameEl = document.getElementById('userName');
-            const userIdEl = document.getElementById('userId');
-            const userPhotoEl = document.getElementById('userPhoto');
-            const defaultAvatarEl = document.getElementById('defaultAvatar');
-            const avatarInitialsEl = document.getElementById('avatarInitials');
-            const balanceDisplay = document.getElementById('balanceDisplay');
-            const currentBetDisplay = document.getElementById('currentBetDisplay');
-            const spinButton = document.getElementById('spinButton');
-            const winMessage = document.getElementById('winMessage');
-            const lastWinAmountSpan = document.getElementById('lastWinAmount');
-            const totalSpinsSpan = document.getElementById('totalSpins');
+            // إعدادات
+            const settingsOverlay = document.getElementById('settingsOverlay');
+            const settingsPanel = document.getElementById('settingsPanel');
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
 
-            // عناصر المشرف
-            const adminUserNameEl = document.getElementById('adminUserName');
-            const adminUserIdEl = document.getElementById('adminUserId');
-            const adminUserPhotoEl = document.getElementById('adminUserPhoto');
-            const adminDefaultAvatarEl = document.getElementById('adminDefaultAvatar');
-            const adminAvatarInitialsEl = document.getElementById('adminAvatarInitials');
-            const adminBalanceEl = document.getElementById('adminBalance');
-            const statTotalSpans = {
-                spins: document.getElementById('statTotalSpins'),
-                bets: document.getElementById('statTotalBets'),
-                wins: document.getElementById('statTotalWins'),
-                profit: document.getElementById('statNetProfit')
+            // -----------------------------------------------
+            // دوال مساعدة
+            // -----------------------------------------------
+            function showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            }
+
+            function updateTheme(theme) {
+                if (theme === 'light') {
+                    document.documentElement.style.setProperty('--tg-theme-bg-color', '#f8fafc');
+                    document.documentElement.style.setProperty('--tg-theme-text-color', '#0f172a');
+                    document.documentElement.style.setProperty('--tg-theme-button-color', '#3b82f6');
+                    document.documentElement.style.setProperty('--tg-theme-button-text-color', '#ffffff');
+                    themeIcon.className = 'fa-solid fa-sun';
+                } else {
+                    document.documentElement.style.setProperty('--tg-theme-bg-color', '#0f172a');
+                    document.documentElement.style.setProperty('--tg-theme-text-color', '#ffffff');
+                    document.documentElement.style.setProperty('--tg-theme-button-color', '#3b82f6');
+                    document.documentElement.style.setProperty('--tg-theme-button-text-color', '#ffffff');
+                    themeIcon.className = 'fa-solid fa-moon';
+                }
+                localStorage.setItem('theme', theme);
+            }
+
+            // -----------------------------------------------
+            // مكونات واجهة المستخدم (UI Components)
+            // -----------------------------------------------
+            const components = {
+                loading: () => {
+                    return `
+                        <div class="flex flex-col items-center justify-center text-center space-y-6 animate-enter">
+                            <div class="spinner"></div>
+                            <div>
+                                <h2 class="text-xl font-bold mb-1">جاري التحقق...</h2>
+                                <p class="text-sm text-gray-400">نحن نتأكد من هويتك عبر تيليجرام</p>
+                            </div>
+                        </div>
+                    `;
+                },
+
+                accessDenied: () => {
+                    return `
+                        <div class="glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter border-red-500/20">
+                            <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold mb-2">دخول محظور</h2>
+                            <p class="text-gray-400 mb-8 leading-relaxed text-sm">
+                                يجب فتح هذا التطبيق حصراً من خلال بوت تيليجرام الرسمي لضمان الأمان.
+                            </p>
+                            <a href="https://telegram.org" target="_blank" class="block w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg shadow-blue-500/20">
+                                <i class="fa-brands fa-telegram ml-2"></i>
+                                فتح تيليجرام
+                            </a>
+                        </div>
+                    `;
+                },
+
+                userDashboard: (user, balance) => {
+                    const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
+                    const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
+                    const photoUrl = user.photo_url;
+
+                    return `
+                        <div class="space-y-5 animate-enter pb-10">
+                            <!-- Header Profile Card -->
+                            <div class="glass-card p-5 rounded-3xl relative overflow-hidden group">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+
+                                <div class="flex items-center gap-4 relative z-10">
+                                    <!-- Avatar -->
+                                    <div class="w-16 h-16 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">
+                                        ${photoUrl ? 
+                                            `<img src="${photoUrl}" alt="User" class="w-full h-full object-cover">` : 
+                                            `<div class="w-full h-full default-avatar"><span>${initials}</span></div>`
+                                        }
+                                    </div>
+
+                                    <!-- User Info -->
+                                    <div class="flex-1 min-w-0">
+                                        <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
+                                        <p class="text-xs text-gray-400 font-mono mt-0.5">ID: ${user.id}</p>
+                                        
+                                        <!-- Status Badge -->
+                                        <div class="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-green-500/10 border border-green-500/20">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                            <span class="text-[10px] font-bold text-green-400 uppercase tracking-wide">نشط الآن</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Balance Card -->
+                                    <div class="flex flex-col items-end justify-center bg-slate-900/50 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/5 shadow-lg">
+                                        <span class="text-[10px] text-gray-400 font-medium mb-0.5">الرصيد الحالي</span>
+                                        <div class="flex items-center gap-1.5">
+                                            <i class="fa-solid fa-coins text-yellow-400 text-sm drop-shadow-md"></i>
+                                            <span class="font-bold text-white text-base tracking-tight">${balance.toLocaleString('ar-EG')}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Stats Grid -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
+                                    <div class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2">
+                                        <i class="fa-solid fa-chart-pie"></i>
+                                    </div>
+                                    <span class="text-gray-400 text-xs mb-1">الإحصائيات</span>
+                                    <span class="text-white font-bold text-lg">100%</span>
+                                </div>
+                                <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
+                                    <div class="w-10 h-10 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2">
+                                        <i class="fa-solid fa-crown"></i>
+                                    </div>
+                                    <span class="text-gray-400 text-xs mb-1">الرتبة</span>
+                                    <span class="text-white font-bold text-lg">مميز</span>
+                                </div>
+                            </div>
+
+                            <!-- Main Actions Area -->
+                            <div class="glass-card p-5 rounded-3xl">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="font-bold text-lg">القائمة الرئيسية</h3>
+                                    <span class="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded-lg">v2.0</span>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <!-- رسالة ترحيبية -->
+                                    <div class="bg-blue-500/5 border border-blue-500/10 rounded-xl p-4 flex items-start gap-3">
+                                        <i class="fa-solid fa-circle-info text-blue-400 mt-1"></i>
+                                        <div>
+                                            <p class="text-sm text-blue-100 font-medium">مرحباً بك في البوابة الآمنة</p>
+                                            <p class="text-xs text-blue-200/60 mt-1 leading-relaxed">
+                                                جميع خدماتك متاحة الآن. يمكنك متابعة آخر التحديثات من خلال القناة الرسمية.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- زر تحديث الرصيد -->
+                                    <button id="updateBalanceBtn" class="w-full p-4 rounded-xl flex items-center justify-between bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 transition-all group">
+                                        <span class="flex items-center gap-3 text-green-200">
+                                            <div class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
+                                                <i class="fa-solid fa-rotate"></i>
+                                            </div>
+                                            تحديث الرصيد
+                                        </span>
+                                        <i class="fa-solid fa-arrow-left text-green-400 group-hover:-translate-x-1 transition-transform"></i>
+                                    </button>
+
+                                    <!-- زر الإعدادات -->
+                                    <button id="openSettingsBtn" class="w-full p-4 rounded-xl flex items-center justify-between bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/30 transition-all group">
+                                        <span class="flex items-center gap-3 text-gray-200">
+                                            <div class="w-8 h-8 rounded-lg bg-gray-500/20 flex items-center justify-center">
+                                                <i class="fa-solid fa-sliders"></i>
+                                            </div>
+                                            الإعدادات
+                                        </span>
+                                        <i class="fa-solid fa-arrow-left text-gray-400 group-hover:-translate-x-1 transition-transform"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Logout Button -->
+                            <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
+                                <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
+                                تسجيل الخروج
+                            </button>
+                        </div>
+                    `;
+                },
+
+                adminDashboard: (user, balance, stats) => {
+                    const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
+                    const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
+                    const photoUrl = user.photo_url;
+
+                    return `
+                        <div class="space-y-5 animate-enter pb-10">
+                            <!-- Header Profile Card (مع شارة المشرف) -->
+                            <div class="glass-card p-5 rounded-3xl relative overflow-hidden border-2 border-yellow-500/30">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+
+                                <div class="flex items-center gap-4 relative z-10">
+                                    <!-- Avatar -->
+                                    <div class="w-16 h-16 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">
+                                        ${photoUrl ? 
+                                            `<img src="${photoUrl}" alt="Admin" class="w-full h-full object-cover">` : 
+                                            `<div class="w-full h-full default-avatar"><span>${initials}</span></div>`
+                                        }
+                                    </div>
+
+                                    <!-- Admin Info -->
+                                    <div class="flex-1 min-w-0">
+                                        <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
+                                        <p class="text-xs text-gray-400 font-mono mt-0.5">ID: ${user.id}</p>
+                                        
+                                        <!-- شارة المشرف -->
+                                        <div class="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-yellow-500/20 border border-yellow-500/30">
+                                            <i class="fa-solid fa-crown text-yellow-400 text-[10px]"></i>
+                                            <span class="text-[10px] font-bold text-yellow-300 uppercase tracking-wide">مدير النظام</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Balance Card -->
+                                    <div class="flex flex-col items-end justify-center bg-slate-900/50 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/5 shadow-lg">
+                                        <span class="text-[10px] text-gray-400 font-medium mb-0.5">رصيد البوت</span>
+                                        <div class="flex items-center gap-1.5">
+                                            <i class="fa-solid fa-coins text-yellow-400 text-sm drop-shadow-md"></i>
+                                            <span class="font-bold text-white text-base tracking-tight">${balance.toLocaleString('ar-EG')}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- إحصائيات خاصة بالمشرف -->
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
+                                    <div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-1">
+                                        <i class="fa-solid fa-users text-sm"></i>
+                                    </div>
+                                    <span class="text-gray-400 text-[10px]">المستخدمين</span>
+                                    <span class="text-white font-bold text-base block">${stats.users.toLocaleString('ar-EG')}</span>
+                                </div>
+                                <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
+                                    <div class="w-8 h-8 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center mx-auto mb-1">
+                                        <i class="fa-solid fa-robot text-sm"></i>
+                                    </div>
+                                    <span class="text-gray-400 text-[10px]">البوتات</span>
+                                    <span class="text-white font-bold text-base block">${stats.bots}</span>
+                                </div>
+                                <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
+                                    <div class="w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto mb-1">
+                                        <i class="fa-solid fa-chart-line text-sm"></i>
+                                    </div>
+                                    <span class="text-gray-400 text-[10px]">عمليات اليوم</span>
+                                    <span class="text-white font-bold text-base block">${stats.dailyOps}</span>
+                                </div>
+                            </div>
+
+                            <!-- أدوات التحكم الإدارية -->
+                            <div class="glass-card p-5 rounded-3xl">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="font-bold text-lg">لوحة التحكم</h3>
+                                    <span class="text-xs text-yellow-400 bg-yellow-500/10 px-2 py-1 rounded-lg">مدير</span>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <!-- زر إرسال إشعار -->
+                                    <button id="notifyUsersBtn" class="w-full p-4 rounded-xl flex items-center justify-between bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 transition-all group">
+                                        <span class="flex items-center gap-3 text-blue-200">
+                                            <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                                <i class="fa-solid fa-bell"></i>
+                                            </div>
+                                            إرسال إشعار للمستخدمين
+                                        </span>
+                                        <i class="fa-solid fa-arrow-left text-blue-400 group-hover:-translate-x-1 transition-transform"></i>
+                                    </button>
+
+                                    <!-- زر عرض التقارير -->
+                                    <button id="reportsBtn" class="w-full p-4 rounded-xl flex items-center justify-between bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 transition-all group">
+                                        <span class="flex items-center gap-3 text-purple-200">
+                                            <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                                                <i class="fa-solid fa-file-alt"></i>
+                                            </div>
+                                            عرض التقارير المتقدمة
+                                        </span>
+                                        <i class="fa-solid fa-arrow-left text-purple-400 group-hover:-translate-x-1 transition-transform"></i>
+                                    </button>
+
+                                    <!-- زر إعدادات البوت -->
+                                    <button id="botSettingsBtn" class="w-full p-4 rounded-xl flex items-center justify-between bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/30 transition-all group">
+                                        <span class="flex items-center gap-3 text-gray-200">
+                                            <div class="w-8 h-8 rounded-lg bg-gray-500/20 flex items-center justify-center">
+                                                <i class="fa-solid fa-sliders"></i>
+                                            </div>
+                                            إعدادات البوت العامة
+                                        </span>
+                                        <i class="fa-solid fa-arrow-left text-gray-400 group-hover:-translate-x-1 transition-transform"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Logout Button -->
+                            <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
+                                <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
+                                تسجيل الخروج
+                            </button>
+                        </div>
+                    `;
+                }
             };
 
-            // متغيرات اللعبة
-            let balance = 5000;                // رصيد افتراضي
-            let currentBet = 25;                // رهان حالي
-            let totalSpins = 0;                  // عدد اللفات للمستخدم
-            let lastWin = 0;                      // آخر فوز
-
-            // رموز السلوت وقيم المكاسب (خط الدفع الأوسط)
-            const symbols = [
-                { emoji: '🍒', multiplier: 2 },   // كرز
-                { emoji: '🍑', multiplier: 3 },   // برقوق
-                { emoji: '🔔', multiplier: 5 },   // جرس
-                { emoji: '7️⃣', multiplier: 10 },  // سبعة
-                { emoji: '💎', multiplier: 8 },   // جوهرة
-                { emoji: '👑', multiplier: 6 },   // تاج
-                { emoji: '⭐', multiplier: 4 },   // نجمة
-                { emoji: '🍀', multiplier: 2.5 }  // نفل (برسيم)
-            ];
-
-            // حالة اللعبة: منع الدوران المتزامن
-            let isSpinning = false;
-
-            // إحصائيات عامة (تخزين في localStorage)
-            let globalStats = {
-                totalSpins: 0,
-                totalBets: 0,
-                totalWins: 0
-            };
-
-            // تحميل الإحصائيات من localStorage
-            function loadGlobalStats() {
-                const stored = localStorage.getItem('slotStats');
-                if (stored) {
-                    try {
-                        globalStats = JSON.parse(stored);
-                    } catch (e) {}
+            // -----------------------------------------------
+            // دالة التصيير (Render)
+            // -----------------------------------------------
+            function render() {
+                if (state.loading) {
+                    appContainer.innerHTML = components.loading();
+                } else if (state.accessDenied) {
+                    appContainer.innerHTML = components.accessDenied();
+                } else if (state.isAdmin) {
+                    appContainer.innerHTML = components.adminDashboard(state.user, state.balance, state.stats);
+                } else {
+                    appContainer.innerHTML = components.userDashboard(state.user, state.balance);
                 }
-                updateAdminStatsDisplay();
+
+                // إعادة ربط الأحداث بعد التصيير
+                bindEvents();
             }
-            function saveGlobalStats() {
-                localStorage.setItem('slotStats', JSON.stringify(globalStats));
-                updateAdminStatsDisplay();
-            }
-            function updateAdminStatsDisplay() {
-                if (statTotalSpans.spins) {
-                    statTotalSpans.spins.innerText = globalStats.totalSpins;
-                    statTotalSpans.bets.innerText = globalStats.totalBets;
-                    statTotalSpans.wins.innerText = globalStats.totalWins;
-                    const net = globalStats.totalBets - globalStats.totalWins;
-                    statTotalSpans.profit.innerText = net;
+
+            // -----------------------------------------------
+            // ربط الأحداث (Event Binding)
+            // -----------------------------------------------
+            function bindEvents() {
+                // زر تسجيل الخروج
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', () => {
+                        tg.close();
+                    });
                 }
-            }
 
-            // تحميل رصيد المستخدم من localStorage (حسب user id)
-            function loadUserBalance(userId) {
-                const key = `balance_${userId}`;
-                const saved = localStorage.getItem(key);
-                if (saved) balance = parseInt(saved) || 5000;
-                else balance = 5000;
-                updateBalanceDisplay();
-            }
-            function saveUserBalance(userId) {
-                const key = `balance_${userId}`;
-                localStorage.setItem(key, balance);
-            }
-            function updateBalanceDisplay() {
-                if (balanceDisplay) balanceDisplay.innerText = balance;
-            }
-
-            // عناصر البكرات (9 خلايا)
-            function getReelCell(row, col) {
-                return document.getElementById(`reel${row}-${col}`);
-            }
-
-            // تعيين رمز معين في بكرة
-            function setSymbol(row, col, symbolObj) {
-                const cell = getReelCell(row, col);
-                if (cell) {
-                    cell.innerText = symbolObj.emoji;
-                    cell.classList.remove('win');
+                // زر تحديث الرصيد (للمستخدم العادي)
+                const updateBalanceBtn = document.getElementById('updateBalanceBtn');
+                if (updateBalanceBtn) {
+                    updateBalanceBtn.addEventListener('click', () => {
+                        // محاكاة جلب رصيد جديد
+                        state.loading = true;
+                        render();
+                        
+                        setTimeout(() => {
+                            state.balance = Math.floor(Math.random() * 5000) + 500;
+                            state.loading = false;
+                            render();
+                            showToast('تم تحديث الرصيد بنجاح', 'success');
+                        }, 1000);
+                    });
                 }
-            }
 
-            // توليد نتيجة عشوائية للبكرات (3x3)
-            function generateRandomReels() {
-                const reels = [];
-                for (let row = 0; row < 3; row++) {
-                    const rowArr = [];
-                    for (let col = 0; col < 3; col++) {
-                        const randomIndex = Math.floor(Math.random() * symbols.length);
-                        rowArr.push(symbols[randomIndex]);
-                    }
-                    reels.push(rowArr);
+                // زر فتح الإعدادات
+                const openSettingsBtn = document.getElementById('openSettingsBtn');
+                if (openSettingsBtn) {
+                    openSettingsBtn.addEventListener('click', () => {
+                        settingsOverlay.classList.add('open');
+                        settingsPanel.classList.add('open');
+                    });
                 }
-                return reels;
-            }
 
-            // عرض البكرات في الواجهة
-            function displayReels(reels) {
-                for (let row = 0; row < 3; row++) {
-                    for (let col = 0; col < 3; col++) {
-                        setSymbol(row, col, reels[row][col]);
-                    }
+                // أزرار المشرف
+                const notifyUsersBtn = document.getElementById('notifyUsersBtn');
+                if (notifyUsersBtn) {
+                    notifyUsersBtn.addEventListener('click', () => {
+                        tg.showPopup({
+                            title: 'إرسال إشعار',
+                            message: 'هل تريد إرسال إشعار لجميع المستخدمين؟',
+                            buttons: [
+                                {type: 'ok', text: 'نعم'},
+                                {type: 'cancel', text: 'إلغاء'}
+                            ]
+                        });
+                    });
+                }
+
+                const reportsBtn = document.getElementById('reportsBtn');
+                if (reportsBtn) {
+                    reportsBtn.addEventListener('click', () => {
+                        showToast('جاري تحميل التقارير...', 'info');
+                    });
+                }
+
+                const botSettingsBtn = document.getElementById('botSettingsBtn');
+                if (botSettingsBtn) {
+                    botSettingsBtn.addEventListener('click', () => {
+                        showToast('سيتم فتح إعدادات البوت قريباً', 'info');
+                    });
                 }
             }
 
-            // دالة تقييم الفوز (الخط الأوسط فقط)
-            function evaluateWin(reels, bet) {
-                const middleRow = reels[1]; // الصف الأوسط
-                const first = middleRow[0];
-                const second = middleRow[1];
-                const third = middleRow[2];
-
-                // إذا كانت الثلاثة رموز متطابقة (بالمعنى الحرفي، نأخذ الـ emoji)
-                if (first.emoji === second.emoji && second.emoji === third.emoji) {
-                    const multiplier = first.multiplier;
-                    const winAmount = bet * multiplier;
-                    return { win: true, amount: winAmount, symbol: first };
-                }
-                return { win: false, amount: 0 };
-            }
-
-            // تسليط الضوء على الرموز الفائزة
-            function highlightWin(win) {
-                if (win.win) {
-                    for (let col = 0; col < 3; col++) {
-                        const cell = getReelCell(1, col);
-                        cell.classList.add('win');
-                    }
-                }
-            }
-
-            // إزالة الهايلايت
-            function clearHighlights() {
-                for (let row = 0; row < 3; row++) {
-                    for (let col = 0; col < 3; col++) {
-                        const cell = getReelCell(row, col);
-                        cell.classList.remove('win');
-                    }
-                }
-            }
-
-            // تحديث إحصائيات اللعبة بعد كل دورة
-            function updateStatsAfterSpin(bet, winAmount) {
-                globalStats.totalSpins++;
-                globalStats.totalBets += bet;
-                if (winAmount > 0) {
-                    globalStats.totalWins += winAmount;
-                }
-                saveGlobalStats();
-
-                // تحديث عرض عدد اللفات للمستخدم
-                totalSpins++;
-                if (totalSpinsSpan) totalSpinsSpan.innerText = totalSpins;
-                if (lastWinAmountSpan) lastWinAmountSpan.innerText = winAmount;
-            }
-
-            // الدورة الرئيسية للعبة
-            function spin() {
-                if (isSpinning) return;
-                if (balance < currentBet) {
-                    winMessage.innerText = '❌ رصيد غير كافٍ';
-                    return;
-                }
-
-                isSpinning = true;
-                spinButton.disabled = true;
-                winMessage.innerText = '';
-
-                // خصم الرهان
-                balance -= currentBet;
-                updateBalanceDisplay();
-                saveUserBalance(tg.initDataUnsafe.user.id);
-
-                // توليد نتيجة عشوائية
-                const reels = generateRandomReels();
-
-                // محاكاة دوران سريع (تأثير)
-                let spinCount = 0;
-                const spinInterval = setInterval(() => {
-                    // عرض بكرات عشوائية أثناء الدوران
-                    for (let row = 0; row < 3; row++) {
-                        for (let col = 0; col < 3; col++) {
-                            const randomIdx = Math.floor(Math.random() * symbols.length);
-                            setSymbol(row, col, symbols[randomIdx]);
-                        }
-                    }
-                    spinCount++;
-                    if (spinCount > 8) { // بعد 9 مرات (حوالي 0.45 ثانية) نوقف
-                        clearInterval(spinInterval);
-                        // العرض النهائي
-                        displayReels(reels);
-                        clearHighlights();
-
-                        // تقييم الفوز
-                        const win = evaluateWin(reels, currentBet);
-                        if (win.win) {
-                            balance += win.amount;
-                            updateBalanceDisplay();
-                            saveUserBalance(tg.initDataUnsafe.user.id);
-                            winMessage.innerText = `🎉 فوز بـ ${win.amount} !`;
-                            highlightWin(win);
-                            lastWin = win.amount;
-                        } else {
-                            winMessage.innerText = '😞 جرب حظك مرة أخرى';
-                            lastWin = 0;
-                        }
-                        if (lastWinAmountSpan) lastWinAmountSpan.innerText = lastWin;
-
-                        // تحديث الإحصائيات
-                        updateStatsAfterSpin(currentBet, win.amount);
-
-                        // إنهاء الدوران
-                        isSpinning = false;
-                        spinButton.disabled = false;
-                    }
-                }, 50); // كل 50ms
-            }
-
-            // تغيير الرهان
-            function setBet(value) {
-                currentBet = value;
-                currentBetDisplay.innerText = value;
-                // تحديث شكل الأزرار
-                document.querySelectorAll('.bet-button').forEach(btn => {
-                    const betVal = parseInt(btn.dataset.bet);
-                    if (betVal === value) btn.classList.add('active');
-                    else btn.classList.remove('active');
-                });
-            }
-
-            // إعادة تعيين الإحصائيات (للمشرف)
-            function resetGlobalStats() {
-                globalStats = { totalSpins: 0, totalBets: 0, totalWins: 0 };
-                saveGlobalStats();
-            }
-
+            // -----------------------------------------------
             // تهيئة التطبيق
-            function initApp() {
+            // -----------------------------------------------
+            async function initApp() {
                 tg.expand();
                 tg.ready();
 
+                // استعادة السمة من localStorage
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme) {
+                    state.theme = savedTheme;
+                    updateTheme(savedTheme);
+                }
+
+                // التحقق من الأمان
                 if (!tg.initData || !tg.initDataUnsafe.user) {
-                    showAccessDenied();
+                    state.loading = false;
+                    state.accessDenied = true;
+                    render();
                     return;
                 }
 
                 const user = tg.initDataUnsafe.user;
-                const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
-                const isAdmin = (user.id === ADMIN_ID);
+                state.user = user;
+                state.isAdmin = (user.id === ADMIN_ID);
 
-                if (isAdmin) {
-                    // تعبئة بيانات المشرف
-                    adminUserNameEl.textContent = fullName || "مشرف";
-                    adminUserIdEl.textContent = `ID: ${user.id}`;
-                    
-                    if (user.photo_url) {
-                        adminUserPhotoEl.src = user.photo_url;
-                        adminUserPhotoEl.classList.remove('hidden');
-                        adminDefaultAvatarEl.classList.add('hidden');
-                    } else {
-                        adminUserPhotoEl.classList.add('hidden');
-                        adminDefaultAvatarEl.classList.remove('hidden');
-                        const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
-                        adminAvatarInitialsEl.textContent = initials || "A";
-                    }
+                // محاكاة جلب البيانات من الخادم
+                try {
+                    // محاكاة تأخير الشبكة
+                    await new Promise(resolve => setTimeout(resolve, 1500));
 
-                    adminBalanceEl.textContent = '١٢٣٤٥'; // وهمي
+                    // بيانات وهمية
+                    state.balance = state.isAdmin ? 12345 : 1234;
+                    state.stats = {
+                        users: 1280,
+                        bots: 12,
+                        dailyOps: 42
+                    };
 
-                    // تحميل الإحصائيات
-                    loadGlobalStats();
+                    state.loading = false;
+                    render();
 
-                    // زر إعادة تعيين الإحصائيات
-                    document.getElementById('resetStatsBtn').addEventListener('click', () => {
-                        if (confirm('هل أنت متأكد من إعادة تعيين إحصائيات اللعبة؟')) {
-                            resetGlobalStats();
-                        }
-                    });
-
-                    // إظهار لوحة المشرف
-                    loadingState.style.display = 'none';
-                    adminDashboardState.classList.remove('hidden-content');
-                    adminDashboardState.style.display = 'block';
-
-                    tg.MainButton.setText("لوحة التحكم");
+                    // إعداد زر MainButton
+                    tg.MainButton.setText(state.isAdmin ? "لوحة التحكم" : "تحديث البيانات");
                     tg.MainButton.setTextColor("#ffffff");
                     tg.MainButton.setColor("#3b82f6");
                     tg.MainButton.show();
-                } else {
-                    // مستخدم عادي
-                    userNameEl.textContent = fullName || "مستخدم تيليجرام";
-                    userIdEl.textContent = `ID: ${user.id}`;
-                    
-                    if (user.photo_url) {
-                        userPhotoEl.src = user.photo_url;
-                        userPhotoEl.classList.remove('hidden');
-                        defaultAvatarEl.classList.add('hidden');
-                    } else {
-                        userPhotoEl.classList.add('hidden');
-                        defaultAvatarEl.classList.remove('hidden');
-                        const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
-                        avatarInitialsEl.textContent = initials || "U";
-                    }
 
-                    // تحميل رصيد المستخدم
-                    loadUserBalance(user.id);
-                    
-                    // إعداد الرهان الافتراضي
-                    setBet(25);
-
-                    // إعداد أحداث أزرار الرهان
-                    document.querySelectorAll('.bet-button').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const bet = parseInt(e.target.dataset.bet);
-                            setBet(bet);
+                    tg.MainButton.onClick(() => {
+                        tg.showPopup({
+                            title: state.isAdmin ? 'مرحباً أيها المدير' : 'نظام آمن',
+                            message: state.isAdmin ? 
+                                `لديك صلاحيات كاملة في النظام.` : 
+                                `أهلاً ${user.first_name}، اتصالك مشفر ومحمي بالكامل.`,
+                            buttons: [{type: 'ok', text: 'حسناً'}]
                         });
                     });
 
-                    // زر السبين
-                    spinButton.addEventListener('click', spin);
-
-                    // تحميل إحصائيات اللعبة (للمستخدم نعرضها)
-                    loadGlobalStats(); // فقط لإظهار العدد في واجهة المستخدم (اختياري)
-                    totalSpinsSpan.innerText = globalStats.totalSpins;
-
-                    // إخفاء التحميل وإظهار اللعبة
-                    loadingState.style.display = 'none';
-                    dashboardState.classList.remove('hidden-content');
-                    dashboardState.style.display = 'block';
-
-                    tg.MainButton.setText(" تحديث البيانات");
-                    tg.MainButton.setTextColor("#ffffff");
-                    tg.MainButton.setColor("#3b82f6");
-                    tg.MainButton.show();
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                    showToast('حدث خطأ أثناء تحميل البيانات', 'error');
+                    state.loading = false;
+                    render();
                 }
             }
 
-            function showAccessDenied() {
-                loadingState.style.display = 'none';
-                accessDeniedState.classList.remove('hidden-content');
-                accessDeniedState.style.display = 'block';
-                try { tg.setHeaderColor('#ef4444'); } catch(e){}
-            }
-
-            function logout() {
-                tg.close();
-            }
-
-            // ربط زر تسجيل الخروج (لكلا الحالتين)
-            window.logout = logout;
-
-            // التعامل مع زر التيليجرام الرئيسي
-            tg.MainButton.onClick(function() {
-                const user = tg.initDataUnsafe.user;
-                if (!user) return;
-                
-                if (user.id === ADMIN_ID) {
-                    tg.showPopup({
-                        title: 'مرحباً أيها المدير',
-                        message: `لديك صلاحيات كاملة في النظام.`,
-                        buttons: [{type: 'ok', text: 'حسناً'}]
-                    });
-                } else {
-                    tg.showPopup({
-                        title: '🎰 سلوت الملك',
-                        message: `أهلاً ${user.first_name}، استمتع باللعب المسؤول!`,
-                        buttons: [{type: 'ok', text: 'حسناً'}]
-                    });
-                }
+            // -----------------------------------------------
+            // أحداث عامة
+            // -----------------------------------------------
+            themeToggle.addEventListener('click', () => {
+                state.theme = state.theme === 'dark' ? 'light' : 'dark';
+                updateTheme(state.theme);
             });
 
-            // بدأ التطبيق
+            // إغلاق الإعدادات
+            document.getElementById('closeSettings').addEventListener('click', () => {
+                settingsOverlay.classList.remove('open');
+                settingsPanel.classList.remove('open');
+            });
+
+            settingsOverlay.addEventListener('click', () => {
+                settingsOverlay.classList.remove('open');
+                settingsPanel.classList.remove('open');
+            });
+
+            // حفظ الإعدادات
+            document.getElementById('languageSelect').addEventListener('change', (e) => {
+                state.settings.language = e.target.value;
+                showToast(`تم تغيير اللغة إلى ${e.target.value === 'ar' ? 'العربية' : 'الإنجليزية'}`);
+            });
+
+            document.getElementById('notificationsToggle').addEventListener('change', (e) => {
+                state.settings.notifications = e.target.checked;
+                showToast(e.target.checked ? 'تم تفعيل الإشعارات' : 'تم إيقاف الإشعارات');
+            });
+
+            // بدء التطبيق
             initApp();
         })();
     </script>
