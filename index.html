@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-88">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>البوابة الذكية | Telegram</title>
     
-    <!-- Tailwind CDN (اختياري للسرعة، لكننا نستخدم CSS مخصص بشكل أساسي) -->
+    <!-- Tailwind CSS (للتصميم السريع) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Telegram Web App -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Font Awesome 6 (مجاني) -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts (Cairo) -->
@@ -145,6 +145,7 @@
             color: white;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
             border: 2px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
         }
 
         .avatar img {
@@ -355,402 +356,401 @@
     <!-- حاوية التطبيق الرئيسية -->
     <div id="app"></div>
 
-    <script type="module">
+    <script>
         // ==================== التهيئة والمتغيرات العامة ====================
-        import { initializeApp } from 'https://esm.sh/firebase/app?bundle'; // مثال فقط، يمكنك إزالة هذا السطر
-        // لكننا سنكتب كل شيء يدوياً بدون استيراد خارجي
+        (function() {
+            // معرف المشرف (غيّره إلى معرفك)
+            const ADMIN_ID = 7609492965;
 
-        // معرف المشرف (غيّره إلى معرفك)
-        const ADMIN_ID = 7609492965;
+            // كائن تيليجرام
+            const tg = window.Telegram.WebApp;
 
-        // كائن تيليجرام
-        const tg = window.Telegram.WebApp;
+            // الحالة المركزية (Store)
+            const state = {
+                user: null,
+                isAdmin: false,
+                loading: true,
+                accessDenied: false,
+                balance: 0,
+                stats: { users: 0, bots: 0, dailyOps: 0 },
+                theme: 'dark', // dark or light
+                settings: { language: 'ar', notifications: true },
+                dashboard: null // 'user', 'admin', null
+            };
 
-        // الحالة المركزية (Store)
-        const state = {
-            user: null,
-            isAdmin: false,
-            loading: true,
-            accessDenied: false,
-            balance: 0,
-            stats: { users: 0, bots: 0, dailyOps: 0 },
-            theme: 'dark', // dark or light
-            settings: { language: 'ar', notifications: true },
-            dashboard: null // 'user', 'admin', null
-        };
+            // المتغيرات العامة للعناصر
+            const appEl = document.getElementById('app');
+            const settingsOverlay = document.getElementById('settingsOverlay');
+            const settingsPanel = document.getElementById('settingsPanel');
+            const themeToggleInput = document.getElementById('themeToggleInput');
+            const languageSelect = document.getElementById('languageSelect');
+            const notificationsToggle = document.getElementById('notificationsToggle');
+            const closeSettingsBtn = document.getElementById('closeSettingsBtn');
 
-        // المتغيرات العامة للعناصر
-        const appEl = document.getElementById('app');
-        const settingsOverlay = document.getElementById('settingsOverlay');
-        const settingsPanel = document.getElementById('settingsPanel');
-        const themeToggleInput = document.getElementById('themeToggleInput');
-        const languageSelect = document.getElementById('languageSelect');
-        const notificationsToggle = document.getElementById('notificationsToggle');
-        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
-
-        // دالة مساعدة لتحديث السمة
-        function setTheme(theme) {
-            if (theme === 'light') {
-                document.body.classList.add('light-theme');
-                themeToggleInput.checked = true;
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.body.classList.remove('light-theme');
-                themeToggleInput.checked = false;
-                localStorage.setItem('theme', 'dark');
+            // دالة مساعدة لتحديث السمة
+            function setTheme(theme) {
+                if (theme === 'light') {
+                    document.body.classList.add('light-theme');
+                    themeToggleInput.checked = true;
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.body.classList.remove('light-theme');
+                    themeToggleInput.checked = false;
+                    localStorage.setItem('theme', 'dark');
+                }
+                state.theme = theme;
             }
-            state.theme = theme;
-        }
 
-        // استعادة السمة المحفوظة
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        setTheme(savedTheme);
+            // استعادة السمة المحفوظة
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            setTheme(savedTheme);
 
-        // دالة عرض الإشعارات (Toast)
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 bg-black/80 text-white px-6 py-3 rounded-2xl text-sm backdrop-blur-lg border border-white/10 z-50 animate-[fadeScale_0.3s]`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
-        }
+            // دالة عرض الإشعارات (Toast)
+            function showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 bg-black/80 text-white px-6 py-3 rounded-2xl text-sm backdrop-blur-lg border border-white/10 z-50 animate-[fadeScale_0.3s]`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            }
 
-        // ==================== مكونات واجهة المستخدم (UI Components) ====================
-        const Components = {
-            loading: () => `
-                <div class="glass-panel p-10 flex flex-col items-center justify-center fade-scale">
-                    <div class="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-6"></div>
-                    <h2 class="text-2xl font-bold mb-2">جاري التحقق</h2>
-                    <p class="text-gray-400 text-center">يتم تأمين اتصالك مع تيليجرام...</p>
-                </div>
-            `,
-
-            accessDenied: () => `
-                <div class="glass-panel p-8 text-center fade-scale">
-                    <div class="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl text-red-500">
-                        <i class="fa-solid fa-shield-halved"></i>
+            // ==================== مكونات واجهة المستخدم (UI Components) ====================
+            const Components = {
+                loading: () => `
+                    <div class="glass-panel p-10 flex flex-col items-center justify-center fade-scale">
+                        <div class="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-6"></div>
+                        <h2 class="text-2xl font-bold mb-2">جاري التحقق</h2>
+                        <p class="text-gray-400 text-center">يتم تأمين اتصالك مع تيليجرام...</p>
                     </div>
-                    <h2 class="text-2xl font-bold mb-3">دخول غير مصرح</h2>
-                    <p class="text-gray-400 mb-8">يجب فتح هذا التطبيق من داخل تيليجرام عبر البوت الرسمي.</p>
-                    <a href="https://t.me/telegram" target="_blank" class="btn-primary">
-                        <i class="fa-brands fa-telegram"></i>
-                        فتح تيليجرام
-                    </a>
-                </div>
-            `,
+                `,
 
-            userDashboard: (user, balance) => {
-                const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
-                const initials = (user.first_name[0] + (user.last_name?.[0] || '')).toUpperCase();
-                const photoUrl = user.photo_url;
+                accessDenied: () => `
+                    <div class="glass-panel p-8 text-center fade-scale">
+                        <div class="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl text-red-500">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3">دخول غير مصرح</h2>
+                        <p class="text-gray-400 mb-8">يجب فتح هذا التطبيق من داخل تيليجرام عبر البوت الرسمي.</p>
+                        <a href="https://t.me/telegram" target="_blank" class="btn-primary">
+                            <i class="fa-brands fa-telegram"></i>
+                            فتح تيليجرام
+                        </a>
+                    </div>
+                `,
 
-                return `
-                    <div class="space-y-5 fade-scale">
-                        <!-- البطاقة الشخصية -->
-                        <div class="glass-panel p-5">
-                            <div class="flex items-center gap-4">
-                                <div class="avatar">
-                                    ${photoUrl ? `<img src="${photoUrl}" alt="photo">` : `<span>${initials}</span>`}
-                                </div>
-                                <div class="flex-1">
-                                    <h2 class="text-xl font-bold truncate" title="${fullName}">${fullName}</h2>
-                                    <p class="text-sm text-gray-400 font-mono">ID: ${user.id}</p>
-                                    <div class="status-badge mt-2">
-                                        <span>نشط الآن</span>
+                userDashboard: (user, balance) => {
+                    const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
+                    const initials = (user.first_name[0] + (user.last_name?.[0] || '')).toUpperCase();
+                    const photoUrl = user.photo_url;
+
+                    return `
+                        <div class="space-y-5 fade-scale">
+                            <!-- البطاقة الشخصية -->
+                            <div class="glass-panel p-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="avatar">
+                                        ${photoUrl ? `<img src="${photoUrl}" alt="photo">` : `<span>${initials}</span>`}
+                                    </div>
+                                    <div class="flex-1">
+                                        <h2 class="text-xl font-bold truncate" title="${fullName}">${fullName}</h2>
+                                        <p class="text-sm text-gray-400 font-mono">ID: ${user.id}</p>
+                                        <div class="status-badge mt-2">
+                                            <span>نشط الآن</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="text-xs text-gray-400">الرصيد</p>
+                                        <p class="text-2xl font-bold text-yellow-400">${balance.toLocaleString('ar-EG')}</p>
                                     </div>
                                 </div>
-                                <div class="text-left">
-                                    <p class="text-xs text-gray-400">الرصيد</p>
-                                    <p class="text-2xl font-bold text-yellow-400">${balance.toLocaleString('ar-EG')}</p>
+                            </div>
+
+                            <!-- الإحصائيات السريعة -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="stat-card">
+                                    <i class="fa-solid fa-chart-simple text-2xl text-blue-400 mb-2"></i>
+                                    <p class="text-xs text-gray-400">الإحصائيات</p>
+                                    <p class="text-xl font-bold">100%</p>
+                                </div>
+                                <div class="stat-card">
+                                    <i class="fa-solid fa-medal text-2xl text-purple-400 mb-2"></i>
+                                    <p class="text-xs text-gray-400">الرتبة</p>
+                                    <p class="text-xl font-bold">ذهبي</p>
+                                </div>
+                            </div>
+
+                            <!-- القائمة الرئيسية -->
+                            <div class="glass-panel p-5">
+                                <h3 class="text-lg font-bold mb-4">القائمة الرئيسية</h3>
+                                <div class="space-y-3">
+                                    <button id="refreshBalanceBtn" class="btn-secondary">
+                                        <i class="fa-solid fa-rotate"></i>
+                                        تحديث الرصيد
+                                    </button>
+                                    <button id="openSettingsBtn" class="btn-secondary">
+                                        <i class="fa-solid fa-sliders"></i>
+                                        الإعدادات
+                                    </button>
+                                    <button id="logoutBtn" class="btn-secondary text-red-400 hover:text-red-300">
+                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                        تسجيل الخروج
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- رسالة ترحيبية -->
+                            <div class="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4 text-sm text-blue-300">
+                                <i class="fa-regular fa-circle-check ml-2"></i>
+                                اتصالك آمن ومشفر بالكامل.
+                            </div>
+                        </div>
+                    `;
+                },
+
+                adminDashboard: (user, balance, stats) => {
+                    const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
+                    const initials = (user.first_name[0] + (user.last_name?.[0] || '')).toUpperCase();
+                    const photoUrl = user.photo_url;
+
+                    return `
+                        <div class="space-y-5 fade-scale">
+                            <!-- البطاقة الشخصية مع شارة المدير -->
+                            <div class="glass-panel p-5 border-2 border-yellow-500/30 relative">
+                                <div class="absolute -top-3 left-5 bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full">
+                                    <i class="fa-solid fa-crown ml-1"></i> مدير النظام
+                                </div>
+                                <div class="flex items-center gap-4 mt-2">
+                                    <div class="avatar">
+                                        ${photoUrl ? `<img src="${photoUrl}" alt="photo">` : `<span>${initials}</span>`}
+                                    </div>
+                                    <div class="flex-1">
+                                        <h2 class="text-xl font-bold truncate" title="${fullName}">${fullName}</h2>
+                                        <p class="text-sm text-gray-400 font-mono">ID: ${user.id}</p>
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="text-xs text-gray-400">رصيد البوت</p>
+                                        <p class="text-2xl font-bold text-yellow-400">${balance.toLocaleString('ar-EG')}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- إحصائيات متقدمة -->
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="stat-card">
+                                    <i class="fa-solid fa-users text-blue-400 text-xl mb-1"></i>
+                                    <p class="text-xs text-gray-400">المستخدمين</p>
+                                    <p class="text-lg font-bold">${stats.users}</p>
+                                </div>
+                                <div class="stat-card">
+                                    <i class="fa-solid fa-robot text-green-400 text-xl mb-1"></i>
+                                    <p class="text-xs text-gray-400">البوتات</p>
+                                    <p class="text-lg font-bold">${stats.bots}</p>
+                                </div>
+                                <div class="stat-card">
+                                    <i class="fa-solid fa-chart-line text-purple-400 text-xl mb-1"></i>
+                                    <p class="text-xs text-gray-400">المعاملات</p>
+                                    <p class="text-lg font-bold">${stats.dailyOps}</p>
+                                </div>
+                            </div>
+
+                            <!-- أدوات المدير -->
+                            <div class="glass-panel p-5">
+                                <h3 class="text-lg font-bold mb-4">لوحة التحكم</h3>
+                                <div class="space-y-3">
+                                    <button id="notifyAllBtn" class="btn-secondary">
+                                        <i class="fa-solid fa-bell"></i>
+                                        إشعار للمستخدمين
+                                    </button>
+                                    <button id="reportsBtn" class="btn-secondary">
+                                        <i class="fa-solid fa-file-lines"></i>
+                                        التقارير المتقدمة
+                                    </button>
+                                    <button id="settingsBtn" class="btn-secondary">
+                                        <i class="fa-solid fa-gear"></i>
+                                        إعدادات البوت
+                                    </button>
+                                    <button id="logoutBtn" class="btn-secondary text-red-400">
+                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                        تسجيل الخروج
+                                    </button>
                                 </div>
                             </div>
                         </div>
+                    `;
+                }
+            };
 
-                        <!-- الإحصائيات السريعة -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="stat-card">
-                                <i class="fa-solid fa-chart-simple text-2xl text-blue-400 mb-2"></i>
-                                <p class="text-xs text-gray-400">الإحصائيات</p>
-                                <p class="text-xl font-bold">100%</p>
-                            </div>
-                            <div class="stat-card">
-                                <i class="fa-solid fa-medal text-2xl text-purple-400 mb-2"></i>
-                                <p class="text-xs text-gray-400">الرتبة</p>
-                                <p class="text-xl font-bold">ذهبي</p>
-                            </div>
-                        </div>
+            // ==================== دالة التصيير (Render) ====================
+            function render() {
+                if (state.loading) {
+                    appEl.innerHTML = Components.loading();
+                } else if (state.accessDenied) {
+                    appEl.innerHTML = Components.accessDenied();
+                } else if (state.isAdmin) {
+                    appEl.innerHTML = Components.adminDashboard(state.user, state.balance, state.stats);
+                } else {
+                    appEl.innerHTML = Components.userDashboard(state.user, state.balance);
+                }
 
-                        <!-- القائمة الرئيسية -->
-                        <div class="glass-panel p-5">
-                            <h3 class="text-lg font-bold mb-4">القائمة الرئيسية</h3>
-                            <div class="space-y-3">
-                                <button id="refreshBalanceBtn" class="btn-secondary">
-                                    <i class="fa-solid fa-rotate"></i>
-                                    تحديث الرصيد
-                                </button>
-                                <button id="openSettingsBtn" class="btn-secondary">
-                                    <i class="fa-solid fa-sliders"></i>
-                                    الإعدادات
-                                </button>
-                                <button id="logoutBtn" class="btn-secondary text-red-400 hover:text-red-300">
-                                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                                    تسجيل الخروج
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- رسالة ترحيبية -->
-                        <div class="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4 text-sm text-blue-300">
-                            <i class="fa-regular fa-circle-check ml-2"></i>
-                            اتصالك آمن ومشفر بالكامل.
-                        </div>
-                    </div>
-                `;
-            },
-
-            adminDashboard: (user, balance, stats) => {
-                const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
-                const initials = (user.first_name[0] + (user.last_name?.[0] || '')).toUpperCase();
-                const photoUrl = user.photo_url;
-
-                return `
-                    <div class="space-y-5 fade-scale">
-                        <!-- البطاقة الشخصية مع شارة المدير -->
-                        <div class="glass-panel p-5 border-2 border-yellow-500/30 relative">
-                            <div class="absolute -top-3 left-5 bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full">
-                                <i class="fa-solid fa-crown ml-1"></i> مدير النظام
-                            </div>
-                            <div class="flex items-center gap-4 mt-2">
-                                <div class="avatar">
-                                    ${photoUrl ? `<img src="${photoUrl}" alt="photo">` : `<span>${initials}</span>`}
-                                </div>
-                                <div class="flex-1">
-                                    <h2 class="text-xl font-bold truncate" title="${fullName}">${fullName}</h2>
-                                    <p class="text-sm text-gray-400 font-mono">ID: ${user.id}</p>
-                                </div>
-                                <div class="text-left">
-                                    <p class="text-xs text-gray-400">رصيد البوت</p>
-                                    <p class="text-2xl font-bold text-yellow-400">${balance.toLocaleString('ar-EG')}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- إحصائيات متقدمة -->
-                        <div class="grid grid-cols-3 gap-2">
-                            <div class="stat-card">
-                                <i class="fa-solid fa-users text-blue-400 text-xl mb-1"></i>
-                                <p class="text-xs text-gray-400">المستخدمين</p>
-                                <p class="text-lg font-bold">${stats.users}</p>
-                            </div>
-                            <div class="stat-card">
-                                <i class="fa-solid fa-robot text-green-400 text-xl mb-1"></i>
-                                <p class="text-xs text-gray-400">البوتات</p>
-                                <p class="text-lg font-bold">${stats.bots}</p>
-                            </div>
-                            <div class="stat-card">
-                                <i class="fa-solid fa-chart-line text-purple-400 text-xl mb-1"></i>
-                                <p class="text-xs text-gray-400">المعاملات</p>
-                                <p class="text-lg font-bold">${stats.dailyOps}</p>
-                            </div>
-                        </div>
-
-                        <!-- أدوات المدير -->
-                        <div class="glass-panel p-5">
-                            <h3 class="text-lg font-bold mb-4">لوحة التحكم</h3>
-                            <div class="space-y-3">
-                                <button id="notifyAllBtn" class="btn-secondary">
-                                    <i class="fa-solid fa-bell"></i>
-                                    إشعار للمستخدمين
-                                </button>
-                                <button id="reportsBtn" class="btn-secondary">
-                                    <i class="fa-solid fa-file-lines"></i>
-                                    التقارير المتقدمة
-                                </button>
-                                <button id="settingsBtn" class="btn-secondary">
-                                    <i class="fa-solid fa-gear"></i>
-                                    إعدادات البوت
-                                </button>
-                                <button id="logoutBtn" class="btn-secondary text-red-400">
-                                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                                    تسجيل الخروج
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        };
-
-        // ==================== دالة التصيير (Render) ====================
-        function render() {
-            if (state.loading) {
-                appEl.innerHTML = Components.loading();
-            } else if (state.accessDenied) {
-                appEl.innerHTML = Components.accessDenied();
-            } else if (state.isAdmin) {
-                appEl.innerHTML = Components.adminDashboard(state.user, state.balance, state.stats);
-            } else {
-                appEl.innerHTML = Components.userDashboard(state.user, state.balance);
+                // إعادة ربط الأحداث بعد التصيير
+                bindEvents();
             }
 
-            // إعادة ربط الأحداث بعد التصيير
-            bindEvents();
-        }
+            // ==================== ربط الأحداث (Event Binding) ====================
+            function bindEvents() {
+                // أزرار مشتركة
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', () => {
+                        tg.close();
+                    });
+                }
 
-        // ==================== ربط الأحداث (Event Binding) ====================
-        function bindEvents() {
-            // أزرار مشتركة
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', () => {
-                    tg.close();
-                });
+                const openSettingsBtn = document.getElementById('openSettingsBtn');
+                if (openSettingsBtn) {
+                    openSettingsBtn.addEventListener('click', () => {
+                        settingsOverlay.classList.add('open');
+                        settingsPanel.classList.add('open');
+                    });
+                }
+
+                // زر تحديث الرصيد (للمستخدم العادي)
+                const refreshBalanceBtn = document.getElementById('refreshBalanceBtn');
+                if (refreshBalanceBtn) {
+                    refreshBalanceBtn.addEventListener('click', () => {
+                        // محاكاة تحديث الرصيد
+                        state.loading = true;
+                        render();
+
+                        setTimeout(() => {
+                            state.balance = Math.floor(Math.random() * 5000) + 1000;
+                            state.loading = false;
+                            render();
+                            showToast('تم تحديث الرصيد بنجاح', 'success');
+                        }, 1500);
+                    });
+                }
+
+                // أزرار المدير
+                const notifyAllBtn = document.getElementById('notifyAllBtn');
+                if (notifyAllBtn) {
+                    notifyAllBtn.addEventListener('click', () => {
+                        tg.showPopup({
+                            title: 'إرسال إشعار',
+                            message: 'سيتم إرسال إشعار لجميع المستخدمين.',
+                            buttons: [{type: 'ok', text: 'موافق'}, {type: 'cancel', text: 'إلغاء'}]
+                        });
+                    });
+                }
+
+                const reportsBtn = document.getElementById('reportsBtn');
+                if (reportsBtn) {
+                    reportsBtn.addEventListener('click', () => {
+                        showToast('جاري تحميل التقارير...', 'info');
+                    });
+                }
+
+                const settingsBtn = document.getElementById('settingsBtn');
+                if (settingsBtn) {
+                    settingsBtn.addEventListener('click', () => {
+                        showToast('سيتم فتح إعدادات البوت قريباً', 'info');
+                    });
+                }
             }
 
-            const openSettingsBtn = document.getElementById('openSettingsBtn');
-            if (openSettingsBtn) {
-                openSettingsBtn.addEventListener('click', () => {
-                    settingsOverlay.classList.add('open');
-                    settingsPanel.classList.add('open');
-                });
-            }
+            // ==================== تهيئة التطبيق ====================
+            async function initApp() {
+                tg.expand();
+                tg.ready();
 
-            // زر تحديث الرصيد (للمستخدم العادي)
-            const refreshBalanceBtn = document.getElementById('refreshBalanceBtn');
-            if (refreshBalanceBtn) {
-                refreshBalanceBtn.addEventListener('click', () => {
-                    // محاكاة تحديث الرصيد
-                    state.loading = true;
+                // التحقق من السياق
+                if (!tg.initData || !tg.initDataUnsafe.user) {
+                    state.loading = false;
+                    state.accessDenied = true;
+                    render();
+                    return;
+                }
+
+                const user = tg.initDataUnsafe.user;
+                state.user = user;
+                state.isAdmin = (user.id === ADMIN_ID);
+
+                // محاكاة تحميل البيانات من الخادم
+                try {
+                    // يمكنك استبدال هذا بجلب حقيقي من API
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    // بيانات وهمية
+                    state.balance = state.isAdmin ? 15420 : 2350;
+                    state.stats = {
+                        users: 2847,
+                        bots: 18,
+                        dailyOps: 156
+                    };
+
+                    state.loading = false;
                     render();
 
-                    setTimeout(() => {
-                        state.balance = Math.floor(Math.random() * 5000) + 1000;
-                        state.loading = false;
-                        render();
-                        showToast('تم تحديث الرصيد بنجاح', 'success');
-                    }, 1500);
-                });
-            }
+                    // إعداد زر MainButton في تيليجرام
+                    tg.MainButton.setText(state.isAdmin ? 'لوحة التحكم' : 'تحديث البيانات');
+                    tg.MainButton.setTextColor('#ffffff');
+                    tg.MainButton.setColor('#2b6ef0');
+                    tg.MainButton.show();
 
-            // أزرار المدير
-            const notifyAllBtn = document.getElementById('notifyAllBtn');
-            if (notifyAllBtn) {
-                notifyAllBtn.addEventListener('click', () => {
-                    tg.showPopup({
-                        title: 'إرسال إشعار',
-                        message: 'سيتم إرسال إشعار لجميع المستخدمين.',
-                        buttons: [{type: 'ok', text: 'موافق'}, {type: 'cancel', text: 'إلغاء'}]
+                    tg.MainButton.onClick(() => {
+                        if (state.isAdmin) {
+                            tg.showPopup({
+                                title: 'مرحباً أيها المدير',
+                                message: 'لديك صلاحيات كاملة.',
+                                buttons: [{type: 'ok', text: 'حسناً'}]
+                            });
+                        } else {
+                            tg.showPopup({
+                                title: 'نظام آمن',
+                                message: `أهلاً ${user.first_name}، اتصالك آمن.`,
+                                buttons: [{type: 'ok', text: 'حسناً'}]
+                            });
+                        }
                     });
-                });
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('حدث خطأ في تحميل البيانات', 'error');
+                    state.loading = false;
+                    render();
+                }
             }
 
-            const reportsBtn = document.getElementById('reportsBtn');
-            if (reportsBtn) {
-                reportsBtn.addEventListener('click', () => {
-                    showToast('جاري تحميل التقارير...', 'info');
-                });
-            }
+            // ==================== أحداث الإعدادات ====================
+            themeToggleInput.addEventListener('change', (e) => {
+                setTheme(e.target.checked ? 'light' : 'dark');
+            });
 
-            const settingsBtn = document.getElementById('settingsBtn');
-            if (settingsBtn) {
-                settingsBtn.addEventListener('click', () => {
-                    showToast('سيتم فتح إعدادات البوت قريباً', 'info');
-                });
-            }
-        }
+            languageSelect.addEventListener('change', (e) => {
+                state.settings.language = e.target.value;
+                showToast(`تم تغيير اللغة إلى ${e.target.value === 'ar' ? 'العربية' : 'الإنجليزية'}`);
+            });
 
-        // ==================== تهيئة التطبيق ====================
-        async function initApp() {
-            tg.expand();
-            tg.ready();
+            notificationsToggle.addEventListener('change', (e) => {
+                state.settings.notifications = e.target.checked;
+                showToast(e.target.checked ? 'تم تفعيل الإشعارات' : 'تم إيقاف الإشعارات');
+            });
 
-            // التحقق من السياق
-            if (!tg.initData || !tg.initDataUnsafe.user) {
-                state.loading = false;
-                state.accessDenied = true;
-                render();
-                return;
-            }
+            closeSettingsBtn.addEventListener('click', () => {
+                settingsOverlay.classList.remove('open');
+                settingsPanel.classList.remove('open');
+            });
 
-            const user = tg.initDataUnsafe.user;
-            state.user = user;
-            state.isAdmin = (user.id === ADMIN_ID);
+            settingsOverlay.addEventListener('click', () => {
+                settingsOverlay.classList.remove('open');
+                settingsPanel.classList.remove('open');
+            });
 
-            // محاكاة تحميل البيانات من الخادم
-            try {
-                // يمكنك استبدال هذا بجلب حقيقي من API
-                await new Promise(resolve => setTimeout(resolve, 2000));
-
-                // بيانات وهمية
-                state.balance = state.isAdmin ? 15420 : 2350;
-                state.stats = {
-                    users: 2847,
-                    bots: 18,
-                    dailyOps: 156
-                };
-
-                state.loading = false;
-                render();
-
-                // إعداد زر MainButton في تيليجرام
-                tg.MainButton.setText(state.isAdmin ? 'لوحة التحكم' : 'تحديث البيانات');
-                tg.MainButton.setTextColor('#ffffff');
-                tg.MainButton.setColor('#2b6ef0');
-                tg.MainButton.show();
-
-                tg.MainButton.onClick(() => {
-                    if (state.isAdmin) {
-                        tg.showPopup({
-                            title: 'مرحباً أيها المدير',
-                            message: 'لديك صلاحيات كاملة.',
-                            buttons: [{type: 'ok', text: 'حسناً'}]
-                        });
-                    } else {
-                        tg.showPopup({
-                            title: 'نظام آمن',
-                            message: `أهلاً ${user.first_name}، اتصالك آمن.`,
-                            buttons: [{type: 'ok', text: 'حسناً'}]
-                        });
-                    }
-                });
-
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('حدث خطأ في تحميل البيانات', 'error');
-                state.loading = false;
-                render();
-            }
-        }
-
-        // ==================== أحداث الإعدادات ====================
-        themeToggleInput.addEventListener('change', (e) => {
-            setTheme(e.target.checked ? 'light' : 'dark');
-        });
-
-        languageSelect.addEventListener('change', (e) => {
-            state.settings.language = e.target.value;
-            showToast(`تم تغيير اللغة إلى ${e.target.value === 'ar' ? 'العربية' : 'الإنجليزية'}`);
-        });
-
-        notificationsToggle.addEventListener('change', (e) => {
-            state.settings.notifications = e.target.checked;
-            showToast(e.target.checked ? 'تم تفعيل الإشعارات' : 'تم إيقاف الإشعارات');
-        });
-
-        closeSettingsBtn.addEventListener('click', () => {
-            settingsOverlay.classList.remove('open');
-            settingsPanel.classList.remove('open');
-        });
-
-        settingsOverlay.addEventListener('click', () => {
-            settingsOverlay.classList.remove('open');
-            settingsPanel.classList.remove('open');
-        });
-
-        // بدء التطبيق
-        initApp();
+            // بدء التطبيق
+            initApp();
+        })();
     </script>
 </body>
 </html>
