@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بوابة تيليجرام المتطورة</title>
+    <title>المحفظة الذكية | Smart Wallet</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,8 +14,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts (Cairo) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts (Cairo & Outfit) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js for Mini Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
         tailwind.config = {
@@ -23,6 +26,7 @@
                 extend: {
                     fontFamily: {
                         cairo: ['Cairo', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
                     },
                     colors: {
                         tg: {
@@ -30,6 +34,23 @@
                             text: 'var(--tg-theme-text-color, #ffffff)',
                             button: 'var(--tg-theme-button-color, #3b82f6)',
                             buttonText: 'var(--tg-theme-button-text-color, #ffffff)',
+                            secondary: 'var(--tg-theme-secondary-bg-color, #1e293b)',
+                            hint: 'var(--tg-theme-hint-color, #94a3b8)',
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'shimmer': 'shimmer 2s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-1000px 0' },
+                            '100%': { backgroundPosition: '1000px 0' }
                         }
                     }
                 }
@@ -38,552 +59,643 @@
     </script>
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --card-gradient: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8));
+            --glass-bg: rgba(30, 41, 59, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
         body {
             font-family: 'Cairo', sans-serif;
             background-color: var(--tg-theme-bg-color, #0f172a);
             color: var(--tg-theme-text-color, #ffffff);
             overflow-x: hidden;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* الخلفية المتحركة */
-        .ambient-light { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; pointer-events: none; }
-        .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; animation: float 10s infinite ease-in-out; }
-        .orb-1 { top: -10%; right: -10%; width: 300px; height: 300px; background: #3b82f6; animation-delay: 0s; }
-        .orb-2 { bottom: -10%; left: -10%; width: 250px; height: 250px; background: #8b5cf6; animation-delay: 5s; }
-        @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(20px, 40px); } }
-
-        /* Glassmorphism */
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+        /* الخلفية المتحركة المتطورة */
+        .ambient-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%);
+            filter: blur(40px);
         }
-        .glass-card:hover { background: rgba(40, 51, 69, 0.8); border-color: rgba(255, 255, 255, 0.15); }
 
-        /* Animations */
-        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-enter { animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        /* البطاقة الزجاجية المتطورة */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* بطاقة المحفظة الرئيسية */
+        .wallet-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
         
+        .wallet-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        
+        .wallet-card:active {
+            transform: scale(0.96);
+        }
+
+        .wallet-card:hover::before {
+            opacity: 1;
+        }
+
+        /* تأثير اللمعان على البطاقة */
+        .card-shine {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+            pointer-events: none;
+            z-index: 1;
+        }
+
         /* Loader */
-        .spinner { width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--tg-theme-button-color, #3b82f6); border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-ring {
+            display: inline-block;
+            width: 60px; height: 60px;
+        }
+        .loader-ring:after {
+            content: " ";
+            display: block;
+            width: 48px; height: 48px;
+            margin: 6px;
+            border-radius: 50%;
+            border: 4px solid var(--tg-theme-button-color, #3b82f6);
+            border-color: var(--tg-theme-button-color, #3b82f6) transparent var(--tg-theme-button-color, #3b82f6) transparent;
+            animation: ring 1.2s linear infinite;
+        }
+        @keyframes ring { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Avatar */
-        .default-avatar { background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; font-weight: bold; }
+        /* Modal Transitions */
+        .modal-enter { opacity: 0; transform: scale(0.95); }
+        .modal-enter-active { opacity: 1; transform: scale(1); transition: all 0.3s ease-out; }
+        .modal-exit { opacity: 1; transform: scale(1); }
+        .modal-exit-active { opacity: 0; transform: scale(0.95); transition: all 0.2s ease-in; }
 
-        /* Toast */
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); color: white; padding: 12px 24px; border-radius: 50px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; border: 1px solid rgba(255,255,255,0.1); }
-        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
-        /* Theme Toggle */
-        .theme-toggle { position: fixed; top: 16px; left: 16px; z-index: 100; background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; padding: 8px 16px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.3s ease; }
-        .theme-toggle:hover { background: rgba(40, 51, 69, 0.8); }
-
-        /* Wallet Specific Styles */
-        .wallet-gradient { background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2)); }
-        .coin-icon-glow { filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6)); }
-        
-        /* Modal Overlay */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-content { transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .modal-overlay.active .modal-content { transform: scale(1); }
+        .tab-active {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border-bottom: 2px solid #60a5fa;
+        }
     </style>
 </head>
-<body>
-    <!-- Background Elements -->
-    <div class="ambient-light">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-    </div>
+<body class="antialiased min-h-screen flex flex-col items-center justify-start pt-6 pb-10">
 
-    <!-- Theme Toggle -->
-    <div class="theme-toggle" id="themeToggle">
-        <i class="fa-solid fa-moon" id="themeIcon"></i>
-        <span class="text-sm">السمة</span>
-    </div>
+    <!-- Background Effects -->
+    <div class="ambient-bg"></div>
+    <div class="fixed top-[-10%] right-[-10%] w-64 h-64 bg-blue-600/20 rounded-full blur-[80px] animate-pulse-slow"></div>
+    <div class="fixed bottom-[-10%] left-[-10%] w-64 h-64 bg-purple-600/20 rounded-full blur-[80px] animate-pulse-slow" style="animation-delay: 1.5s;"></div>
 
-    <!-- Main Container -->
-    <div id="app" class="w-full max-w-md p-5 relative"></div>
+    <!-- Header -->
+    <header class="w-full max-w-md px-5 mb-6 flex justify-between items-center z-10 animate-enter">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                <i class="fa-solid fa-wallet text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold font-outfit leading-tight">محفظتي</h1>
+                <p class="text-xs text-gray-400">نظام الدفع الآمن</p>
+            </div>
+        </div>
+        <button id="themeToggle" class="w-10 h-10 rounded-full glass-panel flex items-center justify-center hover:bg-white/10 transition-colors">
+            <i class="fa-solid fa-moon text-gray-300"></i>
+        </button>
+    </header>
 
-    <!-- Deposit Modal (Hidden by default) -->
-    <div class="modal-overlay" id="depositModal">
-        <div class="modal-content glass-card w-[90%] max-w-sm p-6 rounded-3xl relative">
-            <button id="closeModal" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                <i class="fa-solid fa-times text-white"></i>
-            </button>
+    <!-- Main Content Container -->
+    <main id="app" class="w-full max-w-md px-5 relative z-10 flex-1">
+        <!-- Content will be injected here -->
+    </main>
+
+    <!-- Deposit Modal -->
+    <div id="depositModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto" onclick="closeModal()"></div>
+        <div class="bg-[#1e293b] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 relative transform translate-y-full sm:translate-y-10 transition-transform duration-300 pointer-events-auto border border-white/10 shadow-2xl" id="modalContent">
+            
+            <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-6"></div>
             
             <div class="text-center mb-6">
-                <div class="w-16 h-16 mx-auto bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-3 shadow-lg shadow-orange-500/20">
-                    <i class="fa-solid fa-coins text-2xl text-white"></i>
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-green-400 to-emerald-600 mb-3 shadow-lg shadow-green-500/30 animate-float">
+                    <i class="fa-solid fa-arrow-down text-2xl text-white"></i>
                 </div>
-                <h3 class="text-xl font-bold text-white">شحن المحفظة</h3>
-                <p class="text-gray-400 text-sm mt-1">اختر المبلغ المراد شحنه</p>
+                <h3 class="text-2xl font-bold text-white font-outfit">شحن الرصيد</h3>
+                <p class="text-gray-400 text-sm mt-1">اختر الباقة المناسبة لك</p>
             </div>
 
             <div class="grid grid-cols-2 gap-3 mb-6">
-                <button onclick="selectAmount(10)" class="amount-btn py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-blue-600 hover:border-blue-500 transition-all font-bold text-white">10$</button>
-                <button onclick="selectAmount(50)" class="amount-btn py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-blue-600 hover:border-blue-500 transition-all font-bold text-white">50$</button>
-                <button onclick="selectAmount(100)" class="amount-btn py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-blue-600 hover:border-blue-500 transition-all font-bold text-white">100$</button>
-                <button onclick="selectAmount('custom')" class="amount-btn py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-blue-600 hover:border-blue-500 transition-all font-bold text-white">أخرى</button>
+                <button onclick="selectAmount(50)" class="package-btn group relative overflow-hidden p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500 hover:bg-blue-500/10 transition-all duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                    <span class="block text-2xl font-bold text-white mb-1">50$</span>
+                    <span class="text-xs text-gray-400">باقة أساسية</span>
+                </button>
+                <button onclick="selectAmount(100)" class="package-btn group relative overflow-hidden p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-purple-500 hover:bg-purple-500/10 transition-all duration-300">
+                    <div class="absolute top-2 right-2 w-2 h-2 bg-purple-500 rounded-full animate-ping"></div>
+                    <span class="block text-2xl font-bold text-white mb-1">100$</span>
+                    <span class="text-xs text-gray-400">الأكثر طلباً</span>
+                </button>
+                <button onclick="selectAmount(250)" class="package-btn group relative overflow-hidden p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-yellow-500 hover:bg-yellow-500/10 transition-all duration-300">
+                    <span class="block text-2xl font-bold text-white mb-1">250$</span>
+                    <span class="text-xs text-gray-400">باقة محترفين</span>
+                </button>
+                <button onclick="selectAmount('custom')" class="package-btn group relative overflow-hidden p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-gray-400 hover:bg-gray-500/10 transition-all duration-300">
+                    <span class="block text-2xl font-bold text-white mb-1"><i class="fa-solid fa-pen"></i></span>
+                    <span class="text-xs text-gray-400">مبلغ مخصص</span>
+                </button>
             </div>
 
-            <button id="confirmDeposit" class="w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-paper-plane"></i>
-                تأكيد الطلب
+            <button id="confirmDepositBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 shadow-lg shadow-blue-600/30 active:scale-95 transition-all flex items-center justify-center gap-2">
+                <span>تأكيد العملية</span>
+                <i class="fa-solid fa-check-circle"></i>
             </button>
         </div>
     </div>
 
     <script>
-        (function() {
-            // ---------------------------------------------------------
-            // إعدادات النظام
-            // ---------------------------------------------------------
-            const ADMIN_ID = 7609492965; // ضع معرف المشرف هنا
-            
-            // ---------------------------------------------------------
-            // حالة التطبيق (State)
-            // ---------------------------------------------------------
-            const state = {
-                user: null,
-                isAdmin: false,
-                loading: true,
-                accessDenied: false,
-                telegramMissing: false,
-                balance: 0,
-                stats: { users: 0, bots: 0, dailyOps: 0 },
-                theme: 'dark',
-                transactions: [] // سجل العمليات
-            };
+        // ---------------------------------------------------------
+        // إعدادات النظام والحالة
+        // ---------------------------------------------------------
+        const ADMIN_ID = 7609492965;
+        
+        const state = {
+            user: null,
+            isAdmin: false,
+            loading: true,
+            balance: 0,
+            currency: '$',
+            transactions: [],
+            theme: 'dark',
+            chartData: [120, 150, 140, 180, 200, 250, 300] // بيانات وهمية للرسم البياني
+        };
 
-            let tg = null;
-            try { tg = window.Telegram?.WebApp; } catch (e) { tg = null; }
+        let tg = null;
+        try { tg = window.Telegram?.WebApp; } catch (e) { tg = null; }
 
-            const appContainer = document.getElementById('app');
-            const depositModal = document.getElementById('depositModal');
-            
-            // ---------------------------------------------------------
-            // دوال مساعدة
-            // ---------------------------------------------------------
-            function safeLocalStorageGet(key, defaultValue) {
-                try { const value = localStorage.getItem(key); return value !== null ? value : defaultValue; } catch (e) { return defaultValue; }
+        const appContainer = document.getElementById('app');
+        const modal = document.getElementById('depositModal');
+        const modalContent = document.getElementById('modalContent');
+
+        // ---------------------------------------------------------
+        // دوال مساعدة متطورة
+        // ---------------------------------------------------------
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-US').format(num);
+        }
+
+        function vibrate(type = 'light') {
+            if (tg && tg.HapticFeedback) {
+                if (type === 'success') tg.HapticFeedback.notificationOccurred('success');
+                else if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
+                else tg.HapticFeedback.impactOccurred(type);
             }
-            function safeLocalStorageSet(key, value) { try { localStorage.setItem(key, value); } catch (e) {} }
+        }
 
-            function showToast(message, type = 'info') {
-                const toast = document.createElement('div');
-                toast.className = 'toast';
-                toast.textContent = message;
-                document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 3000);
-            }
+        function showToast(msg, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-5 left-1/2 -translate-x-1/2 z-[60] px-6 py-3 rounded-full shadow-2xl backdrop-blur-md border border-white/10 flex items-center gap-3 animate-enter ${
+                type === 'success' ? 'bg-green-500/20 text-green-400' : 
+                type === 'error' ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'
+            }`;
+            toast.innerHTML = `
+                <i class="fa-solid ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                <span class="font-bold text-sm">${msg}</span>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translate(-50%, -20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
 
-            function updateTheme(theme) {
-                if (theme === 'light') {
-                    document.documentElement.style.setProperty('--tg-theme-bg-color', '#f8fafc');
-                    document.documentElement.style.setProperty('--tg-theme-text-color', '#0f172a');
-                    document.getElementById('themeIcon').className = 'fa-solid fa-sun';
-                } else {
-                    document.documentElement.style.setProperty('--tg-theme-bg-color', '#0f172a');
-                    document.documentElement.style.setProperty('--tg-theme-text-color', '#ffffff');
-                    document.getElementById('themeIcon').className = 'fa-solid fa-moon';
-                }
-                safeLocalStorageSet('theme', theme);
-            }
+        // ---------------------------------------------------------
+        // منطق المحفظة والبيانات
+        // ---------------------------------------------------------
+        function addTransaction(type, amount, status = 'completed') {
+            const now = new Date();
+            state.transactions.unshift({
+                id: Date.now(),
+                type, // 'deposit', 'withdraw', 'transfer'
+                amount,
+                status, // 'completed', 'pending', 'failed'
+                date: now.toLocaleDateString('ar-EG', { month: 'short', day: 'numeric' }),
+                time: now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
+                icon: type === 'deposit' ? 'fa-arrow-down' : type === 'withdraw' ? 'fa-arrow-up' : 'fa-exchange-alt',
+                color: type === 'deposit' ? 'text-green-400' : type === 'withdraw' ? 'text-red-400' : 'text-blue-400',
+                bg: type === 'deposit' ? 'bg-green-500/10' : type === 'withdraw' ? 'bg-red-500/10' : 'bg-blue-500/10'
+            });
+            if (state.transactions.length > 10) state.transactions.pop();
+        }
 
-            // ---------------------------------------------------------
-            // منطق الإحصائيات والبيانات
-            // ---------------------------------------------------------
-            function updateStats() {
-                try {
-                    let usersSet = new Set(JSON.parse(safeLocalStorageGet('app_users', '[]')));
-                    state.stats.users = usersSet.size;
-                    state.stats.bots = 1; 
-                    const today = new Date().toISOString().split('T')[0];
-                    let dailyOpsData = JSON.parse(safeLocalStorageGet('daily_ops', '{}'));
-                    state.stats.dailyOps = dailyOpsData[today] || 0;
-                } catch (e) {}
-            }
+        // ---------------------------------------------------------
+        // مكونات الواجهة (UI Components)
+        // ---------------------------------------------------------
+        const UI = {
+            loader: () => `
+                <div class="flex flex-col items-center justify-center h-64 space-y-4 animate-enter">
+                    <div class="loader-ring"></div>
+                    <p class="text-gray-400 text-sm animate-pulse">جاري تأمين الاتصال...</p>
+                </div>
+            `,
 
-            function registerUser(userId) {
-                try {
-                    let usersSet = new Set(JSON.parse(safeLocalStorageGet('app_users', '[]')));
-                    if (!usersSet.has(userId)) {
-                        usersSet.add(userId);
-                        safeLocalStorageSet('app_users', JSON.stringify([...usersSet]));
-                        updateStats();
-                    }
-                } catch (e) {}
-            }
+            error: (msg) => `
+                <div class="glass-panel p-8 rounded-3xl text-center animate-enter border-red-500/20">
+                    <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500 text-2xl">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-white mb-2">تنبيه أمني</h2>
+                    <p class="text-gray-400 text-sm mb-6">${msg}</p>
+                    <button onclick="window.location.reload()" class="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold transition-colors">إعادة المحاولة</button>
+                </div>
+            `,
 
-            // ---------------------------------------------------------
-            // منطق المحفظة
-            // ---------------------------------------------------------
-            function formatCurrency(amount) {
-                return amount.toLocaleString('ar-EG');
-            }
+            // بطاقة المحفظة المتطورة
+            walletCard: () => `
+                <div class="wallet-card p-6 mb-6 relative group">
+                    <div class="card-shine"></div>
+                    <!-- خلفية زخرفية -->
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                    <div class="absolute bottom-0 left-0 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl -ml-10 -mb-10"></div>
 
-            function addTransaction(type, amount) {
-                const now = new Date();
-                const timeString = now.getHours() + ':' + (now.getMinutes()<10?'0':'') + now.getMinutes();
-                state.transactions.unshift({
-                    id: Date.now(),
-                    type: type, // 'deposit' or 'withdraw'
-                    amount: amount,
-                    time: timeString,
-                    status: 'completed'
-                });
-                if(state.transactions.length > 5) state.transactions.pop();
-            }
-
-            // ---------------------------------------------------------
-            // مكونات الواجهة (UI Components)
-            // ---------------------------------------------------------
-            const components = {
-                loading: () => `
-                    <div class="flex flex-col items-center justify-center text-center space-y-6 animate-enter">
-                        <div class="spinner"></div>
-                        <div><h2 class="text-xl font-bold mb-1">جاري التحقق...</h2><p class="text-sm text-gray-400">نحن نتأكد من هويتك عبر تيليجرام</p></div>
-                    </div>`,
-
-                accessDenied: () => `
-                    <div class="glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter border-red-500/20">
-                        <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl"><i class="fa-solid fa-shield-halved"></i></div>
-                        <h2 class="text-2xl font-bold mb-2">دخول محظور</h2>
-                        <p class="text-gray-400 mb-8 text-sm">يجب فتح هذا التطبيق حصراً من خلال بوت تيليجرام.</p>
-                        <a href="https://telegram.org" target="_blank" class="block w-full py-3.5 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-500 transition-all">فتح تيليجرام</a>
-                    </div>`,
-
-                telegramMissing: () => `
-                    <div class="glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter border-orange-500/20">
-                        <div class="w-20 h-20 bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl"><i class="fa-solid fa-exclamation-triangle"></i></div>
-                        <h2 class="text-2xl font-bold mb-2">بيئة غير مدعومة</h2>
-                        <p class="text-gray-400 mb-8 text-sm">يرجى فتح هذا الرابط من داخل تطبيق تيليجرام.</p>
-                        <a href="https://t.me/your_bot_username" target="_blank" class="block w-full py-3.5 rounded-xl font-bold text-white bg-orange-600 hover:bg-orange-500 transition-all">فتح البوت</a>
-                    </div>`,
-
-                // بطاقة المحفظة المتطورة
-                walletCard: (balance) => `
-                    <div class="glass-card wallet-gradient p-5 rounded-3xl relative overflow-hidden group shadow-xl shadow-blue-900/20 border-blue-500/20">
-                        <!-- خلفية جمالية -->
-                        <div class="absolute -right-6 -top-6 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl group-hover:bg-blue-500/30 transition-all duration-500"></div>
-                        <div class="absolute -left-6 -bottom-6 w-24 h-24 bg-purple-500/20 rounded-full blur-2xl"></div>
-
-                        <div class="relative z-10">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <p class="text-blue-200 text-xs font-medium mb-1 flex items-center gap-2">
-                                        <i class="fa-solid fa-wallet"></i> المحفظة الرقمية
-                                    </p>
-                                    <h3 class="text-3xl font-black text-white tracking-tight drop-shadow-md">
-                                        ${formatCurrency(balance)} <span class="text-lg text-yellow-400 font-bold">$</span>
-                                    </h3>
-                                </div>
-                                <div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-inner">
-                                    <i class="fa-solid fa-coins text-yellow-400 text-xl coin-icon-glow"></i>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-8">
+                            <div>
+                                <p class="text-blue-200/80 text-xs font-medium tracking-wider mb-1 uppercase">الرصيد الحالي</p>
+                                <h2 class="text-4xl font-black text-white font-outfit tracking-tight drop-shadow-lg">
+                                    ${formatNumber(state.balance)} <span class="text-xl text-yellow-400">${state.currency}</span>
+                                </h2>
+                            </div>
+                            <div class="text-right">
+                                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+                                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                                    <span class="text-[10px] font-bold text-green-400">نشط</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="flex gap-3">
-                                <button id="depositBtn" class="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold shadow-lg shadow-blue-600/30 transition-all active:scale-95 flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-plus"></i> شحن
-                                </button>
-                                <button class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-bold border border-white/10 transition-all active:scale-95 flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-arrow-right-from-bracket"></i> سحب
-                                </button>
-                            </div>
+                        <!-- الرسم البياني المصغر -->
+                        <div class="h-16 w-full mb-6 opacity-80">
+                            <canvas id="miniChart"></canvas>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="openModal()" class="group relative overflow-hidden py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-600/30 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                <i class="fa-solid fa-plus relative z-10"></i>
+                                <span class="relative z-10">شحن</span>
+                            </button>
+                            <button onclick="showToast('خاصية السحب قريباً', 'info')" class="group relative overflow-hidden py-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold transition-all active:scale-95 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-arrow-up-from-bracket relative z-10"></i>
+                                <span class="relative z-10">سحب</span>
+                            </button>
                         </div>
                     </div>
-                `,
+                </div>
+            `,
 
-                // سجل العمليات
-                transactionHistory: (transactions) => {
-                    if(transactions.length === 0) return '';
-                    return `
-                        <div class="mt-6">
-                            <h4 class="text-sm font-bold text-gray-400 mb-3 px-1">آخر العمليات</h4>
-                            <div class="space-y-3">
-                                ${transactions.map(tx => `
-                                    <div class="glass-card p-3 rounded-2xl flex items-center justify-between hover:bg-white/5 transition-colors">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 rounded-full ${tx.type === 'deposit' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'} flex items-center justify-center">
-                                                <i class="fa-solid ${tx.type === 'deposit' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
-                                            </div>
-                                            <div>
-                                                <p class="text-sm font-bold text-white">${tx.type === 'deposit' ? 'شحن رصيد' : 'سحب رصيد'}</p>
-                                                <p class="text-[10px] text-gray-500">${tx.time}</p>
-                                            </div>
-                                        </div>
-                                        <span class="font-bold text-sm ${tx.type === 'deposit' ? 'text-green-400' : 'text-red-400'}">
-                                            ${tx.type === 'deposit' ? '+' : '-'}${formatCurrency(tx.amount)}$
-                                        </span>
-                                    </div>
-                                `).join('')}
-                            </div>
+            statsRow: () => `
+                <div class="grid grid-cols-3 gap-3 mb-6">
+                    <div class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
+                        <div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2">
+                            <i class="fa-solid fa-chart-line text-sm"></i>
                         </div>
-                    `;
-                },
-
-                userDashboard: (user, balance) => {
-                    const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
-                    const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
-                    const photoUrl = user.photo_url;
-
-                    return `
-                        <div class="space-y-5 animate-enter pb-10">
-                            <!-- Profile Header -->
-                            <div class="glass-card p-5 rounded-3xl relative overflow-hidden">
-                                <div class="flex items-center gap-4 relative z-10">
-                                    <div class="w-14 h-14 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">
-                                        ${photoUrl ? `<img src="${photoUrl}" class="w-full h-full object-cover">` : `<div class="w-full h-full default-avatar"><span>${initials}</span></div>`}
-                                    </div>
-                                    <div class="flex-1">
-                                        <h2 class="text-lg font-bold truncate">${fullName}</h2>
-                                        <p class="text-xs text-gray-400 font-mono">ID: ${user.id}</p>
-                                        <div class="inline-flex items-center gap-1.5 mt-1.5 px-2 py-0.5 rounded-md bg-green-500/10 border border-green-500/20">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                                            <span class="text-[10px] font-bold text-green-400">نشط</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Wallet Component -->
-                            ${components.walletCard(balance)}
-
-                            <!-- Transaction History -->
-                            ${components.transactionHistory(state.transactions)}
-
-                            <!-- Stats Grid -->
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
-                                    <i class="fa-solid fa-chart-pie text-blue-400 text-xl mb-2"></i>
-                                    <span class="text-gray-400 text-xs">الإحصائيات</span>
-                                    <span class="text-white font-bold">100%</span>
-                                </div>
-                                <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
-                                    <i class="fa-solid fa-crown text-purple-400 text-xl mb-2"></i>
-                                    <span class="text-gray-400 text-xs">الرتبة</span>
-                                    <span class="text-white font-bold">مميز</span>
-                                </div>
-                            </div>
-
-                            <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل الخروج
-                            </button>
+                        <span class="text-[10px] text-gray-400 mb-1">الدخل الشهري</span>
+                        <span class="text-white font-bold text-sm">+12%</span>
+                    </div>
+                    <div class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
+                        <div class="w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2">
+                            <i class="fa-solid fa-receipt text-sm"></i>
                         </div>
-                    `;
-                },
+                        <span class="text-[10px] text-gray-400 mb-1">الفواتير</span>
+                        <span class="text-white font-bold text-sm">${state.transactions.filter(t=>t.type==='withdraw').length}</span>
+                    </div>
+                    <div class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
+                        <div class="w-8 h-8 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center mb-2">
+                            <i class="fa-solid fa-shield-check text-sm"></i>
+                        </div>
+                        <span class="text-[10px] text-gray-400 mb-1">الحماية</span>
+                        <span class="text-green-400 font-bold text-sm">100%</span>
+                    </div>
+                </div>
+            `,
 
-                adminDashboard: (user, balance, stats) => {
-                    const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
-                    const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
-                    const photoUrl = user.photo_url;
-
+            transactionList: () => {
+                if (state.transactions.length === 0) {
                     return `
-                        <div class="space-y-5 animate-enter pb-10">
-                            <div class="glass-card p-5 rounded-3xl relative overflow-hidden border-2 border-yellow-500/30">
-                                <div class="flex items-center gap-4 relative z-10">
-                                    <div class="w-14 h-14 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">
-                                        ${photoUrl ? `<img src="${photoUrl}" class="w-full h-full object-cover">` : `<div class="w-full h-full default-avatar"><span>${initials}</span></div>`}
-                                    </div>
-                                    <div class="flex-1">
-                                        <h2 class="text-lg font-bold truncate">${fullName}</h2>
-                                        <p class="text-xs text-gray-400 font-mono">ID: ${user.id}</p>
-                                        <div class="inline-flex items-center gap-1.5 mt-1.5 px-2 py-0.5 rounded-md bg-yellow-500/20 border border-yellow-500/30">
-                                            <i class="fa-solid fa-crown text-yellow-400 text-[10px]"></i>
-                                            <span class="text-[10px] font-bold text-yellow-300">مدير النظام</span>
-                                        </div>
-                                    </div>
-                                    <div class="flex flex-col items-end">
-                                        <span class="text-[10px] text-gray-400">رصيد البوت</span>
-                                        <span class="font-bold text-white text-lg">${formatCurrency(balance)}$</span>
-                                    </div>
-                                </div>
+                        <div class="glass-panel p-8 rounded-3xl text-center mb-6">
+                            <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-500">
+                                <i class="fa-solid fa-clock-rotate-left text-2xl"></i>
                             </div>
-
-                            ${components.walletCard(balance)}
-                            ${components.transactionHistory(state.transactions)}
-
-                            <div class="grid grid-cols-3 gap-2">
-                                <div class="glass-card p-3 rounded-2xl text-center">
-                                    <i class="fa-solid fa-users text-blue-400 mb-1"></i>
-                                    <span class="text-gray-400 text-[10px] block">المستخدمين</span>
-                                    <span class="text-white font-bold text-sm">${stats.users}</span>
-                                </div>
-                                <div class="glass-card p-3 rounded-2xl text-center">
-                                    <i class="fa-solid fa-robot text-green-400 mb-1"></i>
-                                    <span class="text-gray-400 text-[10px] block">البوتات</span>
-                                    <span class="text-white font-bold text-sm">${stats.bots}</span>
-                                </div>
-                                <div class="glass-card p-3 rounded-2xl text-center">
-                                    <i class="fa-solid fa-chart-line text-purple-400 mb-1"></i>
-                                    <span class="text-gray-400 text-[10px] block">اليوم</span>
-                                    <span class="text-white font-bold text-sm">${stats.dailyOps}</span>
-                                </div>
-                            </div>
-
-                            <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل الخروج
-                            </button>
+                            <p class="text-gray-400 text-sm">لا توجد عمليات حديثة</p>
                         </div>
                     `;
                 }
-            };
 
-            // ---------------------------------------------------------
-            // التصيير والأحداث (Render & Events)
-            // ---------------------------------------------------------
-            function render() {
-                if (state.telegramMissing) appContainer.innerHTML = components.telegramMissing();
-                else if (state.loading) appContainer.innerHTML = components.loading();
-                else if (state.accessDenied) appContainer.innerHTML = components.accessDenied();
-                else if (state.isAdmin) appContainer.innerHTML = components.adminDashboard(state.user, state.balance, state.stats);
-                else appContainer.innerHTML = components.userDashboard(state.user, state.balance);
+                return `
+                    <div class="mb-4 flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-white font-outfit">سجل العمليات</h3>
+                        <button class="text-xs text-blue-400 hover:text-blue-300 font-bold">عرض الكل</button>
+                    </div>
+                    <div class="space-y-3 pb-20">
+                        ${state.transactions.map(tx => `
+                            <div class="glass-panel p-4 rounded-2xl flex items-center justify-between hover:bg-white/5 transition-all cursor-pointer group">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-xl ${tx.bg} ${tx.color} flex items-center justify-center text-lg shadow-inner group-hover:scale-110 transition-transform">
+                                        <i class="fa-solid ${tx.icon}"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-white font-bold text-sm mb-0.5">${tx.type === 'deposit' ? 'شحن رصيد' : tx.type === 'withdraw' ? 'سحب أموال' : 'تحويل داخلي'}</h4>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] text-gray-500">${tx.date}</span>
+                                            <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+                                            <span class="text-[10px] ${tx.status === 'completed' ? 'text-green-500' : 'text-yellow-500'} font-medium">
+                                                ${tx.status === 'completed' ? 'مكتمل' : 'قيد المعالجة'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <span class="block font-bold text-white font-outfit ${tx.type === 'deposit' ? 'text-green-400' : 'text-white'}">
+                                        ${tx.type === 'deposit' ? '+' : '-'}${formatNumber(tx.amount)}${state.currency}
+                                    </span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            },
 
-                bindEvents();
+            adminStats: () => `
+                <div class="glass-panel p-5 rounded-3xl mb-6 border-yellow-500/20 bg-gradient-to-br from-yellow-900/20 to-transparent">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white">لوحة المشرف</h3>
+                            <p class="text-xs text-gray-400">تحكم كامل بالنظام</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white/5 p-3 rounded-xl">
+                            <span class="text-xs text-gray-400 block mb-1">المستخدمين</span>
+                            <span class="text-xl font-bold text-white">1,245</span>
+                        </div>
+                        <div class="bg-white/5 p-3 rounded-xl">
+                            <span class="text-xs text-gray-400 block mb-1">الأرباح اليوم</span>
+                            <span class="text-xl font-bold text-green-400">$3,450</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        };
+
+        // ---------------------------------------------------------
+        // منطق الرسم البياني (Chart.js)
+        // ---------------------------------------------------------
+        function initChart() {
+            const ctx = document.getElementById('miniChart');
+            if (!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+                    datasets: [{
+                        data: state.chartData,
+                        borderColor: '#60a5fa',
+                        backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                    scales: { x: { display: false }, y: { display: false } },
+                    elements: { line: { borderWidth: 2 } }
+                }
+            });
+        }
+
+        // ---------------------------------------------------------
+        // إدارة التطبيق
+        // ---------------------------------------------------------
+        function render() {
+            if (state.loading) {
+                appContainer.innerHTML = UI.loader();
+                return;
             }
 
-            function bindEvents() {
-                const logoutBtn = document.getElementById('logoutBtn');
-                if (logoutBtn) logoutBtn.addEventListener('click', () => tg && tg.close());
-
-                const depositBtn = document.getElementById('depositBtn');
-                if (depositBtn) {
-                    depositBtn.addEventListener('click', () => {
-                        depositModal.classList.add('active');
-                        if(tg) tg.HapticFeedback.impactOccurred('light');
-                    });
-                }
-
-                const closeModal = document.getElementById('closeModal');
-                if(closeModal) {
-                    closeModal.addEventListener('click', () => {
-                        depositModal.classList.remove('active');
-                        if(tg) tg.HapticFeedback.impactOccurred('light');
-                    });
-                }
-
-                depositModal.addEventListener('click', (e) => {
-                    if(e.target === depositModal) depositModal.classList.remove('active');
-                });
-
-                const confirmBtn = document.getElementById('confirmDeposit');
-                if(confirmBtn) {
-                    confirmBtn.addEventListener('click', () => {
-                        const selected = document.querySelector('.amount-btn.bg-blue-600');
-                        if(!selected) {
-                            showToast('الرجاء اختيار مبلغ', 'error');
-                            return;
-                        }
-                        const amount = selected.textContent.replace('$','');
-                        
-                        if(tg) tg.HapticFeedback.notificationOccurred('success');
-                        depositModal.classList.remove('active');
-                        showToast(`تم إرسال طلب شحن ${amount}$ بنجاح!`);
-                        
-                        // تحديث الرصيد والعمليات
-                        state.balance += parseInt(amount);
-                        addTransaction('deposit', parseInt(amount));
-                        render(); 
-                    });
-                }
-            }
-
-            // دالة اختيار المبلغ (Global)
-            window.selectAmount = function(amount) {
-                document.querySelectorAll('.amount-btn').forEach(btn => {
-                    btn.classList.remove('bg-blue-600', 'border-blue-500');
-                    btn.classList.add('bg-white/5', 'border-white/10');
-                });
-                event.target.classList.remove('bg-white/5', 'border-white/10');
-                event.target.classList.add('bg-blue-600', 'border-blue-500');
-                if(tg) tg.HapticFeedback.selectionChanged();
-            };
-
-            // ---------------------------------------------------------
-            // تهيئة التطبيق
-            // ---------------------------------------------------------
-            async function initApp() {
-                if (!tg) {
-                    state.telegramMissing = true;
-                    state.loading = false;
-                    render();
+            if (!tg || !state.user) {
+                // محاكاة للمستخدم التجريبي إذا لم يكن داخل تيليجرام
+                if(!tg) {
+                     // وضع التجربة المحلي
+                } else {
+                    appContainer.innerHTML = UI.error('يجب فتح التطبيق من خلال بوت تيليجرام الرسمي.');
                     return;
                 }
+            }
 
+            let html = '';
+            
+            // معلومات المستخدم المختصرة
+            if (state.user) {
+                html += `
+                    <div class="flex items-center justify-between mb-6 animate-enter" style="animation-delay: 0.1s">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 p-[2px]">
+                                <div class="w-full h-full rounded-full bg-[#1e293b] flex items-center justify-center overflow-hidden">
+                                    ${state.user.photo_url ? `<img src="${state.user.photo_url}" class="w-full h-full object-cover">` : `<span class="font-bold text-white">${state.user.first_name[0]}</span>`}
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-white">${state.user.first_name} ${state.user.last_name || ''}</p>
+                                <p class="text-[10px] text-gray-500 font-mono">ID: ${state.user.id}</p>
+                            </div>
+                        </div>
+                        ${state.isAdmin ? '<span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-[10px] font-bold rounded-md border border-yellow-500/30">ADMIN</span>' : ''}
+                    </div>
+                `;
+            }
+
+            // المحتوى الرئيسي
+            html += `
+                <div style="animation-delay: 0.2s" class="animate-enter">
+                    ${UI.walletCard()}
+                    ${UI.statsRow()}
+                    ${state.isAdmin ? UI.adminStats() : ''}
+                    ${UI.transactionList()}
+                </div>
+            `;
+
+            appContainer.innerHTML = html;
+            
+            // تهيئة الرسم البياني بعد إضافة العنصر
+            setTimeout(initChart, 100);
+            
+            // إعداد الزر الرئيسي في تيليجرام
+            if (tg) {
+                tg.MainButton.setText("تحديث البيانات");
+                tg.MainButton.setTextColor("#ffffff");
+                tg.MainButton.setColor("#3b82f6");
+                tg.MainButton.show();
+                tg.MainButton.onClick(() => {
+                    vibrate('success');
+                    showToast('تم تحديث البيانات بنجاح', 'success');
+                    state.balance += 10; // مكافأة تجريبية
+                    addTransaction('deposit', 10);
+                    render();
+                });
+            }
+        }
+
+        // ---------------------------------------------------------
+        // أحداث المودال والتفاعل
+        // ---------------------------------------------------------
+        window.openModal = () => {
+            vibrate('light');
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modalContent.classList.remove('translate-y-full', 'sm:translate-y-10');
+            modalContent.classList.add('translate-y-0');
+        };
+
+        window.closeModal = () => {
+            vibrate('light');
+            modal.classList.add('pointer-events-none', 'opacity-0');
+            modalContent.classList.add('translate-y-full', 'sm:translate-y-10');
+            modalContent.classList.remove('translate-y-0');
+        };
+
+        window.selectAmount = (amount) => {
+            vibrate('selection');
+            document.querySelectorAll('.package-btn').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'bg-blue-500/10', 'border-purple-500', 'bg-purple-500/10', 'border-yellow-500', 'bg-yellow-500/10', 'border-gray-400', 'bg-gray-500/10');
+                btn.classList.add('border-white/10', 'bg-white/5');
+            });
+            
+            const btn = event.currentTarget;
+            if(amount === 50) btn.classList.replace('border-white/10', 'border-blue-500');
+            if(amount === 100) btn.classList.replace('border-white/10', 'border-purple-500');
+            if(amount === 250) btn.classList.replace('border-white/10', 'border-yellow-500');
+            if(amount === 'custom') btn.classList.replace('border-white/10', 'border-gray-400');
+            
+            btn.classList.remove('bg-white/5');
+            if(amount === 50) btn.classList.add('bg-blue-500/10');
+            if(amount === 100) btn.classList.add('bg-purple-500/10');
+            if(amount === 250) btn.classList.add('bg-yellow-500/10');
+            if(amount === 'custom') btn.classList.add('bg-gray-500/10');
+        };
+
+        document.getElementById('confirmDepositBtn').addEventListener('click', () => {
+            const selected = document.querySelector('.package-btn[class*="border-"][class*="500"]');
+            if (!selected) {
+                vibrate('error');
+                showToast('الرجاء اختيار باقة أولاً', 'error');
+                return;
+            }
+            
+            vibrate('success');
+            closeModal();
+            
+            // محاكاة عملية الشحن
+            const amountText = selected.querySelector('span').innerText.replace('$','').replace(/[^\d]/g, '');
+            const amount = parseInt(amountText) || 0;
+            
+            if(amount > 0) {
+                showToast('جاري معالجة الطلب...', 'info');
+                setTimeout(() => {
+                    state.balance += amount;
+                    addTransaction('deposit', amount);
+                    showToast(`تم شحن ${amount}$ بنجاح!`, 'success');
+                    render();
+                }, 1500);
+            }
+        });
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            vibrate('light');
+            const isDark = document.documentElement.style.getPropertyValue('--tg-theme-bg-color') !== '#f8fafc';
+            if (isDark) {
+                document.documentElement.style.setProperty('--tg-theme-bg-color', '#f8fafc');
+                document.documentElement.style.setProperty('--tg-theme-text-color', '#0f172a');
+                document.documentElement.style.setProperty('--tg-theme-secondary-bg-color', '#ffffff');
+                document.querySelector('#themeToggle i').className = 'fa-solid fa-sun text-yellow-500';
+            } else {
+                document.documentElement.style.setProperty('--tg-theme-bg-color', '#0f172a');
+                document.documentElement.style.setProperty('--tg-theme-text-color', '#ffffff');
+                document.documentElement.style.setProperty('--tg-theme-secondary-bg-color', '#1e293b');
+                document.querySelector('#themeToggle i').className = 'fa-solid fa-moon text-gray-300';
+            }
+        });
+
+        // ---------------------------------------------------------
+        // التهيئة الأولية
+        // ---------------------------------------------------------
+        async function init() {
+            if (tg) {
                 tg.expand();
                 tg.ready();
-
-                const savedTheme = safeLocalStorageGet('theme', 'dark');
-                state.theme = savedTheme;
-                updateTheme(savedTheme);
-
-                if (!tg.initData || !tg.initDataUnsafe.user) {
+                
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    state.user = tg.initDataUnsafe.user;
+                    state.isAdmin = (state.user.id === ADMIN_ID);
+                    
+                    // تحميل بيانات وهمية أولية
+                    state.balance = state.isAdmin ? 50000 : 250;
+                    addTransaction('deposit', 250);
+                    addTransaction('withdraw', 50);
+                    addTransaction('transfer', 20);
+                } else {
+                    // حالة الخطأ إذا لم تكن البيانات موجودة
                     state.loading = false;
-                    state.accessDenied = true;
                     render();
                     return;
                 }
-
-                const user = tg.initDataUnsafe.user;
-                state.user = user;
-                state.isAdmin = (user.id === ADMIN_ID);
-                registerUser(user.id);
-
-                try {
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
-                    // تعيين أرصدة افتراضية للتجربة
-                    state.balance = state.isAdmin ? 50000 : 150; 
-                    
-                    // إضافة عمليات وهمية إذا كان السجل فارغاً
-                    if(state.transactions.length === 0) {
-                        addTransaction('deposit', 100);
-                        addTransaction('withdraw', 20);
-                    }
-                    
-                    updateStats();
-                    state.loading = false;
-                    render();
-
-                    tg.MainButton.setText("تحديث البيانات");
-                    tg.MainButton.setTextColor("#ffffff");
-                    tg.MainButton.setColor("#3b82f6");
-                    tg.MainButton.show();
-
-                    tg.MainButton.onClick(() => {
-                        tg.showPopup({
-                            title: 'نظام آمن',
-                            message: `أهلاً ${user.first_name}، بياناتك محدثة.`,
-                            buttons: [{type: 'ok', text: 'حسناً'}]
-                        });
-                    });
-
-                } catch (error) {
-                    console.error(error);
-                    state.loading = false;
-                    render();
-                }
+            } else {
+                // وضع التجربة خارج تيليجرام (للمطورين)
+                state.user = { first_name: 'مستخدم تجريبي', id: 123456 };
+                state.balance = 1000;
+                addTransaction('deposit', 1000);
             }
 
-            document.getElementById('themeToggle').addEventListener('click', () => {
-                state.theme = state.theme === 'dark' ? 'light' : 'dark';
-                updateTheme(state.theme);
-            });
+            state.loading = false;
+            render();
+        }
 
-            initApp();
-        })();
+        init();
     </script>
 </body>
 </html>
