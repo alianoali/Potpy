@@ -278,14 +278,14 @@
                 isAdmin: false,
                 loading: true,
                 accessDenied: false,
-                dashboard: null, // 'user' or 'admin'
+                dashboard: null,
                 balance: 0,
                 stats: {
-                    users: 1280,
-                    bots: 12,
-                    dailyOps: 42
+                    users: 0,
+                    bots: 0,
+                    dailyOps: 0
                 },
-                theme: 'dark', // 'dark' or 'light'
+                theme: 'dark',
                 settings: {
                     language: 'ar',
                     notifications: true
@@ -298,10 +298,7 @@
             const tg = window.Telegram.WebApp;
             const appContainer = document.getElementById('app');
             
-            // مراجع العناصر (سيتم ملؤها لاحقاً)
-            const elements = new Map();
-
-            // إعدادات
+            // مراجع العناصر
             const settingsOverlay = document.getElementById('settingsOverlay');
             const settingsPanel = document.getElementById('settingsPanel');
             const themeToggle = document.getElementById('themeToggle');
@@ -335,6 +332,44 @@
                     themeIcon.className = 'fa-solid fa-moon';
                 }
                 localStorage.setItem('theme', theme);
+            }
+
+            // دوال الإحصائيات الحقيقية
+            function getTodayDate() {
+                return new Date().toISOString().split('T')[0];
+            }
+
+            function updateStats() {
+                // قراءة المستخدمين المخزنين
+                let usersSet = new Set(JSON.parse(localStorage.getItem('app_users') || '[]'));
+                state.stats.users = usersSet.size;
+
+                // عدد البوتات (يمكن تعديلها يدوياً أو جلبها من API)
+                // هنا نفترض أن هناك بوت واحد هو البوت الحالي + أي بوتات أخرى مسجلة
+                let bots = JSON.parse(localStorage.getItem('app_bots') || '[{"id":123456,"name":"البوت الرسمي"}]');
+                state.stats.bots = bots.length;
+
+                // العمليات اليومية
+                const today = getTodayDate();
+                let dailyOpsData = JSON.parse(localStorage.getItem('daily_ops') || '{}');
+                state.stats.dailyOps = dailyOpsData[today] || 0;
+            }
+
+            function incrementDailyOps() {
+                const today = getTodayDate();
+                let dailyOpsData = JSON.parse(localStorage.getItem('daily_ops') || '{}');
+                dailyOpsData[today] = (dailyOpsData[today] || 0) + 1;
+                localStorage.setItem('daily_ops', JSON.stringify(dailyOpsData));
+                updateStats();
+            }
+
+            function registerUser(userId) {
+                let usersSet = new Set(JSON.parse(localStorage.getItem('app_users') || '[]'));
+                if (!usersSet.has(userId)) {
+                    usersSet.add(userId);
+                    localStorage.setItem('app_users', JSON.stringify([...usersSet]));
+                    updateStats();
+                }
             }
 
             // -----------------------------------------------
@@ -527,28 +562,28 @@
                                 </div>
                             </div>
 
-                            <!-- إحصائيات خاصة بالمشرف -->
+                            <!-- إحصائيات خاصة بالمشرف (ديناميكية وحقيقية) -->
                             <div class="grid grid-cols-3 gap-2">
                                 <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
                                     <div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-1">
                                         <i class="fa-solid fa-users text-sm"></i>
                                     </div>
                                     <span class="text-gray-400 text-[10px]">المستخدمين</span>
-                                    <span class="text-white font-bold text-base block">${stats.users.toLocaleString('ar-EG')}</span>
+                                    <span class="text-white font-bold text-base block" id="statsUsers">${stats.users.toLocaleString('ar-EG')}</span>
                                 </div>
                                 <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
                                     <div class="w-8 h-8 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center mx-auto mb-1">
                                         <i class="fa-solid fa-robot text-sm"></i>
                                     </div>
                                     <span class="text-gray-400 text-[10px]">البوتات</span>
-                                    <span class="text-white font-bold text-base block">${stats.bots}</span>
+                                    <span class="text-white font-bold text-base block" id="statsBots">${stats.bots}</span>
                                 </div>
                                 <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
                                     <div class="w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto mb-1">
                                         <i class="fa-solid fa-chart-line text-sm"></i>
                                     </div>
                                     <span class="text-gray-400 text-[10px]">عمليات اليوم</span>
-                                    <span class="text-white font-bold text-base block">${stats.dailyOps}</span>
+                                    <span class="text-white font-bold text-base block" id="statsDailyOps">${stats.dailyOps}</span>
                                 </div>
                             </div>
 
@@ -639,6 +674,9 @@
                 const updateBalanceBtn = document.getElementById('updateBalanceBtn');
                 if (updateBalanceBtn) {
                     updateBalanceBtn.addEventListener('click', () => {
+                        // زيادة العمليات اليومية
+                        incrementDailyOps();
+                        
                         // محاكاة جلب رصيد جديد
                         state.loading = true;
                         render();
@@ -656,6 +694,9 @@
                 const openSettingsBtn = document.getElementById('openSettingsBtn');
                 if (openSettingsBtn) {
                     openSettingsBtn.addEventListener('click', () => {
+                        // زيادة العمليات اليومية
+                        incrementDailyOps();
+                        
                         settingsOverlay.classList.add('open');
                         settingsPanel.classList.add('open');
                     });
@@ -665,6 +706,9 @@
                 const notifyUsersBtn = document.getElementById('notifyUsersBtn');
                 if (notifyUsersBtn) {
                     notifyUsersBtn.addEventListener('click', () => {
+                        // زيادة العمليات اليومية
+                        incrementDailyOps();
+                        
                         tg.showPopup({
                             title: 'إرسال إشعار',
                             message: 'هل تريد إرسال إشعار لجميع المستخدمين؟',
@@ -679,6 +723,9 @@
                 const reportsBtn = document.getElementById('reportsBtn');
                 if (reportsBtn) {
                     reportsBtn.addEventListener('click', () => {
+                        // زيادة العمليات اليومية
+                        incrementDailyOps();
+                        
                         showToast('جاري تحميل التقارير...', 'info');
                     });
                 }
@@ -686,6 +733,9 @@
                 const botSettingsBtn = document.getElementById('botSettingsBtn');
                 if (botSettingsBtn) {
                     botSettingsBtn.addEventListener('click', () => {
+                        // زيادة العمليات اليومية
+                        incrementDailyOps();
+                        
                         showToast('سيتم فتح إعدادات البوت قريباً', 'info');
                     });
                 }
@@ -717,18 +767,19 @@
                 state.user = user;
                 state.isAdmin = (user.id === ADMIN_ID);
 
+                // تسجيل المستخدم الفريد
+                registerUser(user.id);
+
                 // محاكاة جلب البيانات من الخادم
                 try {
                     // محاكاة تأخير الشبكة
                     await new Promise(resolve => setTimeout(resolve, 1500));
 
-                    // بيانات وهمية
+                    // بيانات الرصيد (يمكن جلبها من API)
                     state.balance = state.isAdmin ? 12345 : 1234;
-                    state.stats = {
-                        users: 1280,
-                        bots: 12,
-                        dailyOps: 42
-                    };
+
+                    // تحديث الإحصائيات الحقيقية
+                    updateStats();
 
                     state.loading = false;
                     render();
