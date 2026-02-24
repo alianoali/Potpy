@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بوابة تيليجرام المتطورة - المحفظة</title>
+    <title>بوابة تيليجرام المتطورة - محفظة احترافية</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -305,25 +305,75 @@
         .transaction-amount.positive { color: #10b981; }
         .transaction-amount.negative { color: #ef4444; }
 
-        /* زر المحفظة */
-        .wallet-icon-btn {
-            background: rgba(59, 130, 246, 0.2);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 20px;
-            padding: 6px 12px;
+        /* أيقونة المحفظة الكبيرة والمتطورة */
+        .wallet-icon-large {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(145deg, #3b82f6, #8b5cf6);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; /* شكل عضوي غير منتظم */
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5), 0 0 0 2px rgba(255,255,255,0.1) inset;
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: floatWallet 3s infinite ease-in-out;
+            position: relative;
+            overflow: hidden;
         }
 
-        .wallet-icon-btn:hover {
-            background: rgba(59, 130, 246, 0.3);
+        .wallet-icon-large::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 70%);
+            opacity: 0.6;
         }
 
-        /* Hidden class */
-        .hidden-content { display: none !important; }
+        .wallet-icon-large i {
+            font-size: 36px;
+            color: white;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            animation: pulseIcon 2s infinite ease-in-out;
+            position: relative;
+            z-index: 2;
+        }
+
+        .wallet-icon-large:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.8), 0 0 0 4px rgba(255,255,255,0.2) inset;
+        }
+
+        @keyframes floatWallet {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulseIcon {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* بطاقة الرصيد الصغيرة (اختيارية) */
+        .balance-badge {
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 40px;
+            padding: 6px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .balance-badge i {
+            color: #fbbf24;
+        }
     </style>
 </head>
 <body>
@@ -594,10 +644,8 @@
 
             // الإيداع (محاكاة - يظهر عنوان المحفظة)
             function deposit(amount) {
-                // في الواقع، الإيداع يتم عبر تحويل خارجي، هنا فقط نسجل طلب إيداع
                 addTransaction('deposit', amount, 'طلب إيداع', 'قيد الانتظار');
                 incrementDailyOps();
-                // لا نزيد الرصيد تلقائياً لأن الإيداع يحتاج تأكيد خارجي
                 return { success: true, message: 'تم إرسال طلب الإيداع، سيتم تحديث الرصيد بعد التأكيد' };
             }
 
@@ -684,17 +732,26 @@
                                             <span class="text-[10px] font-bold text-green-400 uppercase tracking-wide">نشط الآن</span>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
 
-                                    <!-- أيقونة المحفظة + الرصيد -->
-                                    <div class="wallet-icon-btn" id="walletIconBtn">
-                                        <i class="fa-solid fa-wallet text-blue-400 text-sm"></i>
-                                        <span class="font-bold text-white text-sm" id="walletBalanceDisplay">${balance.toLocaleString('ar-EG')}</span>
-                                    </div>
+                            <!-- أيقونة المحفظة الكبيرة والمتطورة (بدون رصيد) -->
+                            <div class="flex justify-center my-4">
+                                <div class="wallet-icon-large" id="walletIconLarge">
+                                    <i class="fa-solid fa-wallet"></i>
+                                </div>
+                            </div>
+
+                            <!-- بطاقة صغيرة لعرض الرصيد (اختيارية - يمكن إزالتها) -->
+                            <div class="flex justify-center">
+                                <div class="balance-badge">
+                                    <i class="fa-solid fa-coins"></i>
+                                    <span>${balance.toLocaleString('ar-EG')}</span>
                                 </div>
                             </div>
 
                             <!-- Stats Grid -->
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-2 gap-4 mt-4">
                                 <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
                                     <div class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2">
                                         <i class="fa-solid fa-chart-pie"></i>
@@ -751,17 +808,26 @@
                                             <span class="text-[10px] font-bold text-yellow-300 uppercase tracking-wide">مدير النظام</span>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
 
-                                    <!-- أيقونة المحفظة + الرصيد -->
-                                    <div class="wallet-icon-btn" id="walletIconBtn">
-                                        <i class="fa-solid fa-wallet text-blue-400 text-sm"></i>
-                                        <span class="font-bold text-white text-sm" id="walletBalanceDisplay">${balance.toLocaleString('ar-EG')}</span>
-                                    </div>
+                            <!-- أيقونة المحفظة الكبيرة والمتطورة (بدون رصيد) -->
+                            <div class="flex justify-center my-4">
+                                <div class="wallet-icon-large" id="walletIconLarge">
+                                    <i class="fa-solid fa-wallet"></i>
+                                </div>
+                            </div>
+
+                            <!-- بطاقة صغيرة لعرض الرصيد (اختيارية) -->
+                            <div class="flex justify-center">
+                                <div class="balance-badge">
+                                    <i class="fa-solid fa-coins"></i>
+                                    <span>${balance.toLocaleString('ar-EG')}</span>
                                 </div>
                             </div>
 
                             <!-- إحصائيات خاصة بالمشرف -->
-                            <div class="grid grid-cols-3 gap-2">
+                            <div class="grid grid-cols-3 gap-2 mt-4">
                                 <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
                                     <div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-1">
                                         <i class="fa-solid fa-users text-sm"></i>
@@ -919,18 +985,12 @@
                     });
                 }
 
-                // أيقونة المحفظة
-                const walletIconBtn = document.getElementById('walletIconBtn');
-                if (walletIconBtn) {
-                    walletIconBtn.addEventListener('click', () => {
+                // أيقونة المحفظة الكبيرة
+                const walletIconLarge = document.getElementById('walletIconLarge');
+                if (walletIconLarge) {
+                    walletIconLarge.addEventListener('click', () => {
                         openWalletModal();
                     });
-                }
-
-                // تحديث عرض الرصيد في الأيقونة
-                const balanceDisplay = document.getElementById('walletBalanceDisplay');
-                if (balanceDisplay) {
-                    balanceDisplay.textContent = state.balance.toLocaleString('ar-EG');
                 }
             }
 
@@ -1088,8 +1148,9 @@
             }
 
             function updateBalanceDisplay() {
-                const balanceDisplay = document.getElementById('walletBalanceDisplay');
-                if (balanceDisplay) balanceDisplay.textContent = state.balance.toLocaleString('ar-EG');
+                // تحديث عرض الرصيد في البطاقة الصغيرة (إذا كانت موجودة)
+                const balanceBadge = document.querySelector('.balance-badge span');
+                if (balanceBadge) balanceBadge.textContent = state.balance.toLocaleString('ar-EG');
             }
 
             // -----------------------------------------------
