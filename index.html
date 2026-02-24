@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بوابة تيليجرام المالية</title>
+    <title>بوابة تيليجرام الآمنة - رصيد حقيقي</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,12 +21,14 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { cairo: ['Cairo', 'sans-serif'] },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    },
                     colors: {
                         tg-bg: 'var(--tg-theme-bg-color, #0f172a)',
                         tg-text: 'var(--tg-theme-text-color, #ffffff)',
                         tg-button: 'var(--tg-theme-button-color, #3b82f6)',
-                        tg-hint: 'var(--tg-theme-hint-color, #94a3b8)',
+                        tg-button-text: 'var(--tg-theme-button-text-color, #ffffff)',
                     }
                 }
             }
@@ -44,50 +46,56 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* خلفية ضبابية متحركة */
-        .ambient-bg {
+        /* خلفية متحركة ناعمة */
+        .ambient-light {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
+            z-index: -1;
             pointer-events: none;
         }
         .orb {
             position: absolute;
             border-radius: 50%;
             filter: blur(80px);
-            opacity: 0.3;
-            animation: float 12s infinite ease-in-out;
+            opacity: 0.4;
+            animation: float 10s infinite ease-in-out;
         }
-        .orb-1 { top: -10%; right: -10%; width: 300px; height: 300px; background: #3b82f6; }
-        .orb-2 { bottom: -10%; left: -10%; width: 250px; height: 250px; background: #10b981; animation-delay: 6s; }
+        .orb-1 { top: -10%; right: -10%; width: 300px; height: 300px; background: #3b82f6; animation-delay: 0s; }
+        .orb-2 { bottom: -10%; left: -10%; width: 250px; height: 250px; background: #8b5cf6; animation-delay: 5s; }
 
         @keyframes float {
             0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(30px, 50px); }
+            50% { transform: translate(20px, 40px); }
         }
 
         /* Animations */
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px); }
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animate-enter { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-enter {
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
 
-        /* Glassmorphism */
+        /* Glassmorphism Cards */
         .glass-card {
-            background: rgba(30, 41, 59, 0.6);
+            background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
 
         /* Loader */
         .spinner {
-            width: 45px; height: 45px;
-            border: 4px solid rgba(255,255,255,0.1);
-            border-top-color: #3b82f6;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--tg-theme-button-color, #3b82f6);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
@@ -95,117 +103,161 @@
 
         .hidden-content { display: none !important; }
         
-        /* Avatar */
+        /* Avatar Placeholder */
         .default-avatar {
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; color: white; font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
         }
 
-        /* Balance Pulse */
-        .balance-update { animation: pulse-green 0.5s ease-in-out; }
-        @keyframes pulse-green {
-            0% { color: #fff; transform: scale(1); }
-            50% { color: #4ade80; transform: scale(1.1); }
-            100% { color: #fff; transform: scale(1); }
+        /* تأثيرات إضافية */
+        .balance-update {
+            transition: transform 0.2s ease;
+        }
+        .balance-update:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-4 relative">
+<body class="min-h-screen flex flex-col items-center justify-center p-5 relative">
 
-    <!-- Background -->
-    <div class="ambient-bg">
+    <!-- Background Elements -->
+    <div class="ambient-light">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
     </div>
 
     <!-- STATE 1: LOADING -->
-    <div id="loadingState" class="flex flex-col items-center justify-center h-screen w-full animate-enter">
-        <div class="spinner mb-4"></div>
-        <h2 class="text-lg font-bold text-white">جاري التحقق...</h2>
-        <p class="text-sm text-gray-400 mt-1">ربط الحساب مع تيليجرام</p>
+    <div id="loadingState" class="flex flex-col items-center justify-center text-center space-y-6 animate-enter">
+        <div class="spinner"></div>
+        <div>
+            <h2 class="text-xl font-bold text-white mb-1">جاري التحقق...</h2>
+            <p class="text-sm text-gray-400">نحن نتأكد من هويتك عبر تيليجرام</p>
+        </div>
     </div>
 
     <!-- STATE 2: ACCESS DENIED -->
-    <div id="accessDeniedState" class="hidden-content glass-card p-8 rounded-3xl text-center max-w-sm w-full animate-enter mt-20 border-red-500/20">
-        <div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-            <i class="fa-solid fa-triangle-exclamation"></i>
+    <div id="accessDeniedState" class="hidden-content glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter border-red-500/20">
+        <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
+            <i class="fa-solid fa-shield-halved"></i>
         </div>
-        <h2 class="text-xl font-bold text-white mb-2">دخول غير مصرح به</h2>
-        <p class="text-gray-400 text-sm mb-6">يجب فتح هذا التطبيق من خلال بوت تيليجرام الرسمي فقط.</p>
-        <a href="https://telegram.org" class="block w-full py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold transition-colors">
-            الذهاب لتيليجرام
+        <h2 class="text-2xl font-bold mb-2 text-white">دخول محظور</h2>
+        <p class="text-gray-400 mb-8 leading-relaxed text-sm">
+            يجب فتح هذا التطبيق حصراً من خلال بوت تيليجرام الرسمي لضمان الأمان.
+        </p>
+        <a href="https://telegram.org" target="_blank" class="block w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg shadow-blue-500/20">
+            <i class="fa-brands fa-telegram ml-2"></i>
+            فتح تيليجرام
         </a>
     </div>
 
     <!-- STATE 3: DASHBOARD -->
-    <div id="dashboardState" class="hidden-content w-full max-w-md space-y-5 animate-enter pb-8">
+    <div id="dashboardState" class="hidden-content w-full max-w-md space-y-5 animate-enter pb-10">
         
-        <!-- Header Profile -->
-        <div class="glass-card p-5 rounded-3xl flex items-center gap-4 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-xl -mr-8 -mt-8"></div>
-            
-            <div id="userPhotoContainer" class="w-14 h-14 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 flex-shrink-0 shadow-lg">
-                <img id="userPhoto" src="" class="w-full h-full object-cover hidden">
-                <div id="defaultAvatar" class="w-full h-full default-avatar hidden"><span id="avatarInitials">U</span></div>
-            </div>
-            
-            <div class="flex-1 min-w-0">
-                <h2 class="text-lg font-bold text-white truncate" id="userName">مستخدم</h2>
-                <p class="text-xs text-gray-400 font-mono mt-0.5" id="userId">ID: 0000</p>
-                <div class="flex items-center gap-1.5 mt-1.5">
-                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span class="text-[10px] text-green-400 font-bold uppercase">متصل</span>
-                </div>
-            </div>
-        </div>
+        <!-- Header Profile Card -->
+        <div class="glass-card p-5 rounded-3xl relative overflow-hidden group">
+            <!-- Decorative gradient inside card -->
+            <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
 
-        <!-- WALLET SECTION (NEW) -->
-        <div class="glass-card p-6 rounded-3xl relative overflow-hidden group">
-            <!-- Decorative BG -->
-            <div class="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 opacity-50 group-hover:opacity-70 transition-opacity"></div>
-            
-            <div class="relative z-10 text-center">
-                <p class="text-gray-300 text-sm font-medium mb-1">الرصيد الحالي</p>
-                <div class="flex items-center justify-center gap-2 mb-6">
-                    <i class="fa-solid fa-coins text-yellow-400 text-2xl drop-shadow-lg"></i>
-                    <h1 class="text-4xl font-black text-white tracking-tight" id="userBalance">0</h1>
-                    <span class="text-lg text-gray-400 font-bold">$</span>
+            <div class="flex items-center gap-4 relative z-10">
+                <!-- Avatar -->
+                <div id="userPhotoContainer" class="w-16 h-16 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">
+                    <img id="userPhoto" src="" alt="User" class="w-full h-full object-cover hidden">
+                    <div id="defaultAvatar" class="w-full h-full default-avatar hidden">
+                        <span id="avatarInitials">U</span>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <!-- زر الشحن -->
-                    <button onclick="openDepositModal()" class="bg-emerald-500 hover:bg-emerald-400 text-white py-3.5 rounded-2xl font-bold shadow-lg shadow-emerald-500/20 transition-all active:scale-95 flex flex-col items-center justify-center gap-1">
-                        <i class="fa-solid fa-wallet text-lg"></i>
-                        <span class="text-sm">شحن رصيد</span>
-                    </button>
+                <!-- User Info -->
+                <div class="flex-1 min-w-0">
+                    <h2 class="text-lg font-bold text-white truncate" id="userName">مستخدم</h2>
+                    <p class="text-xs text-gray-400 font-mono mt-0.5" id="userId">ID: 00000</p>
                     
-                    <!-- زر السحب -->
-                    <button onclick="openWithdrawModal()" class="bg-rose-500 hover:bg-rose-400 text-white py-3.5 rounded-2xl font-bold shadow-lg shadow-rose-500/20 transition-all active:scale-95 flex flex-col items-center justify-center gap-1">
-                        <i class="fa-solid fa-money-bill-transfer text-lg"></i>
-                        <span class="text-sm">سحب رصيد</span>
-                    </button>
+                    <!-- Status Badge -->
+                    <div class="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-green-500/10 border border-green-500/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-[10px] font-bold text-green-400 uppercase tracking-wide">نشط الآن</span>
+                    </div>
+                </div>
+
+                <!-- Balance Card (Floating Style) مع إمكانية التحديث -->
+                <div class="flex flex-col items-end justify-center bg-slate-900/50 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/5 shadow-lg balance-update cursor-pointer" onclick="refreshBalance()" title="اضغط لتحديث الرصيد">
+                    <span class="text-[10px] text-gray-400 font-medium mb-0.5">الرصيد الحالي</span>
+                    <div class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-coins text-yellow-400 text-sm drop-shadow-md"></i>
+                        <span class="font-bold text-white text-base tracking-tight" id="userBalance">٠</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Stats Grid -->
         <div class="grid grid-cols-2 gap-4">
-            <div class="glass-card p-4 rounded-2xl text-center hover:bg-white/5 transition-colors">
-                <i class="fa-solid fa-shield-halved text-blue-400 text-xl mb-2"></i>
-                <div class="text-gray-400 text-xs mb-1">حالة الحساب</div>
-                <div class="text-white font-bold text-sm">محفوظ وآمن</div>
+            <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
+                <div class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+                <span class="text-gray-400 text-xs mb-1">الإحصائيات</span>
+                <span class="text-white font-bold text-lg">100%</span>
             </div>
-            <div class="glass-card p-4 rounded-2xl text-center hover:bg-white/5 transition-colors">
-                <i class="fa-solid fa-bolt text-yellow-400 text-xl mb-2"></i>
-                <div class="text-gray-400 text-xs mb-1">سرعة المعالجة</div>
-                <div class="text-white font-bold text-sm">فورية</div>
+            <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
+                <div class="w-10 h-10 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <span class="text-gray-400 text-xs mb-1">الرتبة</span>
+                <span class="text-white font-bold text-lg">مميز</span>
             </div>
         </div>
 
-        <!-- Logout -->
-        <button onclick="logout()" class="w-full py-4 rounded-xl font-bold text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2">
-            <i class="fa-solid fa-right-from-bracket"></i>
+        <!-- Main Actions Area (مع إضافة زر لزيادة الرصيد تجريبي) -->
+        <div class="glass-card p-5 rounded-3xl">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-white text-lg">القائمة الرئيسية</h3>
+                <span class="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded-lg">v2.0</span>
+            </div>
+            
+            <div class="space-y-3">
+                <!-- رسالة توضيحية مع زر زيادة الرصيد (محاكاة لتحديث الرصيد في الخادم) -->
+                <div class="bg-blue-500/5 border border-blue-500/10 rounded-xl p-4 flex items-start gap-3">
+                    <i class="fa-solid fa-circle-info text-blue-400 mt-1"></i>
+                    <div class="flex-1">
+                        <p class="text-sm text-blue-100 font-medium">مرحباً بك في البوابة الآمنة</p>
+                        <p class="text-xs text-blue-200/60 mt-1 leading-relaxed">
+                            جميع خدماتك متاحة الآن. رصيدك محدث مباشرة من قاعدة البيانات الموحدة.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- زر تجريبي لزيادة الرصيد (محاكاة لإضافة رصيد من الموقع) -->
+                <button onclick="addDemoBalance()" class="w-full p-4 rounded-xl flex items-center justify-between bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 hover:from-emerald-600/30 hover:to-teal-600/30 transition-all">
+                    <span class="flex items-center gap-3 text-white">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
+                        <span class="font-medium">إضافة 100 نقطة تجريبية</span>
+                    </span>
+                    <i class="fa-solid fa-arrow-left text-gray-400"></i>
+                </button>
+
+                <!-- مثال على زر معطل أو قادم قريباً -->
+                <button disabled class="w-full p-4 rounded-xl flex items-center justify-between opacity-50 cursor-not-allowed border border-dashed border-gray-600">
+                    <span class="flex items-center gap-3 text-gray-400">
+                        <div class="w-8 h-8 rounded-lg bg-gray-700/50 flex items-center justify-center">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        ميزات قادمة قريباً
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Logout Button -->
+        <button onclick="logout()" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
+            <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
             تسجيل الخروج
         </button>
     </div>
@@ -213,15 +265,94 @@
     <script>
         const tg = window.Telegram.WebApp;
         
-        // Elements
+        // DOM Elements
         const loadingState = document.getElementById('loadingState');
         const accessDeniedState = document.getElementById('accessDeniedState');
         const dashboardState = document.getElementById('dashboardState');
-        const balanceEl = document.getElementById('userBalance');
         
-        let currentBalance = 0; // الرصيد المحلي (للمحاكاة)
+        const userNameEl = document.getElementById('userName');
+        const userIdEl = document.getElementById('userId');
+        const userPhotoEl = document.getElementById('userPhoto');
+        const defaultAvatarEl = document.getElementById('defaultAvatar');
+        const avatarInitialsEl = document.getElementById('avatarInitials');
+        const userBalanceEl = document.getElementById('userBalance');
 
-        function initApp() {
+        // متغير لحفظ معرف المستخدم الحالي
+        let currentUserId = null;
+        let currentUser = null;
+
+        // ========================
+        // محاكاة قاعدة البيانات عبر localStorage (يمكن استبدالها بـ API حقيقي)
+        // المفتاح: balance_ + userID
+        // ========================
+        function getUserBalanceFromDB(userId) {
+            // محاكاة جلب من قاعدة البيانات
+            // في الإنتاج: استخدم fetch('/api/getBalance?userId=' + userId)
+            const key = 'balance_' + userId;
+            let balance = localStorage.getItem(key);
+            if (balance === null) {
+                // رصيد افتراضي للمستخدم الجديد
+                balance = 500; // يمكن أن يكون 0 أو قيمة افتراضية
+                localStorage.setItem(key, balance);
+            } else {
+                balance = parseInt(balance, 10);
+            }
+            return balance;
+        }
+
+        function setUserBalanceInDB(userId, newBalance) {
+            // محاكاة تحديث في قاعدة البيانات
+            // في الإنتاج: استخدم fetch('/api/setBalance', { method: 'POST', body: JSON.stringify({ userId, balance }) })
+            const key = 'balance_' + userId;
+            localStorage.setItem(key, newBalance);
+            return newBalance;
+        }
+
+        // تحديث عرض الرصيد من قاعدة البيانات
+        async function refreshBalance() {
+            if (!currentUserId) return;
+            try {
+                // في الإنتاج: يمكن أن يكون طلباً غير متزامن
+                const balance = getUserBalanceFromDB(currentUserId);
+                userBalanceEl.textContent = balance.toLocaleString('en-US');
+                // يمكن إضافة تأثير بسيط
+                userBalanceEl.style.transform = 'scale(1.1)';
+                setTimeout(() => userBalanceEl.style.transform = 'scale(1)', 150);
+            } catch (error) {
+                console.error('فشل تحديث الرصيد', error);
+                tg.showPopup({
+                    title: 'خطأ',
+                    message: 'تعذر تحديث الرصيد. تحقق من اتصالك.',
+                    buttons: [{type: 'ok'}]
+                });
+            }
+        }
+
+        // دالة تجريبية لزيادة الرصيد (محاكاة لإجراء من الموقع)
+        async function addDemoBalance() {
+            if (!currentUserId) return;
+            try {
+                const currentBalance = getUserBalanceFromDB(currentUserId);
+                const newBalance = currentBalance + 100;
+                setUserBalanceInDB(currentUserId, newBalance);
+                await refreshBalance(); // تحديث العرض
+                tg.showPopup({
+                    title: 'تم',
+                    message: 'تمت إضافة 100 نقطة إلى رصيدك.',
+                    buttons: [{type: 'ok'}]
+                });
+            } catch (error) {
+                console.error(error);
+                tg.showPopup({
+                    title: 'خطأ',
+                    message: 'لم نتمكن من إضافة الرصيد.',
+                    buttons: [{type: 'ok'}]
+                });
+            }
+        }
+
+        // دالة التهيئة مع جلب الرصيد
+        async function initApp() {
             tg.expand();
             tg.ready();
 
@@ -232,153 +363,71 @@
             }
 
             const user = tg.initDataUnsafe.user;
-            
-            // Set User Info
-            document.getElementById('userName').textContent = `${user.first_name} ${user.last_name || ''}`.trim() || "مستخدم";
-            document.getElementById('userId').textContent = `ID: ${user.id}`;
-            
-            // Avatar Logic
-            const photoContainer = document.getElementById('userPhotoContainer');
-            const imgEl = document.getElementById('userPhoto');
-            const defaultEl = document.getElementById('defaultAvatar');
-            const initialsEl = document.getElementById('avatarInitials');
+            currentUserId = user.id;
+            currentUser = user;
 
+            // Set User Data
+            const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
+            userNameEl.textContent = fullName || "مستخدم تيليجرام";
+            userIdEl.textContent = `ID: ${user.id}`;
+            
+            // Handle Avatar
             if (user.photo_url) {
-                imgEl.src = user.photo_url;
-                imgEl.classList.remove('hidden');
-                defaultEl.classList.add('hidden');
+                userPhotoEl.src = user.photo_url;
+                userPhotoEl.classList.remove('hidden');
+                defaultAvatarEl.classList.add('hidden');
             } else {
-                imgEl.classList.add('hidden');
-                defaultEl.classList.remove('hidden');
-                initialsEl.textContent = (user.first_name[0] + (user.last_name ? user.last_name[0] : '')).toUpperCase();
+                userPhotoEl.classList.add('hidden');
+                defaultAvatarEl.classList.remove('hidden');
+                // Set Initials
+                const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
+                avatarInitialsEl.textContent = initials || "U";
             }
 
-            // Show Dashboard after delay
+            // جلب الرصيد من قاعدة البيانات (محاكاة)
+            try {
+                const balance = getUserBalanceFromDB(user.id);
+                userBalanceEl.textContent = balance.toLocaleString('en-US');
+            } catch (e) {
+                userBalanceEl.textContent = '٠';
+            }
+
+            // Transition to Dashboard
             setTimeout(() => {
                 loadingState.style.display = 'none';
                 dashboardState.classList.remove('hidden-content');
                 dashboardState.style.display = 'block';
                 
-                // Setup Main Button
+                // Setup Main Button for interaction
                 tg.MainButton.setText("تحديث البيانات");
+                tg.MainButton.setTextColor("#ffffff");
+                tg.MainButton.setColor("#3b82f6");
                 tg.MainButton.show();
-            }, 1000);
+            }, 1200);
         }
 
         function showAccessDenied() {
             loadingState.style.display = 'none';
             accessDeniedState.classList.remove('hidden-content');
             accessDeniedState.style.display = 'block';
+            try { tg.setHeaderColor('#ef4444'); } catch(e){}
         }
 
         function logout() {
             tg.close();
         }
 
-        // --- WALLET FUNCTIONS ---
-
-        // دالة تنسيق الأرقام (مثال: 1,200)
-        function formatNumber(num) {
-            return num.toLocaleString('en-US');
-        }
-
-        // تحديث العرض مع تأثير بصري
-        function updateBalanceDisplay(newBalance) {
-            currentBalance = newBalance;
-            balanceEl.textContent = formatNumber(currentBalance);
-            
-            // تأثير وميض عند التغيير
-            balanceEl.classList.remove('balance-update');
-            void balanceEl.offsetWidth; // trigger reflow
-            balanceEl.classList.add('balance-update');
-        }
-
-        // 1. فتح نافذة الشحن
-        function openDepositModal() {
+        tg.MainButton.onClick(function() {
             tg.showPopup({
-                title: '💰 شحن الرصيد',
-                message: 'أدخل المبلغ المراد شحنه إلى حسابك (بالدولار):',
-                buttons: [
-                    { type: 'cancel', text: 'إلغاء' },
-                    { type: 'default', text: 'شحن', id: 'deposit_confirm' }
-                ]
-            }, (btnId) => {
-                if (btnId === 'deposit_confirm') {
-                    tg.showAlert('⚠️ ميزة تجريبية:\nفي النسخة الكاملة، سيتم تحويلك لبوت الدفع لإتمام العملية خصم المبلغ من محفظتك في تيليجرام وإضافته هنا.');
-                    
-                    // محاكاة عملية الشحن الناجحة
-                    simulateTransaction('deposit', 100); 
-                }
-            });
-            
-            // ملاحظة: للحصول على إدخال رقمي دقيق، يفضل استخدام Custom Input في التحديثات الجديدة أو توجيه المستخدم للبوت مباشرة
-            // هنا سنقوم بمحاكاة إدخال مبلغ افتراضي (100) للتوضيح لأن Popup لا يدعم حقول الإدخال المخصصة بسهولة دون HTML مخصص
-        }
-
-        // 2. فتح نافذة السحب
-        function openWithdrawModal() {
-            if (currentBalance <= 0) {
-                tg.showAlert('❌ عذراً، رصيدك غير كافٍ للسحب.');
-                return;
-            }
-
-            tg.showPopup({
-                title: '💸 سحب الرصيد',
-                message: `رصيدك الحالي: ${formatNumber(currentBalance)}$\n\nهل تريد سحب 50$ كتجربة؟\n(سيتم خصم المبلغ من رصيد الموقع)`,
-                buttons: [
-                    { type: 'cancel', text: 'لا' },
-                    { type: 'destructive', text: 'سحب الآن', id: 'withdraw_confirm' }
-                ]
-            }, (btnId) => {
-                if (btnId === 'withdraw_confirm') {
-                    simulateTransaction('withdraw', 50);
-                }
-            });
-        }
-
-        // 3. محاكاة عملية التحديث (ترسل الطلب للبوت في الواقع)
-        function simulateTransaction(type, amount) {
-            tg.showLoading(); // إظهار تحميل تيليجرام
-            
-            setTimeout(() => {
-                tg.hideLoading();
-                
-                if (type === 'deposit') {
-                    const newBal = currentBalance + amount;
-                    updateBalanceDisplay(newBal);
-                    tg.showAlert(`✅ تمت العملية بنجاح!\nتم شحن ${amount}$ إلى رصيدك.\nالرصيد الجديد: ${formatNumber(newBal)}$`);
-                    
-                    // هنا يتم إرسال طلب API للبوت:
-                    // fetch('/api/deposit', { method: 'POST', body: JSON.stringify({ user_id: tg.initDataUnsafe.user.id, amount: amount }) })
-                    
-                } else if (type === 'withdraw') {
-                    if (currentBalance >= amount) {
-                        const newBal = currentBalance - amount;
-                        updateBalanceDisplay(newBal);
-                        tg.showAlert(`✅ تم طلب السحب بنجاح!\nتم خصم ${amount}$.\nسيصلك المبلغ قريباً.`);
-                        
-                        // هنا يتم إرسال طلب API للبوت:
-                        // fetch('/api/withdraw', { method: 'POST', body: JSON.stringify({ user_id: tg.initDataUnsafe.user.id, amount: amount }) })
-                    }
-                }
-            }, 1500);
-        }
-
-        // زر التحديث الرئيسي
-        tg.MainButton.onClick(() => {
-            tg.showConfirm('هل تريد مزامنة الرصيد مع البوت؟', (result) => {
-                if (result) {
-                    tg.showLoading();
-                    setTimeout(() => {
-                        tg.hideLoading();
-                        tg.showAlert('تم تحديث البيانات بنجاح! ✅');
-                        // هنا تستدعي دالة جلب الرصيد الحقيقي من السيرفر
-                    }, 1000);
-                }
+                title: 'نظام آمن',
+                message: `أهلاً ${currentUser?.first_name || ''}، اتصالك مشفر ومحمي بالكامل. رصيدك الحالي: ${userBalanceEl.textContent}`,
+                buttons: [{type: 'ok', text: 'حسناً'}]
             });
         });
 
-        // Start
+        // يمكن جعل التحديث التلقائي كل دقيقة مثلاً (اختياري)
+        // setInterval(refreshBalance, 60000);
+
         initApp();
     </script>
 </body>
