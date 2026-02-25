@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بوابة تيليجرام المتطورة - محفظة احترافية</title>
+    <title>بوابة تيليجرام المتطورة - محفظة احترافية مع إدارة مشرف</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -265,11 +265,13 @@
             margin-bottom: 20px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             padding-bottom: 12px;
+            flex-wrap: wrap;
         }
 
         .wallet-tab {
             flex: 1;
-            padding: 10px;
+            min-width: 70px;
+            padding: 8px 5px;
             text-align: center;
             border-radius: 12px;
             background: transparent;
@@ -278,7 +280,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .wallet-tab.active {
@@ -288,6 +290,7 @@
 
         .wallet-tab i {
             margin-left: 6px;
+            font-size: 14px;
         }
 
         .transaction-item {
@@ -374,6 +377,121 @@
         .balance-badge i {
             color: #fbbf24;
         }
+
+        /* طرق الدفع - صور وأيقونات */
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .payment-method:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .payment-method.selected {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+        }
+
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .payment-icon.usdt { background: #26a17b; color: white; }
+        .payment-icon.visa { background: #1a1f71; color: white; }
+        .payment-icon.bank { background: #4f46e5; color: white; }
+        .payment-icon.telegram { background: #0088cc; color: white; }
+
+        /* لوحة المشرف */
+        .admin-requests-panel {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .request-item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .request-id {
+            font-size: 10px;
+            color: #94a3b8;
+            font-family: monospace;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-accept {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-accept:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-reject {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-reject:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            padding: 2px 10px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -424,6 +542,11 @@
         <div class="wallet-modal" id="walletModalContent"></div>
     </div>
 
+    <!-- Admin Panel Modal (لإدارة الطلبات) -->
+    <div class="wallet-modal-overlay" id="adminPanelOverlay">
+        <div class="wallet-modal" id="adminPanelContent" style="max-width: 500px;"></div>
+    </div>
+
     <script>
         (function() {
             // -----------------------------------------------
@@ -431,6 +554,44 @@
             // -----------------------------------------------
             const ADMIN_ID = 7609492965; // غيّر هذا إلى معرف المشرف الخاص بك
             
+            // -----------------------------------------------
+            // طرق الدفع المتاحة (مع أيقونات وصور)
+            // -----------------------------------------------
+            const PAYMENT_METHODS = [
+                { 
+                    id: 'usdt', 
+                    name: 'USDT (TRC20)', 
+                    icon: 'fa-brands fa-tether', 
+                    iconClass: 'usdt',
+                    details: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ',
+                    withdrawDetails: 'أدخل عنوان USDT الخاص بك'
+                },
+                { 
+                    id: 'visa', 
+                    name: 'Visa / Mastercard', 
+                    icon: 'fa-regular fa-credit-card', 
+                    iconClass: 'visa',
+                    details: 'رقم البطاقة: **** **** **** 1234',
+                    withdrawDetails: 'أدخل بيانات بطاقتك'
+                },
+                { 
+                    id: 'bank', 
+                    name: 'تحويل بنكي', 
+                    icon: 'fa-solid fa-building-columns', 
+                    iconClass: 'bank',
+                    details: 'IBAN: SA0380000000608010167519',
+                    withdrawDetails: 'أدخل رقم IBAN الخاص بك'
+                },
+                { 
+                    id: 'telegram', 
+                    name: 'محفظة تيليجرام', 
+                    icon: 'fa-brands fa-telegram', 
+                    iconClass: 'telegram',
+                    details: '@wallet_bot',
+                    withdrawDetails: 'أدخل معرف تيليجرام للمحفظة'
+                }
+            ];
+
             // -----------------------------------------------
             // الحالة المركزية (State)
             // -----------------------------------------------
@@ -452,9 +613,12 @@
                     notifications: true
                 },
                 wallet: {
-                    transactions: [],  // سجل المعاملات
+                    transactions: [],  // سجل المعاملات المكتملة
                     address: 'T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ'  // عنوان محفظة ثابت للإيداع
-                }
+                },
+                // طلبات الشحن والسحب المعلقة (بإشراف المشرف)
+                depositRequests: [],   // طلبات شحن
+                withdrawalRequests: [] // طلبات سحب
             };
 
             // -----------------------------------------------
@@ -476,6 +640,8 @@
             const themeIcon = document.getElementById('themeIcon');
             const walletModalOverlay = document.getElementById('walletModalOverlay');
             const walletModalContent = document.getElementById('walletModalContent');
+            const adminPanelOverlay = document.getElementById('adminPanelOverlay');
+            const adminPanelContent = document.getElementById('adminPanelContent');
 
             // -----------------------------------------------
             // دوال مساعدة (مع معالجة أخطاء localStorage)
@@ -483,7 +649,7 @@
             function safeLocalStorageGet(key, defaultValue) {
                 try {
                     const value = localStorage.getItem(key);
-                    return value !== null ? value : defaultValue;
+                    return value !== null ? JSON.parse(value) : defaultValue;
                 } catch (e) {
                     return defaultValue;
                 }
@@ -491,7 +657,7 @@
 
             function safeLocalStorageSet(key, value) {
                 try {
-                    localStorage.setItem(key, value);
+                    localStorage.setItem(key, JSON.stringify(value));
                 } catch (e) {
                     // تجاهل الخطأ
                 }
@@ -524,24 +690,21 @@
                 safeLocalStorageSet('theme', theme);
             }
 
-            // دوال الإحصائيات الحقيقية (مع أمان localStorage)
+            // دوال الإحصائيات الحقيقية
             function getTodayDate() {
                 return new Date().toISOString().split('T')[0];
             }
 
             function updateStats() {
                 try {
-                    // قراءة المستخدمين المخزنين
-                    let usersSet = new Set(JSON.parse(safeLocalStorageGet('app_users', '[]')));
+                    let usersSet = new Set(safeLocalStorageGet('app_users', []));
                     state.stats.users = usersSet.size;
 
-                    // عدد البوتات (يمكن تعديلها يدوياً أو جلبها من API)
-                    let bots = JSON.parse(safeLocalStorageGet('app_bots', '[{"id":123456,"name":"البوت الرسمي"}]'));
+                    let bots = safeLocalStorageGet('app_bots', [{ id: 123456, name: 'البوت الرسمي' }]);
                     state.stats.bots = bots.length;
 
-                    // العمليات اليومية
                     const today = getTodayDate();
-                    let dailyOpsData = JSON.parse(safeLocalStorageGet('daily_ops', '{}'));
+                    let dailyOpsData = safeLocalStorageGet('daily_ops', {});
                     state.stats.dailyOps = dailyOpsData[today] || 0;
                 } catch (e) {
                     state.stats.users = 0;
@@ -553,28 +716,28 @@
             function incrementDailyOps() {
                 try {
                     const today = getTodayDate();
-                    let dailyOpsData = JSON.parse(safeLocalStorageGet('daily_ops', '{}'));
+                    let dailyOpsData = safeLocalStorageGet('daily_ops', {});
                     dailyOpsData[today] = (dailyOpsData[today] || 0) + 1;
-                    safeLocalStorageSet('daily_ops', JSON.stringify(dailyOpsData));
+                    safeLocalStorageSet('daily_ops', dailyOpsData);
                     updateStats();
                 } catch (e) {}
             }
 
             function registerUser(userId) {
                 try {
-                    let usersSet = new Set(JSON.parse(safeLocalStorageGet('app_users', '[]')));
+                    let usersSet = new Set(safeLocalStorageGet('app_users', []));
                     if (!usersSet.has(userId)) {
                         usersSet.add(userId);
-                        safeLocalStorageSet('app_users', JSON.stringify([...usersSet]));
+                        safeLocalStorageSet('app_users', [...usersSet]);
                         updateStats();
                     }
                 } catch (e) {}
             }
 
-            // دوال المحفظة
+            // دوال المحفظة والطلبات
             function loadWalletData() {
                 try {
-                    const saved = JSON.parse(safeLocalStorageGet('wallet_data', 'null'));
+                    const saved = safeLocalStorageGet('wallet_data', null);
                     if (saved) {
                         state.balance = saved.balance || 0;
                         state.wallet.transactions = saved.transactions || [];
@@ -597,7 +760,26 @@
                         transactions: state.wallet.transactions,
                         address: state.wallet.address
                     };
-                    safeLocalStorageSet('wallet_data', JSON.stringify(data));
+                    safeLocalStorageSet('wallet_data', data);
+                } catch (e) {}
+            }
+
+            function loadRequests() {
+                try {
+                    const deposits = safeLocalStorageGet('deposit_requests', []);
+                    const withdrawals = safeLocalStorageGet('withdrawal_requests', []);
+                    state.depositRequests = deposits;
+                    state.withdrawalRequests = withdrawals;
+                } catch (e) {
+                    state.depositRequests = [];
+                    state.withdrawalRequests = [];
+                }
+            }
+
+            function saveRequests() {
+                try {
+                    safeLocalStorageSet('deposit_requests', state.depositRequests);
+                    safeLocalStorageSet('withdrawal_requests', state.withdrawalRequests);
                 } catch (e) {}
             }
 
@@ -610,43 +792,113 @@
                     status: status,
                     date: new Date().toISOString()
                 };
-                state.wallet.transactions.unshift(tx); // الأحدث في الأعلى
-                // نحتفظ بآخر 50 معاملة فقط
+                state.wallet.transactions.unshift(tx);
                 if (state.wallet.transactions.length > 50) state.wallet.transactions.pop();
                 saveWalletData();
             }
 
-            // تنفيذ عملية السحب
-            function withdraw(amount, address) {
-                if (amount <= 0) return { success: false, message: 'المبلغ يجب أن يكون أكبر من صفر' };
-                if (amount > state.balance) return { success: false, message: 'الرصيد غير كافٍ' };
-                if (!address || address.length < 5) return { success: false, message: 'عنوان المحفظة غير صالح' };
-
-                state.balance -= amount;
-                addTransaction('withdraw', -amount, `السحب إلى ${address}`);
-                saveWalletData();
+            // إضافة طلب شحن (يتطلب موافقة المشرف)
+            function addDepositRequest(amount, methodId) {
+                const method = PAYMENT_METHODS.find(m => m.id === methodId);
+                const request = {
+                    id: 'dep_' + Date.now() + Math.random().toString(36).substr(2, 5),
+                    userId: state.user.id,
+                    userName: `${state.user.first_name} ${state.user.last_name || ''}`.trim(),
+                    amount: amount,
+                    method: method ? method.name : methodId,
+                    methodId: methodId,
+                    status: 'pending', // pending, approved, rejected
+                    date: new Date().toISOString()
+                };
+                state.depositRequests.push(request);
+                saveRequests();
                 incrementDailyOps();
-                return { success: true, message: 'تم طلب السحب بنجاح' };
+                return request.id;
             }
 
-            // تنفيذ عملية تحويل إلى مستخدم آخر (محاكاة)
-            function transfer(amount, targetUserId) {
-                if (amount <= 0) return { success: false, message: 'المبلغ يجب أن يكون أكبر من صفر' };
-                if (amount > state.balance) return { success: false, message: 'الرصيد غير كافٍ' };
-                if (!targetUserId || targetUserId.length < 3) return { success: false, message: 'معرف المستخدم غير صالح' };
-
-                state.balance -= amount;
-                addTransaction('transfer', -amount, `تحويل إلى المستخدم ${targetUserId}`);
-                saveWalletData();
+            // إضافة طلب سحب (يتطلب موافقة المشرف)
+            function addWithdrawalRequest(amount, methodId, details) {
+                if (amount > state.balance) {
+                    return { success: false, message: 'الرصيد غير كافٍ' };
+                }
+                const method = PAYMENT_METHODS.find(m => m.id === methodId);
+                const request = {
+                    id: 'with_' + Date.now() + Math.random().toString(36).substr(2, 5),
+                    userId: state.user.id,
+                    userName: `${state.user.first_name} ${state.user.last_name || ''}`.trim(),
+                    amount: amount,
+                    method: method ? method.name : methodId,
+                    methodId: methodId,
+                    details: details,
+                    status: 'pending',
+                    date: new Date().toISOString()
+                };
+                state.withdrawalRequests.push(request);
+                saveRequests();
                 incrementDailyOps();
-                return { success: true, message: 'تم التحويل بنجاح' };
+                return { success: true, id: request.id };
             }
 
-            // الإيداع (محاكاة - يظهر عنوان المحفظة)
-            function deposit(amount) {
-                addTransaction('deposit', amount, 'طلب إيداع', 'قيد الانتظار');
-                incrementDailyOps();
-                return { success: true, message: 'تم إرسال طلب الإيداع، سيتم تحديث الرصيد بعد التأكيد' };
+            // الموافقة على طلب (للمشرف)
+            function acceptRequest(request, type) {
+                if (type === 'deposit') {
+                    const req = state.depositRequests.find(r => r.id === request.id);
+                    if (req && req.status === 'pending') {
+                        req.status = 'approved';
+                        // زيادة الرصيد
+                        state.balance += req.amount;
+                        // تسجيل المعاملة
+                        addTransaction('deposit', req.amount, `شحن عبر ${req.method} (تمت الموافقة)`);
+                        saveWalletData();
+                        saveRequests();
+                        return true;
+                    }
+                } else if (type === 'withdrawal') {
+                    const req = state.withdrawalRequests.find(r => r.id === request.id);
+                    if (req && req.status === 'pending') {
+                        // التحقق من الرصيد (قد يتغير بمرور الوقت)
+                        if (state.balance >= req.amount) {
+                            req.status = 'approved';
+                            state.balance -= req.amount;
+                            addTransaction('withdraw', -req.amount, `سحب عبر ${req.method} إلى ${req.details || 'محفظة'}`);
+                            saveWalletData();
+                            saveRequests();
+                            return true;
+                        } else {
+                            return false; // رصيد غير كافٍ (يمكن رفض تلقائي)
+                        }
+                    }
+                }
+                return false;
+            }
+
+            // رفض الطلب
+            function rejectRequest(request, type) {
+                if (type === 'deposit') {
+                    const req = state.depositRequests.find(r => r.id === request.id);
+                    if (req) {
+                        req.status = 'rejected';
+                        saveRequests();
+                        return true;
+                    }
+                } else if (type === 'withdrawal') {
+                    const req = state.withdrawalRequests.find(r => r.id === request.id);
+                    if (req) {
+                        req.status = 'rejected';
+                        saveRequests();
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            // دوال لعرض الطلبات في لوحة المشرف
+            function getPendingDeposits() {
+                return state.depositRequests.filter(r => r.status === 'pending');
+            }
+
+            function getPendingWithdrawals() {
+                return state.withdrawalRequests.filter(r => r.status === 'pending');
             }
 
             // -----------------------------------------------
@@ -735,14 +987,14 @@
                                 </div>
                             </div>
 
-                            <!-- أيقونة المحفظة الكبيرة والمتطورة (بدون رصيد) -->
+                            <!-- أيقونة المحفظة الكبيرة والمتطورة -->
                             <div class="flex justify-center my-4">
                                 <div class="wallet-icon-large" id="walletIconLarge">
                                     <i class="fa-solid fa-wallet"></i>
                                 </div>
                             </div>
 
-                            <!-- بطاقة صغيرة لعرض الرصيد (اختيارية - يمكن إزالتها) -->
+                            <!-- بطاقة صغيرة لعرض الرصيد -->
                             <div class="flex justify-center">
                                 <div class="balance-badge">
                                     <i class="fa-solid fa-coins"></i>
@@ -811,14 +1063,14 @@
                                 </div>
                             </div>
 
-                            <!-- أيقونة المحفظة الكبيرة والمتطورة (بدون رصيد) -->
+                            <!-- أيقونة المحفظة الكبيرة -->
                             <div class="flex justify-center my-4">
                                 <div class="wallet-icon-large" id="walletIconLarge">
                                     <i class="fa-solid fa-wallet"></i>
                                 </div>
                             </div>
 
-                            <!-- بطاقة صغيرة لعرض الرصيد (اختيارية) -->
+                            <!-- بطاقة الرصيد -->
                             <div class="flex justify-center">
                                 <div class="balance-badge">
                                     <i class="fa-solid fa-coins"></i>
@@ -851,6 +1103,12 @@
                                 </div>
                             </div>
 
+                            <!-- زر لوحة الإدارة (للمشرف فقط) -->
+                            <button id="openAdminPanelBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2 mt-2">
+                                <i class="fa-solid fa-gears"></i>
+                                لوحة الإدارة (الطلبات)
+                            </button>
+
                             <!-- Logout Button -->
                             <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
                                 <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
@@ -861,7 +1119,7 @@
                 }
             };
 
-            // دالة عرض محتوى المحفظة
+            // دالة عرض محتوى المحفظة (مطورة مع طرق الدفع)
             function renderWalletModal() {
                 const balance = state.balance;
                 const transactions = state.wallet.transactions;
@@ -887,6 +1145,30 @@
                     }).join('');
                 }
 
+                // إنشاء خيارات طرق الدفع (للعرض في tabs)
+                const paymentMethodsHtml = PAYMENT_METHODS.map(m => `
+                    <div class="payment-method" data-method-id="${m.id}">
+                        <div class="payment-icon ${m.iconClass}">
+                            <i class="${m.icon}"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold">${m.name}</div>
+                            <div class="text-xs text-gray-400">${m.details.substring(0, 30)}...</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                const withdrawMethodsHtml = PAYMENT_METHODS.map(m => `
+                    <div class="payment-method" data-method-id="${m.id}">
+                        <div class="payment-icon ${m.iconClass}">
+                            <i class="${m.icon}"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold">${m.name}</div>
+                        </div>
+                    </div>
+                `).join('');
+
                 return `
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-bold">محفظتي</h2>
@@ -904,7 +1186,7 @@
 
                     <!-- علامات التبويب -->
                     <div class="wallet-tabs">
-                        <button class="wallet-tab active" data-tab="deposit"><i class="fa-solid fa-arrow-down"></i> إيداع</button>
+                        <button class="wallet-tab active" data-tab="deposit"><i class="fa-solid fa-arrow-down"></i> شحن</button>
                         <button class="wallet-tab" data-tab="withdraw"><i class="fa-solid fa-arrow-up"></i> سحب</button>
                         <button class="wallet-tab" data-tab="transfer"><i class="fa-solid fa-exchange-alt"></i> تحويل</button>
                         <button class="wallet-tab" data-tab="history"><i class="fa-solid fa-history"></i> السجل</button>
@@ -912,28 +1194,37 @@
 
                     <!-- محتوى التبويبات -->
                     <div id="walletTabContent">
-                        <!-- الإيداع -->
+                        <!-- تبويب الشحن (مع طرق الدفع) -->
                         <div class="tab-pane active" id="tab-deposit">
-                            <p class="text-sm text-gray-300 mb-2">أرسل المبلغ إلى عنوان المحفظة التالي:</p>
-                            <div class="bg-slate-800 p-3 rounded-lg text-center mb-3 font-mono text-sm break-all">${address}</div>
-                            <p class="text-xs text-gray-400 mb-2">سيتم إضافة الرصيد بعد تأكيد الشبكة (محاكاة)</p>
+                            <p class="text-sm text-gray-300 mb-3">اختر طريقة الدفع:</p>
+                            <div class="payment-methods-list mb-4">
+                                ${paymentMethodsHtml}
+                            </div>
                             <div class="flex gap-2">
                                 <input type="number" id="depositAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                                <button id="depositBtn" class="bg-blue-600 px-4 rounded-lg font-bold">طلب</button>
+                                <button id="depositBtn" class="bg-blue-600 px-4 rounded-lg font-bold">تقديم طلب</button>
                             </div>
+                            <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلبك من قبل الإدارة وتحديث الرصيد بعد الموافقة.</p>
                         </div>
 
-                        <!-- السحب -->
+                        <!-- تبويب السحب (مع طرق الدفع) -->
                         <div class="tab-pane hidden" id="tab-withdraw">
-                            <p class="text-sm text-gray-300 mb-2">أدخل عنوان المحفظة والمبلغ:</p>
-                            <input type="text" id="withdrawAddress" placeholder="عنوان المحفظة" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
+                            <p class="text-sm text-gray-300 mb-3">اختر طريقة السحب:</p>
+                            <div class="payment-methods-list mb-4" id="withdrawMethodsList">
+                                ${withdrawMethodsHtml}
+                            </div>
+                            <div id="withdrawDetailsContainer" class="mb-3">
+                                <!-- سيتم تعبئته ديناميكياً عند اختيار طريقة -->
+                                <input type="text" id="withdrawDetails" placeholder="أدخل التفاصيل (عنوان المحفظة، رقم البطاقة...)" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
+                            </div>
                             <div class="flex gap-2">
                                 <input type="number" id="withdrawAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                                <button id="withdrawBtn" class="bg-red-600 px-4 rounded-lg font-bold">سحب</button>
+                                <button id="withdrawBtn" class="bg-red-600 px-4 rounded-lg font-bold">طلب سحب</button>
                             </div>
+                            <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلب السحب من قبل الإدارة وتحويل المبلغ بعد الموافقة.</p>
                         </div>
 
-                        <!-- التحويل -->
+                        <!-- تبويب التحويل (مباشر) -->
                         <div class="tab-pane hidden" id="tab-transfer">
                             <p class="text-sm text-gray-300 mb-2">تحويل إلى مستخدم آخر:</p>
                             <input type="text" id="transferUserId" placeholder="معرف المستخدم (User ID)" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
@@ -943,10 +1234,88 @@
                             </div>
                         </div>
 
-                        <!-- السجل -->
+                        <!-- تبويب السجل -->
                         <div class="tab-pane hidden" id="tab-history">
                             <div class="max-h-64 overflow-y-auto">
                                 ${transactionsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // دالة عرض لوحة المشرف (إدارة الطلبات)
+            function renderAdminPanel() {
+                const pendingDeposits = getPendingDeposits();
+                const pendingWithdrawals = getPendingWithdrawals();
+
+                const depositsHtml = pendingDeposits.length === 0 
+                    ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات شحن معلقة</p>'
+                    : pendingDeposits.map(req => `
+                        <div class="request-item" data-id="${req.id}" data-type="deposit">
+                            <div class="request-header">
+                                <span class="font-bold">${req.userName}</span>
+                                <span class="badge-pending">قيد الانتظار</span>
+                            </div>
+                            <div class="text-sm">المبلغ: <span class="text-blue-400">${req.amount.toLocaleString('ar-EG')}</span></div>
+                            <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
+                            <div class="text-xs text-gray-400">التاريخ: ${new Date(req.date).toLocaleString('ar-EG')}</div>
+                            <div class="request-actions">
+                                <button class="btn-accept accept-request" data-id="${req.id}" data-type="deposit">قبول</button>
+                                <button class="btn-reject reject-request" data-id="${req.id}" data-type="deposit">رفض</button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                const withdrawalsHtml = pendingWithdrawals.length === 0 
+                    ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات سحب معلقة</p>'
+                    : pendingWithdrawals.map(req => `
+                        <div class="request-item" data-id="${req.id}" data-type="withdrawal">
+                            <div class="request-header">
+                                <span class="font-bold">${req.userName}</span>
+                                <span class="badge-pending">قيد الانتظار</span>
+                            </div>
+                            <div class="text-sm">المبلغ: <span class="text-red-400">${req.amount.toLocaleString('ar-EG')}</span></div>
+                            <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
+                            <div class="text-xs text-gray-400">التفاصيل: ${req.details || 'غير محدد'}</div>
+                            <div class="text-xs text-gray-400">التاريخ: ${new Date(req.date).toLocaleString('ar-EG')}</div>
+                            <div class="request-actions">
+                                <button class="btn-accept accept-request" data-id="${req.id}" data-type="withdrawal">قبول</button>
+                                <button class="btn-reject reject-request" data-id="${req.id}" data-type="withdrawal">رفض</button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                return `
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold">لوحة الإدارة</h2>
+                        <button id="closeAdminPanel" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- طلبات الشحن -->
+                        <div>
+                            <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-arrow-down text-green-400"></i>
+                                طلبات الشحن المعلقة
+                                <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${pendingDeposits.length}</span>
+                            </h3>
+                            <div class="admin-requests-panel">
+                                ${depositsHtml}
+                            </div>
+                        </div>
+
+                        <!-- طلبات السحب -->
+                        <div>
+                            <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-arrow-up text-red-400"></i>
+                                طلبات السحب المعلقة
+                                <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${pendingWithdrawals.length}</span>
+                            </h3>
+                            <div class="admin-requests-panel">
+                                ${withdrawalsHtml}
                             </div>
                         </div>
                     </div>
@@ -992,14 +1361,24 @@
                         openWalletModal();
                     });
                 }
+
+                // زر فتح لوحة المشرف (إذا كان موجوداً)
+                const openAdminPanelBtn = document.getElementById('openAdminPanelBtn');
+                if (openAdminPanelBtn) {
+                    openAdminPanelBtn.addEventListener('click', () => {
+                        openAdminPanel();
+                    });
+                }
             }
 
             // دوال فتح وإغلاق المحفظة
             function openWalletModal() {
                 walletModalContent.innerHTML = renderWalletModal();
                 walletModalOverlay.classList.add('open');
+                bindWalletModalEvents();
+            }
 
-                // ربط أحداث المحفظة
+            function bindWalletModalEvents() {
                 document.getElementById('closeWalletModal').addEventListener('click', closeWalletModal);
                 walletModalOverlay.addEventListener('click', (e) => {
                     if (e.target === walletModalOverlay) closeWalletModal();
@@ -1017,113 +1396,82 @@
                     });
                 });
 
-                // أزرار العمليات
-                document.getElementById('depositBtn')?.addEventListener('click', () => {
-                    const amount = parseFloat(document.getElementById('depositAmount').value);
-                    if (isNaN(amount) || amount <= 0) {
-                        showToast('أدخل مبلغ صحيح', 'error');
-                        return;
-                    }
-                    const result = deposit(amount);
-                    showToast(result.message);
-                    if (result.success) {
-                        document.getElementById('depositAmount').value = '';
-                        // تحديث المحتوى (السجل)
-                        walletModalContent.innerHTML = renderWalletModal();
-                        bindWalletModalEvents(); // إعادة ربط الأحداث
-                    }
-                });
-
-                document.getElementById('withdrawBtn')?.addEventListener('click', () => {
-                    const amount = parseFloat(document.getElementById('withdrawAmount').value);
-                    const address = document.getElementById('withdrawAddress').value.trim();
-                    if (isNaN(amount) || amount <= 0) {
-                        showToast('أدخل مبلغ صحيح', 'error');
-                        return;
-                    }
-                    const result = withdraw(amount, address);
-                    showToast(result.message);
-                    if (result.success) {
-                        document.getElementById('withdrawAmount').value = '';
-                        document.getElementById('withdrawAddress').value = '';
-                        // تحديث الرصيد في الواجهة الرئيسية
-                        updateBalanceDisplay();
-                        // إعادة تحميل المحتوى
-                        walletModalContent.innerHTML = renderWalletModal();
-                        bindWalletModalEvents();
-                    }
-                });
-
-                document.getElementById('transferBtn')?.addEventListener('click', () => {
-                    const amount = parseFloat(document.getElementById('transferAmount').value);
-                    const targetId = document.getElementById('transferUserId').value.trim();
-                    if (isNaN(amount) || amount <= 0) {
-                        showToast('أدخل مبلغ صحيح', 'error');
-                        return;
-                    }
-                    const result = transfer(amount, targetId);
-                    showToast(result.message);
-                    if (result.success) {
-                        document.getElementById('transferAmount').value = '';
-                        document.getElementById('transferUserId').value = '';
-                        updateBalanceDisplay();
-                        walletModalContent.innerHTML = renderWalletModal();
-                        bindWalletModalEvents();
-                    }
-                });
-            }
-
-            function bindWalletModalEvents() {
-                // ربط أحداث المحفظة بعد إعادة التصيير
-                document.getElementById('closeWalletModal').addEventListener('click', closeWalletModal);
-                walletModalOverlay.addEventListener('click', (e) => {
-                    if (e.target === walletModalOverlay) closeWalletModal();
-                });
-
-                const tabs = document.querySelectorAll('.wallet-tab');
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        tabs.forEach(t => t.classList.remove('active'));
-                        tab.classList.add('active');
-                        const tabId = tab.dataset.tab;
-                        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
-                        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+                // اختيار طريقة الدفع في الشحن
+                const paymentMethods = document.querySelectorAll('.payment-methods-list .payment-method');
+                let selectedMethod = null;
+                paymentMethods.forEach(method => {
+                    method.addEventListener('click', () => {
+                        paymentMethods.forEach(m => m.classList.remove('selected'));
+                        method.classList.add('selected');
+                        selectedMethod = method.dataset.methodId;
                     });
                 });
 
+                // زر تقديم طلب شحن
                 document.getElementById('depositBtn')?.addEventListener('click', () => {
                     const amount = parseFloat(document.getElementById('depositAmount').value);
                     if (isNaN(amount) || amount <= 0) {
                         showToast('أدخل مبلغ صحيح', 'error');
                         return;
                     }
-                    const result = deposit(amount);
-                    showToast(result.message);
-                    if (result.success) {
-                        document.getElementById('depositAmount').value = '';
-                        walletModalContent.innerHTML = renderWalletModal();
-                        bindWalletModalEvents();
+                    if (!selectedMethod) {
+                        showToast('اختر طريقة دفع أولاً', 'error');
+                        return;
                     }
+                    const requestId = addDepositRequest(amount, selectedMethod);
+                    showToast(`تم تقديم طلب الشحن بنجاح (رقم: ${requestId})، بانتظار المراجعة`, 'success');
+                    document.getElementById('depositAmount').value = '';
+                    paymentMethods.forEach(m => m.classList.remove('selected'));
+                    selectedMethod = null;
                 });
 
+                // اختيار طريقة السحب
+                const withdrawMethods = document.querySelectorAll('#withdrawMethodsList .payment-method');
+                let selectedWithdrawMethod = null;
+                withdrawMethods.forEach(method => {
+                    method.addEventListener('click', () => {
+                        withdrawMethods.forEach(m => m.classList.remove('selected'));
+                        method.classList.add('selected');
+                        selectedWithdrawMethod = method.dataset.methodId;
+                        // تحديث placeholder حسب الطريقة المختارة
+                        const methodObj = PAYMENT_METHODS.find(m => m.id === selectedWithdrawMethod);
+                        const detailsInput = document.getElementById('withdrawDetails');
+                        if (methodObj) {
+                            detailsInput.placeholder = methodObj.withdrawDetails;
+                        }
+                    });
+                });
+
+                // زر طلب السحب
                 document.getElementById('withdrawBtn')?.addEventListener('click', () => {
                     const amount = parseFloat(document.getElementById('withdrawAmount').value);
-                    const address = document.getElementById('withdrawAddress').value.trim();
+                    const details = document.getElementById('withdrawDetails').value.trim();
                     if (isNaN(amount) || amount <= 0) {
                         showToast('أدخل مبلغ صحيح', 'error');
                         return;
                     }
-                    const result = withdraw(amount, address);
-                    showToast(result.message);
+                    if (!selectedWithdrawMethod) {
+                        showToast('اختر طريقة سحب أولاً', 'error');
+                        return;
+                    }
+                    if (!details) {
+                        showToast('أدخل التفاصيل المطلوبة', 'error');
+                        return;
+                    }
+                    const result = addWithdrawalRequest(amount, selectedWithdrawMethod, details);
                     if (result.success) {
+                        showToast(`تم تقديم طلب السحب بنجاح (رقم: ${result.id})، بانتظار المراجعة`, 'success');
                         document.getElementById('withdrawAmount').value = '';
-                        document.getElementById('withdrawAddress').value = '';
+                        document.getElementById('withdrawDetails').value = '';
+                        withdrawMethods.forEach(m => m.classList.remove('selected'));
+                        selectedWithdrawMethod = null;
                         updateBalanceDisplay();
-                        walletModalContent.innerHTML = renderWalletModal();
-                        bindWalletModalEvents();
+                    } else {
+                        showToast(result.message, 'error');
                     }
                 });
 
+                // زر التحويل (مباشر)
                 document.getElementById('transferBtn')?.addEventListener('click', () => {
                     const amount = parseFloat(document.getElementById('transferAmount').value);
                     const targetId = document.getElementById('transferUserId').value.trim();
@@ -1131,20 +1479,98 @@
                         showToast('أدخل مبلغ صحيح', 'error');
                         return;
                     }
-                    const result = transfer(amount, targetId);
-                    showToast(result.message);
-                    if (result.success) {
-                        document.getElementById('transferAmount').value = '';
-                        document.getElementById('transferUserId').value = '';
-                        updateBalanceDisplay();
-                        walletModalContent.innerHTML = renderWalletModal();
-                        bindWalletModalEvents();
+                    if (!targetId) {
+                        showToast('أدخل معرف المستخدم', 'error');
+                        return;
                     }
+                    if (amount > state.balance) {
+                        showToast('الرصيد غير كافٍ', 'error');
+                        return;
+                    }
+                    // محاكاة تحويل (يمكن جعلها حقيقية لاحقاً)
+                    state.balance -= amount;
+                    addTransaction('transfer', -amount, `تحويل إلى المستخدم ${targetId}`);
+                    saveWalletData();
+                    showToast('تم التحويل بنجاح', 'success');
+                    document.getElementById('transferAmount').value = '';
+                    document.getElementById('transferUserId').value = '';
+                    updateBalanceDisplay();
+                    // تحديث المحتوى
+                    walletModalContent.innerHTML = renderWalletModal();
+                    bindWalletModalEvents();
                 });
             }
 
             function closeWalletModal() {
                 walletModalOverlay.classList.remove('open');
+            }
+
+            // دوال لوحة المشرف
+            function openAdminPanel() {
+                adminPanelContent.innerHTML = renderAdminPanel();
+                adminPanelOverlay.classList.add('open');
+                bindAdminPanelEvents();
+            }
+
+            function bindAdminPanelEvents() {
+                document.getElementById('closeAdminPanel').addEventListener('click', closeAdminPanel);
+                adminPanelOverlay.addEventListener('click', (e) => {
+                    if (e.target === adminPanelOverlay) closeAdminPanel();
+                });
+
+                // أزرار قبول الطلبات
+                document.querySelectorAll('.accept-request').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = btn.dataset.id;
+                        const type = btn.dataset.type;
+                        const request = type === 'deposit' 
+                            ? state.depositRequests.find(r => r.id === id)
+                            : state.withdrawalRequests.find(r => r.id === id);
+                        if (request) {
+                            const success = acceptRequest(request, type);
+                            if (success) {
+                                showToast(`تم قبول الطلب ${id}`, 'success');
+                                // تحديث لوحة المشرف
+                                adminPanelContent.innerHTML = renderAdminPanel();
+                                bindAdminPanelEvents();
+                                // تحديث الرصيد في الواجهة الرئيسية إذا كان مفتوحاً
+                                updateBalanceDisplay();
+                                // إذا كانت المحفظة مفتوحة، تحديثها
+                                if (walletModalOverlay.classList.contains('open')) {
+                                    walletModalContent.innerHTML = renderWalletModal();
+                                    bindWalletModalEvents();
+                                }
+                            } else {
+                                showToast('حدث خطأ أثناء قبول الطلب', 'error');
+                            }
+                        }
+                    });
+                });
+
+                // أزرار رفض الطلبات
+                document.querySelectorAll('.reject-request').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = btn.dataset.id;
+                        const type = btn.dataset.type;
+                        const request = type === 'deposit' 
+                            ? state.depositRequests.find(r => r.id === id)
+                            : state.withdrawalRequests.find(r => r.id === id);
+                        if (request) {
+                            const success = rejectRequest(request, type);
+                            if (success) {
+                                showToast(`تم رفض الطلب ${id}`, 'info');
+                                adminPanelContent.innerHTML = renderAdminPanel();
+                                bindAdminPanelEvents();
+                            } else {
+                                showToast('حدث خطأ أثناء رفض الطلب', 'error');
+                            }
+                        }
+                    });
+                });
+            }
+
+            function closeAdminPanel() {
+                adminPanelOverlay.classList.remove('open');
             }
 
             function updateBalanceDisplay() {
@@ -1187,8 +1613,9 @@
                 // تسجيل المستخدم الفريد
                 registerUser(user.id);
 
-                // تحميل بيانات المحفظة
+                // تحميل بيانات المحفظة والطلبات
                 loadWalletData();
+                loadRequests();
 
                 // محاكاة جلب البيانات من الخادم
                 try {
@@ -1210,7 +1637,7 @@
                         tg.showPopup({
                             title: state.isAdmin ? 'مرحباً أيها المدير' : 'نظام آمن',
                             message: state.isAdmin ? 
-                                `لديك صلاحيات كاملة في النظام.` : 
+                                `لديك صلاحيات كاملة في النظام. الطلبات المعلقة: ${getPendingDeposits().length + getPendingWithdrawals().length}` : 
                                 `أهلاً ${user.first_name}، اتصالك مشفر ومحمي بالكامل.`,
                             buttons: [{type: 'ok', text: 'حسناً'}]
                         });
