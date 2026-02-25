@@ -133,26 +133,70 @@
             font-weight: bold;
         }
 
-        /* Toast Notifications */
-        .toast {
+        /* Toast Notifications - متطور */
+        .toast-container {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-size: 14px;
-            z-index: 1000;
-            animation: toastIn 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 90%;
+            max-width: 350px;
+            pointer-events: none;
         }
 
-        @keyframes toastIn {
-            from { opacity: 0; transform: translate(-50%, 20px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
+        .toast {
+            background: rgba(20, 30, 40, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            padding: 12px 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: toastSlideUp 0.3s ease, toastFadeOut 0.3s ease 2.7s forwards;
+            pointer-events: auto;
+            direction: rtl;
+        }
+
+        .toast.success { border-right: 4px solid #10b981; }
+        .toast.error { border-right: 4px solid #ef4444; }
+        .toast.warning { border-right: 4px solid #f59e0b; }
+        .toast.info { border-right: 4px solid #3b82f6; }
+
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .toast.success .toast-icon { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .toast.error .toast-icon { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .toast.warning .toast-icon { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .toast.info .toast-icon { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+
+        .toast-message {
+            flex: 1;
+        }
+
+        @keyframes toastSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes toastFadeOut {
+            to { opacity: 0; transform: translateY(-10px); }
         }
 
         /* Theme toggle */
@@ -422,6 +466,21 @@
             object-fit: cover;
         }
 
+        /* تفاصيل طريقة الدفع عند الاختيار */
+        .payment-details {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 10px 0 15px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .payment-details strong {
+            color: #3b82f6;
+        }
+
         /* لوحة المشرف */
         .admin-requests-panel {
             background: rgba(0,0,0,0.2);
@@ -566,6 +625,9 @@
         </div>
     </div>
 
+    <!-- Toast Container للتنبيهات المتطورة -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <!-- Wallet Modal (سيتم تعبئته ديناميكياً) -->
     <div class="wallet-modal-overlay" id="walletModalOverlay">
         <div class="wallet-modal" id="walletModalContent"></div>
@@ -598,7 +660,7 @@
                     icon: 'fa-brands fa-tether', 
                     iconClass: 'usdt',
                     description: 'عملة رقمية مستقرة',
-                    depositDetails: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ',
+                    depositDetails: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ\nشبكة: TRC20',
                     withdrawDetails: 'أدخل عنوان USDT الخاص بك',
                     extraField1: 'TRC20',
                     extraField2: 'شبكة Tron',
@@ -610,7 +672,7 @@
                     icon: 'fa-regular fa-credit-card', 
                     iconClass: 'visa',
                     description: 'بطاقات ائتمانية',
-                    depositDetails: 'رقم البطاقة: **** **** **** 1234',
+                    depositDetails: 'رقم البطاقة: **** **** **** 1234\nتاريخ الانتهاء: 12/25\nCVV: ***',
                     withdrawDetails: 'أدخل بيانات بطاقتك',
                     extraField1: 'Visa/Mastercard',
                     extraField2: '',
@@ -622,7 +684,7 @@
                     icon: 'fa-solid fa-building-columns', 
                     iconClass: 'bank',
                     description: 'حوالة بنكية محلية',
-                    depositDetails: 'IBAN: SA0380000000608010167519',
+                    depositDetails: 'IBAN: SA0380000000608010167519\nاسم المستفيد: شركة المدفوعات\nالبنك: الأهلي السعودي',
                     withdrawDetails: 'أدخل رقم IBAN الخاص بك',
                     extraField1: 'البنك الأهلي',
                     extraField2: 'SA0380000000608010167519',
@@ -634,7 +696,7 @@
                     icon: 'fa-brands fa-telegram', 
                     iconClass: 'telegram',
                     description: '@wallet_bot',
-                    depositDetails: '@wallet_bot',
+                    depositDetails: '@wallet_bot\nأرسل المبلغ إلى بوت المحفظة',
                     withdrawDetails: 'أدخل معرف تيليجرام للمحفظة',
                     extraField1: 'Telegram Stars',
                     extraField2: '',
@@ -695,6 +757,50 @@
             const adminPanelContent = document.getElementById('adminPanelContent');
             const paymentMethodModalOverlay = document.getElementById('paymentMethodModalOverlay');
             const paymentMethodModalContent = document.getElementById('paymentMethodModalContent');
+            const toastContainer = document.getElementById('toastContainer');
+
+            // -----------------------------------------------
+            // نظام التنبيهات المتطور
+            // -----------------------------------------------
+            function showToast(message, type = 'info', duration = 3000) {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                
+                // اختيار الأيقونة حسب النوع
+                let iconHtml = '';
+                switch(type) {
+                    case 'success':
+                        iconHtml = '<i class="fa-solid fa-check"></i>';
+                        break;
+                    case 'error':
+                        iconHtml = '<i class="fa-solid fa-exclamation"></i>';
+                        break;
+                    case 'warning':
+                        iconHtml = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                        break;
+                    default:
+                        iconHtml = '<i class="fa-solid fa-info"></i>';
+                }
+                
+                toast.innerHTML = `
+                    <div class="toast-icon">${iconHtml}</div>
+                    <div class="toast-message">${message}</div>
+                `;
+                
+                toastContainer.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, duration);
+            }
+
+            // دوال مساعدة للتنبيهات السريعة
+            const toast = {
+                success: (msg) => showToast(msg, 'success'),
+                error: (msg) => showToast(msg, 'error'),
+                warning: (msg) => showToast(msg, 'warning'),
+                info: (msg) => showToast(msg, 'info')
+            };
 
             // -----------------------------------------------
             // دوال مساعدة (مع معالجة أخطاء localStorage)
@@ -714,16 +820,6 @@
                 } catch (e) {
                     // تجاهل الخطأ
                 }
-            }
-
-            function showToast(message, type = 'info') {
-                const toast = document.createElement('div');
-                toast.className = 'toast';
-                toast.textContent = message;
-                document.body.appendChild(toast);
-                setTimeout(() => {
-                    toast.remove();
-                }, 3000);
             }
 
             function updateTheme(theme) {
@@ -824,7 +920,10 @@
                     if (saved && Array.isArray(saved) && saved.length > 0) {
                         state.paymentMethods = saved;
                     } else {
-                        state.paymentMethods = DEFAULT_PAYMENT_METHODS.map(m => ({ ...m, id: m.id + '_' + Date.now() + Math.random().toString(36).substr(2,4) })); // تجنب تكرار id
+                        state.paymentMethods = DEFAULT_PAYMENT_METHODS.map(m => ({ 
+                            ...m, 
+                            id: m.id + '_' + Date.now() + Math.random().toString(36).substr(2,4) 
+                        }));
                     }
                 } catch (e) {
                     state.paymentMethods = DEFAULT_PAYMENT_METHODS;
@@ -899,8 +998,8 @@
                 saveWalletData();
             }
 
-            // إضافة طلب شحن (يتطلب موافقة المشرف)
-            function addDepositRequest(amount, methodId) {
+            // إضافة طلب شحن (يتطلب موافقة المشرف) - مع إضافة رقم العملية
+            function addDepositRequest(amount, methodId, transactionId) {
                 const method = state.paymentMethods.find(m => m.id === methodId);
                 const request = {
                     id: 'dep_' + Date.now() + Math.random().toString(36).substr(2, 5),
@@ -909,6 +1008,7 @@
                     amount: amount,
                     method: method ? method.name : methodId,
                     methodId: methodId,
+                    transactionId: transactionId, // رقم العملية
                     status: 'pending', // pending, approved, rejected
                     date: new Date().toISOString()
                 };
@@ -950,7 +1050,7 @@
                         // زيادة الرصيد
                         state.balance += req.amount;
                         // تسجيل المعاملة
-                        addTransaction('deposit', req.amount, `شحن عبر ${req.method} (تمت الموافقة)`);
+                        addTransaction('deposit', req.amount, `شحن عبر ${req.method} (تمت الموافقة) - رقم العملية: ${req.transactionId || 'غير محدد'}`);
                         saveWalletData();
                         saveRequests();
                         return true;
@@ -1221,7 +1321,7 @@
                 }
             };
 
-            // دالة عرض محتوى المحفظة (مطورة مع طرق الدفع)
+            // دالة عرض محتوى المحفظة (مطورة مع طرق الدفع وإظهار التفاصيل عند الاختيار)
             function renderWalletModal() {
                 const balance = state.balance;
                 const transactions = state.wallet.transactions;
@@ -1255,7 +1355,7 @@
                         </div>
                         <div class="flex-1">
                             <div class="font-bold">${m.name}</div>
-                            <div class="text-xs text-gray-400">${(m.depositDetails || '').substring(0, 30)}...</div>
+                            <div class="text-xs text-gray-400">${(m.description || '').substring(0, 30)}...</div>
                         </div>
                     </div>
                 `).join('');
@@ -1296,17 +1396,30 @@
 
                     <!-- محتوى التبويبات -->
                     <div id="walletTabContent">
-                        <!-- تبويب الشحن (مع طرق الدفع) -->
+                        <!-- تبويب الشحن (مع طرق الدفع وإظهار التفاصيل عند الاختيار) -->
                         <div class="tab-pane active" id="tab-deposit">
                             <p class="text-sm text-gray-300 mb-3">اختر طريقة الدفع:</p>
                             <div class="payment-methods-list mb-4">
                                 ${paymentMethodsHtml}
                             </div>
+                            
+                            <!-- منطقة عرض التفاصيل عند اختيار طريقة -->
+                            <div id="depositDetailsDisplay" class="payment-details hidden">
+                                <strong>تفاصيل الإيداع:</strong>
+                                <div id="depositDetailsText"></div>
+                            </div>
+
+                            <!-- حقل إدخال رقم العملية (TXID) -->
+                            <div class="mb-3">
+                                <label class="text-sm text-gray-400">رقم العملية (TXID / رمز التتبع):</label>
+                                <input type="text" id="depositTransactionId" placeholder="أدخل رقم العملية" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+
                             <div class="flex gap-2">
                                 <input type="number" id="depositAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
                                 <button id="depositBtn" class="bg-blue-600 px-4 rounded-lg font-bold">تقديم طلب</button>
                             </div>
-                            <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلبك من قبل الإدارة وتحديث الرصيد بعد الموافقة.</p>
+                            <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلبك من قبل الإدارة وتحديث الرصيد بعد الموافقة. تأكد من إدخال رقم العملية بشكل صحيح.</p>
                         </div>
 
                         <!-- تبويب السحب (مع طرق الدفع) -->
@@ -1346,7 +1459,7 @@
                 `;
             }
 
-            // دالة عرض لوحة المشرف (إدارة الطلبات + طرق الدفع)
+            // دالة عرض لوحة المشرف (إدارة الطلبات + طرق الدفع) مع عرض رقم العملية في طلبات الشحن
             function renderAdminPanel() {
                 const pendingDeposits = getPendingDeposits();
                 const pendingWithdrawals = getPendingWithdrawals();
@@ -1361,6 +1474,7 @@
                             </div>
                             <div class="text-sm">المبلغ: <span class="text-blue-400">${req.amount.toLocaleString('ar-EG')}</span></div>
                             <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
+                            <div class="text-xs text-gray-400">رقم العملية: <span class="text-yellow-400">${req.transactionId || 'غير محدد'}</span></div>
                             <div class="text-xs text-gray-400">التاريخ: ${new Date(req.date).toLocaleString('ar-EG')}</div>
                             <div class="request-actions">
                                 <button class="btn-accept accept-request" data-id="${req.id}" data-type="deposit">قبول</button>
@@ -1545,6 +1659,7 @@
                 if (logoutBtn) {
                     logoutBtn.addEventListener('click', () => {
                         if (tg) tg.close();
+                        toast.info('تم تسجيل الخروج بنجاح');
                     });
                 }
 
@@ -1590,33 +1705,55 @@
                     });
                 });
 
-                // اختيار طريقة الدفع في الشحن
+                // اختيار طريقة الدفع في الشحن مع عرض التفاصيل
                 const paymentMethods = document.querySelectorAll('.payment-methods-list .payment-method');
                 let selectedMethod = null;
+                const detailsDisplay = document.getElementById('depositDetailsDisplay');
+                const detailsText = document.getElementById('depositDetailsText');
+                
                 paymentMethods.forEach(method => {
                     method.addEventListener('click', () => {
                         paymentMethods.forEach(m => m.classList.remove('selected'));
                         method.classList.add('selected');
                         selectedMethod = method.dataset.methodId;
+                        
+                        // عرض تفاصيل الطريقة المختارة
+                        const methodObj = state.paymentMethods.find(m => m.id === selectedMethod);
+                        if (methodObj && methodObj.depositDetails) {
+                            detailsText.innerHTML = methodObj.depositDetails.replace(/\n/g, '<br>');
+                            detailsDisplay.classList.remove('hidden');
+                        } else {
+                            detailsDisplay.classList.add('hidden');
+                        }
                     });
                 });
 
                 // زر تقديم طلب شحن
                 document.getElementById('depositBtn')?.addEventListener('click', () => {
                     const amount = parseFloat(document.getElementById('depositAmount').value);
+                    const transactionId = document.getElementById('depositTransactionId').value.trim();
+                    
                     if (isNaN(amount) || amount <= 0) {
-                        showToast('أدخل مبلغ صحيح', 'error');
+                        toast.error('أدخل مبلغ صحيح');
                         return;
                     }
                     if (!selectedMethod) {
-                        showToast('اختر طريقة دفع أولاً', 'error');
+                        toast.error('اختر طريقة دفع أولاً');
                         return;
                     }
-                    const requestId = addDepositRequest(amount, selectedMethod);
-                    showToast(`تم تقديم طلب الشحن بنجاح (رقم: ${requestId})، بانتظار المراجعة`, 'success');
+                    if (!transactionId) {
+                        toast.error('يرجى إدخال رقم العملية (TXID)');
+                        return;
+                    }
+                    
+                    const requestId = addDepositRequest(amount, selectedMethod, transactionId);
+                    toast.success(`تم تقديم طلب الشحن بنجاح (رقم: ${requestId})، بانتظار المراجعة`);
+                    
                     document.getElementById('depositAmount').value = '';
+                    document.getElementById('depositTransactionId').value = '';
                     paymentMethods.forEach(m => m.classList.remove('selected'));
                     selectedMethod = null;
+                    detailsDisplay.classList.add('hidden');
                 });
 
                 // اختيار طريقة السحب
@@ -1641,27 +1778,27 @@
                     const amount = parseFloat(document.getElementById('withdrawAmount').value);
                     const details = document.getElementById('withdrawDetails').value.trim();
                     if (isNaN(amount) || amount <= 0) {
-                        showToast('أدخل مبلغ صحيح', 'error');
+                        toast.error('أدخل مبلغ صحيح');
                         return;
                     }
                     if (!selectedWithdrawMethod) {
-                        showToast('اختر طريقة سحب أولاً', 'error');
+                        toast.error('اختر طريقة سحب أولاً');
                         return;
                     }
                     if (!details) {
-                        showToast('أدخل التفاصيل المطلوبة', 'error');
+                        toast.error('أدخل التفاصيل المطلوبة');
                         return;
                     }
                     const result = addWithdrawalRequest(amount, selectedWithdrawMethod, details);
                     if (result.success) {
-                        showToast(`تم تقديم طلب السحب بنجاح (رقم: ${result.id})، بانتظار المراجعة`, 'success');
+                        toast.success(`تم تقديم طلب السحب بنجاح (رقم: ${result.id})، بانتظار المراجعة`);
                         document.getElementById('withdrawAmount').value = '';
                         document.getElementById('withdrawDetails').value = '';
                         withdrawMethods.forEach(m => m.classList.remove('selected'));
                         selectedWithdrawMethod = null;
                         updateBalanceDisplay();
                     } else {
-                        showToast(result.message, 'error');
+                        toast.error(result.message);
                     }
                 });
 
@@ -1670,22 +1807,22 @@
                     const amount = parseFloat(document.getElementById('transferAmount').value);
                     const targetId = document.getElementById('transferUserId').value.trim();
                     if (isNaN(amount) || amount <= 0) {
-                        showToast('أدخل مبلغ صحيح', 'error');
+                        toast.error('أدخل مبلغ صحيح');
                         return;
                     }
                     if (!targetId) {
-                        showToast('أدخل معرف المستخدم', 'error');
+                        toast.error('أدخل معرف المستخدم');
                         return;
                     }
                     if (amount > state.balance) {
-                        showToast('الرصيد غير كافٍ', 'error');
+                        toast.error('الرصيد غير كافٍ');
                         return;
                     }
                     // محاكاة تحويل (يمكن جعلها حقيقية لاحقاً)
                     state.balance -= amount;
                     addTransaction('transfer', -amount, `تحويل إلى المستخدم ${targetId}`);
                     saveWalletData();
-                    showToast('تم التحويل بنجاح', 'success');
+                    toast.success('تم التحويل بنجاح');
                     document.getElementById('transferAmount').value = '';
                     document.getElementById('transferUserId').value = '';
                     updateBalanceDisplay();
@@ -1740,7 +1877,7 @@
                         if (request) {
                             const success = acceptRequest(request, type);
                             if (success) {
-                                showToast(`تم قبول الطلب ${id}`, 'success');
+                                toast.success(`تم قبول الطلب ${id}`);
                                 // تحديث لوحة المشرف
                                 adminPanelContent.innerHTML = renderAdminPanel();
                                 bindAdminPanelEvents();
@@ -1752,7 +1889,7 @@
                                     bindWalletModalEvents();
                                 }
                             } else {
-                                showToast('حدث خطأ أثناء قبول الطلب', 'error');
+                                toast.error('حدث خطأ أثناء قبول الطلب (قد يكون الرصيد غير كافٍ)');
                             }
                         }
                     });
@@ -1769,11 +1906,11 @@
                         if (request) {
                             const success = rejectRequest(request, type);
                             if (success) {
-                                showToast(`تم رفض الطلب ${id}`, 'info');
+                                toast.info(`تم رفض الطلب ${id}`);
                                 adminPanelContent.innerHTML = renderAdminPanel();
                                 bindAdminPanelEvents();
                             } else {
-                                showToast('حدث خطأ أثناء رفض الطلب', 'error');
+                                toast.error('حدث خطأ أثناء رفض الطلب');
                             }
                         }
                     });
@@ -1799,7 +1936,7 @@
                             deletePaymentMethod(id);
                             adminPanelContent.innerHTML = renderAdminPanel();
                             bindAdminPanelEvents();
-                            showToast('تم الحذف بنجاح');
+                            toast.success('تم الحذف بنجاح');
                         }
                     });
                 });
@@ -1839,11 +1976,11 @@
                     if (id) {
                         // تحديث
                         updatePaymentMethod(id, formData);
-                        showToast('تم التحديث بنجاح');
+                        toast.success('تم التحديث بنجاح');
                     } else {
                         // إضافة
                         addPaymentMethod(formData);
-                        showToast('تمت الإضافة بنجاح');
+                        toast.success('تمت الإضافة بنجاح');
                     }
                     closePaymentMethodModal();
                     // إعادة تحميل لوحة المشرف
@@ -1927,9 +2064,12 @@
                         });
                     });
 
+                    // ترحيب
+                    toast.success(`مرحباً ${user.first_name}، أهلاً بك في المحفظة المتطورة`);
+
                 } catch (error) {
                     console.error('Error loading data:', error);
-                    showToast('حدث خطأ أثناء تحميل البيانات', 'error');
+                    toast.error('حدث خطأ أثناء تحميل البيانات');
                     state.loading = false;
                     render();
                 }
@@ -1941,6 +2081,7 @@
             themeToggle.addEventListener('click', () => {
                 state.theme = state.theme === 'dark' ? 'light' : 'dark';
                 updateTheme(state.theme);
+                toast.info(`تم تغيير السمة إلى ${state.theme === 'dark' ? 'الداكنة' : 'الفاتحة'}`);
             });
 
             // إغلاق الإعدادات
@@ -1957,12 +2098,12 @@
             // حفظ الإعدادات
             document.getElementById('languageSelect').addEventListener('change', (e) => {
                 state.settings.language = e.target.value;
-                showToast(`تم تغيير اللغة إلى ${e.target.value === 'ar' ? 'العربية' : 'الإنجليزية'}`);
+                toast.success(`تم تغيير اللغة إلى ${e.target.value === 'ar' ? 'العربية' : 'الإنجليزية'}`);
             });
 
             document.getElementById('notificationsToggle').addEventListener('change', (e) => {
                 state.settings.notifications = e.target.checked;
-                showToast(e.target.checked ? 'تم تفعيل الإشعارات' : 'تم إيقاف الإشعارات');
+                toast.success(e.target.checked ? 'تم تفعيل الإشعارات' : 'تم إيقاف الإشعارات');
             });
 
             // بدء التطبيق
