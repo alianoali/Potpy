@@ -405,6 +405,31 @@
             color: #fbbf24;
         }
 
+        /* شارة الإشعارات */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+            animation: pulse-badge 1.5s infinite;
+        }
+
+        @keyframes pulse-badge {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
         /* طرق الدفع - صور وأيقونات */
         .payment-method {
             display: flex;
@@ -605,6 +630,20 @@
                     <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600"></div>
                 </label>
             </div>
+            <div class="flex items-center justify-between">
+                <span>تنبيه صوتي</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" id="soundToggle" checked>
+                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600"></div>
+                </label>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>اهتزاز</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" id="vibrateToggle" checked>
+                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600"></div>
+                </label>
+            </div>
         </div>
     </div>
 
@@ -710,6 +749,8 @@
                         document.body.appendChild(this.container);
                     }
                     this.activeToasts = [];
+                    this.soundEnabled = true;
+                    this.vibrateEnabled = true;
                 }
 
                 show(message, type = 'info', duration = 5000) {
@@ -731,10 +772,41 @@
                     this.container.appendChild(toast);
                     this.activeToasts.push(toast);
                     
+                    // تشغيل صوت إذا كان مفعلاً
+                    if (this.soundEnabled && (type === 'success' || type === 'warning' || type === 'info')) {
+                        this.playSound(type);
+                    }
+                    
+                    // اهتزاز إذا كان مفعلاً (للموبايل)
+                    if (this.vibrateEnabled && navigator.vibrate) {
+                        navigator.vibrate(200);
+                    }
+                    
                     setTimeout(() => {
                         toast.remove();
                         this.activeToasts = this.activeToasts.filter(t => t !== toast);
                     }, duration);
+                }
+
+                playSound(type) {
+                    // إنشاء صوت بسيط باستخدام Web Audio API
+                    try {
+                        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                        const oscillator = audioCtx.createOscillator();
+                        const gainNode = audioCtx.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioCtx.destination);
+                        
+                        oscillator.type = 'sine';
+                        oscillator.frequency.value = type === 'success' ? 800 : (type === 'warning' ? 600 : 400);
+                        gainNode.gain.value = 0.1;
+                        
+                        oscillator.start();
+                        oscillator.stop(audioCtx.currentTime + 0.2);
+                    } catch (e) {
+                        console.log('Web Audio not supported');
+                    }
                 }
 
                 success(message) { this.show(message, 'success'); }
@@ -800,7 +872,7 @@
                     this.balance = CONFIG.DEFAULT_BALANCE;
                     this.stats = { users: 0, bots: 0, dailyOps: 0 };
                     this.theme = 'dark';
-                    this.settings = { language: 'ar', notifications: true };
+                    this.settings = { language: 'ar', notifications: true, sound: true, vibrate: true };
                     this.wallet = { transactions: [], address: 'T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ' };
                     this.depositRequests = [];
                     this.withdrawalRequests = [];
@@ -939,6 +1011,10 @@
                     this.state.depositRequests.push(request);
                     this.saveRequests();
                     this.incrementDailyOps();
+                    
+                    // إرسال حدث لإعلام المشرفين (إذا كان المستخدم الحالي مشرفاً فسيتم استقباله)
+                    window.dispatchEvent(new CustomEvent('newDepositRequest', { detail: request }));
+                    
                     return request;
                 }
 
@@ -961,6 +1037,10 @@
                     this.state.withdrawalRequests.push(request);
                     this.saveRequests();
                     this.incrementDailyOps();
+                    
+                    // إرسال حدث لإعلام المشرفين
+                    window.dispatchEvent(new CustomEvent('newWithdrawalRequest', { detail: request }));
+                    
                     return { success: true, id: request.id, request };
                 }
 
@@ -1014,6 +1094,10 @@
 
                 getPendingWithdrawals() {
                     return this.state.withdrawalRequests.filter(r => r.status === 'pending');
+                }
+
+                getPendingRequestsCount() {
+                    return this.getPendingDeposits().length + this.getPendingWithdrawals().length;
                 }
 
                 addTransaction(type, amount, note = '', status = 'مكتمل') {
@@ -1101,6 +1185,50 @@
                     // ربط أحداث الحالة
                     this.state.addEventListener('balanceUpdated', () => this.updateBalanceDisplay());
                     this.state.addEventListener('statsUpdated', () => this.updateStatsDisplay());
+                    
+                    // الاستماع للأحداث الجديدة للطلبات
+                    window.addEventListener('newDepositRequest', (e) => this.handleNewRequest(e.detail, 'شحن'));
+                    window.addEventListener('newWithdrawalRequest', (e) => this.handleNewRequest(e.detail, 'سحب'));
+                }
+
+                // معالج الطلبات الجديدة للمشرف
+                handleNewRequest(request, type) {
+                    // إذا كان المستخدم الحالي هو المشرف، نعرض تنبيه فوري
+                    if (this.state.isAdmin) {
+                        this.toast.success(`🔔 طلب ${type} جديد
+                            • المستخدم: ${request.userName}
+                            • المبلغ: ${request.amount}
+                            • الطريقة: ${request.method}
+                            ${type === 'شحن' ? `• رقم العملية: ${request.transactionId}` : `• التفاصيل: ${request.details}`}
+                            • الرجاء مراجعة الطلب في لوحة الإدارة`);
+                        
+                        // تحديث عداد الطلبات المعلقة في أيقونة المحفظة إذا كان موجوداً
+                        this.updatePendingBadge();
+                    }
+                }
+
+                // تحديث شارة الطلبات المعلقة
+                updatePendingBadge() {
+                    const walletIcon = document.getElementById('walletIconLarge');
+                    if (!walletIcon) return;
+                    
+                    const count = this.data.getPendingRequestsCount();
+                    let badge = walletIcon.querySelector('.notification-badge');
+                    
+                    if (count > 0) {
+                        if (!badge) {
+                            badge = document.createElement('span');
+                            badge.className = 'notification-badge';
+                            walletIcon.style.position = 'relative';
+                            walletIcon.appendChild(badge);
+                        }
+                        badge.textContent = count > 9 ? '9+' : count;
+                    } else {
+                        if (badge) badge.remove();
+                    }
+                    
+                    // تحديث عنوان الصفحة بعدد الطلبات
+                    document.title = count > 0 ? `(${count}) بوابة تيليجرام` : 'بوابة تيليجرام المتطورة';
                 }
 
                 // التصيير الرئيسي
@@ -1118,6 +1246,7 @@
                     }
                     
                     this.bindEvents();
+                    this.updatePendingBadge(); // تحديث الشارة بعد التصيير
                 }
 
                 // مكونات التصيير
@@ -1244,6 +1373,7 @@
                     const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
                     const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
                     const stats = this.state.stats;
+                    const pendingCount = this.data.getPendingRequestsCount();
 
                     return `
                         <div class="space-y-5 animate-enter pb-10">
@@ -1268,10 +1398,11 @@
                                 </div>
                             </div>
 
-                            <!-- أيقونة المحفظة -->
+                            <!-- أيقونة المحفظة مع عداد الطلبات -->
                             <div class="flex justify-center my-4">
                                 <div class="wallet-icon-large" id="walletIconLarge">
                                     <i class="fa-solid fa-wallet"></i>
+                                    ${pendingCount > 0 ? `<span class="notification-badge">${pendingCount > 9 ? '9+' : pendingCount}</span>` : ''}
                                 </div>
                             </div>
 
@@ -1312,6 +1443,7 @@
                             <button id="openAdminPanelBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2 mt-2">
                                 <i class="fa-solid fa-gears"></i>
                                 لوحة الإدارة (الطلبات وطرق الدفع)
+                                ${pendingCount > 0 ? `<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">${pendingCount}</span>` : ''}
                             </button>
 
                             <!-- Logout Button -->
@@ -2004,6 +2136,9 @@
                     const savedTheme = this.data.loadTheme();
                     this.applyTheme(savedTheme);
 
+                    // تحميل الإعدادات وتطبيقها على الـ Toast
+                    this.loadSettings();
+
                     // محاكاة تحميل البيانات
                     this.state.loading = true;
                     this.ui.render();
@@ -2038,6 +2173,16 @@
                         this.state.loading = false;
                         this.ui.render();
                     }
+                }
+
+                loadSettings() {
+                    const settings = this.state.settings;
+                    this.toast.soundEnabled = settings.sound;
+                    this.toast.vibrateEnabled = settings.vibrate;
+                    
+                    // تطبيق الإعدادات على الواجهة
+                    document.getElementById('soundToggle').checked = settings.sound;
+                    document.getElementById('vibrateToggle').checked = settings.vibrate;
                 }
 
                 applyTheme(theme) {
@@ -2096,6 +2241,20 @@
                 app.state.settings.notifications = e.target.checked;
                 app.data.saveSettings();
                 app.toast.success(e.target.checked ? 'تم تفعيل الإشعارات' : 'تم إيقاف الإشعارات');
+            });
+
+            document.getElementById('soundToggle').addEventListener('change', (e) => {
+                app.state.settings.sound = e.target.checked;
+                app.data.saveSettings();
+                app.toast.soundEnabled = e.target.checked;
+                app.toast.success(e.target.checked ? 'تم تفعيل التنبيه الصوتي' : 'تم إيقاف التنبيه الصوتي');
+            });
+
+            document.getElementById('vibrateToggle').addEventListener('change', (e) => {
+                app.state.settings.vibrate = e.target.checked;
+                app.data.saveSettings();
+                app.toast.vibrateEnabled = e.target.checked;
+                app.toast.success(e.target.checked ? 'تم تفعيل الاهتزاز' : 'تم إيقاف الاهتزاز');
             });
         })();
     </script>
