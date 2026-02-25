@@ -939,7 +939,7 @@
                     this.state.depositRequests.push(request);
                     this.saveRequests();
                     this.incrementDailyOps();
-                    return request; // إرجاع الكائن كاملاً
+                    return request;
                 }
 
                 addWithdrawalRequest(amount, methodId, details, user) {
@@ -1563,6 +1563,7 @@
                         
                         // رسالة تفصيلية محملة بجميع المعلومات
                         this.toast.success(`✅ تم تقديم طلب الشحن بنجاح
+                            • المستخدم: ${this.state.user.first_name} ${this.state.user.last_name || ''}
                             • المبلغ: ${amount}
                             • الطريقة: ${request.method}
                             • رقم العملية: ${transactionId}
@@ -1617,6 +1618,7 @@
                             const request = result.request;
                             // رسالة تفصيلية للسحب
                             this.toast.success(`✅ تم تقديم طلب السحب بنجاح
+                                • المستخدم: ${this.state.user.first_name} ${this.state.user.last_name || ''}
                                 • المبلغ: ${amount}
                                 • الطريقة: ${request.method}
                                 • التفاصيل: ${details}
