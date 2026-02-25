@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بوابة تيليجرام المتطورة - محفظة احترافية مع إدارة مشرف</title>
+    <title>بوابة تيليجرام المتطورة - محفظة احترافية</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,26 +16,6 @@
     
     <!-- Google Fonts (Cairo) -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        cairo: ['Cairo', 'sans-serif'],
-                    },
-                    colors: {
-                        tg: {
-                            bg: 'var(--tg-theme-bg-color, #0f172a)',
-                            text: 'var(--tg-theme-text-color, #ffffff)',
-                            button: 'var(--tg-theme-button-color, #3b82f6)',
-                            buttonText: 'var(--tg-theme-button-text-color, #ffffff)',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
 
     <style>
         * {
@@ -628,486 +608,517 @@
     <!-- Toast Container للتنبيهات المتطورة -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Wallet Modal (سيتم تعبئته ديناميكياً) -->
+    <!-- Wallet Modal -->
     <div class="wallet-modal-overlay" id="walletModalOverlay">
         <div class="wallet-modal" id="walletModalContent"></div>
     </div>
 
-    <!-- Admin Panel Modal (لإدارة الطلبات وطرق الدفع) -->
+    <!-- Admin Panel Modal -->
     <div class="wallet-modal-overlay" id="adminPanelOverlay">
         <div class="wallet-modal" id="adminPanelContent" style="max-width: 500px;"></div>
     </div>
 
-    <!-- Modal for editing payment method -->
+    <!-- Payment Method Modal -->
     <div class="wallet-modal-overlay" id="paymentMethodModalOverlay">
         <div class="wallet-modal" id="paymentMethodModalContent" style="max-width: 450px;"></div>
     </div>
 
     <script>
         (function() {
-            // -----------------------------------------------
-            // إعدادات ثابتة
-            // -----------------------------------------------
-            const ADMIN_ID = 7609492965; // غيّر هذا إلى معرف المشرف الخاص بك
-            
-            // -----------------------------------------------
-            // طرق الدفع الافتراضية (سيتم تحميلها من localStorage)
-            // -----------------------------------------------
-            const DEFAULT_PAYMENT_METHODS = [
-                { 
-                    id: 'usdt', 
-                    name: 'USDT (TRC20)', 
-                    icon: 'fa-brands fa-tether', 
-                    iconClass: 'usdt',
-                    description: 'عملة رقمية مستقرة',
-                    depositDetails: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ\nشبكة: TRC20',
-                    withdrawDetails: 'أدخل عنوان USDT الخاص بك',
-                    extraField1: 'TRC20',
-                    extraField2: 'شبكة Tron',
-                    imageUrl: ''
-                },
-                { 
-                    id: 'visa', 
-                    name: 'Visa / Mastercard', 
-                    icon: 'fa-regular fa-credit-card', 
-                    iconClass: 'visa',
-                    description: 'بطاقات ائتمانية',
-                    depositDetails: 'رقم البطاقة: **** **** **** 1234\nتاريخ الانتهاء: 12/25\nCVV: ***',
-                    withdrawDetails: 'أدخل بيانات بطاقتك',
-                    extraField1: 'Visa/Mastercard',
-                    extraField2: '',
-                    imageUrl: ''
-                },
-                { 
-                    id: 'bank', 
-                    name: 'تحويل بنكي', 
-                    icon: 'fa-solid fa-building-columns', 
-                    iconClass: 'bank',
-                    description: 'حوالة بنكية محلية',
-                    depositDetails: 'IBAN: SA0380000000608010167519\nاسم المستفيد: شركة المدفوعات\nالبنك: الأهلي السعودي',
-                    withdrawDetails: 'أدخل رقم IBAN الخاص بك',
-                    extraField1: 'البنك الأهلي',
-                    extraField2: 'SA0380000000608010167519',
-                    imageUrl: ''
-                },
-                { 
-                    id: 'telegram', 
-                    name: 'محفظة تيليجرام', 
-                    icon: 'fa-brands fa-telegram', 
-                    iconClass: 'telegram',
-                    description: '@wallet_bot',
-                    depositDetails: '@wallet_bot\nأرسل المبلغ إلى بوت المحفظة',
-                    withdrawDetails: 'أدخل معرف تيليجرام للمحفظة',
-                    extraField1: 'Telegram Stars',
-                    extraField2: '',
-                    imageUrl: ''
+            // ======================== الإعدادات الثابتة ========================
+            const CONFIG = {
+                ADMIN_ID: 7609492965, // غير هذا إلى معرف المشرف الخاص بك
+                DEFAULT_BALANCE: 1000,
+                MAX_TRANSACTIONS: 50,
+                STORAGE_KEYS: {
+                    USERS: 'app_users',
+                    BOTS: 'app_bots',
+                    DAILY_OPS: 'daily_ops',
+                    WALLET: 'wallet_data',
+                    PAYMENT_METHODS: 'payment_methods',
+                    DEPOSIT_REQUESTS: 'deposit_requests',
+                    WITHDRAWAL_REQUESTS: 'withdrawal_requests',
+                    THEME: 'theme',
+                    SETTINGS: 'settings'
                 }
-            ];
-
-            // -----------------------------------------------
-            // الحالة المركزية (State)
-            // -----------------------------------------------
-            const state = {
-                user: null,
-                isAdmin: false,
-                loading: true,
-                accessDenied: false,
-                telegramMissing: false,
-                balance: 0,
-                stats: {
-                    users: 0,
-                    bots: 0,
-                    dailyOps: 0
-                },
-                theme: 'dark',
-                settings: {
-                    language: 'ar',
-                    notifications: true
-                },
-                wallet: {
-                    transactions: [],  // سجل المعاملات المكتملة
-                    address: 'T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ'  // عنوان محفظة ثابت للإيداع
-                },
-                // طلبات الشحن والسحب المعلقة (بإشراف المشرف)
-                depositRequests: [],   // طلبات شحن
-                withdrawalRequests: [], // طلبات سحب
-                paymentMethods: []      // طرق الدفع المُدارة من قبل المشرف
             };
 
-            // -----------------------------------------------
-            // المتغيرات العامة
-            // -----------------------------------------------
-            let tg = null;
-            try {
-                tg = window.Telegram?.WebApp;
-            } catch (e) {
-                tg = null;
-            }
-
-            const appContainer = document.getElementById('app');
-            
-            // مراجع العناصر
-            const settingsOverlay = document.getElementById('settingsOverlay');
-            const settingsPanel = document.getElementById('settingsPanel');
-            const themeToggle = document.getElementById('themeToggle');
-            const themeIcon = document.getElementById('themeIcon');
-            const walletModalOverlay = document.getElementById('walletModalOverlay');
-            const walletModalContent = document.getElementById('walletModalContent');
-            const adminPanelOverlay = document.getElementById('adminPanelOverlay');
-            const adminPanelContent = document.getElementById('adminPanelContent');
-            const paymentMethodModalOverlay = document.getElementById('paymentMethodModalOverlay');
-            const paymentMethodModalContent = document.getElementById('paymentMethodModalContent');
-            const toastContainer = document.getElementById('toastContainer');
-
-            // -----------------------------------------------
-            // نظام التنبيهات المتطور
-            // -----------------------------------------------
-            function showToast(message, type = 'info', duration = 3000) {
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                
-                // اختيار الأيقونة حسب النوع
-                let iconHtml = '';
-                switch(type) {
-                    case 'success':
-                        iconHtml = '<i class="fa-solid fa-check"></i>';
-                        break;
-                    case 'error':
-                        iconHtml = '<i class="fa-solid fa-exclamation"></i>';
-                        break;
-                    case 'warning':
-                        iconHtml = '<i class="fa-solid fa-triangle-exclamation"></i>';
-                        break;
-                    default:
-                        iconHtml = '<i class="fa-solid fa-info"></i>';
-                }
-                
-                toast.innerHTML = `
-                    <div class="toast-icon">${iconHtml}</div>
-                    <div class="toast-message">${message}</div>
-                `;
-                
-                toastContainer.appendChild(toast);
-                
-                setTimeout(() => {
-                    toast.remove();
-                }, duration);
-            }
-
-            // دوال مساعدة للتنبيهات السريعة
-            const toast = {
-                success: (msg) => showToast(msg, 'success'),
-                error: (msg) => showToast(msg, 'error'),
-                warning: (msg) => showToast(msg, 'warning'),
-                info: (msg) => showToast(msg, 'info')
-            };
-
-            // -----------------------------------------------
-            // دوال مساعدة (مع معالجة أخطاء localStorage)
-            // -----------------------------------------------
-            function safeLocalStorageGet(key, defaultValue) {
-                try {
-                    const value = localStorage.getItem(key);
-                    return value !== null ? JSON.parse(value) : defaultValue;
-                } catch (e) {
-                    return defaultValue;
-                }
-            }
-
-            function safeLocalStorageSet(key, value) {
-                try {
-                    localStorage.setItem(key, JSON.stringify(value));
-                } catch (e) {
-                    // تجاهل الخطأ
-                }
-            }
-
-            function updateTheme(theme) {
-                if (theme === 'light') {
-                    document.documentElement.style.setProperty('--tg-theme-bg-color', '#f8fafc');
-                    document.documentElement.style.setProperty('--tg-theme-text-color', '#0f172a');
-                    document.documentElement.style.setProperty('--tg-theme-button-color', '#3b82f6');
-                    document.documentElement.style.setProperty('--tg-theme-button-text-color', '#ffffff');
-                    themeIcon.className = 'fa-solid fa-sun';
-                } else {
-                    document.documentElement.style.setProperty('--tg-theme-bg-color', '#0f172a');
-                    document.documentElement.style.setProperty('--tg-theme-text-color', '#ffffff');
-                    document.documentElement.style.setProperty('--tg-theme-button-color', '#3b82f6');
-                    document.documentElement.style.setProperty('--tg-theme-button-text-color', '#ffffff');
-                    themeIcon.className = 'fa-solid fa-moon';
-                }
-                safeLocalStorageSet('theme', theme);
-            }
-
-            // دوال الإحصائيات الحقيقية
-            function getTodayDate() {
-                return new Date().toISOString().split('T')[0];
-            }
-
-            function updateStats() {
-                try {
-                    let usersSet = new Set(safeLocalStorageGet('app_users', []));
-                    state.stats.users = usersSet.size;
-
-                    let bots = safeLocalStorageGet('app_bots', [{ id: 123456, name: 'البوت الرسمي' }]);
-                    state.stats.bots = bots.length;
-
-                    const today = getTodayDate();
-                    let dailyOpsData = safeLocalStorageGet('daily_ops', {});
-                    state.stats.dailyOps = dailyOpsData[today] || 0;
-                } catch (e) {
-                    state.stats.users = 0;
-                    state.stats.bots = 1;
-                    state.stats.dailyOps = 0;
-                }
-            }
-
-            function incrementDailyOps() {
-                try {
-                    const today = getTodayDate();
-                    let dailyOpsData = safeLocalStorageGet('daily_ops', {});
-                    dailyOpsData[today] = (dailyOpsData[today] || 0) + 1;
-                    safeLocalStorageSet('daily_ops', dailyOpsData);
-                    updateStats();
-                } catch (e) {}
-            }
-
-            function registerUser(userId) {
-                try {
-                    let usersSet = new Set(safeLocalStorageGet('app_users', []));
-                    if (!usersSet.has(userId)) {
-                        usersSet.add(userId);
-                        safeLocalStorageSet('app_users', [...usersSet]);
-                        updateStats();
+            // ======================== خدمات مساعدة ========================
+            class StorageService {
+                static get(key, defaultValue = null) {
+                    try {
+                        const value = localStorage.getItem(key);
+                        return value !== null ? JSON.parse(value) : defaultValue;
+                    } catch (e) {
+                        console.warn(`Storage read error for key ${key}:`, e);
+                        return defaultValue;
                     }
-                } catch (e) {}
-            }
+                }
 
-            // دوال المحفظة والطلبات
-            function loadWalletData() {
-                try {
-                    const saved = safeLocalStorageGet('wallet_data', null);
-                    if (saved) {
-                        state.balance = saved.balance || 0;
-                        state.wallet.transactions = saved.transactions || [];
-                        state.wallet.address = saved.address || state.wallet.address;
-                    } else {
-                        // بيانات افتراضية للمستخدم الجديد
-                        state.balance = 1000;  // رصيد تجريبي
-                        state.wallet.transactions = [];
+                static set(key, value) {
+                    try {
+                        localStorage.setItem(key, JSON.stringify(value));
+                        return true;
+                    } catch (e) {
+                        console.warn(`Storage write error for key ${key}:`, e);
+                        return false;
                     }
-                } catch (e) {
-                    state.balance = 1000;
-                    state.wallet.transactions = [];
+                }
+
+                static remove(key) {
+                    try {
+                        localStorage.removeItem(key);
+                        return true;
+                    } catch (e) {
+                        console.warn(`Storage remove error for key ${key}:`, e);
+                        return false;
+                    }
                 }
             }
 
-            function saveWalletData() {
-                try {
-                    const data = {
-                        balance: state.balance,
-                        transactions: state.wallet.transactions,
-                        address: state.wallet.address
+            class DateUtils {
+                static getTodayDate() {
+                    return new Date().toISOString().split('T')[0];
+                }
+
+                static formatDateTime(isoString) {
+                    return new Date(isoString).toLocaleString('ar-EG');
+                }
+
+                static formatDate(isoString) {
+                    return new Date(isoString).toLocaleDateString('ar-EG');
+                }
+            }
+
+            class IdGenerator {
+                static generate(prefix = '') {
+                    return prefix + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                }
+            }
+
+            // ======================== نظام التنبيهات المتطور ========================
+            class ToastManager {
+                constructor(containerId) {
+                    this.container = document.getElementById(containerId);
+                    if (!this.container) {
+                        this.container = document.createElement('div');
+                        this.container.id = containerId;
+                        this.container.className = 'toast-container';
+                        document.body.appendChild(this.container);
+                    }
+                    this.activeToasts = [];
+                }
+
+                show(message, type = 'info', duration = 3000) {
+                    const toast = document.createElement('div');
+                    toast.className = `toast ${type}`;
+                    
+                    const iconMap = {
+                        success: 'fa-solid fa-check',
+                        error: 'fa-solid fa-exclamation',
+                        warning: 'fa-solid fa-triangle-exclamation',
+                        info: 'fa-solid fa-info'
                     };
-                    safeLocalStorageSet('wallet_data', data);
-                } catch (e) {}
-            }
-
-            // دوال طرق الدفع
-            function loadPaymentMethods() {
-                try {
-                    const saved = safeLocalStorageGet('payment_methods', null);
-                    if (saved && Array.isArray(saved) && saved.length > 0) {
-                        state.paymentMethods = saved;
-                    } else {
-                        state.paymentMethods = DEFAULT_PAYMENT_METHODS.map(m => ({ 
-                            ...m, 
-                            id: m.id + '_' + Date.now() + Math.random().toString(36).substr(2,4) 
-                        }));
-                    }
-                } catch (e) {
-                    state.paymentMethods = DEFAULT_PAYMENT_METHODS;
+                    
+                    toast.innerHTML = `
+                        <div class="toast-icon"><i class="${iconMap[type] || iconMap.info}"></i></div>
+                        <div class="toast-message">${message}</div>
+                    `;
+                    
+                    this.container.appendChild(toast);
+                    this.activeToasts.push(toast);
+                    
+                    setTimeout(() => {
+                        toast.remove();
+                        this.activeToasts = this.activeToasts.filter(t => t !== toast);
+                    }, duration);
                 }
+
+                success(message) { this.show(message, 'success'); }
+                error(message) { this.show(message, 'error'); }
+                warning(message) { this.show(message, 'warning'); }
+                info(message) { this.show(message, 'info'); }
             }
 
-            function savePaymentMethods() {
-                try {
-                    safeLocalStorageSet('payment_methods', state.paymentMethods);
-                } catch (e) {}
-            }
+            // ======================== خدمة تيليجرام ========================
+            class TelegramService {
+                constructor() {
+                    this.tg = window.Telegram?.WebApp || null;
+                    this.isAvailable = !!this.tg;
+                }
 
-            // إضافة طريقة دفع جديدة
-            function addPaymentMethod(methodData) {
-                const newMethod = {
-                    id: 'pm_' + Date.now() + Math.random().toString(36).substr(2, 6),
-                    ...methodData
-                };
-                state.paymentMethods.push(newMethod);
-                savePaymentMethods();
-                return newMethod;
-            }
-
-            // تحديث طريقة دفع
-            function updatePaymentMethod(id, newData) {
-                const index = state.paymentMethods.findIndex(m => m.id === id);
-                if (index !== -1) {
-                    state.paymentMethods[index] = { ...state.paymentMethods[index], ...newData };
-                    savePaymentMethods();
+                init() {
+                    if (!this.isAvailable) return false;
+                    this.tg.expand();
+                    this.tg.ready();
                     return true;
                 }
-                return false;
-            }
 
-            // حذف طريقة دفع
-            function deletePaymentMethod(id) {
-                state.paymentMethods = state.paymentMethods.filter(m => m.id !== id);
-                savePaymentMethods();
-            }
+                getUser() {
+                    return this.tg?.initDataUnsafe?.user || null;
+                }
 
-            // دوال الطلبات
-            function loadRequests() {
-                try {
-                    const deposits = safeLocalStorageGet('deposit_requests', []);
-                    const withdrawals = safeLocalStorageGet('withdrawal_requests', []);
-                    state.depositRequests = deposits;
-                    state.withdrawalRequests = withdrawals;
-                } catch (e) {
-                    state.depositRequests = [];
-                    state.withdrawalRequests = [];
+                isValid() {
+                    return this.isAvailable && this.tg?.initData;
+                }
+
+                close() {
+                    this.tg?.close();
+                }
+
+                showPopup(params) {
+                    this.tg?.showPopup(params);
+                }
+
+                setMainButton(text, color = '#3b82f6', textColor = '#ffffff', isVisible = true, callback = null) {
+                    if (!this.tg) return;
+                    const btn = this.tg.MainButton;
+                    btn.setText(text);
+                    btn.setColor(color);
+                    btn.setTextColor(textColor);
+                    if (isVisible) btn.show(); else btn.hide();
+                    if (callback) btn.onClick(callback);
+                }
+
+                hideMainButton() {
+                    this.tg?.MainButton.hide();
                 }
             }
 
-            function saveRequests() {
-                try {
-                    safeLocalStorageSet('deposit_requests', state.depositRequests);
-                    safeLocalStorageSet('withdrawal_requests', state.withdrawalRequests);
-                } catch (e) {}
-            }
-
-            function addTransaction(type, amount, note = '', status = 'مكتمل') {
-                const tx = {
-                    id: Date.now() + Math.random().toString(36).substr(2, 5),
-                    type: type, // 'deposit', 'withdraw', 'transfer'
-                    amount: amount,
-                    note: note,
-                    status: status,
-                    date: new Date().toISOString()
-                };
-                state.wallet.transactions.unshift(tx);
-                if (state.wallet.transactions.length > 50) state.wallet.transactions.pop();
-                saveWalletData();
-            }
-
-            // إضافة طلب شحن (يتطلب موافقة المشرف) - مع إضافة رقم العملية
-            function addDepositRequest(amount, methodId, transactionId) {
-                const method = state.paymentMethods.find(m => m.id === methodId);
-                const request = {
-                    id: 'dep_' + Date.now() + Math.random().toString(36).substr(2, 5),
-                    userId: state.user.id,
-                    userName: `${state.user.first_name} ${state.user.last_name || ''}`.trim(),
-                    amount: amount,
-                    method: method ? method.name : methodId,
-                    methodId: methodId,
-                    transactionId: transactionId, // رقم العملية
-                    status: 'pending', // pending, approved, rejected
-                    date: new Date().toISOString()
-                };
-                state.depositRequests.push(request);
-                saveRequests();
-                incrementDailyOps();
-                return request.id;
-            }
-
-            // إضافة طلب سحب (يتطلب موافقة المشرف)
-            function addWithdrawalRequest(amount, methodId, details) {
-                if (amount > state.balance) {
-                    return { success: false, message: 'الرصيد غير كافٍ' };
+            // ======================== إدارة الحالة المركزية (State) ========================
+            class AppState extends EventTarget {
+                constructor() {
+                    super();
+                    this.user = null;
+                    this.isAdmin = false;
+                    this.loading = true;
+                    this.accessDenied = false;
+                    this.telegramMissing = false;
+                    this.balance = CONFIG.DEFAULT_BALANCE;
+                    this.stats = { users: 0, bots: 0, dailyOps: 0 };
+                    this.theme = 'dark';
+                    this.settings = { language: 'ar', notifications: true };
+                    this.wallet = { transactions: [], address: 'T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ' };
+                    this.depositRequests = [];
+                    this.withdrawalRequests = [];
+                    this.paymentMethods = [];
                 }
-                const method = state.paymentMethods.find(m => m.id === methodId);
-                const request = {
-                    id: 'with_' + Date.now() + Math.random().toString(36).substr(2, 5),
-                    userId: state.user.id,
-                    userName: `${state.user.first_name} ${state.user.last_name || ''}`.trim(),
-                    amount: amount,
-                    method: method ? method.name : methodId,
-                    methodId: methodId,
-                    details: details,
-                    status: 'pending',
-                    date: new Date().toISOString()
-                };
-                state.withdrawalRequests.push(request);
-                saveRequests();
-                incrementDailyOps();
-                return { success: true, id: request.id };
+
+                // تحديث حالة معينة وإرسال حدث
+                set(key, value) {
+                    if (this[key] !== undefined) {
+                        this[key] = value;
+                        this.dispatchEvent(new CustomEvent('stateChanged', { detail: { key, value } }));
+                    }
+                }
+
+                updateStats(stats) {
+                    this.stats = { ...this.stats, ...stats };
+                    this.dispatchEvent(new CustomEvent('statsUpdated', { detail: this.stats }));
+                }
+
+                updateBalance(amount) {
+                    this.balance = amount;
+                    this.dispatchEvent(new CustomEvent('balanceUpdated', { detail: amount }));
+                }
+
+                addTransaction(tx) {
+                    this.wallet.transactions.unshift(tx);
+                    if (this.wallet.transactions.length > CONFIG.MAX_TRANSACTIONS) {
+                        this.wallet.transactions.pop();
+                    }
+                    this.dispatchEvent(new CustomEvent('transactionsUpdated', { detail: this.wallet.transactions }));
+                }
             }
 
-            // الموافقة على طلب (للمشرف)
-            function acceptRequest(request, type) {
-                if (type === 'deposit') {
-                    const req = state.depositRequests.find(r => r.id === request.id);
-                    if (req && req.status === 'pending') {
-                        req.status = 'approved';
-                        // زيادة الرصيد
-                        state.balance += req.amount;
-                        // تسجيل المعاملة
-                        addTransaction('deposit', req.amount, `شحن عبر ${req.method} (تمت الموافقة) - رقم العملية: ${req.transactionId || 'غير محدد'}`);
-                        saveWalletData();
-                        saveRequests();
+            // ======================== إدارة البيانات (Data Layer) ========================
+            class DataService {
+                constructor(state) {
+                    this.state = state;
+                    this.loadInitialData();
+                }
+
+                loadInitialData() {
+                    this.loadWallet();
+                    this.loadRequests();
+                    this.loadPaymentMethods();
+                    this.loadSettings();
+                    this.loadStats();
+                }
+
+                // المحفظة
+                loadWallet() {
+                    const data = StorageService.get(CONFIG.STORAGE_KEYS.WALLET, null);
+                    if (data) {
+                        this.state.balance = data.balance || CONFIG.DEFAULT_BALANCE;
+                        this.state.wallet.transactions = data.transactions || [];
+                        this.state.wallet.address = data.address || this.state.wallet.address;
+                    } else {
+                        this.state.balance = CONFIG.DEFAULT_BALANCE;
+                        this.state.wallet.transactions = [];
+                    }
+                }
+
+                saveWallet() {
+                    StorageService.set(CONFIG.STORAGE_KEYS.WALLET, {
+                        balance: this.state.balance,
+                        transactions: this.state.wallet.transactions,
+                        address: this.state.wallet.address
+                    });
+                }
+
+                // طرق الدفع
+                loadPaymentMethods() {
+                    const saved = StorageService.get(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, null);
+                    if (saved && Array.isArray(saved) && saved.length > 0) {
+                        this.state.paymentMethods = saved;
+                    } else {
+                        // الطرق الافتراضية
+                        this.state.paymentMethods = [
+                            { id: IdGenerator.generate('usdt_'), name: 'USDT (TRC20)', icon: 'fa-brands fa-tether', description: 'عملة رقمية مستقرة', depositDetails: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ\nشبكة: TRC20', withdrawDetails: 'أدخل عنوان USDT الخاص بك' },
+                            { id: IdGenerator.generate('visa_'), name: 'Visa / Mastercard', icon: 'fa-regular fa-credit-card', description: 'بطاقات ائتمانية', depositDetails: 'رقم البطاقة: **** **** **** 1234\nتاريخ الانتهاء: 12/25\nCVV: ***', withdrawDetails: 'أدخل بيانات بطاقتك' },
+                            { id: IdGenerator.generate('bank_'), name: 'تحويل بنكي', icon: 'fa-solid fa-building-columns', description: 'حوالة بنكية محلية', depositDetails: 'IBAN: SA0380000000608010167519\nاسم المستفيد: شركة المدفوعات\nالبنك: الأهلي السعودي', withdrawDetails: 'أدخل رقم IBAN الخاص بك' },
+                            { id: IdGenerator.generate('telegram_'), name: 'محفظة تيليجرام', icon: 'fa-brands fa-telegram', description: '@wallet_bot', depositDetails: '@wallet_bot\nأرسل المبلغ إلى بوت المحفظة', withdrawDetails: 'أدخل معرف تيليجرام للمحفظة' }
+                        ];
+                    }
+                }
+
+                savePaymentMethods() {
+                    StorageService.set(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, this.state.paymentMethods);
+                }
+
+                addPaymentMethod(methodData) {
+                    const newMethod = { id: IdGenerator.generate('pm_'), ...methodData };
+                    this.state.paymentMethods.push(newMethod);
+                    this.savePaymentMethods();
+                    return newMethod;
+                }
+
+                updatePaymentMethod(id, newData) {
+                    const index = this.state.paymentMethods.findIndex(m => m.id === id);
+                    if (index !== -1) {
+                        this.state.paymentMethods[index] = { ...this.state.paymentMethods[index], ...newData };
+                        this.savePaymentMethods();
                         return true;
                     }
-                } else if (type === 'withdrawal') {
-                    const req = state.withdrawalRequests.find(r => r.id === request.id);
-                    if (req && req.status === 'pending') {
-                        // التحقق من الرصيد (قد يتغير بمرور الوقت)
-                        if (state.balance >= req.amount) {
+                    return false;
+                }
+
+                deletePaymentMethod(id) {
+                    this.state.paymentMethods = this.state.paymentMethods.filter(m => m.id !== id);
+                    this.savePaymentMethods();
+                }
+
+                // الطلبات
+                loadRequests() {
+                    this.state.depositRequests = StorageService.get(CONFIG.STORAGE_KEYS.DEPOSIT_REQUESTS, []);
+                    this.state.withdrawalRequests = StorageService.get(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, []);
+                }
+
+                saveRequests() {
+                    StorageService.set(CONFIG.STORAGE_KEYS.DEPOSIT_REQUESTS, this.state.depositRequests);
+                    StorageService.set(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, this.state.withdrawalRequests);
+                }
+
+                addDepositRequest(amount, methodId, transactionId, user) {
+                    const method = this.state.paymentMethods.find(m => m.id === methodId);
+                    const request = {
+                        id: IdGenerator.generate('dep_'),
+                        userId: user.id,
+                        userName: `${user.first_name} ${user.last_name || ''}`.trim(),
+                        amount,
+                        method: method ? method.name : methodId,
+                        methodId,
+                        transactionId,
+                        status: 'pending',
+                        date: new Date().toISOString()
+                    };
+                    this.state.depositRequests.push(request);
+                    this.saveRequests();
+                    this.incrementDailyOps();
+                    return request.id;
+                }
+
+                addWithdrawalRequest(amount, methodId, details, user) {
+                    if (amount > this.state.balance) {
+                        return { success: false, message: 'الرصيد غير كافٍ' };
+                    }
+                    const method = this.state.paymentMethods.find(m => m.id === methodId);
+                    const request = {
+                        id: IdGenerator.generate('with_'),
+                        userId: user.id,
+                        userName: `${user.first_name} ${user.last_name || ''}`.trim(),
+                        amount,
+                        method: method ? method.name : methodId,
+                        methodId,
+                        details,
+                        status: 'pending',
+                        date: new Date().toISOString()
+                    };
+                    this.state.withdrawalRequests.push(request);
+                    this.saveRequests();
+                    this.incrementDailyOps();
+                    return { success: true, id: request.id };
+                }
+
+                acceptRequest(request, type) {
+                    if (type === 'deposit') {
+                        const req = this.state.depositRequests.find(r => r.id === request.id);
+                        if (req && req.status === 'pending') {
                             req.status = 'approved';
-                            state.balance -= req.amount;
-                            addTransaction('withdraw', -req.amount, `سحب عبر ${req.method} إلى ${req.details || 'محفظة'}`);
-                            saveWalletData();
-                            saveRequests();
+                            this.state.balance += req.amount;
+                            this.addTransaction('deposit', req.amount, `شحن عبر ${req.method} (رقم العملية: ${req.transactionId || 'غير محدد'})`);
+                            this.saveWallet();
+                            this.saveRequests();
                             return true;
-                        } else {
-                            return false; // رصيد غير كافٍ (يمكن رفض تلقائي)
+                        }
+                    } else if (type === 'withdrawal') {
+                        const req = this.state.withdrawalRequests.find(r => r.id === request.id);
+                        if (req && req.status === 'pending' && this.state.balance >= req.amount) {
+                            req.status = 'approved';
+                            this.state.balance -= req.amount;
+                            this.addTransaction('withdraw', -req.amount, `سحب عبر ${req.method} إلى ${req.details || 'محفظة'}`);
+                            this.saveWallet();
+                            this.saveRequests();
+                            return true;
                         }
                     }
+                    return false;
                 }
-                return false;
-            }
 
-            // رفض الطلب
-            function rejectRequest(request, type) {
-                if (type === 'deposit') {
-                    const req = state.depositRequests.find(r => r.id === request.id);
-                    if (req) {
-                        req.status = 'rejected';
-                        saveRequests();
-                        return true;
+                rejectRequest(request, type) {
+                    if (type === 'deposit') {
+                        const req = this.state.depositRequests.find(r => r.id === request.id);
+                        if (req) {
+                            req.status = 'rejected';
+                            this.saveRequests();
+                            return true;
+                        }
+                    } else if (type === 'withdrawal') {
+                        const req = this.state.withdrawalRequests.find(r => r.id === request.id);
+                        if (req) {
+                            req.status = 'rejected';
+                            this.saveRequests();
+                            return true;
+                        }
                     }
-                } else if (type === 'withdrawal') {
-                    const req = state.withdrawalRequests.find(r => r.id === request.id);
-                    if (req) {
-                        req.status = 'rejected';
-                        saveRequests();
-                        return true;
+                    return false;
+                }
+
+                getPendingDeposits() {
+                    return this.state.depositRequests.filter(r => r.status === 'pending');
+                }
+
+                getPendingWithdrawals() {
+                    return this.state.withdrawalRequests.filter(r => r.status === 'pending');
+                }
+
+                addTransaction(type, amount, note = '', status = 'مكتمل') {
+                    const tx = {
+                        id: IdGenerator.generate('tx_'),
+                        type,
+                        amount,
+                        note,
+                        status,
+                        date: new Date().toISOString()
+                    };
+                    this.state.wallet.transactions.unshift(tx);
+                    if (this.state.wallet.transactions.length > CONFIG.MAX_TRANSACTIONS) {
+                        this.state.wallet.transactions.pop();
+                    }
+                    this.saveWallet();
+                }
+
+                // الإحصائيات
+                loadStats() {
+                    const users = StorageService.get(CONFIG.STORAGE_KEYS.USERS, []);
+                    const bots = StorageService.get(CONFIG.STORAGE_KEYS.BOTS, [{ id: 123456, name: 'البوت الرسمي' }]);
+                    const dailyOpsData = StorageService.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
+                    const today = DateUtils.getTodayDate();
+                    
+                    this.state.stats = {
+                        users: users.length,
+                        bots: bots.length,
+                        dailyOps: dailyOpsData[today] || 0
+                    };
+                }
+
+                incrementDailyOps() {
+                    const today = DateUtils.getTodayDate();
+                    const dailyOpsData = StorageService.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
+                    dailyOpsData[today] = (dailyOpsData[today] || 0) + 1;
+                    StorageService.set(CONFIG.STORAGE_KEYS.DAILY_OPS, dailyOpsData);
+                    this.loadStats();
+                }
+
+                registerUser(userId) {
+                    const users = StorageService.get(CONFIG.STORAGE_KEYS.USERS, []);
+                    if (!users.includes(userId)) {
+                        users.push(userId);
+                        StorageService.set(CONFIG.STORAGE_KEYS.USERS, users);
+                        this.loadStats();
                     }
                 }
-                return false;
+
+                // الإعدادات
+                loadSettings() {
+                    const settings = StorageService.get(CONFIG.STORAGE_KEYS.SETTINGS, null);
+                    if (settings) {
+                        this.state.settings = settings;
+                    }
+                }
+
+                saveSettings() {
+                    StorageService.set(CONFIG.STORAGE_KEYS.SETTINGS, this.state.settings);
+                }
+
+                // الثيم
+                loadTheme() {
+                    const theme = StorageService.get(CONFIG.STORAGE_KEYS.THEME, 'dark');
+                    this.state.theme = theme;
+                    return theme;
+                }
+
+                saveTheme(theme) {
+                    StorageService.set(CONFIG.STORAGE_KEYS.THEME, theme);
+                    this.state.theme = theme;
+                }
             }
 
-            // دوال لعرض الطلبات في لوحة المشرف
-            function getPendingDeposits() {
-                return state.depositRequests.filter(r => r.status === 'pending');
-            }
+            // ======================== مدير واجهة المستخدم (UI Manager) ========================
+            class UIManager {
+                constructor(state, dataService, telegramService, toast) {
+                    this.state = state;
+                    this.data = dataService;
+                    this.tg = telegramService;
+                    this.toast = toast;
+                    this.appContainer = document.getElementById('app');
+                    this.currentModal = null;
+                    
+                    // ربط أحداث الحالة
+                    this.state.addEventListener('balanceUpdated', () => this.updateBalanceDisplay());
+                    this.state.addEventListener('statsUpdated', () => this.updateStatsDisplay());
+                }
 
-            function getPendingWithdrawals() {
-                return state.withdrawalRequests.filter(r => r.status === 'pending');
-            }
+                // التصيير الرئيسي
+                render() {
+                    if (this.state.telegramMissing) {
+                        this.appContainer.innerHTML = this.renderTelegramMissing();
+                    } else if (this.state.loading) {
+                        this.appContainer.innerHTML = this.renderLoading();
+                    } else if (this.state.accessDenied) {
+                        this.appContainer.innerHTML = this.renderAccessDenied();
+                    } else if (this.state.isAdmin) {
+                        this.appContainer.innerHTML = this.renderAdminDashboard();
+                    } else {
+                        this.appContainer.innerHTML = this.renderUserDashboard();
+                    }
+                    
+                    this.bindEvents();
+                }
 
-            // -----------------------------------------------
-            // مكونات واجهة المستخدم (UI Components)
-            // -----------------------------------------------
-            const components = {
-                loading: () => {
+                // مكونات التصيير
+                renderLoading() {
                     return `
                         <div class="flex flex-col items-center justify-center text-center space-y-6 animate-enter">
                             <div class="spinner"></div>
@@ -1117,9 +1128,9 @@
                             </div>
                         </div>
                     `;
-                },
+                }
 
-                accessDenied: () => {
+                renderAccessDenied() {
                     return `
                         <div class="glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter border-red-500/20">
                             <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
@@ -1135,9 +1146,9 @@
                             </a>
                         </div>
                     `;
-                },
+                }
 
-                telegramMissing: () => {
+                renderTelegramMissing() {
                     return `
                         <div class="glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter border-orange-500/20">
                             <div class="w-20 h-20 bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
@@ -1153,34 +1164,28 @@
                             </a>
                         </div>
                     `;
-                },
+                }
 
-                userDashboard: (user, balance) => {
+                renderUserDashboard() {
+                    const user = this.state.user;
                     const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
                     const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
-                    const photoUrl = user.photo_url;
-
+                    
                     return `
                         <div class="space-y-5 animate-enter pb-10">
                             <!-- Header Profile Card -->
                             <div class="glass-card p-5 rounded-3xl relative overflow-hidden group">
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
-
                                 <div class="flex items-center gap-4 relative z-10">
-                                    <!-- Avatar -->
                                     <div class="w-16 h-16 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">
-                                        ${photoUrl ? 
-                                            `<img src="${photoUrl}" alt="User" class="w-full h-full object-cover">` : 
+                                        ${user.photo_url ? 
+                                            `<img src="${user.photo_url}" alt="User" class="w-full h-full object-cover">` : 
                                             `<div class="w-full h-full default-avatar"><span>${initials}</span></div>`
                                         }
                                     </div>
-
-                                    <!-- User Info -->
                                     <div class="flex-1 min-w-0">
                                         <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
                                         <p class="text-xs text-gray-400 font-mono mt-0.5">ID: ${user.id}</p>
-                                        
-                                        <!-- Status Badge -->
                                         <div class="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-green-500/10 border border-green-500/20">
                                             <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                                             <span class="text-[10px] font-bold text-green-400 uppercase tracking-wide">نشط الآن</span>
@@ -1189,18 +1194,18 @@
                                 </div>
                             </div>
 
-                            <!-- أيقونة المحفظة الكبيرة والمتطورة -->
+                            <!-- أيقونة المحفظة -->
                             <div class="flex justify-center my-4">
                                 <div class="wallet-icon-large" id="walletIconLarge">
                                     <i class="fa-solid fa-wallet"></i>
                                 </div>
                             </div>
 
-                            <!-- بطاقة صغيرة لعرض الرصيد -->
+                            <!-- بطاقة الرصيد -->
                             <div class="flex justify-center">
-                                <div class="balance-badge">
+                                <div class="balance-badge" id="balanceBadge">
                                     <i class="fa-solid fa-coins"></i>
-                                    <span>${balance.toLocaleString('ar-EG')}</span>
+                                    <span>${this.state.balance.toLocaleString('ar-EG')}</span>
                                 </div>
                             </div>
 
@@ -1229,34 +1234,29 @@
                             </button>
                         </div>
                     `;
-                },
+                }
 
-                adminDashboard: (user, balance, stats) => {
+                renderAdminDashboard() {
+                    const user = this.state.user;
                     const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
                     const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
-                    const photoUrl = user.photo_url;
+                    const stats = this.state.stats;
 
                     return `
                         <div class="space-y-5 animate-enter pb-10">
-                            <!-- Header Profile Card (مع شارة المشرف) -->
+                            <!-- Header Profile Card -->
                             <div class="glass-card p-5 rounded-3xl relative overflow-hidden border-2 border-yellow-500/30">
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
-
                                 <div class="flex items-center gap-4 relative z-10">
-                                    <!-- Avatar -->
                                     <div class="w-16 h-16 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">
-                                        ${photoUrl ? 
-                                            `<img src="${photoUrl}" alt="Admin" class="w-full h-full object-cover">` : 
+                                        ${user.photo_url ? 
+                                            `<img src="${user.photo_url}" alt="Admin" class="w-full h-full object-cover">` : 
                                             `<div class="w-full h-full default-avatar"><span>${initials}</span></div>`
                                         }
                                     </div>
-
-                                    <!-- Admin Info -->
                                     <div class="flex-1 min-w-0">
                                         <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
                                         <p class="text-xs text-gray-400 font-mono mt-0.5">ID: ${user.id}</p>
-                                        
-                                        <!-- شارة المشرف -->
                                         <div class="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-yellow-500/20 border border-yellow-500/30">
                                             <i class="fa-solid fa-crown text-yellow-400 text-[10px]"></i>
                                             <span class="text-[10px] font-bold text-yellow-300 uppercase tracking-wide">مدير النظام</span>
@@ -1265,7 +1265,7 @@
                                 </div>
                             </div>
 
-                            <!-- أيقونة المحفظة الكبيرة -->
+                            <!-- أيقونة المحفظة -->
                             <div class="flex justify-center my-4">
                                 <div class="wallet-icon-large" id="walletIconLarge">
                                     <i class="fa-solid fa-wallet"></i>
@@ -1274,38 +1274,38 @@
 
                             <!-- بطاقة الرصيد -->
                             <div class="flex justify-center">
-                                <div class="balance-badge">
+                                <div class="balance-badge" id="balanceBadge">
                                     <i class="fa-solid fa-coins"></i>
-                                    <span>${balance.toLocaleString('ar-EG')}</span>
+                                    <span>${this.state.balance.toLocaleString('ar-EG')}</span>
                                 </div>
                             </div>
 
-                            <!-- إحصائيات خاصة بالمشرف -->
+                            <!-- إحصائيات -->
                             <div class="grid grid-cols-3 gap-2 mt-4">
                                 <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
                                     <div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-1">
                                         <i class="fa-solid fa-users text-sm"></i>
                                     </div>
                                     <span class="text-gray-400 text-[10px]">المستخدمين</span>
-                                    <span class="text-white font-bold text-base block" id="statsUsers">${stats.users.toLocaleString('ar-EG')}</span>
+                                    <span class="text-white font-bold text-base" id="statsUsers">${stats.users.toLocaleString('ar-EG')}</span>
                                 </div>
                                 <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
                                     <div class="w-8 h-8 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center mx-auto mb-1">
                                         <i class="fa-solid fa-robot text-sm"></i>
                                     </div>
                                     <span class="text-gray-400 text-[10px]">البوتات</span>
-                                    <span class="text-white font-bold text-base block" id="statsBots">${stats.bots}</span>
+                                    <span class="text-white font-bold text-base" id="statsBots">${stats.bots}</span>
                                 </div>
                                 <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
                                     <div class="w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto mb-1">
                                         <i class="fa-solid fa-chart-line text-sm"></i>
                                     </div>
                                     <span class="text-gray-400 text-[10px]">عمليات اليوم</span>
-                                    <span class="text-white font-bold text-base block" id="statsDailyOps">${stats.dailyOps}</span>
+                                    <span class="text-white font-bold text-base" id="statsDailyOps">${stats.dailyOps}</span>
                                 </div>
                             </div>
 
-                            <!-- زر لوحة الإدارة (للمشرف فقط) -->
+                            <!-- زر لوحة الإدارة -->
                             <button id="openAdminPanelBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2 mt-2">
                                 <i class="fa-solid fa-gears"></i>
                                 لوحة الإدارة (الطلبات وطرق الدفع)
@@ -1319,772 +1319,725 @@
                         </div>
                     `;
                 }
-            };
 
-            // دالة عرض محتوى المحفظة (مطورة مع طرق الدفع وإظهار التفاصيل عند الاختيار)
-            function renderWalletModal() {
-                const balance = state.balance;
-                const transactions = state.wallet.transactions;
-                const address = state.wallet.address;
-
-                let transactionsHtml = '';
-                if (transactions.length === 0) {
-                    transactionsHtml = '<p class="text-center text-gray-400 py-4">لا توجد معاملات بعد</p>';
-                } else {
-                    transactionsHtml = transactions.map(tx => {
-                        const amountClass = tx.amount > 0 ? 'positive' : 'negative';
-                        const amountStr = (tx.amount > 0 ? '+' : '') + tx.amount.toLocaleString('ar-EG');
-                        const date = new Date(tx.date).toLocaleString('ar-EG');
-                        return `
-                            <div class="transaction-item">
-                                <div>
-                                    <div class="font-medium">${tx.note || tx.type}</div>
-                                    <div class="text-xs text-gray-400">${date}</div>
-                                </div>
-                                <div class="transaction-amount ${amountClass} font-bold">${amountStr}</div>
-                            </div>
-                        `;
-                    }).join('');
+                // تحديث عرض الرصيد
+                updateBalanceDisplay() {
+                    const balanceSpan = document.querySelector('#balanceBadge span');
+                    if (balanceSpan) {
+                        balanceSpan.textContent = this.state.balance.toLocaleString('ar-EG');
+                    }
                 }
 
-                // إنشاء خيارات طرق الدفع (للعرض في tabs) باستخدام state.paymentMethods
-                const paymentMethodsHtml = state.paymentMethods.map(m => `
-                    <div class="payment-method" data-method-id="${m.id}">
-                        <div class="payment-icon ${m.iconClass || ''}">
-                            ${m.imageUrl ? `<img src="${m.imageUrl}" alt="${m.name}">` : `<i class="${m.icon}"></i>`}
-                        </div>
-                        <div class="flex-1">
-                            <div class="font-bold">${m.name}</div>
-                            <div class="text-xs text-gray-400">${(m.description || '').substring(0, 30)}...</div>
-                        </div>
-                    </div>
-                `).join('');
+                // تحديث عرض الإحصائيات
+                updateStatsDisplay() {
+                    const stats = this.state.stats;
+                    const usersEl = document.getElementById('statsUsers');
+                    const botsEl = document.getElementById('statsBots');
+                    const dailyOpsEl = document.getElementById('statsDailyOps');
+                    if (usersEl) usersEl.textContent = stats.users.toLocaleString('ar-EG');
+                    if (botsEl) botsEl.textContent = stats.bots;
+                    if (dailyOpsEl) dailyOpsEl.textContent = stats.dailyOps;
+                }
 
-                const withdrawMethodsHtml = state.paymentMethods.map(m => `
-                    <div class="payment-method" data-method-id="${m.id}">
-                        <div class="payment-icon ${m.iconClass || ''}">
-                            ${m.imageUrl ? `<img src="${m.imageUrl}" alt="${m.name}">` : `<i class="${m.icon}"></i>`}
-                        </div>
-                        <div class="flex-1">
-                            <div class="font-bold">${m.name}</div>
-                        </div>
-                    </div>
-                `).join('');
+                // ربط الأحداث
+                bindEvents() {
+                    const logoutBtn = document.getElementById('logoutBtn');
+                    if (logoutBtn) {
+                        logoutBtn.addEventListener('click', () => {
+                            this.tg.close();
+                            this.toast.info('تم تسجيل الخروج بنجاح');
+                        });
+                    }
 
-                return `
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold">محفظتي</h2>
-                        <button id="closeWalletModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                            <i class="fa-solid fa-times"></i>
-                        </button>
-                    </div>
+                    const walletIcon = document.getElementById('walletIconLarge');
+                    if (walletIcon) {
+                        walletIcon.addEventListener('click', () => this.openWalletModal());
+                    }
 
-                    <!-- الرصيد -->
-                    <div class="glass-card p-6 rounded-2xl text-center mb-4">
-                        <div class="text-gray-400 text-sm mb-1">الرصيد الحالي</div>
-                        <div class="text-3xl font-bold text-white">${balance.toLocaleString('ar-EG')}</div>
-                        <div class="text-xs text-gray-400 mt-1">عملة البوت</div>
-                    </div>
+                    const adminPanelBtn = document.getElementById('openAdminPanelBtn');
+                    if (adminPanelBtn) {
+                        adminPanelBtn.addEventListener('click', () => this.openAdminPanel());
+                    }
+                }
 
-                    <!-- علامات التبويب -->
-                    <div class="wallet-tabs">
-                        <button class="wallet-tab active" data-tab="deposit"><i class="fa-solid fa-arrow-down"></i> شحن</button>
-                        <button class="wallet-tab" data-tab="withdraw"><i class="fa-solid fa-arrow-up"></i> سحب</button>
-                        <button class="wallet-tab" data-tab="transfer"><i class="fa-solid fa-exchange-alt"></i> تحويل</button>
-                        <button class="wallet-tab" data-tab="history"><i class="fa-solid fa-history"></i> السجل</button>
-                    </div>
+                // ========== نوافذ مودال ==========
+                openWalletModal() {
+                    const modalOverlay = document.getElementById('walletModalOverlay');
+                    const modalContent = document.getElementById('walletModalContent');
+                    modalContent.innerHTML = this.renderWalletModal();
+                    modalOverlay.classList.add('open');
+                    this.bindWalletModalEvents();
+                }
 
-                    <!-- محتوى التبويبات -->
-                    <div id="walletTabContent">
-                        <!-- تبويب الشحن (مع طرق الدفع وإظهار التفاصيل عند الاختيار) -->
-                        <div class="tab-pane active" id="tab-deposit">
-                            <p class="text-sm text-gray-300 mb-3">اختر طريقة الدفع:</p>
-                            <div class="payment-methods-list mb-4">
-                                ${paymentMethodsHtml}
-                            </div>
-                            
-                            <!-- منطقة عرض التفاصيل عند اختيار طريقة -->
-                            <div id="depositDetailsDisplay" class="payment-details hidden">
-                                <strong>تفاصيل الإيداع:</strong>
-                                <div id="depositDetailsText"></div>
-                            </div>
+                renderWalletModal() {
+                    const balance = this.state.balance;
+                    const transactions = this.state.wallet.transactions;
+                    const paymentMethods = this.state.paymentMethods;
 
-                            <!-- حقل إدخال رقم العملية (TXID) -->
-                            <div class="mb-3">
-                                <label class="text-sm text-gray-400">رقم العملية (TXID / رمز التتبع):</label>
-                                <input type="text" id="depositTransactionId" placeholder="أدخل رقم العملية" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                            </div>
+                    const transactionsHtml = transactions.length === 0 
+                        ? '<p class="text-center text-gray-400 py-4">لا توجد معاملات بعد</p>'
+                        : transactions.map(tx => {
+                            const amountClass = tx.amount > 0 ? 'positive' : 'negative';
+                            const amountStr = (tx.amount > 0 ? '+' : '') + tx.amount.toLocaleString('ar-EG');
+                            return `
+                                <div class="transaction-item">
+                                    <div>
+                                        <div class="font-medium">${tx.note || tx.type}</div>
+                                        <div class="text-xs text-gray-400">${DateUtils.formatDateTime(tx.date)}</div>
+                                    </div>
+                                    <div class="transaction-amount ${amountClass} font-bold">${amountStr}</div>
+                                </div>
+                            `;
+                        }).join('');
 
-                            <div class="flex gap-2">
-                                <input type="number" id="depositAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                                <button id="depositBtn" class="bg-blue-600 px-4 rounded-lg font-bold">تقديم طلب</button>
+                    const paymentMethodsHtml = paymentMethods.map(m => `
+                        <div class="payment-method" data-method-id="${m.id}">
+                            <div class="payment-icon">
+                                <i class="${m.icon}"></i>
                             </div>
-                            <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلبك من قبل الإدارة وتحديث الرصيد بعد الموافقة. تأكد من إدخال رقم العملية بشكل صحيح.</p>
-                        </div>
-
-                        <!-- تبويب السحب (مع طرق الدفع) -->
-                        <div class="tab-pane hidden" id="tab-withdraw">
-                            <p class="text-sm text-gray-300 mb-3">اختر طريقة السحب:</p>
-                            <div class="payment-methods-list mb-4" id="withdrawMethodsList">
-                                ${withdrawMethodsHtml}
-                            </div>
-                            <div id="withdrawDetailsContainer" class="mb-3">
-                                <!-- سيتم تعبئته ديناميكياً عند اختيار طريقة -->
-                                <input type="text" id="withdrawDetails" placeholder="أدخل التفاصيل (عنوان المحفظة، رقم البطاقة...)" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
-                            </div>
-                            <div class="flex gap-2">
-                                <input type="number" id="withdrawAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                                <button id="withdrawBtn" class="bg-red-600 px-4 rounded-lg font-bold">طلب سحب</button>
-                            </div>
-                            <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلب السحب من قبل الإدارة وتحويل المبلغ بعد الموافقة.</p>
-                        </div>
-
-                        <!-- تبويب التحويل (مباشر) -->
-                        <div class="tab-pane hidden" id="tab-transfer">
-                            <p class="text-sm text-gray-300 mb-2">تحويل إلى مستخدم آخر:</p>
-                            <input type="text" id="transferUserId" placeholder="معرف المستخدم (User ID)" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
-                            <div class="flex gap-2">
-                                <input type="number" id="transferAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                                <button id="transferBtn" class="bg-green-600 px-4 rounded-lg font-bold">تحويل</button>
-                            </div>
-                        </div>
-
-                        <!-- تبويب السجل -->
-                        <div class="tab-pane hidden" id="tab-history">
-                            <div class="max-h-64 overflow-y-auto">
-                                ${transactionsHtml}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // دالة عرض لوحة المشرف (إدارة الطلبات + طرق الدفع) مع عرض رقم العملية في طلبات الشحن
-            function renderAdminPanel() {
-                const pendingDeposits = getPendingDeposits();
-                const pendingWithdrawals = getPendingWithdrawals();
-
-                const depositsHtml = pendingDeposits.length === 0 
-                    ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات شحن معلقة</p>'
-                    : pendingDeposits.map(req => `
-                        <div class="request-item" data-id="${req.id}" data-type="deposit">
-                            <div class="request-header">
-                                <span class="font-bold">${req.userName}</span>
-                                <span class="badge-pending">قيد الانتظار</span>
-                            </div>
-                            <div class="text-sm">المبلغ: <span class="text-blue-400">${req.amount.toLocaleString('ar-EG')}</span></div>
-                            <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
-                            <div class="text-xs text-gray-400">رقم العملية: <span class="text-yellow-400">${req.transactionId || 'غير محدد'}</span></div>
-                            <div class="text-xs text-gray-400">التاريخ: ${new Date(req.date).toLocaleString('ar-EG')}</div>
-                            <div class="request-actions">
-                                <button class="btn-accept accept-request" data-id="${req.id}" data-type="deposit">قبول</button>
-                                <button class="btn-reject reject-request" data-id="${req.id}" data-type="deposit">رفض</button>
-                            </div>
-                        </div>
-                    `).join('');
-
-                const withdrawalsHtml = pendingWithdrawals.length === 0 
-                    ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات سحب معلقة</p>'
-                    : pendingWithdrawals.map(req => `
-                        <div class="request-item" data-id="${req.id}" data-type="withdrawal">
-                            <div class="request-header">
-                                <span class="font-bold">${req.userName}</span>
-                                <span class="badge-pending">قيد الانتظار</span>
-                            </div>
-                            <div class="text-sm">المبلغ: <span class="text-red-400">${req.amount.toLocaleString('ar-EG')}</span></div>
-                            <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
-                            <div class="text-xs text-gray-400">التفاصيل: ${req.details || 'غير محدد'}</div>
-                            <div class="text-xs text-gray-400">التاريخ: ${new Date(req.date).toLocaleString('ar-EG')}</div>
-                            <div class="request-actions">
-                                <button class="btn-accept accept-request" data-id="${req.id}" data-type="withdrawal">قبول</button>
-                                <button class="btn-reject reject-request" data-id="${req.id}" data-type="withdrawal">رفض</button>
-                            </div>
-                        </div>
-                    `).join('');
-
-                // عرض طرق الدفع الحالية
-                const paymentMethodsHtml = state.paymentMethods.map(m => `
-                    <div class="payment-method-admin">
-                        <div class="flex items-center gap-3">
-                            <div class="payment-icon ${m.iconClass || ''}">
-                                ${m.imageUrl ? `<img src="${m.imageUrl}" alt="${m.name}">` : `<i class="${m.icon}"></i>`}
-                            </div>
-                            <div>
+                            <div class="flex-1">
                                 <div class="font-bold">${m.name}</div>
-                                <div class="text-xs text-gray-400">${m.description || ''}</div>
+                                <div class="text-xs text-gray-400">${(m.description || '').substring(0, 30)}...</div>
                             </div>
                         </div>
-                        <div class="actions">
-                            <button class="edit-payment-method" data-id="${m.id}" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button class="delete-payment-method" data-id="${m.id}" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                    `).join('');
+
+                    const withdrawMethodsHtml = paymentMethods.map(m => `
+                        <div class="payment-method" data-method-id="${m.id}">
+                            <div class="payment-icon">
+                                <i class="${m.icon}"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-bold">${m.name}</div>
+                            </div>
                         </div>
-                    </div>
-                `).join('');
+                    `).join('');
 
-                return `
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold">لوحة الإدارة</h2>
-                        <button id="closeAdminPanel" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                            <i class="fa-solid fa-times"></i>
-                        </button>
-                    </div>
+                    return `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">محفظتي</h2>
+                            <button id="closeWalletModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
 
-                    <!-- تبويبات الإدارة -->
-                    <div class="wallet-tabs mb-3">
-                        <button class="wallet-tab active" data-admin-tab="requests">الطلبات</button>
-                        <button class="wallet-tab" data-admin-tab="payment-methods">طرق الدفع</button>
-                    </div>
+                        <div class="glass-card p-6 rounded-2xl text-center mb-4">
+                            <div class="text-gray-400 text-sm mb-1">الرصيد الحالي</div>
+                            <div class="text-3xl font-bold text-white">${balance.toLocaleString('ar-EG')}</div>
+                            <div class="text-xs text-gray-400 mt-1">عملة البوت</div>
+                        </div>
 
-                    <!-- محتوى تبويب الطلبات -->
-                    <div id="adminRequestsTab" class="admin-tab-content">
-                        <div class="space-y-6">
-                            <!-- طلبات الشحن -->
-                            <div>
-                                <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
-                                    <i class="fa-solid fa-arrow-down text-green-400"></i>
-                                    طلبات الشحن المعلقة
-                                    <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${pendingDeposits.length}</span>
-                                </h3>
-                                <div class="admin-requests-panel">
-                                    ${depositsHtml}
+                        <div class="wallet-tabs">
+                            <button class="wallet-tab active" data-tab="deposit"><i class="fa-solid fa-arrow-down"></i> شحن</button>
+                            <button class="wallet-tab" data-tab="withdraw"><i class="fa-solid fa-arrow-up"></i> سحب</button>
+                            <button class="wallet-tab" data-tab="transfer"><i class="fa-solid fa-exchange-alt"></i> تحويل</button>
+                            <button class="wallet-tab" data-tab="history"><i class="fa-solid fa-history"></i> السجل</button>
+                        </div>
+
+                        <div id="walletTabContent">
+                            <!-- تبويب الشحن -->
+                            <div class="tab-pane active" id="tab-deposit">
+                                <p class="text-sm text-gray-300 mb-3">اختر طريقة الدفع:</p>
+                                <div class="payment-methods-list mb-4">
+                                    ${paymentMethodsHtml}
+                                </div>
+                                
+                                <div id="depositDetailsDisplay" class="payment-details hidden">
+                                    <strong>تفاصيل الإيداع:</strong>
+                                    <div id="depositDetailsText"></div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="text-sm text-gray-400">رقم العملية (TXID):</label>
+                                    <input type="text" id="depositTransactionId" placeholder="أدخل رقم العملية" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                </div>
+
+                                <div class="flex gap-2">
+                                    <input type="number" id="depositAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                    <button id="depositBtn" class="bg-blue-600 px-4 rounded-lg font-bold">تقديم طلب</button>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلبك من قبل الإدارة.</p>
+                            </div>
+
+                            <!-- تبويب السحب -->
+                            <div class="tab-pane hidden" id="tab-withdraw">
+                                <p class="text-sm text-gray-300 mb-3">اختر طريقة السحب:</p>
+                                <div class="payment-methods-list mb-4" id="withdrawMethodsList">
+                                    ${withdrawMethodsHtml}
+                                </div>
+                                <div id="withdrawDetailsContainer" class="mb-3">
+                                    <input type="text" id="withdrawDetails" placeholder="أدخل التفاصيل" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
+                                </div>
+                                <div class="flex gap-2">
+                                    <input type="number" id="withdrawAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                    <button id="withdrawBtn" class="bg-red-600 px-4 rounded-lg font-bold">طلب سحب</button>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلب السحب من قبل الإدارة.</p>
+                            </div>
+
+                            <!-- تبويب التحويل -->
+                            <div class="tab-pane hidden" id="tab-transfer">
+                                <p class="text-sm text-gray-300 mb-2">تحويل إلى مستخدم آخر:</p>
+                                <input type="text" id="transferUserId" placeholder="معرف المستخدم" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
+                                <div class="flex gap-2">
+                                    <input type="number" id="transferAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                    <button id="transferBtn" class="bg-green-600 px-4 rounded-lg font-bold">تحويل</button>
                                 </div>
                             </div>
 
-                            <!-- طلبات السحب -->
-                            <div>
-                                <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
-                                    <i class="fa-solid fa-arrow-up text-red-400"></i>
-                                    طلبات السحب المعلقة
-                                    <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${pendingWithdrawals.length}</span>
-                                </h3>
-                                <div class="admin-requests-panel">
-                                    ${withdrawalsHtml}
+                            <!-- تبويب السجل -->
+                            <div class="tab-pane hidden" id="tab-history">
+                                <div class="max-h-64 overflow-y-auto">
+                                    ${transactionsHtml}
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- محتوى تبويب طرق الدفع -->
-                    <div id="adminPaymentMethodsTab" class="admin-tab-content hidden">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="text-lg font-bold">طرق الدفع المتاحة</h3>
-                            <button id="addPaymentMethodBtn" class="bg-blue-600 px-3 py-1 rounded-lg text-sm"><i class="fa-solid fa-plus"></i> إضافة</button>
-                        </div>
-                        <div class="space-y-2 max-h-96 overflow-y-auto">
-                            ${paymentMethodsHtml}
-                        </div>
-                    </div>
-                `;
-            }
-
-            // نافذة تعديل/إضافة طريقة دفع
-            function renderPaymentMethodModal(editingId = null) {
-                const method = editingId ? state.paymentMethods.find(m => m.id === editingId) : null;
-                const title = method ? 'تعديل طريقة دفع' : 'إضافة طريقة دفع جديدة';
-                return `
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold">${title}</h2>
-                        <button id="closePaymentMethodModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                            <i class="fa-solid fa-times"></i>
-                        </button>
-                    </div>
-                    <form id="paymentMethodForm" class="space-y-3">
-                        <input type="hidden" id="methodId" value="${method?.id || ''}">
-                        <div>
-                            <label class="text-sm text-gray-400">اسم الطريقة</label>
-                            <input type="text" id="methodName" required value="${method?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                        </div>
-                        <div>
-                            <label class="text-sm text-gray-400">الأيقونة (class FontAwesome مثل "fa-brands fa-tether")</label>
-                            <input type="text" id="methodIcon" value="${method?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                        </div>
-                        <div>
-                            <label class="text-sm text-gray-400">وصف مختصر</label>
-                            <input type="text" id="methodDescription" value="${method?.description || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                        </div>
-                        <div>
-                            <label class="text-sm text-gray-400">تفاصيل الإيداع (تظهر للمستخدم)</label>
-                            <textarea id="methodDepositDetails" rows="2" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">${method?.depositDetails || ''}</textarea>
-                        </div>
-                        <div>
-                            <label class="text-sm text-gray-400">تفاصيل السحب (placeholder)</label>
-                            <input type="text" id="methodWithdrawDetails" value="${method?.withdrawDetails || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                        </div>
-                        <div>
-                            <label class="text-sm text-gray-400">حقل إضافي 1 (مثال: عنوان المحفظة)</label>
-                            <input type="text" id="methodExtra1" value="${method?.extraField1 || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                        </div>
-                        <div>
-                            <label class="text-sm text-gray-400">حقل إضافي 2 (مثال: الشبكة)</label>
-                            <input type="text" id="methodExtra2" value="${method?.extraField2 || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                        </div>
-                        <div>
-                            <label class="text-sm text-gray-400">رابط صورة (اختياري)</label>
-                            <input type="url" id="methodImageUrl" value="${method?.imageUrl || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                        </div>
-                        <div class="flex gap-2 pt-2">
-                            <button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button>
-                            <button type="button" id="cancelPaymentMethod" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button>
-                        </div>
-                    </form>
-                `;
-            }
-
-            // -----------------------------------------------
-            // دالة التصيير (Render)
-            // -----------------------------------------------
-            function render() {
-                if (state.telegramMissing) {
-                    appContainer.innerHTML = components.telegramMissing();
-                } else if (state.loading) {
-                    appContainer.innerHTML = components.loading();
-                } else if (state.accessDenied) {
-                    appContainer.innerHTML = components.accessDenied();
-                } else if (state.isAdmin) {
-                    appContainer.innerHTML = components.adminDashboard(state.user, state.balance, state.stats);
-                } else {
-                    appContainer.innerHTML = components.userDashboard(state.user, state.balance);
+                    `;
                 }
 
-                // إعادة ربط الأحداث بعد التصيير
-                bindEvents();
-            }
-
-            // -----------------------------------------------
-            // ربط الأحداث (Event Binding)
-            // -----------------------------------------------
-            function bindEvents() {
-                // زر تسجيل الخروج
-                const logoutBtn = document.getElementById('logoutBtn');
-                if (logoutBtn) {
-                    logoutBtn.addEventListener('click', () => {
-                        if (tg) tg.close();
-                        toast.info('تم تسجيل الخروج بنجاح');
+                bindWalletModalEvents() {
+                    const modalOverlay = document.getElementById('walletModalOverlay');
+                    document.getElementById('closeWalletModal').addEventListener('click', () => {
+                        modalOverlay.classList.remove('open');
                     });
-                }
-
-                // أيقونة المحفظة الكبيرة
-                const walletIconLarge = document.getElementById('walletIconLarge');
-                if (walletIconLarge) {
-                    walletIconLarge.addEventListener('click', () => {
-                        openWalletModal();
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay) modalOverlay.classList.remove('open');
                     });
-                }
 
-                // زر فتح لوحة المشرف (إذا كان موجوداً)
-                const openAdminPanelBtn = document.getElementById('openAdminPanelBtn');
-                if (openAdminPanelBtn) {
-                    openAdminPanelBtn.addEventListener('click', () => {
-                        openAdminPanel();
-                    });
-                }
-            }
-
-            // دوال فتح وإغلاق المحفظة
-            function openWalletModal() {
-                walletModalContent.innerHTML = renderWalletModal();
-                walletModalOverlay.classList.add('open');
-                bindWalletModalEvents();
-            }
-
-            function bindWalletModalEvents() {
-                document.getElementById('closeWalletModal').addEventListener('click', closeWalletModal);
-                walletModalOverlay.addEventListener('click', (e) => {
-                    if (e.target === walletModalOverlay) closeWalletModal();
-                });
-
-                // تبديل التبويبات
-                const tabs = document.querySelectorAll('.wallet-tab');
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        tabs.forEach(t => t.classList.remove('active'));
-                        tab.classList.add('active');
-                        const tabId = tab.dataset.tab;
-                        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
-                        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-                    });
-                });
-
-                // اختيار طريقة الدفع في الشحن مع عرض التفاصيل
-                const paymentMethods = document.querySelectorAll('.payment-methods-list .payment-method');
-                let selectedMethod = null;
-                const detailsDisplay = document.getElementById('depositDetailsDisplay');
-                const detailsText = document.getElementById('depositDetailsText');
-                
-                paymentMethods.forEach(method => {
-                    method.addEventListener('click', () => {
-                        paymentMethods.forEach(m => m.classList.remove('selected'));
-                        method.classList.add('selected');
-                        selectedMethod = method.dataset.methodId;
-                        
-                        // عرض تفاصيل الطريقة المختارة
-                        const methodObj = state.paymentMethods.find(m => m.id === selectedMethod);
-                        if (methodObj && methodObj.depositDetails) {
-                            detailsText.innerHTML = methodObj.depositDetails.replace(/\n/g, '<br>');
-                            detailsDisplay.classList.remove('hidden');
-                        } else {
-                            detailsDisplay.classList.add('hidden');
-                        }
-                    });
-                });
-
-                // زر تقديم طلب شحن
-                document.getElementById('depositBtn')?.addEventListener('click', () => {
-                    const amount = parseFloat(document.getElementById('depositAmount').value);
-                    const transactionId = document.getElementById('depositTransactionId').value.trim();
-                    
-                    if (isNaN(amount) || amount <= 0) {
-                        toast.error('أدخل مبلغ صحيح');
-                        return;
-                    }
-                    if (!selectedMethod) {
-                        toast.error('اختر طريقة دفع أولاً');
-                        return;
-                    }
-                    if (!transactionId) {
-                        toast.error('يرجى إدخال رقم العملية (TXID)');
-                        return;
-                    }
-                    
-                    const requestId = addDepositRequest(amount, selectedMethod, transactionId);
-                    toast.success(`تم تقديم طلب الشحن بنجاح (رقم: ${requestId})، بانتظار المراجعة`);
-                    
-                    document.getElementById('depositAmount').value = '';
-                    document.getElementById('depositTransactionId').value = '';
-                    paymentMethods.forEach(m => m.classList.remove('selected'));
-                    selectedMethod = null;
-                    detailsDisplay.classList.add('hidden');
-                });
-
-                // اختيار طريقة السحب
-                const withdrawMethods = document.querySelectorAll('#withdrawMethodsList .payment-method');
-                let selectedWithdrawMethod = null;
-                withdrawMethods.forEach(method => {
-                    method.addEventListener('click', () => {
-                        withdrawMethods.forEach(m => m.classList.remove('selected'));
-                        method.classList.add('selected');
-                        selectedWithdrawMethod = method.dataset.methodId;
-                        // تحديث placeholder حسب الطريقة المختارة
-                        const methodObj = state.paymentMethods.find(m => m.id === selectedWithdrawMethod);
-                        const detailsInput = document.getElementById('withdrawDetails');
-                        if (methodObj) {
-                            detailsInput.placeholder = methodObj.withdrawDetails || 'أدخل التفاصيل';
-                        }
-                    });
-                });
-
-                // زر طلب السحب
-                document.getElementById('withdrawBtn')?.addEventListener('click', () => {
-                    const amount = parseFloat(document.getElementById('withdrawAmount').value);
-                    const details = document.getElementById('withdrawDetails').value.trim();
-                    if (isNaN(amount) || amount <= 0) {
-                        toast.error('أدخل مبلغ صحيح');
-                        return;
-                    }
-                    if (!selectedWithdrawMethod) {
-                        toast.error('اختر طريقة سحب أولاً');
-                        return;
-                    }
-                    if (!details) {
-                        toast.error('أدخل التفاصيل المطلوبة');
-                        return;
-                    }
-                    const result = addWithdrawalRequest(amount, selectedWithdrawMethod, details);
-                    if (result.success) {
-                        toast.success(`تم تقديم طلب السحب بنجاح (رقم: ${result.id})، بانتظار المراجعة`);
-                        document.getElementById('withdrawAmount').value = '';
-                        document.getElementById('withdrawDetails').value = '';
-                        withdrawMethods.forEach(m => m.classList.remove('selected'));
-                        selectedWithdrawMethod = null;
-                        updateBalanceDisplay();
-                    } else {
-                        toast.error(result.message);
-                    }
-                });
-
-                // زر التحويل (مباشر)
-                document.getElementById('transferBtn')?.addEventListener('click', () => {
-                    const amount = parseFloat(document.getElementById('transferAmount').value);
-                    const targetId = document.getElementById('transferUserId').value.trim();
-                    if (isNaN(amount) || amount <= 0) {
-                        toast.error('أدخل مبلغ صحيح');
-                        return;
-                    }
-                    if (!targetId) {
-                        toast.error('أدخل معرف المستخدم');
-                        return;
-                    }
-                    if (amount > state.balance) {
-                        toast.error('الرصيد غير كافٍ');
-                        return;
-                    }
-                    // محاكاة تحويل (يمكن جعلها حقيقية لاحقاً)
-                    state.balance -= amount;
-                    addTransaction('transfer', -amount, `تحويل إلى المستخدم ${targetId}`);
-                    saveWalletData();
-                    toast.success('تم التحويل بنجاح');
-                    document.getElementById('transferAmount').value = '';
-                    document.getElementById('transferUserId').value = '';
-                    updateBalanceDisplay();
-                    // تحديث المحتوى
-                    walletModalContent.innerHTML = renderWalletModal();
-                    bindWalletModalEvents();
-                });
-            }
-
-            function closeWalletModal() {
-                walletModalOverlay.classList.remove('open');
-            }
-
-            // دوال لوحة المشرف
-            function openAdminPanel() {
-                adminPanelContent.innerHTML = renderAdminPanel();
-                adminPanelOverlay.classList.add('open');
-                bindAdminPanelEvents();
-            }
-
-            function bindAdminPanelEvents() {
-                document.getElementById('closeAdminPanel').addEventListener('click', closeAdminPanel);
-                adminPanelOverlay.addEventListener('click', (e) => {
-                    if (e.target === adminPanelOverlay) closeAdminPanel();
-                });
-
-                // تبديل التبويبات داخل لوحة المشرف
-                const adminTabs = document.querySelectorAll('[data-admin-tab]');
-                adminTabs.forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        adminTabs.forEach(t => t.classList.remove('active'));
-                        tab.classList.add('active');
-                        const tabName = tab.dataset.adminTab;
-                        if (tabName === 'requests') {
-                            document.getElementById('adminRequestsTab').classList.remove('hidden');
-                            document.getElementById('adminPaymentMethodsTab').classList.add('hidden');
-                        } else {
-                            document.getElementById('adminRequestsTab').classList.add('hidden');
-                            document.getElementById('adminPaymentMethodsTab').classList.remove('hidden');
-                        }
-                    });
-                });
-
-                // أزرار قبول الطلبات
-                document.querySelectorAll('.accept-request').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = btn.dataset.id;
-                        const type = btn.dataset.type;
-                        const request = type === 'deposit' 
-                            ? state.depositRequests.find(r => r.id === id)
-                            : state.withdrawalRequests.find(r => r.id === id);
-                        if (request) {
-                            const success = acceptRequest(request, type);
-                            if (success) {
-                                toast.success(`تم قبول الطلب ${id}`);
-                                // تحديث لوحة المشرف
-                                adminPanelContent.innerHTML = renderAdminPanel();
-                                bindAdminPanelEvents();
-                                // تحديث الرصيد في الواجهة الرئيسية إذا كان مفتوحاً
-                                updateBalanceDisplay();
-                                // إذا كانت المحفظة مفتوحة، تحديثها
-                                if (walletModalOverlay.classList.contains('open')) {
-                                    walletModalContent.innerHTML = renderWalletModal();
-                                    bindWalletModalEvents();
-                                }
-                            } else {
-                                toast.error('حدث خطأ أثناء قبول الطلب (قد يكون الرصيد غير كافٍ)');
-                            }
-                        }
-                    });
-                });
-
-                // أزرار رفض الطلبات
-                document.querySelectorAll('.reject-request').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = btn.dataset.id;
-                        const type = btn.dataset.type;
-                        const request = type === 'deposit' 
-                            ? state.depositRequests.find(r => r.id === id)
-                            : state.withdrawalRequests.find(r => r.id === id);
-                        if (request) {
-                            const success = rejectRequest(request, type);
-                            if (success) {
-                                toast.info(`تم رفض الطلب ${id}`);
-                                adminPanelContent.innerHTML = renderAdminPanel();
-                                bindAdminPanelEvents();
-                            } else {
-                                toast.error('حدث خطأ أثناء رفض الطلب');
-                            }
-                        }
-                    });
-                });
-
-                // إدارة طرق الدفع: زر الإضافة
-                document.getElementById('addPaymentMethodBtn')?.addEventListener('click', () => {
-                    openPaymentMethodModal();
-                });
-
-                // أزرار تعديل وحذف طرق الدفع
-                document.querySelectorAll('.edit-payment-method').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = btn.dataset.id;
-                        openPaymentMethodModal(id);
-                    });
-                });
-
-                document.querySelectorAll('.delete-payment-method').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = btn.dataset.id;
-                        if (confirm('هل أنت متأكد من حذف طريقة الدفع هذه؟')) {
-                            deletePaymentMethod(id);
-                            adminPanelContent.innerHTML = renderAdminPanel();
-                            bindAdminPanelEvents();
-                            toast.success('تم الحذف بنجاح');
-                        }
-                    });
-                });
-            }
-
-            function closeAdminPanel() {
-                adminPanelOverlay.classList.remove('open');
-            }
-
-            // نافذة تعديل/إضافة طريقة دفع
-            function openPaymentMethodModal(editingId = null) {
-                paymentMethodModalContent.innerHTML = renderPaymentMethodModal(editingId);
-                paymentMethodModalOverlay.classList.add('open');
-                bindPaymentMethodModalEvents(editingId);
-            }
-
-            function bindPaymentMethodModalEvents(editingId) {
-                document.getElementById('closePaymentMethodModal').addEventListener('click', closePaymentMethodModal);
-                document.getElementById('cancelPaymentMethod').addEventListener('click', closePaymentMethodModal);
-                paymentMethodModalOverlay.addEventListener('click', (e) => {
-                    if (e.target === paymentMethodModalOverlay) closePaymentMethodModal();
-                });
-
-                document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const formData = {
-                        name: document.getElementById('methodName').value,
-                        icon: document.getElementById('methodIcon').value,
-                        description: document.getElementById('methodDescription').value,
-                        depositDetails: document.getElementById('methodDepositDetails').value,
-                        withdrawDetails: document.getElementById('methodWithdrawDetails').value,
-                        extraField1: document.getElementById('methodExtra1').value,
-                        extraField2: document.getElementById('methodExtra2').value,
-                        imageUrl: document.getElementById('methodImageUrl').value,
-                    };
-                    const id = document.getElementById('methodId').value;
-                    if (id) {
-                        // تحديث
-                        updatePaymentMethod(id, formData);
-                        toast.success('تم التحديث بنجاح');
-                    } else {
-                        // إضافة
-                        addPaymentMethod(formData);
-                        toast.success('تمت الإضافة بنجاح');
-                    }
-                    closePaymentMethodModal();
-                    // إعادة تحميل لوحة المشرف
-                    adminPanelContent.innerHTML = renderAdminPanel();
-                    bindAdminPanelEvents();
-                });
-            }
-
-            function closePaymentMethodModal() {
-                paymentMethodModalOverlay.classList.remove('open');
-            }
-
-            function updateBalanceDisplay() {
-                // تحديث عرض الرصيد في البطاقة الصغيرة (إذا كانت موجودة)
-                const balanceBadge = document.querySelector('.balance-badge span');
-                if (balanceBadge) balanceBadge.textContent = state.balance.toLocaleString('ar-EG');
-            }
-
-            // -----------------------------------------------
-            // تهيئة التطبيق
-            // -----------------------------------------------
-            async function initApp() {
-                if (!tg) {
-                    state.telegramMissing = true;
-                    state.loading = false;
-                    render();
-                    return;
-                }
-
-                tg.expand();
-                tg.ready();
-
-                // استعادة السمة من localStorage
-                const savedTheme = safeLocalStorageGet('theme', 'dark');
-                state.theme = savedTheme;
-                updateTheme(savedTheme);
-
-                // التحقق من الأمان
-                if (!tg.initData || !tg.initDataUnsafe.user) {
-                    state.loading = false;
-                    state.accessDenied = true;
-                    render();
-                    return;
-                }
-
-                const user = tg.initDataUnsafe.user;
-                state.user = user;
-                state.isAdmin = (user.id === ADMIN_ID);
-
-                // تسجيل المستخدم الفريد
-                registerUser(user.id);
-
-                // تحميل بيانات المحفظة والطلبات وطرق الدفع
-                loadWalletData();
-                loadRequests();
-                loadPaymentMethods();
-
-                // محاكاة جلب البيانات من الخادم
-                try {
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-
-                    // تحديث الإحصائيات الحقيقية
-                    updateStats();
-
-                    state.loading = false;
-                    render();
-
-                    // إعداد زر MainButton
-                    tg.MainButton.setText(state.isAdmin ? "لوحة التحكم" : "تحديث البيانات");
-                    tg.MainButton.setTextColor("#ffffff");
-                    tg.MainButton.setColor("#3b82f6");
-                    tg.MainButton.show();
-
-                    tg.MainButton.onClick(() => {
-                        tg.showPopup({
-                            title: state.isAdmin ? 'مرحباً أيها المدير' : 'نظام آمن',
-                            message: state.isAdmin ? 
-                                `لديك صلاحيات كاملة في النظام. الطلبات المعلقة: ${getPendingDeposits().length + getPendingWithdrawals().length}` : 
-                                `أهلاً ${user.first_name}، اتصالك مشفر ومحمي بالكامل.`,
-                            buttons: [{type: 'ok', text: 'حسناً'}]
+                    // تبديل التبويبات
+                    const tabs = document.querySelectorAll('.wallet-tab');
+                    tabs.forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            tabs.forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            const tabId = tab.dataset.tab;
+                            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+                            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
                         });
                     });
 
-                    // ترحيب
-                    toast.success(`مرحباً ${user.first_name}، أهلاً بك في المحفظة المتطورة`);
+                    // اختيار طريقة الشحن
+                    const paymentMethods = document.querySelectorAll('.payment-methods-list .payment-method');
+                    let selectedMethod = null;
+                    const detailsDisplay = document.getElementById('depositDetailsDisplay');
+                    const detailsText = document.getElementById('depositDetailsText');
+                    
+                    paymentMethods.forEach(method => {
+                        method.addEventListener('click', () => {
+                            paymentMethods.forEach(m => m.classList.remove('selected'));
+                            method.classList.add('selected');
+                            selectedMethod = method.dataset.methodId;
+                            
+                            const methodObj = this.state.paymentMethods.find(m => m.id === selectedMethod);
+                            if (methodObj && methodObj.depositDetails) {
+                                detailsText.innerHTML = methodObj.depositDetails.replace(/\n/g, '<br>');
+                                detailsDisplay.classList.remove('hidden');
+                            } else {
+                                detailsDisplay.classList.add('hidden');
+                            }
+                        });
+                    });
 
-                } catch (error) {
-                    console.error('Error loading data:', error);
-                    toast.error('حدث خطأ أثناء تحميل البيانات');
-                    state.loading = false;
-                    render();
+                    // طلب شحن
+                    document.getElementById('depositBtn')?.addEventListener('click', () => {
+                        const amount = parseFloat(document.getElementById('depositAmount').value);
+                        const transactionId = document.getElementById('depositTransactionId').value.trim();
+                        
+                        if (isNaN(amount) || amount <= 0) {
+                            this.toast.error('أدخل مبلغ صحيح');
+                            return;
+                        }
+                        if (!selectedMethod) {
+                            this.toast.error('اختر طريقة دفع أولاً');
+                            return;
+                        }
+                        if (!transactionId) {
+                            this.toast.error('يرجى إدخال رقم العملية');
+                            return;
+                        }
+                        
+                        const requestId = this.data.addDepositRequest(amount, selectedMethod, transactionId, this.state.user);
+                        this.toast.success(`تم تقديم طلب الشحن بنجاح (رقم: ${requestId})`);
+                        
+                        document.getElementById('depositAmount').value = '';
+                        document.getElementById('depositTransactionId').value = '';
+                        paymentMethods.forEach(m => m.classList.remove('selected'));
+                        selectedMethod = null;
+                        detailsDisplay.classList.add('hidden');
+                    });
+
+                    // اختيار طريقة السحب
+                    const withdrawMethods = document.querySelectorAll('#withdrawMethodsList .payment-method');
+                    let selectedWithdrawMethod = null;
+                    withdrawMethods.forEach(method => {
+                        method.addEventListener('click', () => {
+                            withdrawMethods.forEach(m => m.classList.remove('selected'));
+                            method.classList.add('selected');
+                            selectedWithdrawMethod = method.dataset.methodId;
+                            
+                            const methodObj = this.state.paymentMethods.find(m => m.id === selectedWithdrawMethod);
+                            const detailsInput = document.getElementById('withdrawDetails');
+                            if (methodObj) {
+                                detailsInput.placeholder = methodObj.withdrawDetails || 'أدخل التفاصيل';
+                            }
+                        });
+                    });
+
+                    // طلب سحب
+                    document.getElementById('withdrawBtn')?.addEventListener('click', () => {
+                        const amount = parseFloat(document.getElementById('withdrawAmount').value);
+                        const details = document.getElementById('withdrawDetails').value.trim();
+                        if (isNaN(amount) || amount <= 0) {
+                            this.toast.error('أدخل مبلغ صحيح');
+                            return;
+                        }
+                        if (!selectedWithdrawMethod) {
+                            this.toast.error('اختر طريقة سحب أولاً');
+                            return;
+                        }
+                        if (!details) {
+                            this.toast.error('أدخل التفاصيل المطلوبة');
+                            return;
+                        }
+                        const result = this.data.addWithdrawalRequest(amount, selectedWithdrawMethod, details, this.state.user);
+                        if (result.success) {
+                            this.toast.success(`تم تقديم طلب السحب بنجاح (رقم: ${result.id})`);
+                            document.getElementById('withdrawAmount').value = '';
+                            document.getElementById('withdrawDetails').value = '';
+                            withdrawMethods.forEach(m => m.classList.remove('selected'));
+                            selectedWithdrawMethod = null;
+                        } else {
+                            this.toast.error(result.message);
+                        }
+                    });
+
+                    // تحويل
+                    document.getElementById('transferBtn')?.addEventListener('click', () => {
+                        const amount = parseFloat(document.getElementById('transferAmount').value);
+                        const targetId = document.getElementById('transferUserId').value.trim();
+                        if (isNaN(amount) || amount <= 0) {
+                            this.toast.error('أدخل مبلغ صحيح');
+                            return;
+                        }
+                        if (!targetId) {
+                            this.toast.error('أدخل معرف المستخدم');
+                            return;
+                        }
+                        if (amount > this.state.balance) {
+                            this.toast.error('الرصيد غير كافٍ');
+                            return;
+                        }
+                        this.state.balance -= amount;
+                        this.data.addTransaction('transfer', -amount, `تحويل إلى المستخدم ${targetId}`);
+                        this.data.saveWallet();
+                        this.toast.success('تم التحويل بنجاح');
+                        document.getElementById('transferAmount').value = '';
+                        document.getElementById('transferUserId').value = '';
+                        this.updateBalanceDisplay();
+                        // تحديث المحتوى
+                        this.openWalletModal(); // إعادة فتح المودال لتحديث الرصيد
+                    });
+                }
+
+                // لوحة المشرف
+                openAdminPanel() {
+                    const modalOverlay = document.getElementById('adminPanelOverlay');
+                    const modalContent = document.getElementById('adminPanelContent');
+                    modalContent.innerHTML = this.renderAdminPanel();
+                    modalOverlay.classList.add('open');
+                    this.bindAdminPanelEvents();
+                }
+
+                renderAdminPanel() {
+                    const pendingDeposits = this.data.getPendingDeposits();
+                    const pendingWithdrawals = this.data.getPendingWithdrawals();
+
+                    const depositsHtml = pendingDeposits.length === 0 
+                        ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات شحن معلقة</p>'
+                        : pendingDeposits.map(req => `
+                            <div class="request-item" data-id="${req.id}" data-type="deposit">
+                                <div class="request-header">
+                                    <span class="font-bold">${req.userName}</span>
+                                    <span class="badge-pending">قيد الانتظار</span>
+                                </div>
+                                <div class="text-sm">المبلغ: <span class="text-blue-400">${req.amount.toLocaleString('ar-EG')}</span></div>
+                                <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
+                                <div class="text-xs text-gray-400">رقم العملية: <span class="text-yellow-400">${req.transactionId || 'غير محدد'}</span></div>
+                                <div class="text-xs text-gray-400">التاريخ: ${DateUtils.formatDateTime(req.date)}</div>
+                                <div class="request-actions">
+                                    <button class="btn-accept accept-request" data-id="${req.id}" data-type="deposit">قبول</button>
+                                    <button class="btn-reject reject-request" data-id="${req.id}" data-type="deposit">رفض</button>
+                                </div>
+                            </div>
+                        `).join('');
+
+                    const withdrawalsHtml = pendingWithdrawals.length === 0 
+                        ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات سحب معلقة</p>'
+                        : pendingWithdrawals.map(req => `
+                            <div class="request-item" data-id="${req.id}" data-type="withdrawal">
+                                <div class="request-header">
+                                    <span class="font-bold">${req.userName}</span>
+                                    <span class="badge-pending">قيد الانتظار</span>
+                                </div>
+                                <div class="text-sm">المبلغ: <span class="text-red-400">${req.amount.toLocaleString('ar-EG')}</span></div>
+                                <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
+                                <div class="text-xs text-gray-400">التفاصيل: ${req.details || 'غير محدد'}</div>
+                                <div class="text-xs text-gray-400">التاريخ: ${DateUtils.formatDateTime(req.date)}</div>
+                                <div class="request-actions">
+                                    <button class="btn-accept accept-request" data-id="${req.id}" data-type="withdrawal">قبول</button>
+                                    <button class="btn-reject reject-request" data-id="${req.id}" data-type="withdrawal">رفض</button>
+                                </div>
+                            </div>
+                        `).join('');
+
+                    const paymentMethodsHtml = this.state.paymentMethods.map(m => `
+                        <div class="payment-method-admin">
+                            <div class="flex items-center gap-3">
+                                <div class="payment-icon">
+                                    <i class="${m.icon}"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold">${m.name}</div>
+                                    <div class="text-xs text-gray-400">${m.description || ''}</div>
+                                </div>
+                            </div>
+                            <div class="actions">
+                                <button class="edit-payment-method" data-id="${m.id}" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="delete-payment-method" data-id="${m.id}" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    return `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">لوحة الإدارة</h2>
+                            <button id="closeAdminPanel" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="wallet-tabs mb-3">
+                            <button class="wallet-tab active" data-admin-tab="requests">الطلبات</button>
+                            <button class="wallet-tab" data-admin-tab="payment-methods">طرق الدفع</button>
+                        </div>
+
+                        <div id="adminRequestsTab" class="admin-tab-content">
+                            <div class="space-y-6">
+                                <div>
+                                    <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+                                        <i class="fa-solid fa-arrow-down text-green-400"></i>
+                                        طلبات الشحن المعلقة
+                                        <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${pendingDeposits.length}</span>
+                                    </h3>
+                                    <div class="admin-requests-panel">${depositsHtml}</div>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+                                        <i class="fa-solid fa-arrow-up text-red-400"></i>
+                                        طلبات السحب المعلقة
+                                        <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${pendingWithdrawals.length}</span>
+                                    </h3>
+                                    <div class="admin-requests-panel">${withdrawalsHtml}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="adminPaymentMethodsTab" class="admin-tab-content hidden">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-lg font-bold">طرق الدفع المتاحة</h3>
+                                <button id="addPaymentMethodBtn" class="bg-blue-600 px-3 py-1 rounded-lg text-sm"><i class="fa-solid fa-plus"></i> إضافة</button>
+                            </div>
+                            <div class="space-y-2 max-h-96 overflow-y-auto">
+                                ${paymentMethodsHtml}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                bindAdminPanelEvents() {
+                    const modalOverlay = document.getElementById('adminPanelOverlay');
+                    document.getElementById('closeAdminPanel').addEventListener('click', () => {
+                        modalOverlay.classList.remove('open');
+                    });
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay) modalOverlay.classList.remove('open');
+                    });
+
+                    // تبديل التبويبات
+                    const adminTabs = document.querySelectorAll('[data-admin-tab]');
+                    adminTabs.forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            adminTabs.forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            const tabName = tab.dataset.adminTab;
+                            if (tabName === 'requests') {
+                                document.getElementById('adminRequestsTab').classList.remove('hidden');
+                                document.getElementById('adminPaymentMethodsTab').classList.add('hidden');
+                            } else {
+                                document.getElementById('adminRequestsTab').classList.add('hidden');
+                                document.getElementById('adminPaymentMethodsTab').classList.remove('hidden');
+                            }
+                        });
+                    });
+
+                    // قبول الطلبات
+                    document.querySelectorAll('.accept-request').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            const type = btn.dataset.type;
+                            const request = type === 'deposit' 
+                                ? this.state.depositRequests.find(r => r.id === id)
+                                : this.state.withdrawalRequests.find(r => r.id === id);
+                            if (request) {
+                                const success = this.data.acceptRequest(request, type);
+                                if (success) {
+                                    this.toast.success(`تم قبول الطلب ${id}`);
+                                    this.openAdminPanel(); // إعادة فتح اللوحة
+                                } else {
+                                    this.toast.error('حدث خطأ (قد يكون الرصيد غير كافٍ)');
+                                }
+                            }
+                        });
+                    });
+
+                    // رفض الطلبات
+                    document.querySelectorAll('.reject-request').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            const type = btn.dataset.type;
+                            const request = type === 'deposit' 
+                                ? this.state.depositRequests.find(r => r.id === id)
+                                : this.state.withdrawalRequests.find(r => r.id === id);
+                            if (request) {
+                                this.data.rejectRequest(request, type);
+                                this.toast.info(`تم رفض الطلب ${id}`);
+                                this.openAdminPanel();
+                            }
+                        });
+                    });
+
+                    // إضافة طريقة دفع
+                    document.getElementById('addPaymentMethodBtn')?.addEventListener('click', () => {
+                        this.openPaymentMethodModal();
+                    });
+
+                    // تعديل وحذف
+                    document.querySelectorAll('.edit-payment-method').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            this.openPaymentMethodModal(id);
+                        });
+                    });
+
+                    document.querySelectorAll('.delete-payment-method').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            if (confirm('هل أنت متأكد من حذف طريقة الدفع هذه؟')) {
+                                this.data.deletePaymentMethod(id);
+                                this.toast.success('تم الحذف بنجاح');
+                                this.openAdminPanel();
+                            }
+                        });
+                    });
+                }
+
+                // مودال إضافة/تعديل طريقة دفع
+                openPaymentMethodModal(editingId = null) {
+                    const modalOverlay = document.getElementById('paymentMethodModalOverlay');
+                    const modalContent = document.getElementById('paymentMethodModalContent');
+                    const method = editingId ? this.state.paymentMethods.find(m => m.id === editingId) : null;
+                    
+                    modalContent.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">${method ? 'تعديل طريقة دفع' : 'إضافة طريقة دفع جديدة'}</h2>
+                            <button id="closePaymentMethodModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                        <form id="paymentMethodForm" class="space-y-3">
+                            <input type="hidden" id="methodId" value="${method?.id || ''}">
+                            <div>
+                                <label class="text-sm text-gray-400">اسم الطريقة</label>
+                                <input type="text" id="methodName" required value="${method?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-400">الأيقونة (class FontAwesome)</label>
+                                <input type="text" id="methodIcon" value="${method?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-400">وصف مختصر</label>
+                                <input type="text" id="methodDescription" value="${method?.description || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-400">تفاصيل الإيداع</label>
+                                <textarea id="methodDepositDetails" rows="2" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">${method?.depositDetails || ''}</textarea>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-400">تفاصيل السحب (placeholder)</label>
+                                <input type="text" id="methodWithdrawDetails" value="${method?.withdrawDetails || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button>
+                                <button type="button" id="cancelPaymentMethod" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button>
+                            </div>
+                        </form>
+                    `;
+                    
+                    modalOverlay.classList.add('open');
+                    this.bindPaymentMethodModalEvents();
+                }
+
+                bindPaymentMethodModalEvents() {
+                    const modalOverlay = document.getElementById('paymentMethodModalOverlay');
+                    document.getElementById('closePaymentMethodModal').addEventListener('click', () => {
+                        modalOverlay.classList.remove('open');
+                    });
+                    document.getElementById('cancelPaymentMethod').addEventListener('click', () => {
+                        modalOverlay.classList.remove('open');
+                    });
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay) modalOverlay.classList.remove('open');
+                    });
+
+                    document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const formData = {
+                            name: document.getElementById('methodName').value,
+                            icon: document.getElementById('methodIcon').value,
+                            description: document.getElementById('methodDescription').value,
+                            depositDetails: document.getElementById('methodDepositDetails').value,
+                            withdrawDetails: document.getElementById('methodWithdrawDetails').value
+                        };
+                        const id = document.getElementById('methodId').value;
+                        
+                        if (id) {
+                            this.data.updatePaymentMethod(id, formData);
+                            this.toast.success('تم التحديث بنجاح');
+                        } else {
+                            this.data.addPaymentMethod(formData);
+                            this.toast.success('تمت الإضافة بنجاح');
+                        }
+                        
+                        modalOverlay.classList.remove('open');
+                        this.openAdminPanel(); // إعادة فتح لوحة المشرف
+                    });
                 }
             }
 
-            // -----------------------------------------------
-            // أحداث عامة
-            // -----------------------------------------------
-            themeToggle.addEventListener('click', () => {
-                state.theme = state.theme === 'dark' ? 'light' : 'dark';
-                updateTheme(state.theme);
-                toast.info(`تم تغيير السمة إلى ${state.theme === 'dark' ? 'الداكنة' : 'الفاتحة'}`);
+            // ======================== التطبيق الرئيسي ========================
+            class App {
+                constructor() {
+                    this.state = new AppState();
+                    this.telegram = new TelegramService();
+                    this.toast = new ToastManager('toastContainer');
+                    this.data = new DataService(this.state);
+                    this.ui = new UIManager(this.state, this.data, this.telegram, this.toast);
+                    
+                    this.init();
+                }
+
+                async init() {
+                    // التحقق من بيئة تيليجرام
+                    if (!this.telegram.isAvailable) {
+                        this.state.telegramMissing = true;
+                        this.state.loading = false;
+                        this.ui.render();
+                        return;
+                    }
+
+                    this.telegram.init();
+
+                    // التحقق من صحة البيانات
+                    if (!this.telegram.isValid() || !this.telegram.getUser()) {
+                        this.state.accessDenied = true;
+                        this.state.loading = false;
+                        this.ui.render();
+                        return;
+                    }
+
+                    const user = this.telegram.getUser();
+                    this.state.user = user;
+                    this.state.isAdmin = (user.id === CONFIG.ADMIN_ID);
+
+                    // تسجيل المستخدم
+                    this.data.registerUser(user.id);
+
+                    // تحميل الثيم
+                    const savedTheme = this.data.loadTheme();
+                    this.applyTheme(savedTheme);
+
+                    // محاكاة تحميل البيانات
+                    this.state.loading = true;
+                    this.ui.render();
+
+                    try {
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        this.data.loadStats();
+                        this.state.loading = false;
+                        this.ui.render();
+
+                        // إعداد زر MainButton
+                        this.telegram.setMainButton(
+                            this.state.isAdmin ? "لوحة التحكم" : "تحديث البيانات",
+                            '#3b82f6',
+                            '#ffffff',
+                            true,
+                            () => {
+                                this.telegram.showPopup({
+                                    title: this.state.isAdmin ? 'مرحباً أيها المدير' : 'نظام آمن',
+                                    message: this.state.isAdmin 
+                                        ? `لديك صلاحيات كاملة. الطلبات المعلقة: ${this.data.getPendingDeposits().length + this.data.getPendingWithdrawals().length}`
+                                        : `أهلاً ${user.first_name}، اتصالك آمن.`,
+                                    buttons: [{ type: 'ok', text: 'حسناً' }]
+                                });
+                            }
+                        );
+
+                        this.toast.success(`مرحباً ${user.first_name}، أهلاً بك في المحفظة المتطورة`);
+                    } catch (error) {
+                        console.error('Initialization error:', error);
+                        this.toast.error('حدث خطأ أثناء تحميل البيانات');
+                        this.state.loading = false;
+                        this.ui.render();
+                    }
+                }
+
+                applyTheme(theme) {
+                    const root = document.documentElement;
+                    const themeIcon = document.getElementById('themeIcon');
+                    
+                    if (theme === 'light') {
+                        root.style.setProperty('--tg-theme-bg-color', '#f8fafc');
+                        root.style.setProperty('--tg-theme-text-color', '#0f172a');
+                        root.style.setProperty('--tg-theme-button-color', '#3b82f6');
+                        root.style.setProperty('--tg-theme-button-text-color', '#ffffff');
+                        themeIcon.className = 'fa-solid fa-sun';
+                    } else {
+                        root.style.setProperty('--tg-theme-bg-color', '#0f172a');
+                        root.style.setProperty('--tg-theme-text-color', '#ffffff');
+                        root.style.setProperty('--tg-theme-button-color', '#3b82f6');
+                        root.style.setProperty('--tg-theme-button-text-color', '#ffffff');
+                        themeIcon.className = 'fa-solid fa-moon';
+                    }
+                }
+            }
+
+            // ======================== بدء التطبيق ========================
+            const app = new App();
+
+            // أحداث عامة (السمة والإعدادات)
+            document.getElementById('themeToggle').addEventListener('click', () => {
+                const newTheme = app.state.theme === 'dark' ? 'light' : 'dark';
+                app.state.theme = newTheme;
+                app.data.saveTheme(newTheme);
+                app.applyTheme(newTheme);
+                app.toast.info(`تم تغيير السمة إلى ${newTheme === 'dark' ? 'الداكنة' : 'الفاتحة'}`);
             });
 
-            // إغلاق الإعدادات
+            // إعدادات
+            const settingsOverlay = document.getElementById('settingsOverlay');
+            const settingsPanel = document.getElementById('settingsPanel');
+            
             document.getElementById('closeSettings').addEventListener('click', () => {
                 settingsOverlay.classList.remove('open');
                 settingsPanel.classList.remove('open');
@@ -2095,19 +2048,17 @@
                 settingsPanel.classList.remove('open');
             });
 
-            // حفظ الإعدادات
             document.getElementById('languageSelect').addEventListener('change', (e) => {
-                state.settings.language = e.target.value;
-                toast.success(`تم تغيير اللغة إلى ${e.target.value === 'ar' ? 'العربية' : 'الإنجليزية'}`);
+                app.state.settings.language = e.target.value;
+                app.data.saveSettings();
+                app.toast.success(`تم تغيير اللغة إلى ${e.target.value === 'ar' ? 'العربية' : 'الإنجليزية'}`);
             });
 
             document.getElementById('notificationsToggle').addEventListener('change', (e) => {
-                state.settings.notifications = e.target.checked;
-                toast.success(e.target.checked ? 'تم تفعيل الإشعارات' : 'تم إيقاف الإشعارات');
+                app.state.settings.notifications = e.target.checked;
+                app.data.saveSettings();
+                app.toast.success(e.target.checked ? 'تم تفعيل الإشعارات' : 'تم إيقاف الإشعارات');
             });
-
-            // بدء التطبيق
-            initApp();
         })();
     </script>
 </body>
