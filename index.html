@@ -313,7 +313,7 @@
             width: 80px;
             height: 80px;
             background: linear-gradient(145deg, #3b82f6, #8b5cf6);
-            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; /* شكل عضوي غير منتظم */
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
             box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5), 0 0 0 2px rgba(255,255,255,0.1) inset;
             display: flex;
             align-items: center;
@@ -359,7 +359,7 @@
             100% { transform: scale(1); }
         }
 
-        /* بطاقة الرصيد الصغيرة (اختيارية) */
+        /* بطاقة الرصيد الصغيرة */
         .balance-badge {
             background: rgba(0,0,0,0.3);
             backdrop-filter: blur(4px);
@@ -410,12 +410,17 @@
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            background: #334155;
+            color: white;
+            flex-shrink: 0;
         }
-
-        .payment-icon.usdt { background: #26a17b; color: white; }
-        .payment-icon.visa { background: #1a1f71; color: white; }
-        .payment-icon.bank { background: #4f46e5; color: white; }
-        .payment-icon.telegram { background: #0088cc; color: white; }
+        
+        .payment-icon img {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+        }
 
         /* لوحة المشرف */
         .admin-requests-panel {
@@ -492,6 +497,30 @@
             font-size: 10px;
             font-weight: 600;
         }
+
+        /* أزرار تحرير طرق الدفع */
+        .payment-method-admin {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        .payment-method-admin .actions button {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            margin: 0 4px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .payment-method-admin .actions button:hover {
+            color: white;
+        }
+        .payment-method-admin .actions button.delete:hover { color: #ef4444; }
+        .payment-method-admin .actions button.edit:hover { color: #3b82f6; }
     </style>
 </head>
 <body>
@@ -542,9 +571,14 @@
         <div class="wallet-modal" id="walletModalContent"></div>
     </div>
 
-    <!-- Admin Panel Modal (لإدارة الطلبات) -->
+    <!-- Admin Panel Modal (لإدارة الطلبات وطرق الدفع) -->
     <div class="wallet-modal-overlay" id="adminPanelOverlay">
         <div class="wallet-modal" id="adminPanelContent" style="max-width: 500px;"></div>
+    </div>
+
+    <!-- Modal for editing payment method -->
+    <div class="wallet-modal-overlay" id="paymentMethodModalOverlay">
+        <div class="wallet-modal" id="paymentMethodModalContent" style="max-width: 450px;"></div>
     </div>
 
     <script>
@@ -555,40 +589,56 @@
             const ADMIN_ID = 7609492965; // غيّر هذا إلى معرف المشرف الخاص بك
             
             // -----------------------------------------------
-            // طرق الدفع المتاحة (مع أيقونات وصور)
+            // طرق الدفع الافتراضية (سيتم تحميلها من localStorage)
             // -----------------------------------------------
-            const PAYMENT_METHODS = [
+            const DEFAULT_PAYMENT_METHODS = [
                 { 
                     id: 'usdt', 
                     name: 'USDT (TRC20)', 
                     icon: 'fa-brands fa-tether', 
                     iconClass: 'usdt',
-                    details: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ',
-                    withdrawDetails: 'أدخل عنوان USDT الخاص بك'
+                    description: 'عملة رقمية مستقرة',
+                    depositDetails: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ',
+                    withdrawDetails: 'أدخل عنوان USDT الخاص بك',
+                    extraField1: 'TRC20',
+                    extraField2: 'شبكة Tron',
+                    imageUrl: ''
                 },
                 { 
                     id: 'visa', 
                     name: 'Visa / Mastercard', 
                     icon: 'fa-regular fa-credit-card', 
                     iconClass: 'visa',
-                    details: 'رقم البطاقة: **** **** **** 1234',
-                    withdrawDetails: 'أدخل بيانات بطاقتك'
+                    description: 'بطاقات ائتمانية',
+                    depositDetails: 'رقم البطاقة: **** **** **** 1234',
+                    withdrawDetails: 'أدخل بيانات بطاقتك',
+                    extraField1: 'Visa/Mastercard',
+                    extraField2: '',
+                    imageUrl: ''
                 },
                 { 
                     id: 'bank', 
                     name: 'تحويل بنكي', 
                     icon: 'fa-solid fa-building-columns', 
                     iconClass: 'bank',
-                    details: 'IBAN: SA0380000000608010167519',
-                    withdrawDetails: 'أدخل رقم IBAN الخاص بك'
+                    description: 'حوالة بنكية محلية',
+                    depositDetails: 'IBAN: SA0380000000608010167519',
+                    withdrawDetails: 'أدخل رقم IBAN الخاص بك',
+                    extraField1: 'البنك الأهلي',
+                    extraField2: 'SA0380000000608010167519',
+                    imageUrl: ''
                 },
                 { 
                     id: 'telegram', 
                     name: 'محفظة تيليجرام', 
                     icon: 'fa-brands fa-telegram', 
                     iconClass: 'telegram',
-                    details: '@wallet_bot',
-                    withdrawDetails: 'أدخل معرف تيليجرام للمحفظة'
+                    description: '@wallet_bot',
+                    depositDetails: '@wallet_bot',
+                    withdrawDetails: 'أدخل معرف تيليجرام للمحفظة',
+                    extraField1: 'Telegram Stars',
+                    extraField2: '',
+                    imageUrl: ''
                 }
             ];
 
@@ -618,7 +668,8 @@
                 },
                 // طلبات الشحن والسحب المعلقة (بإشراف المشرف)
                 depositRequests: [],   // طلبات شحن
-                withdrawalRequests: [] // طلبات سحب
+                withdrawalRequests: [], // طلبات سحب
+                paymentMethods: []      // طرق الدفع المُدارة من قبل المشرف
             };
 
             // -----------------------------------------------
@@ -642,6 +693,8 @@
             const walletModalContent = document.getElementById('walletModalContent');
             const adminPanelOverlay = document.getElementById('adminPanelOverlay');
             const adminPanelContent = document.getElementById('adminPanelContent');
+            const paymentMethodModalOverlay = document.getElementById('paymentMethodModalOverlay');
+            const paymentMethodModalContent = document.getElementById('paymentMethodModalContent');
 
             // -----------------------------------------------
             // دوال مساعدة (مع معالجة أخطاء localStorage)
@@ -764,6 +817,55 @@
                 } catch (e) {}
             }
 
+            // دوال طرق الدفع
+            function loadPaymentMethods() {
+                try {
+                    const saved = safeLocalStorageGet('payment_methods', null);
+                    if (saved && Array.isArray(saved) && saved.length > 0) {
+                        state.paymentMethods = saved;
+                    } else {
+                        state.paymentMethods = DEFAULT_PAYMENT_METHODS.map(m => ({ ...m, id: m.id + '_' + Date.now() + Math.random().toString(36).substr(2,4) })); // تجنب تكرار id
+                    }
+                } catch (e) {
+                    state.paymentMethods = DEFAULT_PAYMENT_METHODS;
+                }
+            }
+
+            function savePaymentMethods() {
+                try {
+                    safeLocalStorageSet('payment_methods', state.paymentMethods);
+                } catch (e) {}
+            }
+
+            // إضافة طريقة دفع جديدة
+            function addPaymentMethod(methodData) {
+                const newMethod = {
+                    id: 'pm_' + Date.now() + Math.random().toString(36).substr(2, 6),
+                    ...methodData
+                };
+                state.paymentMethods.push(newMethod);
+                savePaymentMethods();
+                return newMethod;
+            }
+
+            // تحديث طريقة دفع
+            function updatePaymentMethod(id, newData) {
+                const index = state.paymentMethods.findIndex(m => m.id === id);
+                if (index !== -1) {
+                    state.paymentMethods[index] = { ...state.paymentMethods[index], ...newData };
+                    savePaymentMethods();
+                    return true;
+                }
+                return false;
+            }
+
+            // حذف طريقة دفع
+            function deletePaymentMethod(id) {
+                state.paymentMethods = state.paymentMethods.filter(m => m.id !== id);
+                savePaymentMethods();
+            }
+
+            // دوال الطلبات
             function loadRequests() {
                 try {
                     const deposits = safeLocalStorageGet('deposit_requests', []);
@@ -799,7 +901,7 @@
 
             // إضافة طلب شحن (يتطلب موافقة المشرف)
             function addDepositRequest(amount, methodId) {
-                const method = PAYMENT_METHODS.find(m => m.id === methodId);
+                const method = state.paymentMethods.find(m => m.id === methodId);
                 const request = {
                     id: 'dep_' + Date.now() + Math.random().toString(36).substr(2, 5),
                     userId: state.user.id,
@@ -821,7 +923,7 @@
                 if (amount > state.balance) {
                     return { success: false, message: 'الرصيد غير كافٍ' };
                 }
-                const method = PAYMENT_METHODS.find(m => m.id === methodId);
+                const method = state.paymentMethods.find(m => m.id === methodId);
                 const request = {
                     id: 'with_' + Date.now() + Math.random().toString(36).substr(2, 5),
                     userId: state.user.id,
@@ -1106,7 +1208,7 @@
                             <!-- زر لوحة الإدارة (للمشرف فقط) -->
                             <button id="openAdminPanelBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2 mt-2">
                                 <i class="fa-solid fa-gears"></i>
-                                لوحة الإدارة (الطلبات)
+                                لوحة الإدارة (الطلبات وطرق الدفع)
                             </button>
 
                             <!-- Logout Button -->
@@ -1145,23 +1247,23 @@
                     }).join('');
                 }
 
-                // إنشاء خيارات طرق الدفع (للعرض في tabs)
-                const paymentMethodsHtml = PAYMENT_METHODS.map(m => `
+                // إنشاء خيارات طرق الدفع (للعرض في tabs) باستخدام state.paymentMethods
+                const paymentMethodsHtml = state.paymentMethods.map(m => `
                     <div class="payment-method" data-method-id="${m.id}">
-                        <div class="payment-icon ${m.iconClass}">
-                            <i class="${m.icon}"></i>
+                        <div class="payment-icon ${m.iconClass || ''}">
+                            ${m.imageUrl ? `<img src="${m.imageUrl}" alt="${m.name}">` : `<i class="${m.icon}"></i>`}
                         </div>
                         <div class="flex-1">
                             <div class="font-bold">${m.name}</div>
-                            <div class="text-xs text-gray-400">${m.details.substring(0, 30)}...</div>
+                            <div class="text-xs text-gray-400">${(m.depositDetails || '').substring(0, 30)}...</div>
                         </div>
                     </div>
                 `).join('');
 
-                const withdrawMethodsHtml = PAYMENT_METHODS.map(m => `
+                const withdrawMethodsHtml = state.paymentMethods.map(m => `
                     <div class="payment-method" data-method-id="${m.id}">
-                        <div class="payment-icon ${m.iconClass}">
-                            <i class="${m.icon}"></i>
+                        <div class="payment-icon ${m.iconClass || ''}">
+                            ${m.imageUrl ? `<img src="${m.imageUrl}" alt="${m.name}">` : `<i class="${m.icon}"></i>`}
                         </div>
                         <div class="flex-1">
                             <div class="font-bold">${m.name}</div>
@@ -1244,7 +1346,7 @@
                 `;
             }
 
-            // دالة عرض لوحة المشرف (إدارة الطلبات)
+            // دالة عرض لوحة المشرف (إدارة الطلبات + طرق الدفع)
             function renderAdminPanel() {
                 const pendingDeposits = getPendingDeposits();
                 const pendingWithdrawals = getPendingWithdrawals();
@@ -1286,6 +1388,25 @@
                         </div>
                     `).join('');
 
+                // عرض طرق الدفع الحالية
+                const paymentMethodsHtml = state.paymentMethods.map(m => `
+                    <div class="payment-method-admin">
+                        <div class="flex items-center gap-3">
+                            <div class="payment-icon ${m.iconClass || ''}">
+                                ${m.imageUrl ? `<img src="${m.imageUrl}" alt="${m.name}">` : `<i class="${m.icon}"></i>`}
+                            </div>
+                            <div>
+                                <div class="font-bold">${m.name}</div>
+                                <div class="text-xs text-gray-400">${m.description || ''}</div>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <button class="edit-payment-method" data-id="${m.id}" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="delete-payment-method" data-id="${m.id}" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+
                 return `
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-bold">لوحة الإدارة</h2>
@@ -1294,31 +1415,104 @@
                         </button>
                     </div>
 
-                    <div class="space-y-6">
-                        <!-- طلبات الشحن -->
-                        <div>
-                            <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-arrow-down text-green-400"></i>
-                                طلبات الشحن المعلقة
-                                <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${pendingDeposits.length}</span>
-                            </h3>
-                            <div class="admin-requests-panel">
-                                ${depositsHtml}
-                            </div>
-                        </div>
+                    <!-- تبويبات الإدارة -->
+                    <div class="wallet-tabs mb-3">
+                        <button class="wallet-tab active" data-admin-tab="requests">الطلبات</button>
+                        <button class="wallet-tab" data-admin-tab="payment-methods">طرق الدفع</button>
+                    </div>
 
-                        <!-- طلبات السحب -->
-                        <div>
-                            <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-arrow-up text-red-400"></i>
-                                طلبات السحب المعلقة
-                                <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${pendingWithdrawals.length}</span>
-                            </h3>
-                            <div class="admin-requests-panel">
-                                ${withdrawalsHtml}
+                    <!-- محتوى تبويب الطلبات -->
+                    <div id="adminRequestsTab" class="admin-tab-content">
+                        <div class="space-y-6">
+                            <!-- طلبات الشحن -->
+                            <div>
+                                <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+                                    <i class="fa-solid fa-arrow-down text-green-400"></i>
+                                    طلبات الشحن المعلقة
+                                    <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${pendingDeposits.length}</span>
+                                </h3>
+                                <div class="admin-requests-panel">
+                                    ${depositsHtml}
+                                </div>
+                            </div>
+
+                            <!-- طلبات السحب -->
+                            <div>
+                                <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+                                    <i class="fa-solid fa-arrow-up text-red-400"></i>
+                                    طلبات السحب المعلقة
+                                    <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${pendingWithdrawals.length}</span>
+                                </h3>
+                                <div class="admin-requests-panel">
+                                    ${withdrawalsHtml}
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- محتوى تبويب طرق الدفع -->
+                    <div id="adminPaymentMethodsTab" class="admin-tab-content hidden">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-lg font-bold">طرق الدفع المتاحة</h3>
+                            <button id="addPaymentMethodBtn" class="bg-blue-600 px-3 py-1 rounded-lg text-sm"><i class="fa-solid fa-plus"></i> إضافة</button>
+                        </div>
+                        <div class="space-y-2 max-h-96 overflow-y-auto">
+                            ${paymentMethodsHtml}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // نافذة تعديل/إضافة طريقة دفع
+            function renderPaymentMethodModal(editingId = null) {
+                const method = editingId ? state.paymentMethods.find(m => m.id === editingId) : null;
+                const title = method ? 'تعديل طريقة دفع' : 'إضافة طريقة دفع جديدة';
+                return `
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold">${title}</h2>
+                        <button id="closePaymentMethodModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+                    <form id="paymentMethodForm" class="space-y-3">
+                        <input type="hidden" id="methodId" value="${method?.id || ''}">
+                        <div>
+                            <label class="text-sm text-gray-400">اسم الطريقة</label>
+                            <input type="text" id="methodName" required value="${method?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-400">الأيقونة (class FontAwesome مثل "fa-brands fa-tether")</label>
+                            <input type="text" id="methodIcon" value="${method?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-400">وصف مختصر</label>
+                            <input type="text" id="methodDescription" value="${method?.description || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-400">تفاصيل الإيداع (تظهر للمستخدم)</label>
+                            <textarea id="methodDepositDetails" rows="2" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">${method?.depositDetails || ''}</textarea>
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-400">تفاصيل السحب (placeholder)</label>
+                            <input type="text" id="methodWithdrawDetails" value="${method?.withdrawDetails || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-400">حقل إضافي 1 (مثال: عنوان المحفظة)</label>
+                            <input type="text" id="methodExtra1" value="${method?.extraField1 || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-400">حقل إضافي 2 (مثال: الشبكة)</label>
+                            <input type="text" id="methodExtra2" value="${method?.extraField2 || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-400">رابط صورة (اختياري)</label>
+                            <input type="url" id="methodImageUrl" value="${method?.imageUrl || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                            <button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button>
+                            <button type="button" id="cancelPaymentMethod" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button>
+                        </div>
+                    </form>
                 `;
             }
 
@@ -1434,10 +1628,10 @@
                         method.classList.add('selected');
                         selectedWithdrawMethod = method.dataset.methodId;
                         // تحديث placeholder حسب الطريقة المختارة
-                        const methodObj = PAYMENT_METHODS.find(m => m.id === selectedWithdrawMethod);
+                        const methodObj = state.paymentMethods.find(m => m.id === selectedWithdrawMethod);
                         const detailsInput = document.getElementById('withdrawDetails');
                         if (methodObj) {
-                            detailsInput.placeholder = methodObj.withdrawDetails;
+                            detailsInput.placeholder = methodObj.withdrawDetails || 'أدخل التفاصيل';
                         }
                     });
                 });
@@ -1518,6 +1712,23 @@
                     if (e.target === adminPanelOverlay) closeAdminPanel();
                 });
 
+                // تبديل التبويبات داخل لوحة المشرف
+                const adminTabs = document.querySelectorAll('[data-admin-tab]');
+                adminTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        adminTabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        const tabName = tab.dataset.adminTab;
+                        if (tabName === 'requests') {
+                            document.getElementById('adminRequestsTab').classList.remove('hidden');
+                            document.getElementById('adminPaymentMethodsTab').classList.add('hidden');
+                        } else {
+                            document.getElementById('adminRequestsTab').classList.add('hidden');
+                            document.getElementById('adminPaymentMethodsTab').classList.remove('hidden');
+                        }
+                    });
+                });
+
                 // أزرار قبول الطلبات
                 document.querySelectorAll('.accept-request').forEach(btn => {
                     btn.addEventListener('click', (e) => {
@@ -1567,10 +1778,82 @@
                         }
                     });
                 });
+
+                // إدارة طرق الدفع: زر الإضافة
+                document.getElementById('addPaymentMethodBtn')?.addEventListener('click', () => {
+                    openPaymentMethodModal();
+                });
+
+                // أزرار تعديل وحذف طرق الدفع
+                document.querySelectorAll('.edit-payment-method').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = btn.dataset.id;
+                        openPaymentMethodModal(id);
+                    });
+                });
+
+                document.querySelectorAll('.delete-payment-method').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = btn.dataset.id;
+                        if (confirm('هل أنت متأكد من حذف طريقة الدفع هذه؟')) {
+                            deletePaymentMethod(id);
+                            adminPanelContent.innerHTML = renderAdminPanel();
+                            bindAdminPanelEvents();
+                            showToast('تم الحذف بنجاح');
+                        }
+                    });
+                });
             }
 
             function closeAdminPanel() {
                 adminPanelOverlay.classList.remove('open');
+            }
+
+            // نافذة تعديل/إضافة طريقة دفع
+            function openPaymentMethodModal(editingId = null) {
+                paymentMethodModalContent.innerHTML = renderPaymentMethodModal(editingId);
+                paymentMethodModalOverlay.classList.add('open');
+                bindPaymentMethodModalEvents(editingId);
+            }
+
+            function bindPaymentMethodModalEvents(editingId) {
+                document.getElementById('closePaymentMethodModal').addEventListener('click', closePaymentMethodModal);
+                document.getElementById('cancelPaymentMethod').addEventListener('click', closePaymentMethodModal);
+                paymentMethodModalOverlay.addEventListener('click', (e) => {
+                    if (e.target === paymentMethodModalOverlay) closePaymentMethodModal();
+                });
+
+                document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const formData = {
+                        name: document.getElementById('methodName').value,
+                        icon: document.getElementById('methodIcon').value,
+                        description: document.getElementById('methodDescription').value,
+                        depositDetails: document.getElementById('methodDepositDetails').value,
+                        withdrawDetails: document.getElementById('methodWithdrawDetails').value,
+                        extraField1: document.getElementById('methodExtra1').value,
+                        extraField2: document.getElementById('methodExtra2').value,
+                        imageUrl: document.getElementById('methodImageUrl').value,
+                    };
+                    const id = document.getElementById('methodId').value;
+                    if (id) {
+                        // تحديث
+                        updatePaymentMethod(id, formData);
+                        showToast('تم التحديث بنجاح');
+                    } else {
+                        // إضافة
+                        addPaymentMethod(formData);
+                        showToast('تمت الإضافة بنجاح');
+                    }
+                    closePaymentMethodModal();
+                    // إعادة تحميل لوحة المشرف
+                    adminPanelContent.innerHTML = renderAdminPanel();
+                    bindAdminPanelEvents();
+                });
+            }
+
+            function closePaymentMethodModal() {
+                paymentMethodModalOverlay.classList.remove('open');
             }
 
             function updateBalanceDisplay() {
@@ -1613,9 +1896,10 @@
                 // تسجيل المستخدم الفريد
                 registerUser(user.id);
 
-                // تحميل بيانات المحفظة والطلبات
+                // تحميل بيانات المحفظة والطلبات وطرق الدفع
                 loadWalletData();
                 loadRequests();
+                loadPaymentMethods();
 
                 // محاكاة جلب البيانات من الخادم
                 try {
