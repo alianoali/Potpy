@@ -650,7 +650,7 @@
     <!-- Toast Container للتنبيهات المتطورة -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Wallet Modal -->
+    <!-- Wallet Modal (يستخدم أيضاً للإشعارات) -->
     <div class="wallet-modal-overlay" id="walletModalOverlay">
         <div class="wallet-modal" id="walletModalContent"></div>
     </div>
@@ -681,7 +681,8 @@
                     DEPOSIT_REQUESTS: 'deposit_requests',
                     WITHDRAWAL_REQUESTS: 'withdrawal_requests',
                     THEME: 'theme',
-                    SETTINGS: 'settings'
+                    SETTINGS: 'settings',
+                    NOTIFICATIONS: 'notifications' // مفتاح جديد للإشعارات
                 }
             };
 
@@ -860,6 +861,74 @@
                 }
             }
 
+            // ======================== نظام الإشعارات الجديد ========================
+            class NotificationService {
+                constructor(state) {
+                    this.state = state;
+                    this.STORAGE_KEY = CONFIG.STORAGE_KEYS.NOTIFICATIONS;
+                }
+
+                // تحميل الإشعارات من localStorage
+                loadNotifications() {
+                    const saved = StorageService.get(this.STORAGE_KEY, []);
+                    this.state.notifications = saved;
+                }
+
+                // حفظ الإشعارات
+                saveNotifications() {
+                    StorageService.set(this.STORAGE_KEY, this.state.notifications);
+                }
+
+                // إضافة إشعار جديد
+                addNotification(userId, title, message, type = 'info') {
+                    const notification = {
+                        id: IdGenerator.generate('notif_'),
+                        userId,
+                        title,
+                        message,
+                        type, // success, error, info, warning
+                        read: false,
+                        date: new Date().toISOString()
+                    };
+                    this.state.notifications.push(notification);
+                    this.saveNotifications();
+                    
+                    // إرسال حدث للإشعار الجديد (لمن يرغب في الاستماع)
+                    window.dispatchEvent(new CustomEvent('newNotification', { detail: notification }));
+                    
+                    return notification;
+                }
+
+                // تحديد إشعار كمقروء
+                markAsRead(notificationId) {
+                    const notif = this.state.notifications.find(n => n.id === notificationId);
+                    if (notif) {
+                        notif.read = true;
+                        this.saveNotifications();
+                    }
+                }
+
+                // تحديد كل إشعارات مستخدم معين كمقروءة
+                markAllAsRead(userId) {
+                    this.state.notifications.forEach(n => {
+                        if (n.userId === userId && !n.read) n.read = true;
+                    });
+                    this.saveNotifications();
+                }
+
+                // جلب إشعارات مستخدم معين (مرتبة من الأحدث)
+                getUserNotifications(userId) {
+                    return this.state.notifications
+                        .filter(n => n.userId === userId)
+                        .sort((a, b) => new Date(b.date) - new Date(a.date));
+                }
+
+                // عدد الإشعارات غير المقروءة لمستخدم
+                getUnreadCount(userId) {
+                    return this.state.notifications.filter(n => n.userId === userId && !n.read).length;
+                }
+            }
+
             // ======================== إدارة الحالة المركزية (State) ========================
             class AppState extends EventTarget {
                 constructor() {
@@ -877,6 +946,7 @@
                     this.depositRequests = [];
                     this.withdrawalRequests = [];
                     this.paymentMethods = [];
+                    this.notifications = []; // خاصية الإشعارات
                 }
 
                 // تحديث حالة معينة وإرسال حدث
@@ -910,6 +980,7 @@
             class DataService {
                 constructor(state) {
                     this.state = state;
+                    this.notificationService = new NotificationService(state); // ربط نظام الإشعارات
                     this.loadInitialData();
                 }
 
@@ -919,6 +990,7 @@
                     this.loadPaymentMethods();
                     this.loadSettings();
                     this.loadStats();
+                    this.notificationService.loadNotifications(); // تحميل الإشعارات
                 }
 
                 // المحفظة
@@ -1053,6 +1125,15 @@
                             this.addTransaction('deposit', req.amount, `شحن عبر ${req.method} (رقم العملية: ${req.transactionId || 'غير محدد'})`);
                             this.saveWallet();
                             this.saveRequests();
+                            
+                            // إضافة إشعار للمستخدم
+                            this.notificationService.addNotification(
+                                req.userId,
+                                '✅ تم قبول طلب الشحن',
+                                `تم قبول طلب الشحن بمبلغ ${req.amount} عبر ${req.method}. رقم العملية: ${req.transactionId || 'غير محدد'}`,
+                                'success'
+                            );
+                            
                             return true;
                         }
                     } else if (type === 'withdrawal') {
@@ -1063,6 +1144,14 @@
                             this.addTransaction('withdraw', -req.amount, `سحب عبر ${req.method} إلى ${req.details || 'محفظة'}`);
                             this.saveWallet();
                             this.saveRequests();
+                            
+                            this.notificationService.addNotification(
+                                req.userId,
+                                '✅ تم قبول طلب السحب',
+                                `تم قبول طلب السحب بمبلغ ${req.amount} عبر ${req.method}. التفاصيل: ${req.details}`,
+                                'success'
+                            );
+                            
                             return true;
                         }
                     }
@@ -1075,6 +1164,14 @@
                         if (req) {
                             req.status = 'rejected';
                             this.saveRequests();
+                            
+                            this.notificationService.addNotification(
+                                req.userId,
+                                '❌ تم رفض طلب الشحن',
+                                `تم رفض طلب الشحن بمبلغ ${req.amount} عبر ${req.method}.`,
+                                'error'
+                            );
+                            
                             return true;
                         }
                     } else if (type === 'withdrawal') {
@@ -1082,6 +1179,14 @@
                         if (req) {
                             req.status = 'rejected';
                             this.saveRequests();
+                            
+                            this.notificationService.addNotification(
+                                req.userId,
+                                '❌ تم رفض طلب السحب',
+                                `تم رفض طلب السحب بمبلغ ${req.amount} عبر ${req.method}.`,
+                                'error'
+                            );
+                            
                             return true;
                         }
                     }
@@ -1189,6 +1294,9 @@
                     // الاستماع للأحداث الجديدة للطلبات
                     window.addEventListener('newDepositRequest', (e) => this.handleNewRequest(e.detail, 'شحن'));
                     window.addEventListener('newWithdrawalRequest', (e) => this.handleNewRequest(e.detail, 'سحب'));
+                    
+                    // الاستماع للإشعارات الجديدة
+                    window.addEventListener('newNotification', (e) => this.handleNewNotification(e.detail));
                 }
 
                 // معالج الطلبات الجديدة للمشرف
@@ -1207,7 +1315,24 @@
                     }
                 }
 
-                // تحديث شارة الطلبات المعلقة
+                // معالج الإشعارات الجديدة (للمستخدم العادي)
+                handleNewNotification(notification) {
+                    // إذا كان المستخدم الحالي هو صاحب الإشعار، نعرض Toast فوري
+                    if (this.state.user && this.state.user.id === notification.userId) {
+                        const type = notification.type;
+                        this.toast.show(notification.message, type);
+                        
+                        // تحديث عداد الإشعارات
+                        this.updateNotificationBadge();
+                        
+                        // إذا كان المستخدم في واجهة المستخدم العادي، نحدث العداد
+                        if (!this.state.isAdmin) {
+                            this.render(); // إعادة رسم لتحديث العداد (يمكن تحسين الأداء)
+                        }
+                    }
+                }
+
+                // تحديث شارة الطلبات المعلقة (للمشرف)
                 updatePendingBadge() {
                     const walletIcon = document.getElementById('walletIconLarge');
                     if (!walletIcon) return;
@@ -1231,6 +1356,30 @@
                     document.title = count > 0 ? `(${count}) بوابة تيليجرام` : 'بوابة تيليجرام المتطورة';
                 }
 
+                // تحديث شارة الإشعارات (للمستخدم)
+                updateNotificationBadge() {
+                    const bell = document.getElementById('notificationBell');
+                    if (!bell) return;
+                    
+                    const userId = this.state.user?.id;
+                    if (!userId) return;
+                    
+                    const unreadCount = this.data.notificationService.getUnreadCount(userId);
+                    let badge = bell.querySelector('.notification-badge');
+                    
+                    if (unreadCount > 0) {
+                        if (!badge) {
+                            badge = document.createElement('span');
+                            badge.className = 'notification-badge';
+                            bell.style.position = 'relative';
+                            bell.appendChild(badge);
+                        }
+                        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                    } else {
+                        if (badge) badge.remove();
+                    }
+                }
+
                 // التصيير الرئيسي
                 render() {
                     if (this.state.telegramMissing) {
@@ -1247,6 +1396,7 @@
                     
                     this.bindEvents();
                     this.updatePendingBadge(); // تحديث الشارة بعد التصيير
+                    this.updateNotificationBadge(); // تحديث شارة الإشعارات
                 }
 
                 // مكونات التصيير
@@ -1298,6 +1448,24 @@
                     `;
                 }
 
+                // دالة لعرض أيقونة الجرس مع العداد
+                renderNotificationBell() {
+                    const userId = this.state.user?.id;
+                    if (!userId) return '';
+                    const unreadCount = this.data.notificationService.getUnreadCount(userId);
+                    
+                    return `
+                        <div class="relative cursor-pointer" id="notificationBell">
+                            <i class="fa-regular fa-bell text-xl"></i>
+                            ${unreadCount > 0 ? `
+                                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                                    ${unreadCount > 9 ? '9+' : unreadCount}
+                                </span>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+
                 renderUserDashboard() {
                     const user = this.state.user;
                     const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
@@ -1316,7 +1484,10 @@
                                         }
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
+                                        <div class="flex items-center justify-between">
+                                            <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
+                                            ${this.renderNotificationBell()}
+                                        </div>
                                         <p class="text-xs text-gray-400 font-mono mt-0.5">ID: ${user.id}</p>
                                         <div class="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-green-500/10 border border-green-500/20">
                                             <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
@@ -1388,7 +1559,10 @@
                                         }
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
+                                        <div class="flex items-center justify-between">
+                                            <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
+                                            ${this.renderNotificationBell()}
+                                        </div>
                                         <p class="text-xs text-gray-400 font-mono mt-0.5">ID: ${user.id}</p>
                                         <div class="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-yellow-500/20 border border-yellow-500/30">
                                             <i class="fa-solid fa-crown text-yellow-400 text-[10px]"></i>
@@ -1492,6 +1666,12 @@
                     const adminPanelBtn = document.getElementById('openAdminPanelBtn');
                     if (adminPanelBtn) {
                         adminPanelBtn.addEventListener('click', () => this.openAdminPanel());
+                    }
+
+                    // ربط حدث النقر على جرس الإشعارات
+                    const notificationBell = document.getElementById('notificationBell');
+                    if (notificationBell) {
+                        notificationBell.addEventListener('click', () => this.openNotificationsModal());
                     }
                 }
 
@@ -2090,6 +2270,86 @@
                         
                         modalOverlay.classList.remove('open');
                         this.openAdminPanel(); // إعادة فتح لوحة المشرف
+                    });
+                }
+
+                // مودال الإشعارات
+                openNotificationsModal() {
+                    const modalOverlay = document.getElementById('walletModalOverlay');
+                    const modalContent = document.getElementById('walletModalContent');
+                    modalContent.innerHTML = this.renderNotificationsModal();
+                    modalOverlay.classList.add('open');
+                    this.bindNotificationsModalEvents();
+                }
+
+                renderNotificationsModal() {
+                    const userId = this.state.user.id;
+                    const notifications = this.data.notificationService.getUserNotifications(userId);
+                    
+                    const notificationsHtml = notifications.length === 0 
+                        ? '<p class="text-center text-gray-400 py-8">لا توجد إشعارات</p>'
+                        : notifications.map(n => `
+                            <div class="transaction-item ${n.read ? 'opacity-60' : ''}" data-id="${n.id}">
+                                <div class="flex-1">
+                                    <div class="font-bold flex items-center gap-2">
+                                        ${!n.read ? '<span class="w-2 h-2 bg-blue-500 rounded-full"></span>' : ''}
+                                        ${n.title}
+                                    </div>
+                                    <div class="text-sm">${n.message}</div>
+                                    <div class="text-xs text-gray-400 mt-1">${DateUtils.formatDateTime(n.date)}</div>
+                                </div>
+                                ${!n.read ? `
+                                    <button class="mark-read text-xs text-blue-400 hover:text-blue-300" data-id="${n.id}">
+                                        <i class="fa-regular fa-circle-check"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        `).join('');
+                    
+                    return `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">الإشعارات</h2>
+                            <button id="closeNotificationsModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="flex justify-end mb-3">
+                            <button id="markAllRead" class="text-sm bg-blue-600 px-3 py-1 rounded-lg">
+                                <i class="fa-regular fa-bell-slash ml-1"></i> تحديد الكل كمقروء
+                            </button>
+                        </div>
+                        <div class="max-h-96 overflow-y-auto space-y-2">
+                            ${notificationsHtml}
+                        </div>
+                    `;
+                }
+
+                bindNotificationsModalEvents() {
+                    const modalOverlay = document.getElementById('walletModalOverlay');
+                    document.getElementById('closeNotificationsModal').addEventListener('click', () => {
+                        modalOverlay.classList.remove('open');
+                    });
+                    
+                    document.getElementById('markAllRead')?.addEventListener('click', () => {
+                        this.data.notificationService.markAllAsRead(this.state.user.id);
+                        this.toast.success('تم تحديد الكل كمقروء');
+                        this.openNotificationsModal(); // إعادة فتح المودال
+                        this.updateNotificationBadge(); // تحديث العداد
+                    });
+                    
+                    // زر تحديد كمقروء لكل إشعار
+                    document.querySelectorAll('.mark-read').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const id = btn.dataset.id;
+                            this.data.notificationService.markAsRead(id);
+                            this.openNotificationsModal();
+                            this.updateNotificationBadge();
+                        });
+                    });
+                    
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay) modalOverlay.classList.remove('open');
                     });
                 }
             }
