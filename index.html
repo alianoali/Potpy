@@ -563,6 +563,21 @@
         }
         .payment-method-admin .actions button.delete:hover { color: #ef4444; }
         .payment-method-admin .actions button.edit:hover { color: #3b82f6; }
+
+        /* معاينة الصورة في نموذج الإضافة */
+        .image-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.2);
+            margin-top: 8px;
+        }
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
@@ -887,7 +902,7 @@
                                 id: IdGenerator.generate('usdt_'), 
                                 name: 'USDT (TRC20)', 
                                 icon: 'fa-brands fa-tether', 
-                                imageUrl: 'https://cryptologos.cc/logos/tether-usdt-logo.png', // صورة العملة
+                                imageUrl: 'https://cryptologos.cc/logos/tether-usdt-logo.png', // رابط صورة
                                 description: 'عملة رقمية مستقرة - شبكة TRC20', 
                                 depositDetails: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ\nشبكة: TRC20', 
                                 withdrawDetails: 'أدخل عنوان USDT الخاص بك (TRC20)' 
@@ -1435,7 +1450,10 @@
                         <div class="payment-method" data-method-id="${m.id}" data-context="deposit">
                             <div class="payment-icon">
                                 ${m.imageUrl ? 
-                                    `<img src="${m.imageUrl}" alt="${m.name}" style="width:100%; height:100%; object-fit:contain; background:white; border-radius:8px;">` : 
+                                    (m.imageUrl.startsWith('data:image') ? 
+                                        `<img src="${m.imageUrl}" alt="${m.name}" style="width:100%; height:100%; object-fit:contain; background:white; border-radius:8px;">` : 
+                                        `<img src="${m.imageUrl}" alt="${m.name}" style="width:100%; height:100%; object-fit:contain; background:white; border-radius:8px;">`
+                                    ) : 
                                     `<i class="${m.icon}"></i>`
                                 }
                             </div>
@@ -1450,7 +1468,10 @@
                         <div class="payment-method" data-method-id="${m.id}" data-context="withdraw">
                             <div class="payment-icon">
                                 ${m.imageUrl ? 
-                                    `<img src="${m.imageUrl}" alt="${m.name}" style="width:100%; height:100%; object-fit:contain; background:white; border-radius:8px;">` : 
+                                    (m.imageUrl.startsWith('data:image') ? 
+                                        `<img src="${m.imageUrl}" alt="${m.name}" style="width:100%; height:100%; object-fit:contain; background:white; border-radius:8px;">` : 
+                                        `<img src="${m.imageUrl}" alt="${m.name}" style="width:100%; height:100%; object-fit:contain; background:white; border-radius:8px;">`
+                                    ) : 
                                     `<i class="${m.icon}"></i>`
                                 }
                             </div>
@@ -1488,7 +1509,6 @@
                                 <div class="payment-methods-list mb-4">
                                     ${paymentMethodsHtml}
                                 </div>
-                                <!-- لا توجد حقول هنا، ستظهر في المودال الجديد -->
                             </div>
 
                             <!-- تبويب السحب -->
@@ -1609,7 +1629,10 @@
                         <div class="flex flex-col items-center mb-4">
                             <div class="w-24 h-24 rounded-2xl overflow-hidden bg-white/10 flex items-center justify-center mb-3 detail-payment-icon">
                                 ${method.imageUrl ? 
-                                    `<img src="${method.imageUrl}" alt="${method.name}" style="width:100%; height:100%; object-fit:contain;">` : 
+                                    (method.imageUrl.startsWith('data:image') ? 
+                                        `<img src="${method.imageUrl}" alt="${method.name}" style="width:100%; height:100%; object-fit:contain;">` : 
+                                        `<img src="${method.imageUrl}" alt="${method.name}" style="width:100%; height:100%; object-fit:contain;">`
+                                    ) : 
                                     `<i class="${method.icon} text-4xl"></i>`
                                 }
                             </div>
@@ -1751,7 +1774,10 @@
                             <div class="flex items-center gap-3">
                                 <div class="payment-icon">
                                     ${m.imageUrl ? 
-                                        `<img src="${m.imageUrl}" alt="${m.name}" style="width:100%; height:100%; object-fit:contain; background:white; border-radius:8px;">` : 
+                                        (m.imageUrl.startsWith('data:image') ? 
+                                            `<img src="${m.imageUrl}" alt="${m.name}" style="width:100%; height:100%; object-fit:contain; background:white; border-radius:8px;">` : 
+                                            `<img src="${m.imageUrl}" alt="${m.name}" style="width:100%; height:100%; object-fit:contain; background:white; border-radius:8px;">`
+                                        ) : 
                                         `<i class="${m.icon}"></i>`
                                     }
                                 </div>
@@ -1900,7 +1926,7 @@
                     });
                 }
 
-                // مودال إضافة/تعديل طريقة دفع (مع إضافة حقل الصورة)
+                // مودال إضافة/تعديل طريقة دفع (مع إضافة حقل رفع الصورة من الجهاز)
                 openPaymentMethodModal(editingId = null) {
                     const modalOverlay = document.getElementById('paymentMethodModalOverlay');
                     const modalContent = document.getElementById('paymentMethodModalContent');
@@ -1924,8 +1950,12 @@
                                 <input type="text" id="methodIcon" value="${method?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
                             </div>
                             <div>
-                                <label class="text-sm text-gray-400">رابط الصورة (URL)</label>
-                                <input type="url" id="methodImageUrl" value="${method?.imageUrl || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                <label class="text-sm text-gray-400">صورة الطريقة (اختر من الجهاز)</label>
+                                <input type="file" id="methodImageFile" accept="image/png, image/jpeg, image/gif, image/webp" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                <div id="imagePreviewContainer" class="image-preview mt-2 ${method?.imageUrl ? '' : 'hidden'}">
+                                    <img id="imagePreview" src="${method?.imageUrl || ''}" alt="Preview">
+                                </div>
+                                <p class="text-xs text-gray-400 mt-1">سيتم تحويل الصورة وتخزينها محلياً. الحجم الأقصى 500KB.</p>
                             </div>
                             <div>
                                 <label class="text-sm text-gray-400">وصف مختصر</label>
@@ -1962,28 +1992,87 @@
                         if (e.target === modalOverlay) modalOverlay.classList.remove('open');
                     });
 
+                    // معاينة الصورة عند اختيار ملف
+                    const fileInput = document.getElementById('methodImageFile');
+                    const previewContainer = document.getElementById('imagePreviewContainer');
+                    const previewImage = document.getElementById('imagePreview');
+                    
+                    fileInput.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            // التحقق من الحجم (500KB)
+                            if (file.size > 500 * 1024) {
+                                alert('الصورة كبيرة جداً. الحد الأقصى 500 كيلوبايت.');
+                                fileInput.value = '';
+                                previewContainer.classList.add('hidden');
+                                return;
+                            }
+                            const reader = new FileReader();
+                            reader.onload = function(ev) {
+                                previewImage.src = ev.target.result;
+                                previewContainer.classList.remove('hidden');
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            previewContainer.classList.add('hidden');
+                        }
+                    });
+
                     document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
                         e.preventDefault();
+                        
+                        // جمع بيانات النموذج
                         const formData = {
                             name: document.getElementById('methodName').value,
                             icon: document.getElementById('methodIcon').value,
-                            imageUrl: document.getElementById('methodImageUrl').value,
                             description: document.getElementById('methodDescription').value,
                             depositDetails: document.getElementById('methodDepositDetails').value,
                             withdrawDetails: document.getElementById('methodWithdrawDetails').value
                         };
-                        const id = document.getElementById('methodId').value;
-                        
-                        if (id) {
-                            this.data.updatePaymentMethod(id, formData);
-                            this.toast.success('تم التحديث بنجاح');
+
+                        // معالجة الصورة: إذا تم اختيار ملف جديد نستخدم base64، وإلا نحتفظ بالصورة القديمة (في حالة التعديل)
+                        const file = fileInput.files[0];
+                        if (file) {
+                            // التحقق من الحجم مرة أخرى
+                            if (file.size > 500 * 1024) {
+                                alert('الصورة كبيرة جداً. الحد الأقصى 500 كيلوبايت.');
+                                return;
+                            }
+                            // تحويل الملف إلى base64 بشكل متزامن (نستخدم FileReader داخل Promise)
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                                formData.imageUrl = ev.target.result;
+                                // متابعة الحفظ بعد تحميل الصورة
+                                saveMethod(formData);
+                            };
+                            reader.readAsDataURL(file);
                         } else {
-                            this.data.addPaymentMethod(formData);
-                            this.toast.success('تمت الإضافة بنجاح');
+                            // إذا لم يتم اختيار ملف جديد، نحتفظ بالصورة القديمة (في حالة التعديل)
+                            const methodId = document.getElementById('methodId').value;
+                            if (methodId) {
+                                const oldMethod = this.state.paymentMethods.find(m => m.id === methodId);
+                                formData.imageUrl = oldMethod?.imageUrl || '';
+                            } else {
+                                formData.imageUrl = ''; // لا صورة
+                            }
+                            saveMethod(formData);
                         }
-                        
-                        modalOverlay.classList.remove('open');
-                        this.openAdminPanel(); // إعادة فتح لوحة المشرف
+
+                        // دالة الحفظ (تستدعى بعد التأكد من الصورة)
+                        const saveMethod = (data) => {
+                            const id = document.getElementById('methodId').value;
+                            
+                            if (id) {
+                                this.data.updatePaymentMethod(id, data);
+                                this.toast.success('تم التحديث بنجاح');
+                            } else {
+                                this.data.addPaymentMethod(data);
+                                this.toast.success('تمت الإضافة بنجاح');
+                            }
+                            
+                            modalOverlay.classList.remove('open');
+                            this.openAdminPanel(); // إعادة فتح لوحة المشرف
+                        };
                     });
                 }
             }
