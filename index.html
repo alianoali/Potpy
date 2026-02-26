@@ -18,7 +18,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* الأنماط كما هي دون تغيير */
         * {
             margin: 0;
             padding: 0;
@@ -38,6 +37,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
+        /* الخلفية المتحركة */
         .ambient-light {
             position: fixed;
             top: 0;
@@ -65,6 +65,7 @@
             50% { transform: translate(20px, 40px); }
         }
 
+        /* Glassmorphism */
         .glass-card {
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(16px);
@@ -79,6 +80,7 @@
             border-color: rgba(255, 255, 255, 0.15);
         }
 
+        /* Animations */
         @keyframes slideUpFade {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
@@ -88,6 +90,7 @@
             animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
+        /* Loader */
         .spinner {
             width: 50px;
             height: 50px;
@@ -99,6 +102,7 @@
         
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* Avatar */
         .default-avatar {
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             display: flex;
@@ -109,6 +113,7 @@
             font-weight: bold;
         }
 
+        /* Toast Notifications */
         .toast-container {
             position: fixed;
             bottom: 20px;
@@ -175,6 +180,7 @@
             to { opacity: 0; transform: translateY(-10px); }
         }
 
+        /* Theme toggle */
         .theme-toggle {
             position: fixed;
             top: 16px;
@@ -196,6 +202,7 @@
             background: rgba(40, 51, 69, 0.8);
         }
 
+        /* Settings panel */
         .settings-panel {
             position: fixed;
             bottom: 0;
@@ -232,6 +239,7 @@
             pointer-events: all;
         }
 
+        /* Wallet Modal */
         .wallet-modal-overlay {
             position: fixed;
             top: 0;
@@ -314,6 +322,7 @@
         .transaction-amount.positive { color: #10b981; }
         .transaction-amount.negative { color: #ef4444; }
 
+        /* أيقونة المحفظة الكبيرة */
         .wallet-icon-large {
             width: 80px;
             height: 80px;
@@ -397,6 +406,7 @@
             100% { transform: scale(1); }
         }
 
+        /* طرق الدفع - صور وأيقونات */
         .payment-method {
             display: flex;
             align-items: center;
@@ -443,6 +453,7 @@
             line-height: 1.6;
         }
 
+        /* لوحة المشرف */
         .admin-requests-panel {
             background: rgba(0,0,0,0.2);
             border-radius: 20px;
@@ -494,6 +505,7 @@
             font-weight: 600;
         }
 
+        /* أزرار تحرير طرق الدفع */
         .payment-method-admin {
             display: flex;
             align-items: center;
@@ -514,6 +526,7 @@
         .payment-method-admin .actions button.delete:hover { color: #ef4444; }
         .payment-method-admin .actions button.edit:hover { color: #3b82f6; }
 
+        /* أنماط المتجر */
         .product-card {
             cursor: pointer;
             transition: all 0.2s;
@@ -538,21 +551,86 @@
             outline: none;
             border-color: #3b82f6;
         }
+        
+        /* أنماط محسنة */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .badge-blue {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .badge-green {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .badge-yellow {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        
+        .badge-red {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
     </style>
 </head>
 <body>
+    <!-- Background Elements -->
     <div class="ambient-light">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
     </div>
 
+    <!-- Theme Toggle -->
     <div class="theme-toggle" id="themeToggle">
         <i class="fa-solid fa-moon" id="themeIcon"></i>
         <span class="text-sm">السمة</span>
     </div>
 
+    <!-- Main Container -->
     <div id="app" class="w-full max-w-md p-5 relative"></div>
 
+    <!-- Settings Panel -->
     <div class="settings-overlay" id="settingsOverlay"></div>
     <div class="settings-panel" id="settingsPanel">
         <div class="flex justify-between items-center mb-4">
@@ -593,16 +671,20 @@
         </div>
     </div>
 
+    <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- Wallet Modal -->
     <div class="wallet-modal-overlay" id="walletModalOverlay">
         <div class="wallet-modal" id="walletModalContent"></div>
     </div>
 
+    <!-- Admin Panel Modal -->
     <div class="wallet-modal-overlay" id="adminPanelOverlay">
         <div class="wallet-modal" id="adminPanelContent" style="max-width: 500px;"></div>
     </div>
 
+    <!-- Payment Method Modal -->
     <div class="wallet-modal-overlay" id="paymentMethodModalOverlay">
         <div class="wallet-modal" id="paymentMethodModalContent" style="max-width: 450px;"></div>
     </div>
@@ -611,7 +693,7 @@
         (function() {
             // ======================== الإعدادات الثابتة ========================
             const CONFIG = {
-                ADMIN_ID: 7609492965, // غير هذا إلى معرف المشرف الخاص بك
+                ADMIN_ID: 7609492965,
                 DEFAULT_BALANCE: 1000,
                 MAX_TRANSACTIONS: 50,
                 STORAGE_KEYS: {
@@ -862,7 +944,7 @@
                 }
             }
 
-            // ======================== إدارة الحالة المركزية (State) ========================
+            // ======================== إدارة الحالة المركزية ========================
             class AppState extends EventTarget {
                 constructor() {
                     super();
@@ -914,7 +996,7 @@
                 }
             }
 
-            // ======================== إدارة البيانات (Data Layer) ========================
+            // ======================== إدارة البيانات ========================
             class DataService {
                 constructor(state) {
                     this.state = state;
@@ -930,6 +1012,7 @@
                     this.loadStats();
                     this.notificationService.loadNotifications();
                     
+                    // تحميل بيانات المتجر
                     this.loadCategories();
                     this.loadProducts();
                     this.loadOrders();
@@ -937,194 +1020,254 @@
 
                 // ========== المحفظة ==========
                 loadWallet() {
-                    const data = StorageService.get(CONFIG.STORAGE_KEYS.WALLET, null);
-                    if (data) {
-                        this.state.balance = data.balance || CONFIG.DEFAULT_BALANCE;
-                        this.state.wallet.transactions = data.transactions || [];
-                        this.state.wallet.address = data.address || this.state.wallet.address;
-                    } else {
-                        this.state.balance = CONFIG.DEFAULT_BALANCE;
-                        this.state.wallet.transactions = [];
+                    try {
+                        const data = StorageService.get(CONFIG.STORAGE_KEYS.WALLET, null);
+                        if (data) {
+                            this.state.balance = data.balance || CONFIG.DEFAULT_BALANCE;
+                            this.state.wallet.transactions = data.transactions || [];
+                            this.state.wallet.address = data.address || this.state.wallet.address;
+                        } else {
+                            this.state.balance = CONFIG.DEFAULT_BALANCE;
+                            this.state.wallet.transactions = [];
+                        }
+                    } catch (e) {
+                        console.error('Error loading wallet:', e);
                     }
                 }
 
                 saveWallet() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.WALLET, {
-                        balance: this.state.balance,
-                        transactions: this.state.wallet.transactions,
-                        address: this.state.wallet.address
-                    });
+                    try {
+                        StorageService.set(CONFIG.STORAGE_KEYS.WALLET, {
+                            balance: this.state.balance,
+                            transactions: this.state.wallet.transactions,
+                            address: this.state.wallet.address
+                        });
+                    } catch (e) {
+                        console.error('Error saving wallet:', e);
+                    }
                 }
 
                 // ========== طرق الدفع ==========
                 loadPaymentMethods() {
-                    const saved = StorageService.get(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, null);
-                    if (saved && Array.isArray(saved) && saved.length > 0) {
-                        this.state.paymentMethods = saved;
-                    } else {
-                        this.state.paymentMethods = [
-                            { id: IdGenerator.generate('usdt_'), name: 'USDT (TRC20)', icon: 'fa-brands fa-tether', description: 'عملة رقمية مستقرة', depositDetails: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ\nشبكة: TRC20', withdrawDetails: 'أدخل عنوان USDT الخاص بك' },
-                            { id: IdGenerator.generate('visa_'), name: 'Visa / Mastercard', icon: 'fa-regular fa-credit-card', description: 'بطاقات ائتمانية', depositDetails: 'رقم البطاقة: **** **** **** 1234\nتاريخ الانتهاء: 12/25\nCVV: ***', withdrawDetails: 'أدخل بيانات بطاقتك' },
-                            { id: IdGenerator.generate('bank_'), name: 'تحويل بنكي', icon: 'fa-solid fa-building-columns', description: 'حوالة بنكية محلية', depositDetails: 'IBAN: SA0380000000608010167519\nاسم المستفيد: شركة المدفوعات\nالبنك: الأهلي السعودي', withdrawDetails: 'أدخل رقم IBAN الخاص بك' },
-                            { id: IdGenerator.generate('telegram_'), name: 'محفظة تيليجرام', icon: 'fa-brands fa-telegram', description: '@wallet_bot', depositDetails: '@wallet_bot\nأرسل المبلغ إلى بوت المحفظة', withdrawDetails: 'أدخل معرف تيليجرام للمحفظة' }
-                        ];
+                    try {
+                        const saved = StorageService.get(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, null);
+                        if (saved && Array.isArray(saved) && saved.length > 0) {
+                            this.state.paymentMethods = saved;
+                        } else {
+                            this.state.paymentMethods = [
+                                { id: IdGenerator.generate('usdt_'), name: 'USDT (TRC20)', icon: 'fa-brands fa-tether', description: 'عملة رقمية مستقرة', depositDetails: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ\nشبكة: TRC20', withdrawDetails: 'أدخل عنوان USDT الخاص بك' },
+                                { id: IdGenerator.generate('visa_'), name: 'Visa / Mastercard', icon: 'fa-regular fa-credit-card', description: 'بطاقات ائتمانية', depositDetails: 'رقم البطاقة: **** **** **** 1234\nتاريخ الانتهاء: 12/25\nCVV: ***', withdrawDetails: 'أدخل بيانات بطاقتك' },
+                                { id: IdGenerator.generate('bank_'), name: 'تحويل بنكي', icon: 'fa-solid fa-building-columns', description: 'حوالة بنكية محلية', depositDetails: 'IBAN: SA0380000000608010167519\nاسم المستفيد: شركة المدفوعات\nالبنك: الأهلي السعودي', withdrawDetails: 'أدخل رقم IBAN الخاص بك' },
+                                { id: IdGenerator.generate('telegram_'), name: 'محفظة تيليجرام', icon: 'fa-brands fa-telegram', description: '@wallet_bot', depositDetails: '@wallet_bot\nأرسل المبلغ إلى بوت المحفظة', withdrawDetails: 'أدخل معرف تيليجرام للمحفظة' }
+                            ];
+                        }
+                    } catch (e) {
+                        console.error('Error loading payment methods:', e);
                     }
                 }
 
                 savePaymentMethods() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, this.state.paymentMethods);
+                    try {
+                        StorageService.set(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, this.state.paymentMethods);
+                    } catch (e) {
+                        console.error('Error saving payment methods:', e);
+                    }
                 }
 
                 addPaymentMethod(methodData) {
-                    const newMethod = { id: IdGenerator.generate('pm_'), ...methodData };
-                    this.state.paymentMethods.push(newMethod);
-                    this.savePaymentMethods();
-                    return newMethod;
+                    try {
+                        const newMethod = { id: IdGenerator.generate('pm_'), ...methodData };
+                        this.state.paymentMethods.push(newMethod);
+                        this.savePaymentMethods();
+                        return newMethod;
+                    } catch (e) {
+                        console.error('Error adding payment method:', e);
+                        return null;
+                    }
                 }
 
                 updatePaymentMethod(id, newData) {
-                    const index = this.state.paymentMethods.findIndex(m => m.id === id);
-                    if (index !== -1) {
-                        this.state.paymentMethods[index] = { ...this.state.paymentMethods[index], ...newData };
-                        this.savePaymentMethods();
-                        return true;
+                    try {
+                        const index = this.state.paymentMethods.findIndex(m => m.id === id);
+                        if (index !== -1) {
+                            this.state.paymentMethods[index] = { ...this.state.paymentMethods[index], ...newData };
+                            this.savePaymentMethods();
+                            return true;
+                        }
+                        return false;
+                    } catch (e) {
+                        console.error('Error updating payment method:', e);
+                        return false;
                     }
-                    return false;
                 }
 
                 deletePaymentMethod(id) {
-                    this.state.paymentMethods = this.state.paymentMethods.filter(m => m.id !== id);
-                    this.savePaymentMethods();
+                    try {
+                        this.state.paymentMethods = this.state.paymentMethods.filter(m => m.id !== id);
+                        this.savePaymentMethods();
+                        return true;
+                    } catch (e) {
+                        console.error('Error deleting payment method:', e);
+                        return false;
+                    }
                 }
 
                 // ========== طلبات الشحن والسحب ==========
                 loadRequests() {
-                    this.state.depositRequests = StorageService.get(CONFIG.STORAGE_KEYS.DEPOSIT_REQUESTS, []);
-                    this.state.withdrawalRequests = StorageService.get(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, []);
+                    try {
+                        this.state.depositRequests = StorageService.get(CONFIG.STORAGE_KEYS.DEPOSIT_REQUESTS, []);
+                        this.state.withdrawalRequests = StorageService.get(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, []);
+                    } catch (e) {
+                        console.error('Error loading requests:', e);
+                    }
                 }
 
                 saveRequests() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.DEPOSIT_REQUESTS, this.state.depositRequests);
-                    StorageService.set(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, this.state.withdrawalRequests);
+                    try {
+                        StorageService.set(CONFIG.STORAGE_KEYS.DEPOSIT_REQUESTS, this.state.depositRequests);
+                        StorageService.set(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, this.state.withdrawalRequests);
+                    } catch (e) {
+                        console.error('Error saving requests:', e);
+                    }
                 }
 
                 addDepositRequest(amount, methodId, transactionId, user) {
-                    const method = this.state.paymentMethods.find(m => m.id === methodId);
-                    const request = {
-                        id: IdGenerator.generate('dep_'),
-                        userId: user.id,
-                        userName: `${user.first_name} ${user.last_name || ''}`.trim(),
-                        amount,
-                        method: method ? method.name : methodId,
-                        methodId,
-                        transactionId,
-                        status: 'pending',
-                        date: new Date().toISOString()
-                    };
-                    this.state.depositRequests.push(request);
-                    this.saveRequests();
-                    this.incrementDailyOps();
-                    window.dispatchEvent(new CustomEvent('newDepositRequest', { detail: request }));
-                    return request;
+                    try {
+                        const method = this.state.paymentMethods.find(m => m.id === methodId);
+                        const request = {
+                            id: IdGenerator.generate('dep_'),
+                            userId: user.id,
+                            userName: `${user.first_name} ${user.last_name || ''}`.trim(),
+                            amount,
+                            method: method ? method.name : methodId,
+                            methodId,
+                            transactionId,
+                            status: 'pending',
+                            date: new Date().toISOString()
+                        };
+                        this.state.depositRequests.push(request);
+                        this.saveRequests();
+                        this.incrementDailyOps();
+                        window.dispatchEvent(new CustomEvent('newDepositRequest', { detail: request }));
+                        return request;
+                    } catch (e) {
+                        console.error('Error adding deposit request:', e);
+                        return null;
+                    }
                 }
 
                 addWithdrawalRequest(amount, methodId, details, user) {
-                    if (amount > this.state.balance) {
-                        return { success: false, message: 'الرصيد غير كافٍ', request: null };
+                    try {
+                        if (amount > this.state.balance) {
+                            return { success: false, message: 'الرصيد غير كافٍ', request: null };
+                        }
+                        const method = this.state.paymentMethods.find(m => m.id === methodId);
+                        const request = {
+                            id: IdGenerator.generate('with_'),
+                            userId: user.id,
+                            userName: `${user.first_name} ${user.last_name || ''}`.trim(),
+                            amount,
+                            method: method ? method.name : methodId,
+                            methodId,
+                            details,
+                            status: 'pending',
+                            date: new Date().toISOString()
+                        };
+                        this.state.withdrawalRequests.push(request);
+                        this.saveRequests();
+                        this.incrementDailyOps();
+                        window.dispatchEvent(new CustomEvent('newWithdrawalRequest', { detail: request }));
+                        return { success: true, id: request.id, request };
+                    } catch (e) {
+                        console.error('Error adding withdrawal request:', e);
+                        return { success: false, message: 'حدث خطأ في النظام', request: null };
                     }
-                    const method = this.state.paymentMethods.find(m => m.id === methodId);
-                    const request = {
-                        id: IdGenerator.generate('with_'),
-                        userId: user.id,
-                        userName: `${user.first_name} ${user.last_name || ''}`.trim(),
-                        amount,
-                        method: method ? method.name : methodId,
-                        methodId,
-                        details,
-                        status: 'pending',
-                        date: new Date().toISOString()
-                    };
-                    this.state.withdrawalRequests.push(request);
-                    this.saveRequests();
-                    this.incrementDailyOps();
-                    window.dispatchEvent(new CustomEvent('newWithdrawalRequest', { detail: request }));
-                    return { success: true, id: request.id, request };
                 }
 
                 acceptRequest(request, type) {
-                    if (type === 'deposit') {
-                        const req = this.state.depositRequests.find(r => r.id === request.id);
-                        if (req && req.status === 'pending') {
-                            req.status = 'approved';
-                            this.state.balance += req.amount;
-                            this.addTransaction('deposit', req.amount, `شحن عبر ${req.method} (رقم العملية: ${req.transactionId || 'غير محدد'})`);
-                            this.saveWallet();
-                            this.saveRequests();
-                            
-                            this.notificationService.addNotification(
-                                req.userId,
-                                '✅ تم قبول طلب الشحن',
-                                `تم قبول طلب الشحن بمبلغ ${req.amount} عبر ${req.method}. رقم العملية: ${req.transactionId || 'غير محدد'}`,
-                                'success'
-                            );
-                            
-                            return true;
+                    try {
+                        if (type === 'deposit') {
+                            const req = this.state.depositRequests.find(r => r.id === request.id);
+                            if (req && req.status === 'pending') {
+                                req.status = 'approved';
+                                this.state.balance += req.amount;
+                                this.addTransaction('deposit', req.amount, `شحن عبر ${req.method} (رقم العملية: ${req.transactionId || 'غير محدد'})`);
+                                this.saveWallet();
+                                this.saveRequests();
+                                
+                                this.notificationService.addNotification(
+                                    req.userId,
+                                    '✅ تم قبول طلب الشحن',
+                                    `تم قبول طلب الشحن بمبلغ ${req.amount} عبر ${req.method}. رقم العملية: ${req.transactionId || 'غير محدد'}`,
+                                    'success'
+                                );
+                                
+                                return true;
+                            }
+                        } else if (type === 'withdrawal') {
+                            const req = this.state.withdrawalRequests.find(r => r.id === request.id);
+                            if (req && req.status === 'pending' && this.state.balance >= req.amount) {
+                                req.status = 'approved';
+                                this.state.balance -= req.amount;
+                                this.addTransaction('withdraw', -req.amount, `سحب عبر ${req.method} إلى ${req.details || 'محفظة'}`);
+                                this.saveWallet();
+                                this.saveRequests();
+                                
+                                this.notificationService.addNotification(
+                                    req.userId,
+                                    '✅ تم قبول طلب السحب',
+                                    `تم قبول طلب السحب بمبلغ ${req.amount} عبر ${req.method}. التفاصيل: ${req.details}`,
+                                    'success'
+                                );
+                                
+                                return true;
+                            }
                         }
-                    } else if (type === 'withdrawal') {
-                        const req = this.state.withdrawalRequests.find(r => r.id === request.id);
-                        if (req && req.status === 'pending' && this.state.balance >= req.amount) {
-                            req.status = 'approved';
-                            this.state.balance -= req.amount;
-                            this.addTransaction('withdraw', -req.amount, `سحب عبر ${req.method} إلى ${req.details || 'محفظة'}`);
-                            this.saveWallet();
-                            this.saveRequests();
-                            
-                            this.notificationService.addNotification(
-                                req.userId,
-                                '✅ تم قبول طلب السحب',
-                                `تم قبول طلب السحب بمبلغ ${req.amount} عبر ${req.method}. التفاصيل: ${req.details}`,
-                                'success'
-                            );
-                            
-                            return true;
-                        }
+                        return false;
+                    } catch (e) {
+                        console.error('Error accepting request:', e);
+                        return false;
                     }
-                    return false;
                 }
 
                 rejectRequest(request, type) {
-                    if (type === 'deposit') {
-                        const req = this.state.depositRequests.find(r => r.id === request.id);
-                        if (req) {
-                            req.status = 'rejected';
-                            this.saveRequests();
-                            
-                            this.notificationService.addNotification(
-                                req.userId,
-                                '❌ تم رفض طلب الشحن',
-                                `تم رفض طلب الشحن بمبلغ ${req.amount} عبر ${req.method}.`,
-                                'error'
-                            );
-                            
-                            return true;
+                    try {
+                        if (type === 'deposit') {
+                            const req = this.state.depositRequests.find(r => r.id === request.id);
+                            if (req) {
+                                req.status = 'rejected';
+                                this.saveRequests();
+                                
+                                this.notificationService.addNotification(
+                                    req.userId,
+                                    '❌ تم رفض طلب الشحن',
+                                    `تم رفض طلب الشحن بمبلغ ${req.amount} عبر ${req.method}.`,
+                                    'error'
+                                );
+                                
+                                return true;
+                            }
+                        } else if (type === 'withdrawal') {
+                            const req = this.state.withdrawalRequests.find(r => r.id === request.id);
+                            if (req) {
+                                req.status = 'rejected';
+                                this.saveRequests();
+                                
+                                this.notificationService.addNotification(
+                                    req.userId,
+                                    '❌ تم رفض طلب السحب',
+                                    `تم رفض طلب السحب بمبلغ ${req.amount} عبر ${req.method}.`,
+                                    'error'
+                                );
+                                
+                                return true;
+                            }
                         }
-                    } else if (type === 'withdrawal') {
-                        const req = this.state.withdrawalRequests.find(r => r.id === request.id);
-                        if (req) {
-                            req.status = 'rejected';
-                            this.saveRequests();
-                            
-                            this.notificationService.addNotification(
-                                req.userId,
-                                '❌ تم رفض طلب السحب',
-                                `تم رفض طلب السحب بمبلغ ${req.amount} عبر ${req.method}.`,
-                                'error'
-                            );
-                            
-                            return true;
-                        }
+                        return false;
+                    } catch (e) {
+                        console.error('Error rejecting request:', e);
+                        return false;
                     }
-                    return false;
                 }
 
                 getPendingDeposits() {
@@ -1140,225 +1283,324 @@
                 }
 
                 addTransaction(type, amount, note = '', status = 'مكتمل') {
-                    const tx = {
-                        id: IdGenerator.generate('tx_'),
-                        type,
-                        amount,
-                        note,
-                        status,
-                        date: new Date().toISOString()
-                    };
-                    this.state.wallet.transactions.unshift(tx);
-                    if (this.state.wallet.transactions.length > CONFIG.MAX_TRANSACTIONS) {
-                        this.state.wallet.transactions.pop();
+                    try {
+                        const tx = {
+                            id: IdGenerator.generate('tx_'),
+                            type,
+                            amount,
+                            note,
+                            status,
+                            date: new Date().toISOString()
+                        };
+                        this.state.wallet.transactions.unshift(tx);
+                        if (this.state.wallet.transactions.length > CONFIG.MAX_TRANSACTIONS) {
+                            this.state.wallet.transactions.pop();
+                        }
+                        this.saveWallet();
+                    } catch (e) {
+                        console.error('Error adding transaction:', e);
                     }
-                    this.saveWallet();
                 }
 
                 // ========== الإحصائيات ==========
                 loadStats() {
-                    const users = StorageService.get(CONFIG.STORAGE_KEYS.USERS, []);
-                    const bots = StorageService.get(CONFIG.STORAGE_KEYS.BOTS, [{ id: 123456, name: 'البوت الرسمي' }]);
-                    const dailyOpsData = StorageService.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
-                    const today = DateUtils.getTodayDate();
-                    
-                    this.state.stats = {
-                        users: users.length,
-                        bots: bots.length,
-                        dailyOps: dailyOpsData[today] || 0
-                    };
+                    try {
+                        const users = StorageService.get(CONFIG.STORAGE_KEYS.USERS, []);
+                        const bots = StorageService.get(CONFIG.STORAGE_KEYS.BOTS, [{ id: 123456, name: 'البوت الرسمي' }]);
+                        const dailyOpsData = StorageService.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
+                        const today = DateUtils.getTodayDate();
+                        
+                        this.state.stats = {
+                            users: users.length,
+                            bots: bots.length,
+                            dailyOps: dailyOpsData[today] || 0
+                        };
+                    } catch (e) {
+                        console.error('Error loading stats:', e);
+                    }
                 }
 
                 incrementDailyOps() {
-                    const today = DateUtils.getTodayDate();
-                    const dailyOpsData = StorageService.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
-                    dailyOpsData[today] = (dailyOpsData[today] || 0) + 1;
-                    StorageService.set(CONFIG.STORAGE_KEYS.DAILY_OPS, dailyOpsData);
-                    this.loadStats();
+                    try {
+                        const today = DateUtils.getTodayDate();
+                        const dailyOpsData = StorageService.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
+                        dailyOpsData[today] = (dailyOpsData[today] || 0) + 1;
+                        StorageService.set(CONFIG.STORAGE_KEYS.DAILY_OPS, dailyOpsData);
+                        this.loadStats();
+                    } catch (e) {
+                        console.error('Error incrementing daily ops:', e);
+                    }
                 }
 
                 registerUser(userId) {
-                    const users = StorageService.get(CONFIG.STORAGE_KEYS.USERS, []);
-                    if (!users.includes(userId)) {
-                        users.push(userId);
-                        StorageService.set(CONFIG.STORAGE_KEYS.USERS, users);
-                        this.loadStats();
+                    try {
+                        const users = StorageService.get(CONFIG.STORAGE_KEYS.USERS, []);
+                        if (!users.includes(userId)) {
+                            users.push(userId);
+                            StorageService.set(CONFIG.STORAGE_KEYS.USERS, users);
+                            this.loadStats();
+                        }
+                    } catch (e) {
+                        console.error('Error registering user:', e);
                     }
                 }
 
                 // ========== الإعدادات ==========
                 loadSettings() {
-                    const settings = StorageService.get(CONFIG.STORAGE_KEYS.SETTINGS, null);
-                    if (settings) {
-                        this.state.settings = settings;
+                    try {
+                        const settings = StorageService.get(CONFIG.STORAGE_KEYS.SETTINGS, null);
+                        if (settings) {
+                            this.state.settings = settings;
+                        }
+                    } catch (e) {
+                        console.error('Error loading settings:', e);
                     }
                 }
 
                 saveSettings() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.SETTINGS, this.state.settings);
+                    try {
+                        StorageService.set(CONFIG.STORAGE_KEYS.SETTINGS, this.state.settings);
+                    } catch (e) {
+                        console.error('Error saving settings:', e);
+                    }
                 }
 
                 loadTheme() {
-                    const theme = StorageService.get(CONFIG.STORAGE_KEYS.THEME, 'dark');
-                    this.state.theme = theme;
-                    return theme;
+                    try {
+                        const theme = StorageService.get(CONFIG.STORAGE_KEYS.THEME, 'dark');
+                        this.state.theme = theme;
+                        return theme;
+                    } catch (e) {
+                        console.error('Error loading theme:', e);
+                        return 'dark';
+                    }
                 }
 
                 saveTheme(theme) {
-                    StorageService.set(CONFIG.STORAGE_KEYS.THEME, theme);
-                    this.state.theme = theme;
+                    try {
+                        StorageService.set(CONFIG.STORAGE_KEYS.THEME, theme);
+                        this.state.theme = theme;
+                    } catch (e) {
+                        console.error('Error saving theme:', e);
+                    }
                 }
 
                 // ========== المتجر: الأقسام ==========
                 loadCategories() {
-                    const saved = StorageService.get(CONFIG.STORAGE_KEYS.STORE_CATEGORIES, null);
-                    if (saved && Array.isArray(saved) && saved.length > 0) {
-                        this.state.categories = saved;
-                    } else {
-                        this.state.categories = [
-                            { id: IdGenerator.generate('cat_'), name: '🎮 شحن الألعاب', icon: 'fa-gamepad', description: 'شحن عملات PUBG، Free Fire، Roblox', order: 1 },
-                            { id: IdGenerator.generate('cat_'), name: '📺 اشتراكات', icon: 'fa-tv', description: 'نتفلكس، سبوتيفاي، يوتيوب بريميوم', order: 2 },
-                            { id: IdGenerator.generate('cat_'), name: '💳 بطاقات هدايا', icon: 'fa-gift', description: 'Google Play، App Store، أمازون', order: 3 },
-                            { id: IdGenerator.generate('cat_'), name: '📱 رصيد جوال', icon: 'fa-mobile', description: 'شحن رصيد، فودافون كاش', order: 4 },
-                            { id: IdGenerator.generate('cat_'), name: '💻 برامج', icon: 'fa-computer', description: 'أوفيس، أدوبي، أنتي فيروس', order: 5 },
-                            { id: IdGenerator.generate('cat_'), name: '📚 كتب إلكترونية', icon: 'fa-book', description: 'كتب PDF، روايات', order: 6 },
-                            { id: IdGenerator.generate('cat_'), name: '🔑 مفاتيح تفعيل', icon: 'fa-key', description: 'تفعيل ويندوز، برامج', order: 7 },
-                            { id: IdGenerator.generate('cat_'), name: '🛠️ خدمات', icon: 'fa-brush', description: 'تصميم، برمجة، دعم فني', order: 8 }
-                        ];
+                    try {
+                        const saved = StorageService.get(CONFIG.STORAGE_KEYS.STORE_CATEGORIES, null);
+                        if (saved && Array.isArray(saved) && saved.length > 0) {
+                            this.state.categories = saved;
+                        } else {
+                            this.state.categories = [
+                                { id: IdGenerator.generate('cat_'), name: '🎮 شحن الألعاب', icon: 'fa-gamepad', description: 'شحن عملات PUBG، Free Fire، Roblox', order: 1 },
+                                { id: IdGenerator.generate('cat_'), name: '📺 اشتراكات', icon: 'fa-tv', description: 'نتفلكس، سبوتيفاي، يوتيوب بريميوم', order: 2 },
+                                { id: IdGenerator.generate('cat_'), name: '💳 بطاقات هدايا', icon: 'fa-gift', description: 'Google Play، App Store، أمازون', order: 3 },
+                                { id: IdGenerator.generate('cat_'), name: '📱 رصيد جوال', icon: 'fa-mobile', description: 'شحن رصيد، فودافون كاش', order: 4 },
+                                { id: IdGenerator.generate('cat_'), name: '💻 برامج', icon: 'fa-computer', description: 'أوفيس، أدوبي، أنتي فيروس', order: 5 },
+                                { id: IdGenerator.generate('cat_'), name: '📚 كتب إلكترونية', icon: 'fa-book', description: 'كتب PDF، روايات', order: 6 },
+                                { id: IdGenerator.generate('cat_'), name: '🔑 مفاتيح تفعيل', icon: 'fa-key', description: 'تفعيل ويندوز، برامج', order: 7 },
+                                { id: IdGenerator.generate('cat_'), name: '🛠️ خدمات', icon: 'fa-brush', description: 'تصميم، برمجة، دعم فني', order: 8 }
+                            ];
+                        }
+                    } catch (e) {
+                        console.error('Error loading categories:', e);
                     }
                 }
 
                 saveCategories() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.STORE_CATEGORIES, this.state.categories);
+                    try {
+                        StorageService.set(CONFIG.STORAGE_KEYS.STORE_CATEGORIES, this.state.categories);
+                    } catch (e) {
+                        console.error('Error saving categories:', e);
+                    }
                 }
 
                 addCategory(categoryData) {
-                    const newCat = { id: IdGenerator.generate('cat_'), ...categoryData };
-                    this.state.categories.push(newCat);
-                    this.saveCategories();
-                    return newCat;
+                    try {
+                        const newCat = { id: IdGenerator.generate('cat_'), ...categoryData };
+                        this.state.categories.push(newCat);
+                        this.saveCategories();
+                        return newCat;
+                    } catch (e) {
+                        console.error('Error adding category:', e);
+                        return null;
+                    }
                 }
 
                 updateCategory(id, newData) {
-                    const index = this.state.categories.findIndex(c => c.id === id);
-                    if (index !== -1) {
-                        this.state.categories[index] = { ...this.state.categories[index], ...newData };
-                        this.saveCategories();
-                        return true;
+                    try {
+                        const index = this.state.categories.findIndex(c => c.id === id);
+                        if (index !== -1) {
+                            this.state.categories[index] = { ...this.state.categories[index], ...newData };
+                            this.saveCategories();
+                            return true;
+                        }
+                        return false;
+                    } catch (e) {
+                        console.error('Error updating category:', e);
+                        return false;
                     }
-                    return false;
                 }
 
                 deleteCategory(id) {
-                    this.state.categories = this.state.categories.filter(c => c.id !== id);
-                    this.saveCategories();
+                    try {
+                        this.state.categories = this.state.categories.filter(c => c.id !== id);
+                        this.saveCategories();
+                        return true;
+                    } catch (e) {
+                        console.error('Error deleting category:', e);
+                        return false;
+                    }
                 }
 
                 // ========== المتجر: المنتجات ==========
                 loadProducts() {
-                    const saved = StorageService.get(CONFIG.STORAGE_KEYS.STORE_PRODUCTS, null);
-                    if (saved && Array.isArray(saved) && saved.length > 0) {
-                        this.state.products = saved;
-                    } else {
-                        this.state.products = [
-                            {
-                                id: IdGenerator.generate('prod_'), name: 'شحن 100 UC PUBG', price: 50, categoryId: this.state.categories.find(c => c.name.includes('الألعاب'))?.id || this.state.categories[0]?.id,
-                                type: 'topup', icon: 'fa-gamepad', description: 'شحن 100 UC للعبة PUBG', stock: -1,
-                                inputFields: [
-                                    { name: 'userId', label: 'معرف المستخدم', type: 'text', required: true, placeholder: 'أدخل الـ ID' },
-                                    { name: 'server', label: 'الخادم', type: 'select', options: ['Asia', 'Europe', 'America'], required: true }
-                                ],
-                                fulfillmentData: { type: 'manual', instructions: 'سيتم الشحن خلال 24 ساعة' }
-                            },
-                            {
-                                id: IdGenerator.generate('prod_'), name: 'نتفلكس شهر', price: 30, categoryId: this.state.categories.find(c => c.name.includes('اشتراكات'))?.id || this.state.categories[1]?.id,
-                                type: 'subscription', icon: 'fa-film', description: 'اشتراك نتفلكس لمدة شهر', stock: -1,
-                                inputFields: [
-                                    { name: 'email', label: 'البريد الإلكتروني', type: 'email', required: true, placeholder: 'example@domain.com' }
-                                ],
-                                fulfillmentData: { type: 'account', value: 'user@example.com / pass123', instructions: 'استخدم الحساب المرسل' }
-                            },
-                            {
-                                id: IdGenerator.generate('prod_'), name: 'بطاقة Google Play 10$', price: 40, categoryId: this.state.categories.find(c => c.name.includes('بطاقات'))?.id || this.state.categories[2]?.id,
-                                type: 'card', icon: 'fa-google-play', description: 'بطاقة هدايا Google Play بقيمة 10 دولار', stock: 10,
-                                inputFields: [],
-                                fulfillmentData: { type: 'code', value: 'GPLAY-12345-ABCDE', instructions: 'استخدم الكود في متجر Google Play' }
-                            }
-                        ];
+                    try {
+                        const saved = StorageService.get(CONFIG.STORAGE_KEYS.STORE_PRODUCTS, null);
+                        if (saved && Array.isArray(saved) && saved.length > 0) {
+                            this.state.products = saved;
+                        } else {
+                            this.state.products = [
+                                {
+                                    id: IdGenerator.generate('prod_'), name: 'شحن 100 UC PUBG', price: 50, categoryId: this.state.categories.find(c => c.name.includes('الألعاب'))?.id || this.state.categories[0]?.id,
+                                    type: 'topup', icon: 'fa-gamepad', description: 'شحن 100 UC للعبة PUBG', stock: -1,
+                                    inputFields: [
+                                        { name: 'userId', label: 'معرف المستخدم', type: 'text', required: true, placeholder: 'أدخل الـ ID' },
+                                        { name: 'server', label: 'الخادم', type: 'select', options: ['Asia', 'Europe', 'America'], required: true }
+                                    ],
+                                    fulfillmentData: { type: 'manual', instructions: 'سيتم الشحن خلال 24 ساعة' }
+                                },
+                                {
+                                    id: IdGenerator.generate('prod_'), name: 'نتفلكس شهر', price: 30, categoryId: this.state.categories.find(c => c.name.includes('اشتراكات'))?.id || this.state.categories[1]?.id,
+                                    type: 'subscription', icon: 'fa-film', description: 'اشتراك نتفلكس لمدة شهر', stock: -1,
+                                    inputFields: [
+                                        { name: 'email', label: 'البريد الإلكتروني', type: 'email', required: true, placeholder: 'example@domain.com' }
+                                    ],
+                                    fulfillmentData: { type: 'account', value: 'user@example.com / pass123', instructions: 'استخدم الحساب المرسل' }
+                                },
+                                {
+                                    id: IdGenerator.generate('prod_'), name: 'بطاقة Google Play 10$', price: 40, categoryId: this.state.categories.find(c => c.name.includes('بطاقات'))?.id || this.state.categories[2]?.id,
+                                    type: 'card', icon: 'fa-google-play', description: 'بطاقة هدايا Google Play بقيمة 10 دولار', stock: 10,
+                                    inputFields: [],
+                                    fulfillmentData: { type: 'code', value: 'GPLAY-12345-ABCDE', instructions: 'استخدم الكود في متجر Google Play' }
+                                }
+                            ];
+                        }
+                    } catch (e) {
+                        console.error('Error loading products:', e);
                     }
                 }
 
                 saveProducts() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.STORE_PRODUCTS, this.state.products);
+                    try {
+                        StorageService.set(CONFIG.STORAGE_KEYS.STORE_PRODUCTS, this.state.products);
+                    } catch (e) {
+                        console.error('Error saving products:', e);
+                    }
                 }
 
                 addProduct(productData) {
-                    const newProd = { id: IdGenerator.generate('prod_'), ...productData };
-                    this.state.products.push(newProd);
-                    this.saveProducts();
-                    return newProd;
+                    try {
+                        const newProd = { id: IdGenerator.generate('prod_'), ...productData };
+                        this.state.products.push(newProd);
+                        this.saveProducts();
+                        return newProd;
+                    } catch (e) {
+                        console.error('Error adding product:', e);
+                        return null;
+                    }
                 }
 
                 updateProduct(id, newData) {
-                    const index = this.state.products.findIndex(p => p.id === id);
-                    if (index !== -1) {
-                        this.state.products[index] = { ...this.state.products[index], ...newData };
-                        this.saveProducts();
-                        return true;
+                    try {
+                        const index = this.state.products.findIndex(p => p.id === id);
+                        if (index !== -1) {
+                            this.state.products[index] = { ...this.state.products[index], ...newData };
+                            this.saveProducts();
+                            return true;
+                        }
+                        return false;
+                    } catch (e) {
+                        console.error('Error updating product:', e);
+                        return false;
                     }
-                    return false;
                 }
 
                 deleteProduct(id) {
-                    this.state.products = this.state.products.filter(p => p.id !== id);
-                    this.saveProducts();
+                    try {
+                        this.state.products = this.state.products.filter(p => p.id !== id);
+                        this.saveProducts();
+                        return true;
+                    } catch (e) {
+                        console.error('Error deleting product:', e);
+                        return false;
+                    }
                 }
 
                 // ========== المتجر: الطلبات ==========
                 loadOrders() {
-                    const saved = StorageService.get(CONFIG.STORAGE_KEYS.STORE_ORDERS, []);
-                    this.state.orders = saved;
+                    try {
+                        const saved = StorageService.get(CONFIG.STORAGE_KEYS.STORE_ORDERS, []);
+                        this.state.orders = saved;
+                    } catch (e) {
+                        console.error('Error loading orders:', e);
+                    }
                 }
 
                 saveOrders() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.STORE_ORDERS, this.state.orders);
+                    try {
+                        StorageService.set(CONFIG.STORAGE_KEYS.STORE_ORDERS, this.state.orders);
+                    } catch (e) {
+                        console.error('Error saving orders:', e);
+                    }
                 }
 
                 createOrder(product, inputData, userId) {
-                    const order = {
-                        id: IdGenerator.generate('ord_'),
-                        userId,
-                        productId: product.id,
-                        productName: product.name,
-                        price: product.price,
-                        status: product.fulfillmentData.type === 'manual' ? 'pending' : 'completed',
-                        inputData,
-                        fulfillment: product.fulfillmentData,
-                        createdAt: new Date().toISOString()
-                    };
-                    this.state.orders.push(order);
-                    this.saveOrders();
-                    return order;
+                    try {
+                        const order = {
+                            id: IdGenerator.generate('ord_'),
+                            userId,
+                            productId: product.id,
+                            productName: product.name,
+                            price: product.price,
+                            status: product.fulfillmentData.type === 'manual' ? 'pending' : 'completed',
+                            inputData,
+                            fulfillment: product.fulfillmentData,
+                            createdAt: new Date().toISOString()
+                        };
+                        this.state.orders.push(order);
+                        this.saveOrders();
+                        return order;
+                    } catch (e) {
+                        console.error('Error creating order:', e);
+                        return null;
+                    }
                 }
 
                 completeOrder(orderId, fulfillmentDetails = null) {
-                    const order = this.state.orders.find(o => o.id === orderId);
-                    if (order && order.status !== 'completed') {
-                        order.status = 'completed';
-                        if (fulfillmentDetails) {
-                            order.fulfillment = { ...order.fulfillment, ...fulfillmentDetails };
+                    try {
+                        const order = this.state.orders.find(o => o.id === orderId);
+                        if (order && order.status !== 'completed') {
+                            order.status = 'completed';
+                            if (fulfillmentDetails) {
+                                order.fulfillment = { ...order.fulfillment, ...fulfillmentDetails };
+                            }
+                            this.saveOrders();
+                            
+                            this.notificationService.addNotification(
+                                order.userId,
+                                '✅ تم تجهيز طلبك',
+                                `طلبك "${order.productName}" جاهز.\nالتفاصيل: ${JSON.stringify(order.fulfillment)}`,
+                                'success'
+                            );
+                            return true;
                         }
-                        this.saveOrders();
-                        
-                        this.notificationService.addNotification(
-                            order.userId,
-                            '✅ تم تجهيز طلبك',
-                            `طلبك "${order.productName}" جاهز.\nالتفاصيل: ${JSON.stringify(order.fulfillment)}`,
-                            'success'
-                        );
-                        return true;
+                        return false;
+                    } catch (e) {
+                        console.error('Error completing order:', e);
+                        return false;
                     }
-                    return false;
                 }
 
                 getUserOrders(userId) {
@@ -1366,7 +1608,7 @@
                 }
             }
 
-            // ======================== مدير واجهة المستخدم (UI Manager) ========================
+            // ======================== مدير واجهة المستخدم ========================
             class UIManager {
                 constructor(state, dataService, telegramService, toast) {
                     this.state = state;
@@ -1539,6 +1781,7 @@
                     
                     return `
                         <div class="space-y-5 animate-enter pb-10">
+                            <!-- Header Profile Card -->
                             <div class="glass-card p-5 rounded-3xl relative overflow-hidden group">
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
                                 <div class="flex items-center gap-4 relative z-10">
@@ -1562,12 +1805,14 @@
                                 </div>
                             </div>
 
+                            <!-- أيقونة المحفظة -->
                             <div class="flex justify-center my-4">
                                 <div class="wallet-icon-large" id="walletIconLarge">
                                     <i class="fa-solid fa-wallet"></i>
                                 </div>
                             </div>
 
+                            <!-- بطاقة الرصيد -->
                             <div class="flex justify-center">
                                 <div class="balance-badge" id="balanceBadge">
                                     <i class="fa-solid fa-coins"></i>
@@ -1575,6 +1820,7 @@
                                 </div>
                             </div>
 
+                            <!-- زر المتجر -->
                             <div class="flex justify-center mt-4">
                                 <button id="openStoreBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 transition-all shadow-lg shadow-green-500/20 flex items-center justify-center gap-2">
                                     <i class="fa-solid fa-store"></i>
@@ -1582,6 +1828,7 @@
                                 </button>
                             </div>
 
+                            <!-- Stats Grid -->
                             <div class="grid grid-cols-2 gap-4 mt-4">
                                 <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
                                     <div class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2">
@@ -1599,6 +1846,7 @@
                                 </div>
                             </div>
 
+                            <!-- Logout Button -->
                             <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
                                 <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
                                 تسجيل الخروج
@@ -1616,6 +1864,7 @@
 
                     return `
                         <div class="space-y-5 animate-enter pb-10">
+                            <!-- Header Profile Card -->
                             <div class="glass-card p-5 rounded-3xl relative overflow-hidden border-2 border-yellow-500/30">
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
                                 <div class="flex items-center gap-4 relative z-10">
@@ -1639,6 +1888,7 @@
                                 </div>
                             </div>
 
+                            <!-- أيقونة المحفظة مع عداد الطلبات -->
                             <div class="flex justify-center my-4">
                                 <div class="wallet-icon-large" id="walletIconLarge">
                                     <i class="fa-solid fa-wallet"></i>
@@ -1646,6 +1896,7 @@
                                 </div>
                             </div>
 
+                            <!-- بطاقة الرصيد -->
                             <div class="flex justify-center">
                                 <div class="balance-badge" id="balanceBadge">
                                     <i class="fa-solid fa-coins"></i>
@@ -1653,6 +1904,7 @@
                                 </div>
                             </div>
 
+                            <!-- زر المتجر للمشرف -->
                             <div class="flex justify-center mt-4">
                                 <button id="openStoreBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 transition-all shadow-lg shadow-green-500/20 flex items-center justify-center gap-2">
                                     <i class="fa-solid fa-store"></i>
@@ -1660,6 +1912,7 @@
                                 </button>
                             </div>
 
+                            <!-- إحصائيات -->
                             <div class="grid grid-cols-3 gap-2 mt-4">
                                 <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
                                     <div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-1">
@@ -1684,12 +1937,14 @@
                                 </div>
                             </div>
 
+                            <!-- زر لوحة الإدارة -->
                             <button id="openAdminPanelBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2 mt-2">
                                 <i class="fa-solid fa-gears"></i>
                                 لوحة الإدارة (الطلبات وطرق الدفع والمتجر)
                                 ${pendingCount > 0 ? `<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">${pendingCount}</span>` : ''}
                             </button>
 
+                            <!-- Logout Button -->
                             <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
                                 <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
                                 تسجيل الخروج
@@ -1747,17 +2002,22 @@
 
                 // ========== نوافذ المودال ==========
                 openWalletModal() {
-                    const modalOverlay = document.getElementById('walletModalOverlay');
-                    const modalContent = document.getElementById('walletModalContent');
-                    modalContent.innerHTML = this.renderWalletModal();
-                    modalOverlay.classList.add('open');
-                    this.bindWalletModalEvents();
+                    try {
+                        const modalOverlay = document.getElementById('walletModalOverlay');
+                        const modalContent = document.getElementById('walletModalContent');
+                        modalContent.innerHTML = this.renderWalletModal();
+                        modalOverlay.classList.add('open');
+                        this.bindWalletModalEvents();
+                    } catch (e) {
+                        console.error('Error opening wallet modal:', e);
+                        this.toast.error('حدث خطأ أثناء فتح المحفظة');
+                    }
                 }
 
                 renderWalletModal() {
                     const balance = this.state.balance;
                     const transactions = this.state.wallet.transactions;
-                    const paymentMethods = this.state.paymentMethods || [];
+                    const paymentMethods = this.state.paymentMethods;
 
                     const transactionsHtml = transactions.length === 0 
                         ? '<p class="text-center text-gray-400 py-4">لا توجد معاملات بعد</p>'
@@ -1856,165 +2116,186 @@
                 }
 
                 bindWalletModalEvents() {
-                    const modalOverlay = document.getElementById('walletModalOverlay');
-                    document.getElementById('closeWalletModal').addEventListener('click', () => {
-                        modalOverlay.classList.remove('open');
-                    });
-                    modalOverlay.addEventListener('click', (e) => {
-                        if (e.target === modalOverlay) modalOverlay.classList.remove('open');
-                    });
-
-                    const tabs = document.querySelectorAll('.wallet-tab');
-                    tabs.forEach(tab => {
-                        tab.addEventListener('click', () => {
-                            tabs.forEach(t => t.classList.remove('active'));
-                            tab.classList.add('active');
-                            const tabId = tab.dataset.tab;
-                            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
-                            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-                        });
-                    });
-
-                    let selectedMethod = null;
-                    const paymentMethods = document.querySelectorAll('.payment-methods-list .payment-method');
-                    const detailsDisplay = document.getElementById('depositDetailsDisplay');
-                    const detailsText = document.getElementById('depositDetailsText');
-                    
-                    paymentMethods.forEach(method => {
-                        method.addEventListener('click', () => {
-                            paymentMethods.forEach(m => m.classList.remove('selected'));
-                            method.classList.add('selected');
-                            selectedMethod = method.dataset.methodId;
-                            
-                            const methodObj = this.state.paymentMethods.find(m => m.id === selectedMethod);
-                            if (methodObj && methodObj.depositDetails) {
-                                detailsText.innerHTML = methodObj.depositDetails.replace(/\n/g, '<br>');
-                                detailsDisplay.classList.remove('hidden');
-                            } else {
-                                detailsDisplay.classList.add('hidden');
-                            }
-                        });
-                    });
-
-                    document.getElementById('depositBtn')?.addEventListener('click', () => {
-                        const amount = parseFloat(document.getElementById('depositAmount').value);
-                        const transactionId = document.getElementById('depositTransactionId').value.trim();
-                        
-                        if (isNaN(amount) || amount <= 0) {
-                            this.toast.error('أدخل مبلغ صحيح');
-                            return;
-                        }
-                        if (!selectedMethod) {
-                            this.toast.error('اختر طريقة دفع أولاً');
-                            return;
-                        }
-                        if (!transactionId) {
-                            this.toast.error('يرجى إدخال رقم العملية');
-                            return;
+                    try {
+                        const modalOverlay = document.getElementById('walletModalOverlay');
+                        const closeBtn = document.getElementById('closeWalletModal');
+                        if (closeBtn) {
+                            closeBtn.addEventListener('click', () => {
+                                modalOverlay.classList.remove('open');
+                            });
                         }
                         
-                        const request = this.data.addDepositRequest(amount, selectedMethod, transactionId, this.state.user);
-                        this.toast.success(`✅ تم تقديم طلب الشحن بنجاح
-                            • المستخدم: ${this.state.user.first_name} ${this.state.user.last_name || ''}
-                            • المبلغ: ${amount}
-                            • الطريقة: ${request.method}
-                            • رقم العملية: ${transactionId}
-                            • رقم الطلب: ${request.id}`);
-                        
-                        document.getElementById('depositAmount').value = '';
-                        document.getElementById('depositTransactionId').value = '';
-                        paymentMethods.forEach(m => m.classList.remove('selected'));
-                        selectedMethod = null;
-                        detailsDisplay.classList.add('hidden');
-                    });
-
-                    let selectedWithdrawMethod = null;
-                    const withdrawMethods = document.querySelectorAll('#withdrawMethodsList .payment-method');
-                    withdrawMethods.forEach(method => {
-                        method.addEventListener('click', () => {
-                            withdrawMethods.forEach(m => m.classList.remove('selected'));
-                            method.classList.add('selected');
-                            selectedWithdrawMethod = method.dataset.methodId;
-                            
-                            const methodObj = this.state.paymentMethods.find(m => m.id === selectedWithdrawMethod);
-                            const detailsInput = document.getElementById('withdrawDetails');
-                            if (methodObj) {
-                                detailsInput.placeholder = methodObj.withdrawDetails || 'أدخل التفاصيل';
-                            }
+                        modalOverlay.addEventListener('click', (e) => {
+                            if (e.target === modalOverlay) modalOverlay.classList.remove('open');
                         });
-                    });
 
-                    document.getElementById('withdrawBtn')?.addEventListener('click', () => {
-                        const amount = parseFloat(document.getElementById('withdrawAmount').value);
-                        const details = document.getElementById('withdrawDetails').value.trim();
-                        if (isNaN(amount) || amount <= 0) {
-                            this.toast.error('أدخل مبلغ صحيح');
-                            return;
-                        }
-                        if (!selectedWithdrawMethod) {
-                            this.toast.error('اختر طريقة سحب أولاً');
-                            return;
-                        }
-                        if (!details) {
-                            this.toast.error('أدخل التفاصيل المطلوبة');
-                            return;
-                        }
-                        const result = this.data.addWithdrawalRequest(amount, selectedWithdrawMethod, details, this.state.user);
-                        if (result.success) {
-                            this.toast.success(`✅ تم تقديم طلب السحب بنجاح
-                                • المبلغ: ${amount}
-                                • الطريقة: ${result.request.method}
-                                • التفاصيل: ${details}
-                                • رقم الطلب: ${result.request.id}`);
-                            
-                            document.getElementById('withdrawAmount').value = '';
-                            document.getElementById('withdrawDetails').value = '';
-                            withdrawMethods.forEach(m => m.classList.remove('selected'));
-                            selectedWithdrawMethod = null;
-                        } else {
-                            this.toast.error(result.message);
-                        }
-                    });
+                        const tabs = document.querySelectorAll('.wallet-tab');
+                        tabs.forEach(tab => {
+                            tab.addEventListener('click', () => {
+                                tabs.forEach(t => t.classList.remove('active'));
+                                tab.classList.add('active');
+                                const tabId = tab.dataset.tab;
+                                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+                                document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+                            });
+                        });
 
-                    document.getElementById('transferBtn')?.addEventListener('click', () => {
-                        const amount = parseFloat(document.getElementById('transferAmount').value);
-                        const targetId = document.getElementById('transferUserId').value.trim();
-                        if (isNaN(amount) || amount <= 0) {
-                            this.toast.error('أدخل مبلغ صحيح');
-                            return;
+                        // شحن
+                        let selectedMethod = null;
+                        const paymentMethods = document.querySelectorAll('.payment-methods-list .payment-method');
+                        const detailsDisplay = document.getElementById('depositDetailsDisplay');
+                        const detailsText = document.getElementById('depositDetailsText');
+                        
+                        paymentMethods.forEach(method => {
+                            method.addEventListener('click', () => {
+                                paymentMethods.forEach(m => m.classList.remove('selected'));
+                                method.classList.add('selected');
+                                selectedMethod = method.dataset.methodId;
+                                
+                                const methodObj = this.state.paymentMethods.find(m => m.id === selectedMethod);
+                                if (methodObj && methodObj.depositDetails) {
+                                    detailsText.innerHTML = methodObj.depositDetails.replace(/\n/g, '<br>');
+                                    detailsDisplay.classList.remove('hidden');
+                                } else {
+                                    detailsDisplay.classList.add('hidden');
+                                }
+                            });
+                        });
+
+                        const depositBtn = document.getElementById('depositBtn');
+                        if (depositBtn) {
+                            depositBtn.addEventListener('click', () => {
+                                const amount = parseFloat(document.getElementById('depositAmount').value);
+                                const transactionId = document.getElementById('depositTransactionId').value.trim();
+                                
+                                if (isNaN(amount) || amount <= 0) {
+                                    this.toast.error('أدخل مبلغ صحيح');
+                                    return;
+                                }
+                                if (!selectedMethod) {
+                                    this.toast.error('اختر طريقة دفع أولاً');
+                                    return;
+                                }
+                                if (!transactionId) {
+                                    this.toast.error('يرجى إدخال رقم العملية');
+                                    return;
+                                }
+                                
+                                const request = this.data.addDepositRequest(amount, selectedMethod, transactionId, this.state.user);
+                                if (request) {
+                                    this.toast.success(`✅ تم تقديم طلب الشحن بنجاح`);
+                                    
+                                    document.getElementById('depositAmount').value = '';
+                                    document.getElementById('depositTransactionId').value = '';
+                                    paymentMethods.forEach(m => m.classList.remove('selected'));
+                                    selectedMethod = null;
+                                    detailsDisplay.classList.add('hidden');
+                                } else {
+                                    this.toast.error('حدث خطأ في تقديم الطلب');
+                                }
+                            });
                         }
-                        if (!targetId) {
-                            this.toast.error('أدخل معرف المستخدم');
-                            return;
+
+                        // سحب
+                        let selectedWithdrawMethod = null;
+                        const withdrawMethods = document.querySelectorAll('#withdrawMethodsList .payment-method');
+                        withdrawMethods.forEach(method => {
+                            method.addEventListener('click', () => {
+                                withdrawMethods.forEach(m => m.classList.remove('selected'));
+                                method.classList.add('selected');
+                                selectedWithdrawMethod = method.dataset.methodId;
+                                
+                                const methodObj = this.state.paymentMethods.find(m => m.id === selectedWithdrawMethod);
+                                const detailsInput = document.getElementById('withdrawDetails');
+                                if (methodObj) {
+                                    detailsInput.placeholder = methodObj.withdrawDetails || 'أدخل التفاصيل';
+                                }
+                            });
+                        });
+
+                        const withdrawBtn = document.getElementById('withdrawBtn');
+                        if (withdrawBtn) {
+                            withdrawBtn.addEventListener('click', () => {
+                                const amount = parseFloat(document.getElementById('withdrawAmount').value);
+                                const details = document.getElementById('withdrawDetails').value.trim();
+                                if (isNaN(amount) || amount <= 0) {
+                                    this.toast.error('أدخل مبلغ صحيح');
+                                    return;
+                                }
+                                if (!selectedWithdrawMethod) {
+                                    this.toast.error('اختر طريقة سحب أولاً');
+                                    return;
+                                }
+                                if (!details) {
+                                    this.toast.error('أدخل التفاصيل المطلوبة');
+                                    return;
+                                }
+                                const result = this.data.addWithdrawalRequest(amount, selectedWithdrawMethod, details, this.state.user);
+                                if (result.success) {
+                                    this.toast.success(`✅ تم تقديم طلب السحب بنجاح`);
+                                    
+                                    document.getElementById('withdrawAmount').value = '';
+                                    document.getElementById('withdrawDetails').value = '';
+                                    withdrawMethods.forEach(m => m.classList.remove('selected'));
+                                    selectedWithdrawMethod = null;
+                                } else {
+                                    this.toast.error(result.message);
+                                }
+                            });
                         }
-                        if (amount > this.state.balance) {
-                            this.toast.error('الرصيد غير كافٍ');
-                            return;
+
+                        // تحويل
+                        const transferBtn = document.getElementById('transferBtn');
+                        if (transferBtn) {
+                            transferBtn.addEventListener('click', () => {
+                                const amount = parseFloat(document.getElementById('transferAmount').value);
+                                const targetId = document.getElementById('transferUserId').value.trim();
+                                if (isNaN(amount) || amount <= 0) {
+                                    this.toast.error('أدخل مبلغ صحيح');
+                                    return;
+                                }
+                                if (!targetId) {
+                                    this.toast.error('أدخل معرف المستخدم');
+                                    return;
+                                }
+                                if (amount > this.state.balance) {
+                                    this.toast.error('الرصيد غير كافٍ');
+                                    return;
+                                }
+                                this.state.balance -= amount;
+                                this.data.addTransaction('transfer', -amount, `تحويل إلى المستخدم ${targetId}`);
+                                this.data.saveWallet();
+                                this.toast.success('تم التحويل بنجاح');
+                                document.getElementById('transferAmount').value = '';
+                                document.getElementById('transferUserId').value = '';
+                                this.updateBalanceDisplay();
+                                this.openWalletModal(); // تحديث
+                            });
                         }
-                        this.state.balance -= amount;
-                        this.data.addTransaction('transfer', -amount, `تحويل إلى المستخدم ${targetId}`);
-                        this.data.saveWallet();
-                        this.toast.success('تم التحويل بنجاح');
-                        document.getElementById('transferAmount').value = '';
-                        document.getElementById('transferUserId').value = '';
-                        this.updateBalanceDisplay();
-                        this.openWalletModal();
-                    });
+                    } catch (e) {
+                        console.error('Error binding wallet modal events:', e);
+                        this.toast.error('حدث خطأ في تحميل المحفظة');
+                    }
                 }
 
                 // ========== المتجر ==========
                 openStore() {
-                    const modalOverlay = document.getElementById('walletModalOverlay');
-                    const modalContent = document.getElementById('walletModalContent');
-                    modalContent.innerHTML = this.renderStoreModal();
-                    modalOverlay.classList.add('open');
-                    this.bindStoreEvents();
+                    try {
+                        const modalOverlay = document.getElementById('walletModalOverlay');
+                        const modalContent = document.getElementById('walletModalContent');
+                        modalContent.innerHTML = this.renderStoreModal();
+                        modalOverlay.classList.add('open');
+                        this.bindStoreEvents();
+                    } catch (e) {
+                        console.error('Error opening store:', e);
+                        this.toast.error('حدث خطأ أثناء فتح المتجر');
+                    }
                 }
 
                 renderStoreModal() {
-                    const categories = this.state.categories || [];
-                    const products = this.state.products || [];
-                    const cart = this.state.cart || [];
+                    const categories = this.state.categories;
+                    const products = this.state.products;
+                    const cart = this.state.cart;
 
                     const categoriesTabs = categories.map(cat => `
                         <button class="category-tab px-3 py-1 rounded-full text-sm bg-white/10 hover:bg-white/20" data-cat-id="${cat.id}">
@@ -2057,6 +2338,7 @@
                             </button>
                         </div>
 
+                        <!-- شريط البحث والفلترة -->
                         <div class="flex gap-2 mb-4">
                             <input type="text" id="storeSearch" placeholder="🔍 ابحث عن منتج..." class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm store-search">
                             <select id="storeCategoryFilter" class="bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
@@ -2065,15 +2347,18 @@
                             </select>
                         </div>
 
+                        <!-- تبويبات الأقسام -->
                         <div class="flex gap-2 mb-4 overflow-x-auto pb-2" id="categoryTabs">
                             <button class="category-tab px-3 py-1 rounded-full text-sm bg-blue-600" data-cat-id="all">الكل</button>
                             ${categoriesTabs}
                         </div>
 
+                        <!-- شبكة المنتجات -->
                         <div class="grid grid-cols-2 gap-3 max-h-80 overflow-y-auto p-1" id="productsGrid">
                             ${productsGrid}
                         </div>
 
+                        <!-- السلة -->
                         <div class="mt-4 glass-card p-3 rounded-2xl">
                             <h3 class="font-bold mb-2 flex items-center gap-2">
                                 <i class="fa-solid fa-cart-shopping"></i> السلة
@@ -2093,211 +2378,275 @@
                 }
 
                 bindStoreEvents() {
-                    const modalOverlay = document.getElementById('walletModalOverlay');
-                    document.getElementById('closeStoreModal').addEventListener('click', () => {
-                        modalOverlay.classList.remove('open');
-                    });
+                    try {
+                        const modalOverlay = document.getElementById('walletModalOverlay');
+                        const closeBtn = document.getElementById('closeStoreModal');
+                        if (closeBtn) {
+                            closeBtn.addEventListener('click', () => {
+                                modalOverlay.classList.remove('open');
+                            });
+                        }
 
-                    document.querySelectorAll('.product-card').forEach(card => {
-                        card.addEventListener('click', (e) => {
-                            if (e.target.classList.contains('add-to-cart-btn')) return;
-                            const prodId = card.dataset.prodId;
-                            this.showProductDetails(prodId);
+                        // فتح تفاصيل المنتج عند النقر على البطاقة
+                        document.querySelectorAll('.product-card').forEach(card => {
+                            card.addEventListener('click', (e) => {
+                                if (e.target.classList.contains('add-to-cart-btn')) return; // لا تفتح التفاصيل إذا ضغط على زر السلة
+                                const prodId = card.dataset.prodId;
+                                this.showProductDetails(prodId);
+                            });
                         });
-                    });
 
-                    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const prodId = btn.dataset.prodId;
-                            const product = this.state.products.find(p => p.id === prodId);
-                            if (product) {
-                                const exists = this.state.cart.some(item => item.id === prodId);
-                                if (!exists) {
-                                    this.state.cart.push({ ...product });
-                                    this.toast.success('تمت الإضافة للسلة');
-                                } else {
-                                    this.state.cart = this.state.cart.filter(item => item.id !== prodId);
-                                    this.toast.info('تمت الإزالة من السلة');
+                        // إضافة للسلة
+                        document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                            btn.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                const prodId = btn.dataset.prodId;
+                                const product = this.state.products.find(p => p.id === prodId);
+                                if (product) {
+                                    const exists = this.state.cart.some(item => item.id === prodId);
+                                    if (!exists) {
+                                        this.state.cart.push({ ...product });
+                                        this.toast.success('تمت الإضافة للسلة');
+                                    } else {
+                                        this.state.cart = this.state.cart.filter(item => item.id !== prodId);
+                                        this.toast.info('تمت الإزالة من السلة');
+                                    }
+                                    this.openStore(); // تحديث المودال
                                 }
-                                this.openStore();
-                            }
+                            });
                         });
-                    });
 
-                    document.getElementById('storeCategoryFilter').addEventListener('change', (e) => {
-                        const catId = e.target.value;
-                        this.filterStoreProducts(catId);
-                    });
+                        // فلترة حسب القسم
+                        const categoryFilter = document.getElementById('storeCategoryFilter');
+                        if (categoryFilter) {
+                            categoryFilter.addEventListener('change', (e) => {
+                                const catId = e.target.value;
+                                this.filterStoreProducts(catId);
+                            });
+                        }
 
-                    document.querySelectorAll('.category-tab').forEach(tab => {
-                        tab.addEventListener('click', () => {
-                            const catId = tab.dataset.catId;
-                            document.getElementById('storeCategoryFilter').value = catId;
-                            this.filterStoreProducts(catId);
-                            document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('bg-blue-600'));
-                            tab.classList.add('bg-blue-600');
+                        document.querySelectorAll('.category-tab').forEach(tab => {
+                            tab.addEventListener('click', () => {
+                                const catId = tab.dataset.catId;
+                                const filterEl = document.getElementById('storeCategoryFilter');
+                                if (filterEl) filterEl.value = catId;
+                                this.filterStoreProducts(catId);
+                                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('bg-blue-600'));
+                                tab.classList.add('bg-blue-600');
+                            });
                         });
-                    });
 
-                    document.getElementById('storeSearch').addEventListener('input', (e) => {
-                        const searchTerm = e.target.value.toLowerCase();
-                        this.filterStoreProducts(document.getElementById('storeCategoryFilter').value, searchTerm);
-                    });
+                        // بحث
+                        const searchInput = document.getElementById('storeSearch');
+                        if (searchInput) {
+                            searchInput.addEventListener('input', (e) => {
+                                const searchTerm = e.target.value.toLowerCase();
+                                const filterEl = document.getElementById('storeCategoryFilter');
+                                this.filterStoreProducts(filterEl ? filterEl.value : 'all', searchTerm);
+                            });
+                        }
 
-                    document.getElementById('checkoutBtn').addEventListener('click', () => {
-                        this.checkout();
-                    });
+                        // إتمام الشراء
+                        const checkoutBtn = document.getElementById('checkoutBtn');
+                        if (checkoutBtn) {
+                            checkoutBtn.addEventListener('click', () => {
+                                this.checkout();
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error binding store events:', e);
+                        this.toast.error('حدث خطأ في تحميل المتجر');
+                    }
                 }
 
                 filterStoreProducts(catId, searchTerm = '') {
-                    let filtered = this.state.products || [];
-                    if (catId !== 'all') {
-                        filtered = filtered.filter(p => p.categoryId === catId);
-                    }
-                    if (searchTerm) {
-                        filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm) || (p.description && p.description.toLowerCase().includes(searchTerm)));
-                    }
-                    const cart = this.state.cart || [];
-                    const productsGrid = filtered.map(prod => {
-                        const inCart = cart.some(item => item.id === prod.id);
-                        return `
-                            <div class="product-card glass-card p-3 rounded-2xl" data-prod-id="${prod.id}">
-                                <div class="w-full h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl flex items-center justify-center mb-2">
-                                    <i class="${prod.icon} text-3xl text-blue-400"></i>
+                    try {
+                        let filtered = this.state.products;
+                        if (catId !== 'all') {
+                            filtered = filtered.filter(p => p.categoryId === catId);
+                        }
+                        if (searchTerm) {
+                            filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm) || (p.description && p.description.toLowerCase().includes(searchTerm)));
+                        }
+                        const cart = this.state.cart;
+                        const productsGrid = filtered.map(prod => {
+                            const inCart = cart.some(item => item.id === prod.id);
+                            return `
+                                <div class="product-card glass-card p-3 rounded-2xl" data-prod-id="${prod.id}">
+                                    <div class="w-full h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl flex items-center justify-center mb-2">
+                                        <i class="${prod.icon} text-3xl text-blue-400"></i>
+                                    </div>
+                                    <h3 class="font-bold text-sm">${prod.name}</h3>
+                                    <p class="text-xs text-gray-400 mb-2">${prod.description?.substring(0, 30) || ''}...</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-blue-400 font-bold">${prod.price}</span>
+                                        <button class="add-to-cart-btn ${inCart ? 'bg-green-600' : 'bg-blue-600'} text-white px-2 py-1 rounded-lg text-xs" data-prod-id="${prod.id}">
+                                            ${inCart ? '✓ في السلة' : '➕'}
+                                        </button>
+                                    </div>
                                 </div>
-                                <h3 class="font-bold text-sm">${prod.name}</h3>
-                                <p class="text-xs text-gray-400 mb-2">${prod.description?.substring(0, 30) || ''}...</p>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-blue-400 font-bold">${prod.price}</span>
-                                    <button class="add-to-cart-btn ${inCart ? 'bg-green-600' : 'bg-blue-600'} text-white px-2 py-1 rounded-lg text-xs" data-prod-id="${prod.id}">
-                                        ${inCart ? '✓ في السلة' : '➕'}
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                    document.getElementById('productsGrid').innerHTML = productsGrid;
+                            `;
+                        }).join('');
+                        
+                        const productsGridEl = document.getElementById('productsGrid');
+                        if (productsGridEl) {
+                            productsGridEl.innerHTML = productsGrid;
 
-                    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const prodId = btn.dataset.prodId;
-                            const product = this.state.products.find(p => p.id === prodId);
-                            if (product) {
-                                const exists = this.state.cart.some(item => item.id === prodId);
-                                if (!exists) {
-                                    this.state.cart.push({ ...product });
-                                    this.toast.success('تمت الإضافة للسلة');
-                                } else {
-                                    this.state.cart = this.state.cart.filter(item => item.id !== prodId);
-                                    this.toast.info('تمت الإزالة من السلة');
-                                }
-                                this.filterStoreProducts(document.getElementById('storeCategoryFilter').value, document.getElementById('storeSearch').value);
-                                this.updateCartDisplay();
-                            }
-                        });
-                    });
+                            // إعادة ربط أحداث الأزرار
+                            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                                btn.addEventListener('click', (e) => {
+                                    e.stopPropagation();
+                                    const prodId = btn.dataset.prodId;
+                                    const product = this.state.products.find(p => p.id === prodId);
+                                    if (product) {
+                                        const exists = this.state.cart.some(item => item.id === prodId);
+                                        if (!exists) {
+                                            this.state.cart.push({ ...product });
+                                            this.toast.success('تمت الإضافة للسلة');
+                                        } else {
+                                            this.state.cart = this.state.cart.filter(item => item.id !== prodId);
+                                            this.toast.info('تمت الإزالة من السلة');
+                                        }
+                                        const filterEl = document.getElementById('storeCategoryFilter');
+                                        const searchEl = document.getElementById('storeSearch');
+                                        this.filterStoreProducts(filterEl ? filterEl.value : 'all', searchEl ? searchEl.value.toLowerCase() : '');
+                                        this.updateCartDisplay();
+                                    }
+                                });
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error filtering store products:', e);
+                    }
                 }
 
                 updateCartDisplay() {
-                    const cartItems = this.state.cart.map(item => `
-                        <div class="flex justify-between items-center text-sm border-b border-white/5 py-2">
-                            <span>${item.name}</span>
-                            <span>${item.price}</span>
-                        </div>
-                    `).join('');
-                    const total = this.state.cart.reduce((sum, item) => sum + item.price, 0);
-                    document.getElementById('cartItems').innerHTML = cartItems || '<p class="text-gray-400 text-xs">السلة فارغة</p>';
-                    document.getElementById('cartTotal').textContent = total;
-                    const checkoutBtn = document.getElementById('checkoutBtn');
-                    if (this.state.cart.length === 0) {
-                        checkoutBtn.disabled = true;
-                        checkoutBtn.classList.add('opacity-50');
-                    } else {
-                        checkoutBtn.disabled = false;
-                        checkoutBtn.classList.remove('opacity-50');
+                    try {
+                        const cartItems = this.state.cart.map(item => `
+                            <div class="flex justify-between items-center text-sm border-b border-white/5 py-2">
+                                <span>${item.name}</span>
+                                <span>${item.price}</span>
+                            </div>
+                        `).join('');
+                        const total = this.state.cart.reduce((sum, item) => sum + item.price, 0);
+                        
+                        const cartItemsEl = document.getElementById('cartItems');
+                        if (cartItemsEl) {
+                            cartItemsEl.innerHTML = cartItems || '<p class="text-gray-400 text-xs">السلة فارغة</p>';
+                        }
+                        
+                        const cartTotalEl = document.getElementById('cartTotal');
+                        if (cartTotalEl) {
+                            cartTotalEl.textContent = total;
+                        }
+                        
+                        const checkoutBtn = document.getElementById('checkoutBtn');
+                        if (checkoutBtn) {
+                            if (this.state.cart.length === 0) {
+                                checkoutBtn.disabled = true;
+                                checkoutBtn.classList.add('opacity-50');
+                            } else {
+                                checkoutBtn.disabled = false;
+                                checkoutBtn.classList.remove('opacity-50');
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error updating cart display:', e);
                     }
                 }
 
                 showProductDetails(prodId) {
-                    const product = this.state.products.find(p => p.id === prodId);
-                    if (!product) return;
+                    try {
+                        const product = this.state.products.find(p => p.id === prodId);
+                        if (!product) return;
 
-                    const inputFieldsHtml = (product.inputFields || []).map(field => {
-                        if (field.type === 'select') {
-                            const options = field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
-                            return `
-                                <div class="mb-3">
-                                    <label class="text-sm text-gray-400">${field.label} ${field.required ? '*' : ''}</label>
-                                    <select id="field_${field.name}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white" ${field.required ? 'required' : ''}>
-                                        ${options}
-                                    </select>
+                        const inputFieldsHtml = product.inputFields.map(field => {
+                            if (field.type === 'select') {
+                                const options = field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+                                return `
+                                    <div class="mb-3">
+                                        <label class="text-sm text-gray-400">${field.label} ${field.required ? '*' : ''}</label>
+                                        <select id="field_${field.name}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white" ${field.required ? 'required' : ''}>
+                                            ${options}
+                                        </select>
+                                    </div>
+                                `;
+                            } else {
+                                return `
+                                    <div class="mb-3">
+                                        <label class="text-sm text-gray-400">${field.label} ${field.required ? '*' : ''}</label>
+                                        <input type="${field.type}" id="field_${field.name}" placeholder="${field.placeholder || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white" ${field.required ? 'required' : ''}>
+                                    </div>
+                                `;
+                            }
+                        }).join('');
+
+                        const modalOverlay = document.getElementById('walletModalOverlay');
+                        const modalContent = document.getElementById('walletModalContent');
+                        modalContent.innerHTML = `
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-bold">${product.name}</h2>
+                                <button id="closeProductModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="flex justify-center mb-4">
+                                <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+                                    <i class="${product.icon} text-4xl text-blue-400"></i>
                                 </div>
-                            `;
-                        } else {
-                            return `
-                                <div class="mb-3">
-                                    <label class="text-sm text-gray-400">${field.label} ${field.required ? '*' : ''}</label>
-                                    <input type="${field.type}" id="field_${field.name}" placeholder="${field.placeholder || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white" ${field.required ? 'required' : ''}>
+                            </div>
+                            <p class="text-gray-300 text-sm mb-4">${product.description || 'لا يوجد وصف'}</p>
+                            <div class="glass-card p-4 rounded-2xl mb-4">
+                                <div class="text-center mb-2">
+                                    <span class="text-gray-400">السعر:</span>
+                                    <span class="text-2xl font-bold text-blue-400">${product.price}</span>
                                 </div>
-                            `;
+                                <form id="productPurchaseForm">
+                                    ${inputFieldsHtml}
+                                    <div class="flex gap-2 mt-4">
+                                        <button type="button" id="addToCartFromDetails" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">➕ أضف للسلة</button>
+                                        <button type="submit" id="buyNowBtn" class="flex-1 bg-green-600 py-2 rounded-lg font-bold">💳 شراء الآن</button>
+                                    </div>
+                                </form>
+                            </div>
+                        `;
+                        modalOverlay.classList.add('open');
+
+                        const closeBtn = document.getElementById('closeProductModal');
+                        if (closeBtn) {
+                            closeBtn.addEventListener('click', () => modalOverlay.classList.remove('open'));
                         }
-                    }).join('');
+                        
+                        const addToCartBtn = document.getElementById('addToCartFromDetails');
+                        if (addToCartBtn) {
+                            addToCartBtn.addEventListener('click', () => {
+                                const inputData = this.collectInputFields(product.inputFields);
+                                const cartItem = { ...product, inputData, cartId: IdGenerator.generate('cart_') };
+                                this.state.cart.push(cartItem);
+                                this.toast.success('تمت الإضافة للسلة');
+                                modalOverlay.classList.remove('open');
+                                this.openStore(); // تحديث المتجر
+                            });
+                        }
 
-                    const modalOverlay = document.getElementById('walletModalOverlay');
-                    const modalContent = document.getElementById('walletModalContent');
-                    modalContent.innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">${product.name}</h2>
-                            <button id="closeProductModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="flex justify-center mb-4">
-                            <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
-                                <i class="${product.icon} text-4xl text-blue-400"></i>
-                            </div>
-                        </div>
-                        <p class="text-gray-300 text-sm mb-4">${product.description || 'لا يوجد وصف'}</p>
-                        <div class="glass-card p-4 rounded-2xl mb-4">
-                            <div class="text-center mb-2">
-                                <span class="text-gray-400">السعر:</span>
-                                <span class="text-2xl font-bold text-blue-400">${product.price}</span>
-                            </div>
-                            <form id="productPurchaseForm">
-                                ${inputFieldsHtml}
-                                <div class="flex gap-2 mt-4">
-                                    <button type="button" id="addToCartFromDetails" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">➕ أضف للسلة</button>
-                                    <button type="submit" id="buyNowBtn" class="flex-1 bg-green-600 py-2 rounded-lg font-bold">💳 شراء الآن</button>
-                                </div>
-                            </form>
-                        </div>
-                    `;
-                    modalOverlay.classList.add('open');
-
-                    document.getElementById('closeProductModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
-                    
-                    document.getElementById('addToCartFromDetails').addEventListener('click', () => {
-                        const inputData = this.collectInputFields(product.inputFields);
-                        const cartItem = { ...product, inputData, cartId: IdGenerator.generate('cart_') };
-                        this.state.cart.push(cartItem);
-                        this.toast.success('تمت الإضافة للسلة');
-                        modalOverlay.classList.remove('open');
-                        this.openStore();
-                    });
-
-                    document.getElementById('productPurchaseForm').addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        const inputData = this.collectInputFields(product.inputFields);
-                        this.buyNow(product, inputData);
-                        modalOverlay.classList.remove('open');
-                    });
+                        const purchaseForm = document.getElementById('productPurchaseForm');
+                        if (purchaseForm) {
+                            purchaseForm.addEventListener('submit', (e) => {
+                                e.preventDefault();
+                                const inputData = this.collectInputFields(product.inputFields);
+                                this.buyNow(product, inputData);
+                                modalOverlay.classList.remove('open');
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error showing product details:', e);
+                        this.toast.error('حدث خطأ في عرض تفاصيل المنتج');
+                    }
                 }
 
                 collectInputFields(fields) {
                     const data = {};
-                    (fields || []).forEach(field => {
+                    fields.forEach(field => {
                         const input = document.getElementById(`field_${field.name}`);
                         if (input) data[field.name] = input.value;
                     });
@@ -2305,56 +2654,70 @@
                 }
 
                 buyNow(product, inputData) {
-                    const total = product.price;
-                    if (total > this.state.balance) {
-                        this.toast.error('الرصيد غير كافٍ');
-                        return;
-                    }
-                    this.state.balance -= total;
-                    this.data.saveWallet();
+                    try {
+                        const total = product.price;
+                        if (total > this.state.balance) {
+                            this.toast.error('الرصيد غير كافٍ');
+                            return;
+                        }
+                        this.state.balance -= total;
+                        this.data.saveWallet();
 
-                    const order = this.data.createOrder(product, inputData, this.state.user.id);
-                    
-                    if (product.fulfillmentData.type !== 'manual') {
-                        this.data.completeOrder(order.id);
-                        this.toast.success(`✅ تم الشراء بنجاح!\nالتفاصيل: ${JSON.stringify(product.fulfillmentData)}`);
-                    } else {
-                        this.toast.success('✅ تم تقديم الطلب، سيتم المعالجة يدويًا');
-                    }
+                        const order = this.data.createOrder(product, inputData, this.state.user.id);
+                        
+                        if (order) {
+                            if (product.fulfillmentData.type !== 'manual') {
+                                this.data.completeOrder(order.id);
+                                this.toast.success(`✅ تم الشراء بنجاح!\nالتفاصيل: ${JSON.stringify(product.fulfillmentData)}`);
+                            } else {
+                                this.toast.success('✅ تم تقديم الطلب، سيتم المعالجة يدويًا');
+                            }
 
-                    this.data.notificationService.addNotification(
-                        this.state.user.id,
-                        '✅ طلب جديد',
-                        `تم شراء "${product.name}" بنجاح.`,
-                        'success'
-                    );
-                    
-                    this.updateBalanceDisplay();
+                            this.data.notificationService.addNotification(
+                                this.state.user.id,
+                                '✅ طلب جديد',
+                                `تم شراء "${product.name}" بنجاح.`,
+                                'success'
+                            );
+                        }
+                        
+                        this.updateBalanceDisplay();
+                    } catch (e) {
+                        console.error('Error buying now:', e);
+                        this.toast.error('حدث خطأ أثناء الشراء');
+                    }
                 }
 
                 checkout() {
-                    const total = this.state.cart.reduce((sum, item) => sum + item.price, 0);
-                    if (total > this.state.balance) {
-                        this.toast.error('الرصيد غير كافٍ');
-                        return;
-                    }
-                    
-                    this.state.balance -= total;
-                    this.data.saveWallet();
-
-                    this.state.cart.forEach(item => {
-                        const order = this.data.createOrder(item, item.inputData || {}, this.state.user.id);
-                        if (item.fulfillmentData.type !== 'manual') {
-                            this.data.completeOrder(order.id);
+                    try {
+                        const total = this.state.cart.reduce((sum, item) => sum + item.price, 0);
+                        if (total > this.state.balance) {
+                            this.toast.error('الرصيد غير كافٍ');
+                            return;
                         }
-                    });
+                        
+                        this.state.balance -= total;
+                        this.data.saveWallet();
 
-                    this.state.cart = [];
-                    this.toast.success('✅ تمت عملية الشراء بنجاح! تفقد الإشعارات للحصول على التفاصيل.');
-                    
-                    const modalOverlay = document.getElementById('walletModalOverlay');
-                    modalOverlay.classList.remove('open');
-                    this.updateBalanceDisplay();
+                        this.state.cart.forEach(item => {
+                            const order = this.data.createOrder(item, item.inputData || {}, this.state.user.id);
+                            if (order && item.fulfillmentData.type !== 'manual') {
+                                this.data.completeOrder(order.id);
+                            }
+                        });
+
+                        this.state.cart = [];
+                        this.toast.success('✅ تمت عملية الشراء بنجاح! تفقد الإشعارات للحصول على التفاصيل.');
+                        
+                        const modalOverlay = document.getElementById('walletModalOverlay');
+                        if (modalOverlay) {
+                            modalOverlay.classList.remove('open');
+                        }
+                        this.updateBalanceDisplay();
+                    } catch (e) {
+                        console.error('Error during checkout:', e);
+                        this.toast.error('حدث خطأ أثناء إتمام الشراء');
+                    }
                 }
 
                 // ========== لوحة المشرف ==========
@@ -2365,18 +2728,13 @@
                         modalContent.innerHTML = this.renderAdminPanel();
                         modalOverlay.classList.add('open');
                         this.bindAdminPanelEvents();
-                    } catch (error) {
-                        console.error('خطأ في فتح لوحة التحكم:', error);
-                        this.toast.error('حدث خطأ أثناء فتح لوحة التحكم: ' + error.message);
+                    } catch (e) {
+                        console.error('Error opening admin panel:', e);
+                        this.toast.error('حدث خطأ أثناء فتح لوحة التحكم');
                     }
                 }
 
                 renderAdminPanel() {
-                    // التأكد من وجود المصفوفات
-                    const categories = this.state.categories || [];
-                    const products = this.state.products || [];
-                    const paymentMethods = this.state.paymentMethods || [];
-
                     const pendingDeposits = this.data.getPendingDeposits();
                     const pendingWithdrawals = this.data.getPendingWithdrawals();
 
@@ -2412,7 +2770,7 @@
                             </div>
                         `).join('');
 
-                    const paymentMethodsHtml = paymentMethods.map(m => `
+                    const paymentMethodsHtml = this.state.paymentMethods.map(m => `
                         <div class="payment-method-admin">
                             <div class="flex items-center gap-3">
                                 <div class="payment-icon"><i class="${m.icon}"></i></div>
@@ -2425,7 +2783,7 @@
                         </div>
                     `).join('');
 
-                    const categoriesHtml = categories.map(cat => `
+                    const categoriesHtml = this.state.categories.map(cat => `
                         <div class="payment-method-admin">
                             <div class="flex items-center gap-3">
                                 <div class="payment-icon"><i class="${cat.icon}"></i></div>
@@ -2438,7 +2796,7 @@
                         </div>
                     `).join('');
 
-                    const productsHtml = products.map(prod => `
+                    const productsHtml = this.state.products.map(prod => `
                         <div class="payment-method-admin">
                             <div class="flex items-center gap-3">
                                 <div class="payment-icon"><i class="${prod.icon}"></i></div>
@@ -2483,256 +2841,336 @@
                 }
 
                 bindAdminPanelEvents() {
-                    const modalOverlay = document.getElementById('adminPanelOverlay');
-                    const closeBtn = document.getElementById('closeAdminPanel');
-                    if (closeBtn) {
-                        closeBtn.addEventListener('click', () => modalOverlay.classList.remove('open'));
+                    try {
+                        const modalOverlay = document.getElementById('adminPanelOverlay');
+                        const closeBtn = document.getElementById('closeAdminPanel');
+                        if (closeBtn) {
+                            closeBtn.addEventListener('click', () => modalOverlay.classList.remove('open'));
+                        }
+                        
+                        modalOverlay.addEventListener('click', (e) => { 
+                            if (e.target === modalOverlay) modalOverlay.classList.remove('open'); 
+                        });
+
+                        const adminTabs = document.querySelectorAll('[data-admin-tab]');
+                        adminTabs.forEach(tab => {
+                            tab.addEventListener('click', () => {
+                                adminTabs.forEach(t => t.classList.remove('active'));
+                                tab.classList.add('active');
+                                const tabName = tab.dataset.adminTab;
+                                document.getElementById('adminRequestsTab').classList.add('hidden');
+                                document.getElementById('adminPaymentMethodsTab').classList.add('hidden');
+                                document.getElementById('adminStoreTab').classList.add('hidden');
+                                if (tabName === 'requests') document.getElementById('adminRequestsTab').classList.remove('hidden');
+                                else if (tabName === 'payment-methods') document.getElementById('adminPaymentMethodsTab').classList.remove('hidden');
+                                else document.getElementById('adminStoreTab').classList.remove('hidden');
+                            });
+                        });
+
+                        // قبول/رفض الطلبات
+                        document.querySelectorAll('.accept-request').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const id = btn.dataset.id;
+                                const type = btn.dataset.type;
+                                const request = type === 'deposit' ? this.state.depositRequests.find(r => r.id === id) : this.state.withdrawalRequests.find(r => r.id === id);
+                                if (request) {
+                                    const success = this.data.acceptRequest(request, type);
+                                    if (success) this.toast.success(`تم قبول الطلب`);
+                                    else this.toast.error('فشل القبول');
+                                    this.openAdminPanel();
+                                }
+                            });
+                        });
+
+                        document.querySelectorAll('.reject-request').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const id = btn.dataset.id;
+                                const type = btn.dataset.type;
+                                const request = type === 'deposit' ? this.state.depositRequests.find(r => r.id === id) : this.state.withdrawalRequests.find(r => r.id === id);
+                                if (request) {
+                                    this.data.rejectRequest(request, type);
+                                    this.toast.info('تم رفض الطلب');
+                                    this.openAdminPanel();
+                                }
+                            });
+                        });
+
+                        // طرق الدفع
+                        const addPaymentBtn = document.getElementById('addPaymentMethodBtn');
+                        if (addPaymentBtn) {
+                            addPaymentBtn.addEventListener('click', () => this.openPaymentMethodModal());
+                        }
+                        
+                        document.querySelectorAll('.edit-payment-method').forEach(btn => {
+                            btn.addEventListener('click', () => this.openPaymentMethodModal(btn.dataset.id));
+                        });
+                        
+                        document.querySelectorAll('.delete-payment-method').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                if (confirm('حذف طريقة الدفع؟')) {
+                                    this.data.deletePaymentMethod(btn.dataset.id);
+                                    this.toast.success('تم الحذف');
+                                    this.openAdminPanel();
+                                }
+                            });
+                        });
+
+                        // إدارة الأقسام
+                        const addCategoryBtn = document.getElementById('addCategoryBtn');
+                        if (addCategoryBtn) {
+                            addCategoryBtn.addEventListener('click', () => this.openCategoryModal());
+                        }
+                        
+                        document.querySelectorAll('.edit-category').forEach(btn => {
+                            btn.addEventListener('click', () => this.openCategoryModal(btn.dataset.id));
+                        });
+                        
+                        document.querySelectorAll('.delete-category').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                if (confirm('حذف القسم؟')) {
+                                    this.data.deleteCategory(btn.dataset.id);
+                                    this.toast.success('تم الحذف');
+                                    this.openAdminPanel();
+                                }
+                            });
+                        });
+
+                        // إدارة المنتجات
+                        const addProductBtn = document.getElementById('addProductBtn');
+                        if (addProductBtn) {
+                            addProductBtn.addEventListener('click', () => this.openProductModal());
+                        }
+                        
+                        document.querySelectorAll('.edit-product').forEach(btn => {
+                            btn.addEventListener('click', () => this.openProductModal(btn.dataset.id));
+                        });
+                        
+                        document.querySelectorAll('.delete-product').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                if (confirm('حذف المنتج؟')) {
+                                    this.data.deleteProduct(btn.dataset.id);
+                                    this.toast.success('تم الحذف');
+                                    this.openAdminPanel();
+                                }
+                            });
+                        });
+                    } catch (e) {
+                        console.error('Error binding admin panel events:', e);
+                        this.toast.error('حدث خطأ في تحميل لوحة التحكم');
                     }
-                    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); });
-
-                    const adminTabs = document.querySelectorAll('[data-admin-tab]');
-                    adminTabs.forEach(tab => {
-                        tab.addEventListener('click', () => {
-                            adminTabs.forEach(t => t.classList.remove('active'));
-                            tab.classList.add('active');
-                            const tabName = tab.dataset.adminTab;
-                            document.getElementById('adminRequestsTab').classList.add('hidden');
-                            document.getElementById('adminPaymentMethodsTab').classList.add('hidden');
-                            document.getElementById('adminStoreTab').classList.add('hidden');
-                            if (tabName === 'requests') document.getElementById('adminRequestsTab').classList.remove('hidden');
-                            else if (tabName === 'payment-methods') document.getElementById('adminPaymentMethodsTab').classList.remove('hidden');
-                            else document.getElementById('adminStoreTab').classList.remove('hidden');
-                        });
-                    });
-
-                    document.querySelectorAll('.accept-request').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            const type = btn.dataset.type;
-                            const request = type === 'deposit' ? this.state.depositRequests.find(r => r.id === id) : this.state.withdrawalRequests.find(r => r.id === id);
-                            if (request) {
-                                const success = this.data.acceptRequest(request, type);
-                                if (success) this.toast.success(`تم قبول الطلب`);
-                                else this.toast.error('فشل القبول');
-                                this.openAdminPanel();
-                            }
-                        });
-                    });
-
-                    document.querySelectorAll('.reject-request').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            const type = btn.dataset.type;
-                            const request = type === 'deposit' ? this.state.depositRequests.find(r => r.id === id) : this.state.withdrawalRequests.find(r => r.id === id);
-                            if (request) {
-                                this.data.rejectRequest(request, type);
-                                this.toast.info('تم رفض الطلب');
-                                this.openAdminPanel();
-                            }
-                        });
-                    });
-
-                    const addPaymentMethodBtn = document.getElementById('addPaymentMethodBtn');
-                    if (addPaymentMethodBtn) {
-                        addPaymentMethodBtn.addEventListener('click', () => this.openPaymentMethodModal());
-                    }
-
-                    document.querySelectorAll('.edit-payment-method').forEach(btn => {
-                        btn.addEventListener('click', () => this.openPaymentMethodModal(btn.dataset.id));
-                    });
-                    document.querySelectorAll('.delete-payment-method').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            if (confirm('حذف طريقة الدفع؟')) {
-                                this.data.deletePaymentMethod(btn.dataset.id);
-                                this.toast.success('تم الحذف');
-                                this.openAdminPanel();
-                            }
-                        });
-                    });
-
-                    const addCategoryBtn = document.getElementById('addCategoryBtn');
-                    if (addCategoryBtn) {
-                        addCategoryBtn.addEventListener('click', () => this.openCategoryModal());
-                    }
-
-                    document.querySelectorAll('.edit-category').forEach(btn => {
-                        btn.addEventListener('click', () => this.openCategoryModal(btn.dataset.id));
-                    });
-                    document.querySelectorAll('.delete-category').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            if (confirm('حذف القسم؟')) {
-                                this.data.deleteCategory(btn.dataset.id);
-                                this.toast.success('تم الحذف');
-                                this.openAdminPanel();
-                            }
-                        });
-                    });
-
-                    const addProductBtn = document.getElementById('addProductBtn');
-                    if (addProductBtn) {
-                        addProductBtn.addEventListener('click', () => this.openProductModal());
-                    }
-
-                    document.querySelectorAll('.edit-product').forEach(btn => {
-                        btn.addEventListener('click', () => this.openProductModal(btn.dataset.id));
-                    });
-                    document.querySelectorAll('.delete-product').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            if (confirm('حذف المنتج؟')) {
-                                this.data.deleteProduct(btn.dataset.id);
-                                this.toast.success('تم الحذف');
-                                this.openAdminPanel();
-                            }
-                        });
-                    });
                 }
 
                 openPaymentMethodModal(editingId = null) {
-                    const modalOverlay = document.getElementById('paymentMethodModalOverlay');
-                    const modalContent = document.getElementById('paymentMethodModalContent');
-                    const method = editingId ? this.state.paymentMethods.find(m => m.id === editingId) : null;
-                    modalContent.innerHTML = `
-                        <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">${method ? 'تعديل' : 'إضافة'} طريقة دفع</h2><button id="closePaymentMethodModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><i class="fa-solid fa-times"></i></button></div>
-                        <form id="paymentMethodForm" class="space-y-3">
-                            <input type="hidden" id="methodId" value="${method?.id || ''}">
-                            <div><label class="text-sm text-gray-400">الاسم</label><input type="text" id="methodName" required value="${method?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div><label class="text-sm text-gray-400">الأيقونة</label><input type="text" id="methodIcon" value="${method?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div><label class="text-sm text-gray-400">الوصف</label><input type="text" id="methodDescription" value="${method?.description || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div><label class="text-sm text-gray-400">تفاصيل الإيداع</label><textarea id="methodDepositDetails" rows="2" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">${method?.depositDetails || ''}</textarea></div>
-                            <div><label class="text-sm text-gray-400">تفاصيل السحب</label><input type="text" id="methodWithdrawDetails" value="${method?.withdrawDetails || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div class="flex gap-2 pt-2"><button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button><button type="button" id="cancelPaymentMethod" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button></div>
-                        </form>
-                    `;
-                    modalOverlay.classList.add('open');
-                    document.getElementById('closePaymentMethodModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
-                    document.getElementById('cancelPaymentMethod').addEventListener('click', () => modalOverlay.classList.remove('open'));
-                    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); });
-                    document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        const formData = {
-                            name: document.getElementById('methodName').value,
-                            icon: document.getElementById('methodIcon').value,
-                            description: document.getElementById('methodDescription').value,
-                            depositDetails: document.getElementById('methodDepositDetails').value,
-                            withdrawDetails: document.getElementById('methodWithdrawDetails').value
-                        };
-                        const id = document.getElementById('methodId').value;
-                        if (id) {
-                            this.data.updatePaymentMethod(id, formData);
-                            this.toast.success('تم التحديث');
-                        } else {
-                            this.data.addPaymentMethod(formData);
-                            this.toast.success('تمت الإضافة');
+                    try {
+                        const modalOverlay = document.getElementById('paymentMethodModalOverlay');
+                        const modalContent = document.getElementById('paymentMethodModalContent');
+                        const method = editingId ? this.state.paymentMethods.find(m => m.id === editingId) : null;
+                        modalContent.innerHTML = `
+                            <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">${method ? 'تعديل' : 'إضافة'} طريقة دفع</h2><button id="closePaymentMethodModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><i class="fa-solid fa-times"></i></button></div>
+                            <form id="paymentMethodForm" class="space-y-3">
+                                <input type="hidden" id="methodId" value="${method?.id || ''}">
+                                <div><label class="text-sm text-gray-400">الاسم</label><input type="text" id="methodName" required value="${method?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                                <div><label class="text-sm text-gray-400">الأيقونة</label><input type="text" id="methodIcon" value="${method?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                                <div><label class="text-sm text-gray-400">الوصف</label><input type="text" id="methodDescription" value="${method?.description || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                                <div><label class="text-sm text-gray-400">تفاصيل الإيداع</label><textarea id="methodDepositDetails" rows="2" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">${method?.depositDetails || ''}</textarea></div>
+                                <div><label class="text-sm text-gray-400">تفاصيل السحب</label><input type="text" id="methodWithdrawDetails" value="${method?.withdrawDetails || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                                <div class="flex gap-2 pt-2"><button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button><button type="button" id="cancelPaymentMethod" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button></div>
+                            </form>
+                        `;
+                        modalOverlay.classList.add('open');
+
+                        const closeBtn = document.getElementById('closePaymentMethodModal');
+                        if (closeBtn) {
+                            closeBtn.addEventListener('click', () => modalOverlay.classList.remove('open'));
                         }
-                        modalOverlay.classList.remove('open');
-                        this.openAdminPanel();
-                    });
+                        
+                        const cancelBtn = document.getElementById('cancelPaymentMethod');
+                        if (cancelBtn) {
+                            cancelBtn.addEventListener('click', () => modalOverlay.classList.remove('open'));
+                        }
+                        
+                        modalOverlay.addEventListener('click', (e) => { 
+                            if (e.target === modalOverlay) modalOverlay.classList.remove('open'); 
+                        });
+                        
+                        const form = document.getElementById('paymentMethodForm');
+                        if (form) {
+                            form.addEventListener('submit', (e) => {
+                                e.preventDefault();
+                                const formData = {
+                                    name: document.getElementById('methodName').value,
+                                    icon: document.getElementById('methodIcon').value,
+                                    description: document.getElementById('methodDescription').value,
+                                    depositDetails: document.getElementById('methodDepositDetails').value,
+                                    withdrawDetails: document.getElementById('methodWithdrawDetails').value
+                                };
+                                const id = document.getElementById('methodId').value;
+                                if (id) {
+                                    this.data.updatePaymentMethod(id, formData);
+                                    this.toast.success('تم التحديث');
+                                } else {
+                                    this.data.addPaymentMethod(formData);
+                                    this.toast.success('تمت الإضافة');
+                                }
+                                modalOverlay.classList.remove('open');
+                                this.openAdminPanel();
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error opening payment method modal:', e);
+                        this.toast.error('حدث خطأ في فتح النافذة');
+                    }
                 }
 
                 openCategoryModal(editingId = null) {
-                    const modalOverlay = document.getElementById('paymentMethodModalOverlay');
-                    const modalContent = document.getElementById('paymentMethodModalContent');
-                    const cat = editingId ? this.state.categories.find(c => c.id === editingId) : null;
-                    modalContent.innerHTML = `
-                        <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">${cat ? 'تعديل' : 'إضافة'} قسم</h2><button id="closeCategoryModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><i class="fa-solid fa-times"></i></button></div>
-                        <form id="categoryForm" class="space-y-3">
-                            <input type="hidden" id="categoryId" value="${cat?.id || ''}">
-                            <div><label class="text-sm text-gray-400">اسم القسم</label><input type="text" id="categoryName" required value="${cat?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div><label class="text-sm text-gray-400">الأيقونة (مثل fa-gamepad)</label><input type="text" id="categoryIcon" value="${cat?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div><label class="text-sm text-gray-400">الوصف</label><input type="text" id="categoryDescription" value="${cat?.description || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div><label class="text-sm text-gray-400">الترتيب</label><input type="number" id="categoryOrder" value="${cat?.order || 0}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div class="flex gap-2 pt-2"><button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button><button type="button" id="cancelCategoryModal" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button></div>
-                        </form>
-                    `;
-                    modalOverlay.classList.add('open');
-                    document.getElementById('closeCategoryModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
-                    document.getElementById('cancelCategoryModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
-                    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); });
-                    document.getElementById('categoryForm').addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        const formData = {
-                            name: document.getElementById('categoryName').value,
-                            icon: document.getElementById('categoryIcon').value,
-                            description: document.getElementById('categoryDescription').value,
-                            order: parseInt(document.getElementById('categoryOrder').value) || 0
-                        };
-                        const id = document.getElementById('categoryId').value;
-                        if (id) {
-                            this.data.updateCategory(id, formData);
-                            this.toast.success('تم التحديث');
-                        } else {
-                            this.data.addCategory(formData);
-                            this.toast.success('تمت الإضافة');
+                    try {
+                        const modalOverlay = document.getElementById('paymentMethodModalOverlay');
+                        const modalContent = document.getElementById('paymentMethodModalContent');
+                        const cat = editingId ? this.state.categories.find(c => c.id === editingId) : null;
+                        modalContent.innerHTML = `
+                            <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">${cat ? 'تعديل' : 'إضافة'} قسم</h2><button id="closeCategoryModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><i class="fa-solid fa-times"></i></button></div>
+                            <form id="categoryForm" class="space-y-3">
+                                <input type="hidden" id="categoryId" value="${cat?.id || ''}">
+                                <div><label class="text-sm text-gray-400">اسم القسم</label><input type="text" id="categoryName" required value="${cat?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                                <div><label class="text-sm text-gray-400">الأيقونة (مثل fa-gamepad)</label><input type="text" id="categoryIcon" value="${cat?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                                <div><label class="text-sm text-gray-400">الوصف</label><input type="text" id="categoryDescription" value="${cat?.description || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                                <div><label class="text-sm text-gray-400">الترتيب</label><input type="number" id="categoryOrder" value="${cat?.order || 0}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                                <div class="flex gap-2 pt-2"><button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button><button type="button" id="cancelCategoryModal" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button></div>
+                            </form>
+                        `;
+                        modalOverlay.classList.add('open');
+
+                        const closeBtn = document.getElementById('closeCategoryModal');
+                        if (closeBtn) {
+                            closeBtn.addEventListener('click', () => modalOverlay.classList.remove('open'));
                         }
-                        modalOverlay.classList.remove('open');
-                        this.openAdminPanel();
-                    });
+                        
+                        const cancelBtn = document.getElementById('cancelCategoryModal');
+                        if (cancelBtn) {
+                            cancelBtn.addEventListener('click', () => modalOverlay.classList.remove('open'));
+                        }
+                        
+                        modalOverlay.addEventListener('click', (e) => { 
+                            if (e.target === modalOverlay) modalOverlay.classList.remove('open'); 
+                        });
+                        
+                        const form = document.getElementById('categoryForm');
+                        if (form) {
+                            form.addEventListener('submit', (e) => {
+                                e.preventDefault();
+                                const formData = {
+                                    name: document.getElementById('categoryName').value,
+                                    icon: document.getElementById('categoryIcon').value,
+                                    description: document.getElementById('categoryDescription').value,
+                                    order: parseInt(document.getElementById('categoryOrder').value) || 0
+                                };
+                                const id = document.getElementById('categoryId').value;
+                                if (id) {
+                                    this.data.updateCategory(id, formData);
+                                    this.toast.success('تم التحديث');
+                                } else {
+                                    this.data.addCategory(formData);
+                                    this.toast.success('تمت الإضافة');
+                                }
+                                modalOverlay.classList.remove('open');
+                                this.openAdminPanel();
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error opening category modal:', e);
+                        this.toast.error('حدث خطأ في فتح النافذة');
+                    }
                 }
 
                 openProductModal(editingId = null) {
-                    const modalOverlay = document.getElementById('paymentMethodModalOverlay');
-                    const modalContent = document.getElementById('paymentMethodModalContent');
-                    const prod = editingId ? this.state.products.find(p => p.id === editingId) : null;
-                    const categoryOptions = (this.state.categories || []).map(c => `<option value="${c.id}" ${prod?.categoryId === c.id ? 'selected' : ''}>${c.name}</option>`).join('');
-                    modalContent.innerHTML = `
-                        <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">${prod ? 'تعديل' : 'إضافة'} منتج</h2><button id="closeProductModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><i class="fa-solid fa-times"></i></button></div>
-                        <form id="productForm" class="space-y-3 max-h-96 overflow-y-auto p-1">
-                            <input type="hidden" id="productId" value="${prod?.id || ''}">
-                            <div><label class="text-sm text-gray-400">الاسم</label><input type="text" id="productName" required value="${prod?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div><label class="text-sm text-gray-400">الوصف</label><textarea id="productDescription" rows="2" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">${prod?.description || ''}</textarea></div>
-                            <div><label class="text-sm text-gray-400">السعر</label><input type="number" id="productPrice" required value="${prod?.price || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div><label class="text-sm text-gray-400">القسم</label>
-                                <select id="productCategoryId" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                                    ${categoryOptions}
-                                </select>
-                            </div>
-                            <div><label class="text-sm text-gray-400">الأيقونة</label><input type="text" id="productIcon" value="${prod?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div><label class="text-sm text-gray-400">المخزون (-1 لغير محدود)</label><input type="number" id="productStock" value="${prod?.stock ?? -1}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div><label class="text-sm text-gray-400">الحقول المطلوبة (JSON)</label><textarea id="productInputFields" rows="3" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white font-mono text-xs">${JSON.stringify(prod?.inputFields || [], null, 2)}</textarea></div>
-                            <div><label class="text-sm text-gray-400">بيانات التسليم (JSON)</label><textarea id="productFulfillment" rows="3" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white font-mono text-xs">${JSON.stringify(prod?.fulfillmentData || { type: 'manual' }, null, 2)}</textarea></div>
-                            <div class="flex gap-2 pt-2"><button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button><button type="button" id="cancelProductModal" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button></div>
-                        </form>
-                    `;
-                    modalOverlay.classList.add('open');
-                    document.getElementById('closeProductModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
-                    document.getElementById('cancelProductModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
-                    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); });
-                    document.getElementById('productForm').addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        try {
-                            const formData = {
-                                name: document.getElementById('productName').value,
-                                description: document.getElementById('productDescription').value,
-                                price: parseFloat(document.getElementById('productPrice').value),
-                                categoryId: document.getElementById('productCategoryId').value,
-                                icon: document.getElementById('productIcon').value,
-                                stock: parseInt(document.getElementById('productStock').value),
-                                inputFields: JSON.parse(document.getElementById('productInputFields').value),
-                                fulfillmentData: JSON.parse(document.getElementById('productFulfillment').value)
-                            };
-                            const id = document.getElementById('productId').value;
-                            if (id) {
-                                this.data.updateProduct(id, formData);
-                                this.toast.success('تم التحديث');
-                            } else {
-                                this.data.addProduct(formData);
-                                this.toast.success('تمت الإضافة');
-                            }
-                            modalOverlay.classList.remove('open');
-                            this.openAdminPanel();
-                        } catch (err) {
-                            this.toast.error('خطأ في صيغة JSON');
+                    try {
+                        const modalOverlay = document.getElementById('paymentMethodModalOverlay');
+                        const modalContent = document.getElementById('paymentMethodModalContent');
+                        const prod = editingId ? this.state.products.find(p => p.id === editingId) : null;
+                        const categoryOptions = this.state.categories.map(c => `<option value="${c.id}" ${prod?.categoryId === c.id ? 'selected' : ''}>${c.name}</option>`).join('');
+                        modalContent.innerHTML = `
+                            <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">${prod ? 'تعديل' : 'إضافة'} منتج</h2><button id="closeProductModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><i class="fa-solid fa-times"></i></button></div>
+                            <form id="productForm" class="space-y-3 max-h-96 overflow-y-auto p-1">
+                                <input type="hidden" id="productId" value="${prod?.id || ''}">
+                                <div><label class="text-sm text-gray-400">الاسم</label><input type="text" id="productName" required value="${prod?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                                <div><label class="text-sm text-gray-400">الوصف</label><textarea id="productDescription" rows="2" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">${prod?.description || ''}</textarea></div>
+                                <div><label class="text-sm text-gray-400">السعر</label><input type="number" id="productPrice" required value="${prod?.price || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                                <div><label class="text-sm text-gray-400">القسم</label>
+                                    <select id="productCategoryId" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                        ${categoryOptions}
+                                    </select>
+                                </div>
+                                <div><label class="text-sm text-gray-400">الأيقونة</label><input type="text" id="productIcon" value="${prod?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                                <div><label class="text-sm text-gray-400">المخزون (-1 لغير محدود)</label><input type="number" id="productStock" value="${prod?.stock ?? -1}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                                <div><label class="text-sm text-gray-400">الحقول المطلوبة (JSON)</label><textarea id="productInputFields" rows="3" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white font-mono text-xs">${JSON.stringify(prod?.inputFields || [], null, 2)}</textarea></div>
+                                <div><label class="text-sm text-gray-400">بيانات التسليم (JSON)</label><textarea id="productFulfillment" rows="3" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white font-mono text-xs">${JSON.stringify(prod?.fulfillmentData || { type: 'manual' }, null, 2)}</textarea></div>
+                                <div class="flex gap-2 pt-2"><button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button><button type="button" id="cancelProductModal" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button></div>
+                            </form>
+                        `;
+                        modalOverlay.classList.add('open');
+
+                        const closeBtn = document.getElementById('closeProductModal');
+                        if (closeBtn) {
+                            closeBtn.addEventListener('click', () => modalOverlay.classList.remove('open'));
                         }
-                    });
+                        
+                        const cancelBtn = document.getElementById('cancelProductModal');
+                        if (cancelBtn) {
+                            cancelBtn.addEventListener('click', () => modalOverlay.classList.remove('open'));
+                        }
+                        
+                        modalOverlay.addEventListener('click', (e) => { 
+                            if (e.target === modalOverlay) modalOverlay.classList.remove('open'); 
+                        });
+                        
+                        const form = document.getElementById('productForm');
+                        if (form) {
+                            form.addEventListener('submit', (e) => {
+                                e.preventDefault();
+                                try {
+                                    const formData = {
+                                        name: document.getElementById('productName').value,
+                                        description: document.getElementById('productDescription').value,
+                                        price: parseFloat(document.getElementById('productPrice').value),
+                                        categoryId: document.getElementById('productCategoryId').value,
+                                        icon: document.getElementById('productIcon').value,
+                                        stock: parseInt(document.getElementById('productStock').value),
+                                        inputFields: JSON.parse(document.getElementById('productInputFields').value),
+                                        fulfillmentData: JSON.parse(document.getElementById('productFulfillment').value)
+                                    };
+                                    const id = document.getElementById('productId').value;
+                                    if (id) {
+                                        this.data.updateProduct(id, formData);
+                                        this.toast.success('تم التحديث');
+                                    } else {
+                                        this.data.addProduct(formData);
+                                        this.toast.success('تمت الإضافة');
+                                    }
+                                    modalOverlay.classList.remove('open');
+                                    this.openAdminPanel();
+                                } catch (err) {
+                                    this.toast.error('خطأ في صيغة JSON');
+                                }
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error opening product modal:', e);
+                        this.toast.error('حدث خطأ في فتح النافذة');
+                    }
                 }
 
                 // ========== الإشعارات ==========
                 openNotificationsModal() {
-                    const modalOverlay = document.getElementById('walletModalOverlay');
-                    const modalContent = document.getElementById('walletModalContent');
-                    modalContent.innerHTML = this.renderNotificationsModal();
-                    modalOverlay.classList.add('open');
-                    this.bindNotificationsModalEvents();
+                    try {
+                        const modalOverlay = document.getElementById('walletModalOverlay');
+                        const modalContent = document.getElementById('walletModalContent');
+                        modalContent.innerHTML = this.renderNotificationsModal();
+                        modalOverlay.classList.add('open');
+                        this.bindNotificationsModalEvents();
+                    } catch (e) {
+                        console.error('Error opening notifications modal:', e);
+                        this.toast.error('حدث خطأ في فتح الإشعارات');
+                    }
                 }
 
                 renderNotificationsModal() {
@@ -2760,29 +3198,39 @@
                 }
 
                 bindNotificationsModalEvents() {
-                    const modalOverlay = document.getElementById('walletModalOverlay');
-                    document.getElementById('closeNotificationsModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
-                    
-                    document.getElementById('markAllRead')?.addEventListener('click', () => {
-                        this.data.notificationService.markAllAsRead(this.state.user.id);
-                        this.toast.success('تم تحديد الكل كمقروء');
-                        this.openNotificationsModal();
-                        this.updateNotificationBadge();
-                    });
-                    
-                    document.querySelectorAll('.mark-read').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const id = btn.dataset.id;
-                            this.data.notificationService.markAsRead(id);
-                            this.openNotificationsModal();
-                            this.updateNotificationBadge();
+                    try {
+                        const modalOverlay = document.getElementById('walletModalOverlay');
+                        const closeBtn = document.getElementById('closeNotificationsModal');
+                        if (closeBtn) {
+                            closeBtn.addEventListener('click', () => modalOverlay.classList.remove('open'));
+                        }
+                        
+                        const markAllBtn = document.getElementById('markAllRead');
+                        if (markAllBtn) {
+                            markAllBtn.addEventListener('click', () => {
+                                this.data.notificationService.markAllAsRead(this.state.user.id);
+                                this.toast.success('تم تحديد الكل كمقروء');
+                                this.openNotificationsModal();
+                                this.updateNotificationBadge();
+                            });
+                        }
+                        
+                        document.querySelectorAll('.mark-read').forEach(btn => {
+                            btn.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                const id = btn.dataset.id;
+                                this.data.notificationService.markAsRead(id);
+                                this.openNotificationsModal();
+                                this.updateNotificationBadge();
+                            });
                         });
-                    });
-                    
-                    modalOverlay.addEventListener('click', (e) => {
-                        if (e.target === modalOverlay) modalOverlay.classList.remove('open');
-                    });
+                        
+                        modalOverlay.addEventListener('click', (e) => {
+                            if (e.target === modalOverlay) modalOverlay.classList.remove('open');
+                        });
+                    } catch (e) {
+                        console.error('Error binding notifications modal events:', e);
+                    }
                 }
             }
 
@@ -2799,37 +3247,37 @@
                 }
 
                 async init() {
-                    if (!this.telegram.isAvailable) {
-                        this.state.telegramMissing = true;
-                        this.state.loading = false;
-                        this.ui.render();
-                        return;
-                    }
-
-                    this.telegram.init();
-
-                    if (!this.telegram.isValid() || !this.telegram.getUser()) {
-                        this.state.accessDenied = true;
-                        this.state.loading = false;
-                        this.ui.render();
-                        return;
-                    }
-
-                    const user = this.telegram.getUser();
-                    this.state.user = user;
-                    this.state.isAdmin = (user.id === CONFIG.ADMIN_ID);
-
-                    this.data.registerUser(user.id);
-
-                    const savedTheme = this.data.loadTheme();
-                    this.applyTheme(savedTheme);
-
-                    this.loadSettings();
-
-                    this.state.loading = true;
-                    this.ui.render();
-
                     try {
+                        if (!this.telegram.isAvailable) {
+                            this.state.telegramMissing = true;
+                            this.state.loading = false;
+                            this.ui.render();
+                            return;
+                        }
+
+                        this.telegram.init();
+
+                        if (!this.telegram.isValid() || !this.telegram.getUser()) {
+                            this.state.accessDenied = true;
+                            this.state.loading = false;
+                            this.ui.render();
+                            return;
+                        }
+
+                        const user = this.telegram.getUser();
+                        this.state.user = user;
+                        this.state.isAdmin = (user.id === CONFIG.ADMIN_ID);
+
+                        this.data.registerUser(user.id);
+
+                        const savedTheme = this.data.loadTheme();
+                        this.applyTheme(savedTheme);
+
+                        this.loadSettings();
+
+                        this.state.loading = true;
+                        this.ui.render();
+
                         await new Promise(resolve => setTimeout(resolve, 1000));
                         this.data.loadStats();
                         this.state.loading = false;
@@ -2865,8 +3313,11 @@
                     this.toast.soundEnabled = settings.sound;
                     this.toast.vibrateEnabled = settings.vibrate;
                     
-                    document.getElementById('soundToggle').checked = settings.sound;
-                    document.getElementById('vibrateToggle').checked = settings.vibrate;
+                    const soundToggle = document.getElementById('soundToggle');
+                    if (soundToggle) soundToggle.checked = settings.sound;
+                    
+                    const vibrateToggle = document.getElementById('vibrateToggle');
+                    if (vibrateToggle) vibrateToggle.checked = settings.vibrate;
                 }
 
                 applyTheme(theme) {
@@ -2877,12 +3328,12 @@
                         root.style.setProperty('--tg-theme-bg-color', '#f8fafc');
                         root.style.setProperty('--tg-theme-text-color', '#0f172a');
                         root.style.setProperty('--tg-theme-button-color', '#3b82f6');
-                        themeIcon.className = 'fa-solid fa-sun';
+                        if (themeIcon) themeIcon.className = 'fa-solid fa-sun';
                     } else {
                         root.style.setProperty('--tg-theme-bg-color', '#0f172a');
                         root.style.setProperty('--tg-theme-text-color', '#ffffff');
                         root.style.setProperty('--tg-theme-button-color', '#3b82f6');
-                        themeIcon.className = 'fa-solid fa-moon';
+                        if (themeIcon) themeIcon.className = 'fa-solid fa-moon';
                     }
                 }
             }
@@ -2890,52 +3341,73 @@
             // ======================== بدء التطبيق ========================
             const app = new App();
 
-            document.getElementById('themeToggle').addEventListener('click', () => {
-                const newTheme = app.state.theme === 'dark' ? 'light' : 'dark';
-                app.state.theme = newTheme;
-                app.data.saveTheme(newTheme);
-                app.applyTheme(newTheme);
-                app.toast.info(`تم تغيير السمة إلى ${newTheme === 'dark' ? 'الداكنة' : 'الفاتحة'}`);
-            });
+            // أحداث عامة
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    const newTheme = app.state.theme === 'dark' ? 'light' : 'dark';
+                    app.state.theme = newTheme;
+                    app.data.saveTheme(newTheme);
+                    app.applyTheme(newTheme);
+                    app.toast.info(`تم تغيير السمة إلى ${newTheme === 'dark' ? 'الداكنة' : 'الفاتحة'}`);
+                });
+            }
 
             const settingsOverlay = document.getElementById('settingsOverlay');
             const settingsPanel = document.getElementById('settingsPanel');
             
-            document.getElementById('closeSettings').addEventListener('click', () => {
-                settingsOverlay.classList.remove('open');
-                settingsPanel.classList.remove('open');
-            });
+            const closeSettingsBtn = document.getElementById('closeSettings');
+            if (closeSettingsBtn) {
+                closeSettingsBtn.addEventListener('click', () => {
+                    if (settingsOverlay) settingsOverlay.classList.remove('open');
+                    if (settingsPanel) settingsPanel.classList.remove('open');
+                });
+            }
 
-            settingsOverlay.addEventListener('click', () => {
-                settingsOverlay.classList.remove('open');
-                settingsPanel.classList.remove('open');
-            });
+            if (settingsOverlay) {
+                settingsOverlay.addEventListener('click', () => {
+                    settingsOverlay.classList.remove('open');
+                    if (settingsPanel) settingsPanel.classList.remove('open');
+                });
+            }
 
-            document.getElementById('languageSelect').addEventListener('change', (e) => {
-                app.state.settings.language = e.target.value;
-                app.data.saveSettings();
-                app.toast.success(`تم تغيير اللغة إلى ${e.target.value === 'ar' ? 'العربية' : 'الإنجليزية'}`);
-            });
+            const languageSelect = document.getElementById('languageSelect');
+            if (languageSelect) {
+                languageSelect.addEventListener('change', (e) => {
+                    app.state.settings.language = e.target.value;
+                    app.data.saveSettings();
+                    app.toast.success(`تم تغيير اللغة إلى ${e.target.value === 'ar' ? 'العربية' : 'الإنجليزية'}`);
+                });
+            }
 
-            document.getElementById('notificationsToggle').addEventListener('change', (e) => {
-                app.state.settings.notifications = e.target.checked;
-                app.data.saveSettings();
-                app.toast.success(e.target.checked ? 'تم تفعيل الإشعارات' : 'تم إيقاف الإشعارات');
-            });
+            const notificationsToggle = document.getElementById('notificationsToggle');
+            if (notificationsToggle) {
+                notificationsToggle.addEventListener('change', (e) => {
+                    app.state.settings.notifications = e.target.checked;
+                    app.data.saveSettings();
+                    app.toast.success(e.target.checked ? 'تم تفعيل الإشعارات' : 'تم إيقاف الإشعارات');
+                });
+            }
 
-            document.getElementById('soundToggle').addEventListener('change', (e) => {
-                app.state.settings.sound = e.target.checked;
-                app.data.saveSettings();
-                app.toast.soundEnabled = e.target.checked;
-                app.toast.success(e.target.checked ? 'تم تفعيل التنبيه الصوتي' : 'تم إيقاف التنبيه الصوتي');
-            });
+            const soundToggle = document.getElementById('soundToggle');
+            if (soundToggle) {
+                soundToggle.addEventListener('change', (e) => {
+                    app.state.settings.sound = e.target.checked;
+                    app.data.saveSettings();
+                    app.toast.soundEnabled = e.target.checked;
+                    app.toast.success(e.target.checked ? 'تم تفعيل التنبيه الصوتي' : 'تم إيقاف التنبيه الصوتي');
+                });
+            }
 
-            document.getElementById('vibrateToggle').addEventListener('change', (e) => {
-                app.state.settings.vibrate = e.target.checked;
-                app.data.saveSettings();
-                app.toast.vibrateEnabled = e.target.checked;
-                app.toast.success(e.target.checked ? 'تم تفعيل الاهتزاز' : 'تم إيقاف الاهتزاز');
-            });
+            const vibrateToggle = document.getElementById('vibrateToggle');
+            if (vibrateToggle) {
+                vibrateToggle.addEventListener('change', (e) => {
+                    app.state.settings.vibrate = e.target.checked;
+                    app.data.saveSettings();
+                    app.toast.vibrateEnabled = e.target.checked;
+                    app.toast.success(e.target.checked ? 'تم تفعيل الاهتزاز' : 'تم إيقاف الاهتزاز');
+                });
+            }
         })();
     </script>
 </body>
