@@ -1201,11 +1201,15 @@
                 }
 
                 getPendingDeposits() {
-                    return this.state.depositRequests.filter(r => r.status === 'pending');
+                    return Array.isArray(this.state.depositRequests) 
+                        ? this.state.depositRequests.filter(r => r.status === 'pending') 
+                        : [];
                 }
 
                 getPendingWithdrawals() {
-                    return this.state.withdrawalRequests.filter(r => r.status === 'pending');
+                    return Array.isArray(this.state.withdrawalRequests) 
+                        ? this.state.withdrawalRequests.filter(r => r.status === 'pending') 
+                        : [];
                 }
 
                 getPendingRequestsCount() {
@@ -2208,9 +2212,9 @@
                 }
 
                 renderStoreModal() {
-                    const categories = this.state.categories;
-                    const products = this.state.products;
-                    const cart = this.state.cart;
+                    const categories = this.state.categories || [];
+                    const products = this.state.products || [];
+                    const cart = this.state.cart || [];
 
                     // تبويبات الأقسام مع إظهار الصورة إن وجدت
                     const categoriesTabs = categories.map(cat => `
@@ -2435,14 +2439,14 @@
                     this.currentCategoryFilter = catId;
                     this.currentSearchTerm = searchTerm;
 
-                    let filtered = this.state.products;
+                    let filtered = this.state.products || [];
                     if (catId !== 'all') {
                         filtered = filtered.filter(p => p.categoryId === catId);
                     }
                     if (searchTerm) {
                         filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm) || (p.description && p.description.toLowerCase().includes(searchTerm)));
                     }
-                    const cart = this.state.cart;
+                    const cart = this.state.cart || [];
                     const productsGrid = filtered.map(prod => {
                         const inCart = cart.some(item => item.productId === prod.id);
                         const finalPrice = prod.price * (1 - (prod.discount || 0) / 100);
@@ -2494,7 +2498,7 @@
                 }
 
                 updateCartDisplay() {
-                    const cart = this.state.cart;
+                    const cart = this.state.cart || [];
                     const cartItems = cart.map(item => {
                         const itemTotal = item.price * item.quantity * (1 - (item.discount || 0)/100);
                         return `
@@ -2728,7 +2732,7 @@
                 }
 
                 checkout() {
-                    const cart = this.state.cart;
+                    const cart = this.state.cart || [];
                     if (cart.length === 0) {
                         this.toast.error('السلة فارغة');
                         return;
@@ -2839,19 +2843,33 @@
                     });
                 }
 
-                // ========== لوحة المشرف المحسّنة ==========
+                // ========== لوحة المشرف المحسّنة (مع التأكد من وجود المصفوفات) ==========
                 openAdminPanel() {
-                    const modalOverlay = document.getElementById('adminPanelOverlay');
-                    const modalContent = document.getElementById('adminPanelContent');
-                    modalContent.innerHTML = this.renderAdminPanel();
-                    modalOverlay.classList.add('open');
-                    this.bindAdminPanelEvents();
+                    try {
+                        const modalOverlay = document.getElementById('adminPanelOverlay');
+                        const modalContent = document.getElementById('adminPanelContent');
+                        if (!modalOverlay || !modalContent) {
+                            this.toast.error('عناصر لوحة الإدارة غير موجودة');
+                            return;
+                        }
+                        modalContent.innerHTML = this.renderAdminPanel();
+                        modalOverlay.classList.add('open');
+                        this.bindAdminPanelEvents();
+                    } catch (e) {
+                        console.error('خطأ في فتح لوحة الإدارة:', e);
+                        this.toast.error('حدث خطأ أثناء فتح لوحة الإدارة: ' + e.message);
+                    }
                 }
 
                 renderAdminPanel() {
-                    const pendingDeposits = this.data.getPendingDeposits();
-                    const pendingWithdrawals = this.data.getPendingWithdrawals();
-                    const allOrders = this.state.orders;
+                    // التأكد من أن المصفوفات موجودة (حتى لا نستخدم map على undefined)
+                    const paymentMethods = Array.isArray(this.state.paymentMethods) ? this.state.paymentMethods : [];
+                    const categories = Array.isArray(this.state.categories) ? this.state.categories : [];
+                    const products = Array.isArray(this.state.products) ? this.state.products : [];
+                    const orders = Array.isArray(this.state.orders) ? this.state.orders : [];
+                    
+                    const pendingDeposits = this.data.getPendingDeposits() || [];
+                    const pendingWithdrawals = this.data.getPendingWithdrawals() || [];
 
                     const depositsHtml = pendingDeposits.length === 0 
                         ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات شحن معلقة</p>'
@@ -2886,9 +2904,9 @@
                         `).join('');
 
                     // طلبات المتجر
-                    const ordersHtml = allOrders.length === 0 
+                    const ordersHtml = orders.length === 0 
                         ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات متجر</p>'
-                        : allOrders.map(order => `
+                        : orders.map(order => `
                             <div class="request-item" data-order-id="${order.id}">
                                 <div class="flex justify-between">
                                     <span class="font-bold">${order.productName}</span>
@@ -2909,7 +2927,7 @@
                             </div>
                         `).join('');
 
-                    const paymentMethodsHtml = this.state.paymentMethods.map(m => `
+                    const paymentMethodsHtml = paymentMethods.map(m => `
                         <div class="payment-method-admin">
                             <div class="flex items-center gap-3">
                                 <div class="payment-icon"><i class="${m.icon}"></i></div>
@@ -2922,8 +2940,7 @@
                         </div>
                     `).join('');
 
-                    // عرض الأقسام مع إمكانية رفع الصورة
-                    const categoriesHtml = this.state.categories.map(cat => `
+                    const categoriesHtml = categories.map(cat => `
                         <div class="payment-method-admin">
                             <div class="flex items-center gap-3">
                                 <div class="payment-icon">
@@ -2938,7 +2955,7 @@
                         </div>
                     `).join('');
 
-                    const productsHtml = this.state.products.map(prod => `
+                    const productsHtml = products.map(prod => `
                         <div class="payment-method-admin">
                             <div class="flex items-center gap-3">
                                 <div class="payment-icon">
@@ -3233,7 +3250,7 @@
                     const modalOverlay = document.getElementById('paymentMethodModalOverlay');
                     const modalContent = document.getElementById('paymentMethodModalContent');
                     const prod = editingId ? this.state.products.find(p => p.id === editingId) : null;
-                    const categoryOptions = this.state.categories.map(c => `<option value="${c.id}" ${prod?.categoryId === c.id ? 'selected' : ''}>${c.name}</option>`).join('');
+                    const categoryOptions = (this.state.categories || []).map(c => `<option value="${c.id}" ${prod?.categoryId === c.id ? 'selected' : ''}>${c.name}</option>`).join('');
 
                     let imagePreviewHtml = '';
                     if (prod?.image) {
