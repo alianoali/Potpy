@@ -18,7 +18,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* الأنماط الموجودة سابقاً - لم يتم تغييرها */
         * {
             margin: 0;
             padding: 0;
@@ -598,32 +597,25 @@
             border-radius: 8px;
             object-fit: cover;
         }
-
-        /* أنماط إضافية لمعاينة الصورة */
-        .image-preview {
-            width: 100px;
-            height: 100px;
-            border-radius: 12px;
-            object-fit: cover;
-            border: 2px solid rgba(255,255,255,0.2);
-            margin-top: 8px;
-        }
     </style>
 </head>
 <body>
-    <!-- نفس عناصر HTML السابقة بدون تغيير -->
+    <!-- Background Elements -->
     <div class="ambient-light">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
     </div>
 
+    <!-- Theme Toggle -->
     <div class="theme-toggle" id="themeToggle">
         <i class="fa-solid fa-moon" id="themeIcon"></i>
         <span class="text-sm">السمة</span>
     </div>
 
+    <!-- Main Container -->
     <div id="app" class="w-full max-w-md p-5 relative"></div>
 
+    <!-- Settings Panel -->
     <div class="settings-overlay" id="settingsOverlay"></div>
     <div class="settings-panel" id="settingsPanel">
         <div class="flex justify-between items-center mb-4">
@@ -664,25 +656,32 @@
         </div>
     </div>
 
+    <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- Wallet Modal (reused for store, product details, admin) -->
     <div class="wallet-modal-overlay" id="walletModalOverlay">
         <div class="wallet-modal" id="walletModalContent"></div>
     </div>
 
+    <!-- Admin Panel Modal -->
     <div class="wallet-modal-overlay" id="adminPanelOverlay">
         <div class="wallet-modal" id="adminPanelContent" style="max-width: 500px;"></div>
     </div>
 
+    <!-- Payment Method Modal -->
     <div class="wallet-modal-overlay" id="paymentMethodModalOverlay">
         <div class="wallet-modal" id="paymentMethodModalContent" style="max-width: 450px;"></div>
     </div>
+
+    <!-- Store Product Details Modal (we'll reuse walletModalOverlay but keep separate if needed) -->
+    <!-- Not needed, reuse walletModalOverlay with dynamic content -->
 
     <script>
         (function() {
             // ======================== الإعدادات الثابتة ========================
             const CONFIG = {
-                ADMIN_ID: 7609492965,
+                ADMIN_ID: 7609492965, // غير هذا إلى معرف المشرف الخاص بك
                 DEFAULT_BALANCE: 1000,
                 MAX_TRANSACTIONS: 50,
                 STORAGE_KEYS: {
@@ -696,10 +695,11 @@
                     THEME: 'theme',
                     SETTINGS: 'settings',
                     NOTIFICATIONS: 'notifications',
+                    // مفاتيح المتجر
                     STORE_CATEGORIES: 'store_categories',
                     STORE_PRODUCTS: 'store_products',
                     STORE_ORDERS: 'store_orders',
-                    STORE_CART: 'store_cart'
+                    STORE_CART: 'store_cart' // لحفظ سلة المستخدم
                 }
             };
 
@@ -957,7 +957,7 @@
                     this.categories = [];
                     this.products = [];
                     this.orders = [];
-                    this.cart = [];
+                    this.cart = []; // سلة مؤقتة (سيتم حفظها في localStorage لكل مستخدم)
                 }
 
                 set(key, value) {
@@ -1002,10 +1002,11 @@
                     this.loadStats();
                     this.notificationService.loadNotifications();
                     
+                    // تحميل بيانات المتجر
                     this.loadCategories();
                     this.loadProducts();
                     this.loadOrders();
-                    this.loadCart();
+                    this.loadCart(); // تحميل سلة المستخدم الحالي إذا وجد
                 }
 
                 // ========== المحفظة ==========
@@ -1283,21 +1284,21 @@
                 }
 
                 // ========== المتجر المحسّن ==========
-                // الأقسام (تمت إضافة حقل image)
+                // الأقسام
                 loadCategories() {
                     const saved = StorageService.get(CONFIG.STORAGE_KEYS.STORE_CATEGORIES, null);
                     if (saved && Array.isArray(saved) && saved.length > 0) {
                         this.state.categories = saved;
                     } else {
                         this.state.categories = [
-                            { id: IdGenerator.generate('cat_'), name: '🎮 شحن الألعاب', icon: 'fa-gamepad', description: 'شحن عملات PUBG، Free Fire، Roblox', order: 1, image: '' },
-                            { id: IdGenerator.generate('cat_'), name: '📺 اشتراكات', icon: 'fa-tv', description: 'نتفلكس، سبوتيفاي، يوتيوب بريميوم', order: 2, image: '' },
-                            { id: IdGenerator.generate('cat_'), name: '💳 بطاقات هدايا', icon: 'fa-gift', description: 'Google Play، App Store، أمازون', order: 3, image: '' },
-                            { id: IdGenerator.generate('cat_'), name: '📱 رصيد جوال', icon: 'fa-mobile', description: 'شحن رصيد، فودافون كاش', order: 4, image: '' },
-                            { id: IdGenerator.generate('cat_'), name: '💻 برامج', icon: 'fa-computer', description: 'أوفيس، أدوبي، أنتي فيروس', order: 5, image: '' },
-                            { id: IdGenerator.generate('cat_'), name: '📚 كتب إلكترونية', icon: 'fa-book', description: 'كتب PDF، روايات', order: 6, image: '' },
-                            { id: IdGenerator.generate('cat_'), name: '🔑 مفاتيح تفعيل', icon: 'fa-key', description: 'تفعيل ويندوز، برامج', order: 7, image: '' },
-                            { id: IdGenerator.generate('cat_'), name: '🛠️ خدمات', icon: 'fa-brush', description: 'تصميم، برمجة، دعم فني', order: 8, image: '' }
+                            { id: IdGenerator.generate('cat_'), name: '🎮 شحن الألعاب', icon: 'fa-gamepad', description: 'شحن عملات PUBG، Free Fire، Roblox', order: 1 },
+                            { id: IdGenerator.generate('cat_'), name: '📺 اشتراكات', icon: 'fa-tv', description: 'نتفلكس، سبوتيفاي، يوتيوب بريميوم', order: 2 },
+                            { id: IdGenerator.generate('cat_'), name: '💳 بطاقات هدايا', icon: 'fa-gift', description: 'Google Play، App Store، أمازون', order: 3 },
+                            { id: IdGenerator.generate('cat_'), name: '📱 رصيد جوال', icon: 'fa-mobile', description: 'شحن رصيد، فودافون كاش', order: 4 },
+                            { id: IdGenerator.generate('cat_'), name: '💻 برامج', icon: 'fa-computer', description: 'أوفيس، أدوبي، أنتي فيروس', order: 5 },
+                            { id: IdGenerator.generate('cat_'), name: '📚 كتب إلكترونية', icon: 'fa-book', description: 'كتب PDF، روايات', order: 6 },
+                            { id: IdGenerator.generate('cat_'), name: '🔑 مفاتيح تفعيل', icon: 'fa-key', description: 'تفعيل ويندوز، برامج', order: 7 },
+                            { id: IdGenerator.generate('cat_'), name: '🛠️ خدمات', icon: 'fa-brush', description: 'تصميم، برمجة، دعم فني', order: 8 }
                         ];
                     }
                 }
@@ -1344,8 +1345,8 @@
                                 icon: 'fa-gamepad', 
                                 description: 'شحن 100 UC للعبة PUBG', 
                                 stock: -1,
-                                image: '',
-                                discount: 0,
+                                image: '', // يمكن إضافة رابط صورة
+                                discount: 0, // نسبة خصم
                                 rating: 4.5,
                                 reviewCount: 120,
                                 inputFields: [
@@ -1364,7 +1365,7 @@
                                 description: 'اشتراك نتفلكس لمدة شهر', 
                                 stock: -1,
                                 image: '',
-                                discount: 10,
+                                discount: 10, // خصم 10%
                                 rating: 4.8,
                                 reviewCount: 85,
                                 inputFields: [
@@ -1418,7 +1419,7 @@
                     this.saveProducts();
                 }
 
-                // الطلبات
+                // الطلبات (محسّن)
                 loadOrders() {
                     const saved = StorageService.get(CONFIG.STORAGE_KEYS.STORE_ORDERS, []);
                     this.state.orders = saved;
@@ -1471,7 +1472,7 @@
                         .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
                 }
 
-                // سلة التسوق
+                // سلة التسوق (مخزنة لكل مستخدم)
                 loadCart() {
                     if (!this.state.user) return;
                     const key = `${CONFIG.STORAGE_KEYS.STORE_CART}_${this.state.user.id}`;
@@ -1486,6 +1487,7 @@
                 }
 
                 addToCart(product, inputData = {}, quantity = 1) {
+                    // التحقق من المخزون
                     if (product.stock !== -1 && product.stock < quantity) {
                         return { success: false, message: 'الكمية المطلوبة غير متوفرة' };
                     }
@@ -2209,11 +2211,10 @@
                     const products = this.state.products;
                     const cart = this.state.cart;
 
-                    // تبويبات الأقسام مع إظهار الصورة إن وجدت
+                    // تبويبات الأقسام
                     const categoriesTabs = categories.map(cat => `
-                        <button class="category-tab px-3 py-1 rounded-full text-sm bg-white/10 hover:bg-white/20 flex items-center gap-1" data-cat-id="${cat.id}">
-                            ${cat.image ? `<img src="${cat.image}" class="w-5 h-5 rounded-full object-cover">` : `<i class="${cat.icon} ml-1"></i>`}
-                            ${cat.name}
+                        <button class="category-tab px-3 py-1 rounded-full text-sm bg-white/10 hover:bg-white/20" data-cat-id="${cat.id}">
+                            <i class="${cat.icon} ml-1"></i> ${cat.name}
                         </button>
                     `).join('');
 
@@ -2254,7 +2255,7 @@
                         return `
                             <div class="cart-item" data-cart-id="${item.id}">
                                 <div class="cart-item-image bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
-                                    ${item.image ? `<img src="${item.image}" class="w-full h-full object-cover">` : `<i class="${this.state.products.find(p=>p.id===item.productId)?.icon || 'fa-box'} text-xl text-blue-400"></i>`}
+                                    <i class="${this.state.products.find(p=>p.id===item.productId)?.icon || 'fa-box'} text-xl text-blue-400"></i>
                                 </div>
                                 <div class="flex-1">
                                     <div class="flex justify-between">
@@ -2532,7 +2533,7 @@
                         return `
                             <div class="cart-item" data-cart-id="${item.id}">
                                 <div class="cart-item-image bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
-                                    ${item.image ? `<img src="${item.image}" class="w-full h-full object-cover">` : `<i class="${this.state.products.find(p=>p.id===item.productId)?.icon || 'fa-box'} text-xl text-blue-400"></i>`}
+                                    <i class="${this.state.products.find(p=>p.id===item.productId)?.icon || 'fa-box'} text-xl text-blue-400"></i>
                                 </div>
                                 <div class="flex-1">
                                     <div class="flex justify-between">
@@ -2949,13 +2950,10 @@
                         </div>
                     `).join('');
 
-                    // عرض الأقسام مع إمكانية رفع الصورة
                     const categoriesHtml = this.state.categories.map(cat => `
                         <div class="payment-method-admin">
                             <div class="flex items-center gap-3">
-                                <div class="payment-icon">
-                                    ${cat.image ? `<img src="${cat.image}" class="w-full h-full object-cover">` : `<i class="${cat.icon}"></i>`}
-                                </div>
+                                <div class="payment-icon"><i class="${cat.icon}"></i></div>
                                 <div><div class="font-bold">${cat.name}</div><div class="text-xs text-gray-400">${cat.description || ''}</div></div>
                             </div>
                             <div class="actions">
@@ -2968,9 +2966,7 @@
                     const productsHtml = this.state.products.map(prod => `
                         <div class="payment-method-admin">
                             <div class="flex items-center gap-3">
-                                <div class="payment-icon">
-                                    ${prod.image ? `<img src="${prod.image}" class="w-full h-full object-cover">` : `<i class="${prod.icon}"></i>`}
-                                </div>
+                                <div class="payment-icon"><i class="${prod.icon}"></i></div>
                                 <div><div class="font-bold">${prod.name}</div><div class="text-xs text-gray-400">${prod.price} - ${prod.description?.substring(0,20)}...</div></div>
                             </div>
                             <div class="actions">
@@ -3122,7 +3118,7 @@
                     });
                 }
 
-                // نماذج الإضافة/التعديل المحسّنة مع رفع الصور
+                // نماذج الإضافة/التعديل (مختصرة ولكن محسّنة)
                 openPaymentMethodModal(editingId = null) {
                     const modalOverlay = document.getElementById('paymentMethodModalOverlay');
                     const modalContent = document.getElementById('paymentMethodModalContent');
@@ -3165,108 +3161,51 @@
                     });
                 }
 
-                // نموذج القسم مع رفع الصورة
                 openCategoryModal(editingId = null) {
                     const modalOverlay = document.getElementById('paymentMethodModalOverlay');
                     const modalContent = document.getElementById('paymentMethodModalContent');
                     const cat = editingId ? this.state.categories.find(c => c.id === editingId) : null;
-                    
-                    // إنشاء عنصر وهمي لمعاينة الصورة
-                    let imagePreviewHtml = '';
-                    if (cat?.image) {
-                        imagePreviewHtml = `<img src="${cat.image}" class="image-preview" id="categoryImagePreview">`;
-                    } else {
-                        imagePreviewHtml = `<div class="image-preview hidden" id="categoryImagePreview"></div>`;
-                    }
-
                     modalContent.innerHTML = `
                         <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">${cat ? 'تعديل' : 'إضافة'} قسم</h2><button id="closeCategoryModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><i class="fa-solid fa-times"></i></button></div>
                         <form id="categoryForm" class="space-y-3">
                             <input type="hidden" id="categoryId" value="${cat?.id || ''}">
                             <div><label class="text-sm text-gray-400">اسم القسم</label><input type="text" id="categoryName" required value="${cat?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div><label class="text-sm text-gray-400">الأيقونة (مثل fa-gamepad) - اختياري إذا وجدت صورة</label><input type="text" id="categoryIcon" value="${cat?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                            <div><label class="text-sm text-gray-400">الأيقونة (مثل fa-gamepad)</label><input type="text" id="categoryIcon" value="${cat?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
                             <div><label class="text-sm text-gray-400">الوصف</label><input type="text" id="categoryDescription" value="${cat?.description || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
                             <div><label class="text-sm text-gray-400">الترتيب</label><input type="number" id="categoryOrder" value="${cat?.order || 0}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div>
-                                <label class="text-sm text-gray-400">صورة القسم (اختياري)</label>
-                                <input type="file" id="categoryImageFile" accept="image/*" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                                ${imagePreviewHtml}
-                            </div>
                             <div class="flex gap-2 pt-2"><button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button><button type="button" id="cancelCategoryModal" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button></div>
                         </form>
                     `;
                     modalOverlay.classList.add('open');
-                    
-                    // معاينة الصورة عند الاختيار
-                    const fileInput = document.getElementById('categoryImageFile');
-                    const preview = document.getElementById('categoryImagePreview');
-                    fileInput.addEventListener('change', (e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                            const reader = new FileReader();
-                            reader.onload = (e) => {
-                                preview.src = e.target.result;
-                                preview.classList.remove('hidden');
-                            };
-                            reader.readAsDataURL(file);
-                        } else {
-                            preview.classList.add('hidden');
-                        }
-                    });
-
                     document.getElementById('closeCategoryModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
                     document.getElementById('cancelCategoryModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
                     modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); });
-                    
                     document.getElementById('categoryForm').addEventListener('submit', (e) => {
                         e.preventDefault();
-                        
-                        // قراءة الصورة إن وجدت
-                        const file = fileInput.files[0];
-                        const processForm = (imageBase64) => {
-                            const formData = {
-                                name: document.getElementById('categoryName').value,
-                                icon: document.getElementById('categoryIcon').value,
-                                description: document.getElementById('categoryDescription').value,
-                                order: parseInt(document.getElementById('categoryOrder').value) || 0,
-                                image: imageBase64 || cat?.image || ''
-                            };
-                            const id = document.getElementById('categoryId').value;
-                            if (id) {
-                                this.data.updateCategory(id, formData);
-                                this.toast.success('تم التحديث');
-                            } else {
-                                this.data.addCategory(formData);
-                                this.toast.success('تمت الإضافة');
-                            }
-                            modalOverlay.classList.remove('open');
-                            this.openAdminPanel();
+                        const formData = {
+                            name: document.getElementById('categoryName').value,
+                            icon: document.getElementById('categoryIcon').value,
+                            description: document.getElementById('categoryDescription').value,
+                            order: parseInt(document.getElementById('categoryOrder').value) || 0
                         };
-
-                        if (file) {
-                            const reader = new FileReader();
-                            reader.onload = (e) => processForm(e.target.result);
-                            reader.readAsDataURL(file);
+                        const id = document.getElementById('categoryId').value;
+                        if (id) {
+                            this.data.updateCategory(id, formData);
+                            this.toast.success('تم التحديث');
                         } else {
-                            processForm(null);
+                            this.data.addCategory(formData);
+                            this.toast.success('تمت الإضافة');
                         }
+                        modalOverlay.classList.remove('open');
+                        this.openAdminPanel();
                     });
                 }
 
-                // نموذج المنتج مع رفع الصورة وتحسين حقول JSON
                 openProductModal(editingId = null) {
                     const modalOverlay = document.getElementById('paymentMethodModalOverlay');
                     const modalContent = document.getElementById('paymentMethodModalContent');
                     const prod = editingId ? this.state.products.find(p => p.id === editingId) : null;
                     const categoryOptions = this.state.categories.map(c => `<option value="${c.id}" ${prod?.categoryId === c.id ? 'selected' : ''}>${c.name}</option>`).join('');
-
-                    let imagePreviewHtml = '';
-                    if (prod?.image) {
-                        imagePreviewHtml = `<img src="${prod.image}" class="image-preview" id="productImagePreview">`;
-                    } else {
-                        imagePreviewHtml = `<div class="image-preview hidden" id="productImagePreview"></div>`;
-                    }
-
                     modalContent.innerHTML = `
                         <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">${prod ? 'تعديل' : 'إضافة'} منتج</h2><button id="closeProductModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><i class="fa-solid fa-times"></i></button></div>
                         <form id="productForm" class="space-y-3 max-h-96 overflow-y-auto p-1">
@@ -3279,90 +3218,50 @@
                                     ${categoryOptions}
                                 </select>
                             </div>
-                            <div><label class="text-sm text-gray-400">الأيقونة (اختياري إذا وجدت صورة)</label><input type="text" id="productIcon" value="${prod?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
+                            <div><label class="text-sm text-gray-400">الأيقونة</label><input type="text" id="productIcon" value="${prod?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
                             <div><label class="text-sm text-gray-400">المخزون (-1 لغير محدود)</label><input type="number" id="productStock" value="${prod?.stock ?? -1}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
                             <div><label class="text-sm text-gray-400">الخصم (%)</label><input type="number" id="productDiscount" value="${prod?.discount || 0}" min="0" max="100" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div><label class="text-sm text-gray-400">صورة المنتج</label>
-                                <input type="file" id="productImageFile" accept="image/*" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
-                                ${imagePreviewHtml}
-                            </div>
+                            <div><label class="text-sm text-gray-400">رابط الصورة (أو اتركه فارغاً)</label><input type="text" id="productImage" value="${prod?.image || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
                             <div><label class="text-sm text-gray-400">التقييم (اختياري)</label><input type="number" id="productRating" value="${prod?.rating || 0}" step="0.1" min="0" max="5" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
                             <div><label class="text-sm text-gray-400">عدد التقييمات</label><input type="number" id="productReviewCount" value="${prod?.reviewCount || 0}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white"></div>
-                            <div><label class="text-sm text-gray-400">الحقول المطلوبة (JSON)</label>
-                                <textarea id="productInputFields" rows="3" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white font-mono text-xs">${JSON.stringify(prod?.inputFields || [], null, 2)}</textarea>
-                                <p class="text-xs text-gray-400 mt-1">مثال: [{"name":"userId","label":"معرف المستخدم","type":"text","required":true,"placeholder":"أدخل الـ ID"}]</p>
-                            </div>
-                            <div><label class="text-sm text-gray-400">بيانات التسليم (JSON)</label>
-                                <textarea id="productFulfillment" rows="3" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white font-mono text-xs">${JSON.stringify(prod?.fulfillmentData || { type: 'manual' }, null, 2)}</textarea>
-                                <p class="text-xs text-gray-400 mt-1">مثال: {"type":"manual","instructions":"سيتم الشحن خلال 24 ساعة"}</p>
-                            </div>
+                            <div><label class="text-sm text-gray-400">الحقول المطلوبة (JSON)</label><textarea id="productInputFields" rows="3" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white font-mono text-xs">${JSON.stringify(prod?.inputFields || [], null, 2)}</textarea></div>
+                            <div><label class="text-sm text-gray-400">بيانات التسليم (JSON)</label><textarea id="productFulfillment" rows="3" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white font-mono text-xs">${JSON.stringify(prod?.fulfillmentData || { type: 'manual' }, null, 2)}</textarea></div>
                             <div class="flex gap-2 pt-2"><button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button><button type="button" id="cancelProductModal" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button></div>
                         </form>
                     `;
                     modalOverlay.classList.add('open');
-
-                    // معاينة الصورة
-                    const fileInput = document.getElementById('productImageFile');
-                    const preview = document.getElementById('productImagePreview');
-                    fileInput.addEventListener('change', (e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                            const reader = new FileReader();
-                            reader.onload = (e) => {
-                                preview.src = e.target.result;
-                                preview.classList.remove('hidden');
-                            };
-                            reader.readAsDataURL(file);
-                        } else {
-                            preview.classList.add('hidden');
-                        }
-                    });
-
                     document.getElementById('closeProductModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
                     document.getElementById('cancelProductModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
                     modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); });
-
                     document.getElementById('productForm').addEventListener('submit', (e) => {
                         e.preventDefault();
-                        
-                        const file = fileInput.files[0];
-                        const processForm = (imageBase64) => {
-                            try {
-                                const formData = {
-                                    name: document.getElementById('productName').value,
-                                    description: document.getElementById('productDescription').value,
-                                    price: parseFloat(document.getElementById('productPrice').value),
-                                    categoryId: document.getElementById('productCategoryId').value,
-                                    icon: document.getElementById('productIcon').value,
-                                    stock: parseInt(document.getElementById('productStock').value),
-                                    discount: parseFloat(document.getElementById('productDiscount').value) || 0,
-                                    image: imageBase64 || prod?.image || '',
-                                    rating: parseFloat(document.getElementById('productRating').value) || 0,
-                                    reviewCount: parseInt(document.getElementById('productReviewCount').value) || 0,
-                                    inputFields: JSON.parse(document.getElementById('productInputFields').value),
-                                    fulfillmentData: JSON.parse(document.getElementById('productFulfillment').value)
-                                };
-                                const id = document.getElementById('productId').value;
-                                if (id) {
-                                    this.data.updateProduct(id, formData);
-                                    this.toast.success('تم التحديث');
-                                } else {
-                                    this.data.addProduct(formData);
-                                    this.toast.success('تمت الإضافة');
-                                }
-                                modalOverlay.classList.remove('open');
-                                this.openAdminPanel();
-                            } catch (err) {
-                                this.toast.error('خطأ في صيغة JSON: ' + err.message);
+                        try {
+                            const formData = {
+                                name: document.getElementById('productName').value,
+                                description: document.getElementById('productDescription').value,
+                                price: parseFloat(document.getElementById('productPrice').value),
+                                categoryId: document.getElementById('productCategoryId').value,
+                                icon: document.getElementById('productIcon').value,
+                                stock: parseInt(document.getElementById('productStock').value),
+                                discount: parseFloat(document.getElementById('productDiscount').value) || 0,
+                                image: document.getElementById('productImage').value,
+                                rating: parseFloat(document.getElementById('productRating').value) || 0,
+                                reviewCount: parseInt(document.getElementById('productReviewCount').value) || 0,
+                                inputFields: JSON.parse(document.getElementById('productInputFields').value),
+                                fulfillmentData: JSON.parse(document.getElementById('productFulfillment').value)
+                            };
+                            const id = document.getElementById('productId').value;
+                            if (id) {
+                                this.data.updateProduct(id, formData);
+                                this.toast.success('تم التحديث');
+                            } else {
+                                this.data.addProduct(formData);
+                                this.toast.success('تمت الإضافة');
                             }
-                        };
-
-                        if (file) {
-                            const reader = new FileReader();
-                            reader.onload = (e) => processForm(e.target.result);
-                            reader.readAsDataURL(file);
-                        } else {
-                            processForm(null);
+                            modalOverlay.classList.remove('open');
+                            this.openAdminPanel();
+                        } catch (err) {
+                            this.toast.error('خطأ في صيغة JSON');
                         }
                     });
                 }
