@@ -18,7 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* الأنماط الموجودة سابقاً - لم يتم تغييرها */
+        /* الأنماط كما هي دون تغيير */
         * {
             margin: 0;
             padding: 0;
@@ -1283,7 +1283,6 @@
                 }
 
                 // ========== المتجر المحسّن ==========
-                // الأقسام (تمت إضافة حقل image)
                 loadCategories() {
                     const saved = StorageService.get(CONFIG.STORAGE_KEYS.STORE_CATEGORIES, null);
                     if (saved && Array.isArray(saved) && saved.length > 0) {
@@ -1328,7 +1327,7 @@
                     this.saveCategories();
                 }
 
-                // المنتجات (محسّن)
+                // المنتجات
                 loadProducts() {
                     const saved = StorageService.get(CONFIG.STORAGE_KEYS.STORE_PRODUCTS, null);
                     if (saved && Array.isArray(saved) && saved.length > 0) {
@@ -1538,6 +1537,10 @@
                     this.tg = telegramService;
                     this.toast = toast;
                     this.appContainer = document.getElementById('app');
+                    
+                    // متغيرات لتخزين حالة الفلترة الحالية في المتجر
+                    this.currentCategoryFilter = 'all';
+                    this.currentSearchTerm = '';
                     
                     this.state.addEventListener('balanceUpdated', () => this.updateBalanceDisplay());
                     this.state.addEventListener('statsUpdated', () => this.updateStatsDisplay());
@@ -2341,45 +2344,25 @@
                         });
                     });
 
-                    // إضافة/إزالة من السلة
+                    // زر الإضافة على البطاقة: يفتح التفاصيل بدلاً من الإضافة المباشرة
                     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             e.stopPropagation();
                             const prodId = btn.dataset.prodId;
-                            const product = this.state.products.find(p => p.id === prodId);
-                            if (product) {
-                                const existing = this.state.cart.find(item => item.productId === prodId);
-                                if (!existing) {
-                                    // إضافة للسلة بكمية 1
-                                    const result = this.data.addToCart(product, {}, 1);
-                                    if (result.success) {
-                                        this.toast.success('تمت الإضافة للسلة');
-                                    } else {
-                                        this.toast.error(result.message);
-                                    }
-                                } else {
-                                    // إزالة من السلة
-                                    this.data.removeFromCart(existing.id);
-                                    this.toast.info('تمت الإزالة من السلة');
-                                }
-                                // تحديث عرض المتجر
-                                const search = document.getElementById('storeSearch')?.value || '';
-                                const cat = document.getElementById('storeCategoryFilter')?.value || 'all';
-                                this.filterStoreProducts(cat, search);
-                                this.updateCartDisplay();
-                            }
+                            this.showProductDetails(prodId);
                         });
                     });
 
                     // فلترة حسب القسم
                     document.getElementById('storeCategoryFilter').addEventListener('change', (e) => {
-                        const catId = e.target.value;
-                        this.filterStoreProducts(catId, document.getElementById('storeSearch').value);
+                        this.currentCategoryFilter = e.target.value;
+                        this.filterStoreProducts(this.currentCategoryFilter, document.getElementById('storeSearch').value);
                     });
 
                     document.querySelectorAll('.category-tab').forEach(tab => {
                         tab.addEventListener('click', () => {
                             const catId = tab.dataset.catId;
+                            this.currentCategoryFilter = catId;
                             document.getElementById('storeCategoryFilter').value = catId;
                             this.filterStoreProducts(catId, document.getElementById('storeSearch').value);
                             document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('bg-blue-600'));
@@ -2389,8 +2372,8 @@
 
                     // بحث
                     document.getElementById('storeSearch').addEventListener('input', (e) => {
-                        const searchTerm = e.target.value.toLowerCase();
-                        this.filterStoreProducts(document.getElementById('storeCategoryFilter').value, searchTerm);
+                        this.currentSearchTerm = e.target.value.toLowerCase();
+                        this.filterStoreProducts(this.currentCategoryFilter, this.currentSearchTerm);
                     });
 
                     // أحداث السلة: زيادة الكمية، نقصان، إزالة
@@ -2423,7 +2406,6 @@
                                 this.updateCartDisplay();
                                 this.toast.info('تم تحديث الكمية');
                             } else if (item && item.quantity === 1) {
-                                // يمكن إزالته
                                 this.data.removeFromCart(cartId);
                                 this.updateCartDisplay();
                                 this.toast.info('تمت الإزالة من السلة');
@@ -2449,6 +2431,10 @@
                 }
 
                 filterStoreProducts(catId, searchTerm = '') {
+                    // تحديث المتغيرات الحالية
+                    this.currentCategoryFilter = catId;
+                    this.currentSearchTerm = searchTerm;
+
                     let filtered = this.state.products;
                     if (catId !== 'all') {
                         filtered = filtered.filter(p => p.categoryId === catId);
@@ -2502,25 +2488,7 @@
                         btn.addEventListener('click', (e) => {
                             e.stopPropagation();
                             const prodId = btn.dataset.prodId;
-                            const product = this.state.products.find(p => p.id === prodId);
-                            if (product) {
-                                const existing = this.state.cart.find(item => item.productId === prodId);
-                                if (!existing) {
-                                    const result = this.data.addToCart(product, {}, 1);
-                                    if (result.success) {
-                                        this.toast.success('تمت الإضافة للسلة');
-                                    } else {
-                                        this.toast.error(result.message);
-                                    }
-                                } else {
-                                    this.data.removeFromCart(existing.id);
-                                    this.toast.info('تمت الإزالة من السلة');
-                                }
-                                const search = document.getElementById('storeSearch').value;
-                                const cat = document.getElementById('storeCategoryFilter').value;
-                                this.filterStoreProducts(cat, search);
-                                this.updateCartDisplay();
-                            }
+                            this.showProductDetails(prodId);
                         });
                     });
                 }
@@ -2690,6 +2658,9 @@
                         const result = this.data.addToCart(product, inputData, quantity);
                         if (result.success) {
                             this.toast.success('تمت الإضافة للسلة');
+                            // تحديث عرض المتجر بعد الإضافة
+                            this.filterStoreProducts(this.currentCategoryFilter, this.currentSearchTerm);
+                            this.updateCartDisplay();
                         } else {
                             this.toast.error(result.message);
                         }
@@ -2751,6 +2722,8 @@
                         'success'
                     );
                     
+                    // تحديث المتجر
+                    this.filterStoreProducts(this.currentCategoryFilter, this.currentSearchTerm);
                     this.updateBalanceDisplay();
                 }
 
@@ -3200,19 +3173,21 @@
                     // معاينة الصورة عند الاختيار
                     const fileInput = document.getElementById('categoryImageFile');
                     const preview = document.getElementById('categoryImagePreview');
-                    fileInput.addEventListener('change', (e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                            const reader = new FileReader();
-                            reader.onload = (e) => {
-                                preview.src = e.target.result;
-                                preview.classList.remove('hidden');
-                            };
-                            reader.readAsDataURL(file);
-                        } else {
-                            preview.classList.add('hidden');
-                        }
-                    });
+                    if (fileInput) {
+                        fileInput.addEventListener('change', (e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                                const reader = new FileReader();
+                                reader.onload = (e) => {
+                                    preview.src = e.target.result;
+                                    preview.classList.remove('hidden');
+                                };
+                                reader.readAsDataURL(file);
+                            } else {
+                                preview.classList.add('hidden');
+                            }
+                        });
+                    }
 
                     document.getElementById('closeCategoryModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
                     document.getElementById('cancelCategoryModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
@@ -3222,7 +3197,7 @@
                         e.preventDefault();
                         
                         // قراءة الصورة إن وجدت
-                        const file = fileInput.files[0];
+                        const file = fileInput?.files[0];
                         const processForm = (imageBase64) => {
                             const formData = {
                                 name: document.getElementById('categoryName').value,
@@ -3304,19 +3279,21 @@
                     // معاينة الصورة
                     const fileInput = document.getElementById('productImageFile');
                     const preview = document.getElementById('productImagePreview');
-                    fileInput.addEventListener('change', (e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                            const reader = new FileReader();
-                            reader.onload = (e) => {
-                                preview.src = e.target.result;
-                                preview.classList.remove('hidden');
-                            };
-                            reader.readAsDataURL(file);
-                        } else {
-                            preview.classList.add('hidden');
-                        }
-                    });
+                    if (fileInput) {
+                        fileInput.addEventListener('change', (e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                                const reader = new FileReader();
+                                reader.onload = (e) => {
+                                    preview.src = e.target.result;
+                                    preview.classList.remove('hidden');
+                                };
+                                reader.readAsDataURL(file);
+                            } else {
+                                preview.classList.add('hidden');
+                            }
+                        });
+                    }
 
                     document.getElementById('closeProductModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
                     document.getElementById('cancelProductModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
@@ -3325,7 +3302,7 @@
                     document.getElementById('productForm').addEventListener('submit', (e) => {
                         e.preventDefault();
                         
-                        const file = fileInput.files[0];
+                        const file = fileInput?.files[0];
                         const processForm = (imageBase64) => {
                             try {
                                 const formData = {
