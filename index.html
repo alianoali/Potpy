@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>المحفظة الذكية - بوابة تيليجرام</title>
+    <title>المحفظة الذكية - المتجر الإلكتروني</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,6 +17,9 @@
     <!-- Google Fonts (Cairo) -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
+    <!-- Chart.js للإحصائيات -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -29,9 +32,6 @@
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: #ffffff;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -50,23 +50,17 @@
             border-color: rgba(59, 130, 246, 0.3);
         }
 
-        /* Animations محسنة */
+        /* Animations */
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .animate-slide {
             animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
-        /* Loader محسن */
+        /* Loader */
         .loader {
             width: 48px;
             height: 48px;
@@ -80,7 +74,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Toast Notifications محسنة */
+        /* Toast Notifications */
         .toast-container {
             position: fixed;
             bottom: 20px;
@@ -146,7 +140,7 @@
             50% { transform: scale(1.1); }
         }
 
-        /* Wallet Icon محسن */
+        /* Wallet Icon */
         .wallet-icon {
             width: 90px;
             height: 90px;
@@ -177,7 +171,7 @@
             50% { transform: translateY(-10px); }
         }
 
-        /* Modal محسن */
+        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -208,7 +202,7 @@
             border-radius: 32px;
             padding: 24px;
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
             max-height: 85vh;
             overflow-y: auto;
             transform: scale(0.9) translateY(20px);
@@ -220,7 +214,7 @@
             transform: scale(1) translateY(0);
         }
 
-        /* Tabs محسنة */
+        /* Tabs */
         .modal-tab {
             flex: 1;
             padding: 10px;
@@ -239,7 +233,7 @@
             color: #3b82f6;
         }
 
-        /* Payment Methods محسنة */
+        /* Payment Methods */
         .payment-item {
             display: flex;
             align-items: center;
@@ -276,7 +270,7 @@
             color: white;
         }
 
-        /* Inputs محسنة */
+        /* Inputs */
         .custom-input {
             width: 100%;
             background: rgba(0,0,0,0.3);
@@ -298,7 +292,7 @@
             color: #64748b;
         }
 
-        /* Buttons محسنة */
+        /* Buttons */
         .btn-primary {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             border: none;
@@ -338,7 +332,7 @@
             background: rgba(255,255,255,0.1);
         }
 
-        /* Scrollbar محسنة */
+        /* Scrollbar */
         .scroll-custom::-webkit-scrollbar {
             width: 6px;
         }
@@ -357,21 +351,38 @@
             background: #3b82f6;
         }
 
-        /* Product Card محسن */
+        /* Product Card */
         .product-card {
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.05);
             border-radius: 20px;
             padding: 16px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             position: relative;
+            overflow: hidden;
         }
 
         .product-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-4px) scale(1.02);
             border-color: #3b82f6;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.3);
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover::before {
+            transform: translateX(0);
         }
 
         .discount-badge {
@@ -380,11 +391,24 @@
             right: 12px;
             background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 20px;
+            padding: 4px 10px;
+            border-radius: 30px;
             z-index: 10;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 140px;
+            border-radius: 16px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #3b82f620, #8b5cf620);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
         }
 
         /* Status Badges */
@@ -399,10 +423,177 @@
         .status-pending { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
         .status-approved { background: rgba(16, 185, 129, 0.2); color: #10b981; }
         .status-rejected { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-processing { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .status-completed { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-cancelled { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        /* Stars Rating */
+        .stars {
+            display: inline-flex;
+            gap: 2px;
+            direction: ltr;
+        }
+
+        .star {
+            color: #f59e0b;
+            font-size: 14px;
+        }
+
+        .star.empty {
+            color: #475569;
+        }
+
+        /* Admin Card */
+        .admin-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+
+        .admin-card:hover {
+            border-color: #f59e0b;
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.1);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        /* Table */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th {
+            text-align: right;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .admin-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #475569;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #3b82f6;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Color Picker */
+        .color-picker {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+        }
+
+        /* Drag and Drop */
+        .draggable {
+            cursor: move;
+        }
+
+        .draggable.dragging {
+            opacity: 0.5;
+        }
+
+        /* Gallery */
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+        }
+
+        .gallery-item .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            background: rgba(239, 68, 68, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .gallery-item:hover .remove-image {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
-    <div id="app" class="w-full max-w-md p-4"></div>
+    <div id="app" class="w-full max-w-md mx-auto p-4"></div>
 
     <!-- Modal Container -->
     <div class="modal-overlay" id="modalOverlay">
@@ -420,21 +611,23 @@
                 DEFAULT_BALANCE: 1000,
                 APP_NAME: 'المحفظة الذكية',
                 STORAGE_KEYS: {
-                    USERS: 'smart_wallet_users',
-                    WALLET: 'smart_wallet_data',
-                    PAYMENT_METHODS: 'smart_wallet_payments',
-                    DEPOSITS: 'smart_wallet_deposits',
-                    WITHDRAWALS: 'smart_wallet_withdrawals',
-                    PRODUCTS: 'smart_wallet_products',
-                    CATEGORIES: 'smart_wallet_categories',
-                    ORDERS: 'smart_wallet_orders',
-                    CART: 'smart_wallet_cart',
-                    NOTIFICATIONS: 'smart_wallet_notifications',
-                    STATS: 'smart_wallet_stats'
+                    USERS: 'smart_wallet_users_v2',
+                    WALLET: 'smart_wallet_data_v2',
+                    PAYMENT_METHODS: 'smart_wallet_payments_v2',
+                    DEPOSITS: 'smart_wallet_deposits_v2',
+                    WITHDRAWALS: 'smart_wallet_withdrawals_v2',
+                    PRODUCTS: 'smart_wallet_products_v2',
+                    CATEGORIES: 'smart_wallet_categories_v2',
+                    ORDERS: 'smart_wallet_orders_v2',
+                    CART: 'smart_wallet_cart_v2',
+                    NOTIFICATIONS: 'smart_wallet_notifications_v2',
+                    STATS: 'smart_wallet_stats_v2',
+                    COUPONS: 'smart_wallet_coupons_v2',
+                    SETTINGS: 'smart_wallet_settings_v2'
                 }
             };
 
-            // ======================== Toast System محسن ========================
+            // ======================== Toast System ========================
             class Toast {
                 constructor() {
                     this.container = document.getElementById('toastContainer');
@@ -453,7 +646,7 @@
                     
                     toast.innerHTML = `
                         <i class="fas ${icons[type]} text-${type === 'success' ? 'green' : type === 'error' ? 'red' : type === 'warning' ? 'yellow' : 'blue'}-400 text-xl"></i>
-                        <div>${message}</div>
+                        <div class="flex-1">${message}</div>
                     `;
                     
                     this.container.appendChild(toast);
@@ -469,7 +662,7 @@
                 info(message) { this.show(message, 'info'); }
             }
 
-            // ======================== Storage Service محسن ========================
+            // ======================== Storage Service ========================
             class Storage {
                 static get(key, defaultValue = null) {
                     try {
@@ -499,12 +692,12 @@
                 }
             }
 
-            // ======================== ID Generator محسن ========================
+            // ======================== ID Generator ========================
             const generateId = (prefix = '') => {
                 return prefix + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             };
 
-            // ======================== Date Utils محسنة ========================
+            // ======================== Date Utils ========================
             const formatDate = (isoString) => {
                 return new Date(isoString).toLocaleString('ar-EG', {
                     year: 'numeric',
@@ -515,7 +708,18 @@
                 });
             };
 
-            // ======================== Telegram Service محسن ========================
+            const formatRelativeTime = (isoString) => {
+                const now = new Date();
+                const date = new Date(isoString);
+                const diff = Math.floor((now - date) / 1000);
+                
+                if (diff < 60) return 'منذ لحظات';
+                if (diff < 3600) return `منذ ${Math.floor(diff / 60)} دقيقة`;
+                if (diff < 86400) return `منذ ${Math.floor(diff / 3600)} ساعة`;
+                return formatDate(isoString);
+            };
+
+            // ======================== Telegram Service ========================
             class TelegramService {
                 constructor() {
                     this.tg = window.Telegram?.WebApp || null;
@@ -527,6 +731,8 @@
                     this.tg.expand();
                     this.tg.ready();
                     this.tg.disableVerticalSwipes();
+                    this.tg.setHeaderColor('#0f172a');
+                    this.tg.setBackgroundColor('#0f172a');
                     return true;
                 }
 
@@ -540,6 +746,19 @@
 
                 showAlert(message, title = 'تنبيه') {
                     this.tg?.showPopup({ title, message, buttons: [{ type: 'ok', text: 'حسناً' }] });
+                }
+
+                showConfirm(message, title = 'تأكيد', onConfirm) {
+                    this.tg?.showPopup({
+                        title,
+                        message,
+                        buttons: [
+                            { id: 'confirm', type: 'ok', text: 'تأكيد' },
+                            { id: 'cancel', type: 'cancel', text: 'إلغاء' }
+                        ]
+                    }, (btnId) => {
+                        if (btnId === 'confirm' && onConfirm) onConfirm();
+                    });
                 }
 
                 setMainButton(text, callback) {
@@ -557,7 +776,7 @@
                 }
             }
 
-            // ======================== Data Service محسن ========================
+            // ======================== Advanced Data Service ========================
             class DataService {
                 constructor() {
                     this.user = null;
@@ -571,7 +790,30 @@
                     this.orders = [];
                     this.cart = [];
                     this.notifications = [];
-                    this.stats = { users: 0, dailyOps: 0 };
+                    this.coupons = [];
+                    this.settings = {
+                        storeName: 'المتجر الإلكتروني',
+                        storeLogo: 'fa-store',
+                        primaryColor: '#3b82f6',
+                        secondaryColor: '#8b5cf6',
+                        minWithdraw: 10,
+                        maxWithdraw: 10000,
+                        withdrawFee: 0,
+                        enableReviews: true,
+                        enableCoupons: true,
+                        enableNotifications: true,
+                        maintenance: false
+                    };
+                    this.stats = {
+                        users: 0,
+                        dailyOps: 0,
+                        totalSales: 0,
+                        totalOrders: 0,
+                        totalProducts: 0,
+                        totalCategories: 0,
+                        revenue: 0,
+                        lastUpdate: new Date().toISOString()
+                    };
                     
                     this.loadAll();
                 }
@@ -592,7 +834,8 @@
                             icon: 'fa-brands fa-tether',
                             description: 'عملة رقمية مستقرة',
                             depositDetails: 'العنوان: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ\nالشبكة: TRC20',
-                            withdrawDetails: 'أدخل عنوان USDT الخاص بك'
+                            withdrawDetails: 'أدخل عنوان USDT الخاص بك',
+                            enabled: true
                         },
                         { 
                             id: generateId('pm_'), 
@@ -600,7 +843,8 @@
                             icon: 'fa-regular fa-credit-card',
                             description: 'بطاقات ائتمانية',
                             depositDetails: 'رقم البطاقة: **** **** **** 1234',
-                            withdrawDetails: 'أدخل بيانات بطاقتك'
+                            withdrawDetails: 'أدخل بيانات بطاقتك',
+                            enabled: true
                         },
                         { 
                             id: generateId('pm_'), 
@@ -608,7 +852,8 @@
                             icon: 'fa-solid fa-building-columns',
                             description: 'حوالة بنكية',
                             depositDetails: 'IBAN: SA0380000000608010167519',
-                            withdrawDetails: 'أدخل رقم IBAN'
+                            withdrawDetails: 'أدخل رقم IBAN',
+                            enabled: true
                         }
                     ]);
 
@@ -618,9 +863,10 @@
 
                     // Load categories
                     this.categories = Storage.get(CONFIG.STORAGE_KEYS.CATEGORIES, [
-                        { id: generateId('cat_'), name: '🎮 ألعاب', icon: 'fa-gamepad', order: 1 },
-                        { id: generateId('cat_'), name: '📺 اشتراكات', icon: 'fa-tv', order: 2 },
-                        { id: generateId('cat_'), name: '💳 بطاقات', icon: 'fa-gift', order: 3 }
+                        { id: generateId('cat_'), name: '🎮 ألعاب', icon: 'fa-gamepad', order: 1, enabled: true },
+                        { id: generateId('cat_'), name: '📺 اشتراكات', icon: 'fa-tv', order: 2, enabled: true },
+                        { id: generateId('cat_'), name: '💳 بطاقات', icon: 'fa-gift', order: 3, enabled: true },
+                        { id: generateId('cat_'), name: '📱 تطبيقات', icon: 'fa-mobile', order: 4, enabled: true }
                     ]);
 
                     // Load products
@@ -636,38 +882,109 @@
                             image: '',
                             icon: 'fa-gamepad',
                             rating: 4.5,
+                            reviews: 128,
+                            featured: true,
                             inputFields: [
                                 { name: 'userId', label: 'معرف اللعبة', type: 'text', required: true }
                             ],
-                            fulfillment: { type: 'manual', instructions: 'سيتم الشحن خلال 24 ساعة' }
+                            fulfillment: { type: 'manual', instructions: 'سيتم الشحن خلال 24 ساعة' },
+                            gallery: [],
+                            tags: ['pubg', 'uc', 'شحن'],
+                            createdAt: new Date().toISOString()
                         },
                         {
                             id: generateId('prod_'),
                             name: 'نتفلكس شهر',
                             price: 30,
                             categoryId: this.categories[1].id,
-                            description: 'اشتراك نتفلكس لمدة شهر',
+                            description: 'اشتراك نتفلكس لمدة شهر بجودة عالية',
                             stock: 50,
                             discount: 10,
                             image: '',
                             icon: 'fa-film',
                             rating: 4.8,
+                            reviews: 256,
+                            featured: true,
                             inputFields: [
                                 { name: 'email', label: 'البريد الإلكتروني', type: 'email', required: true }
                             ],
-                            fulfillment: { type: 'account', value: 'user@example.com / pass123' }
+                            fulfillment: { type: 'account', value: 'user@example.com / pass123' },
+                            gallery: [],
+                            tags: ['netflix', 'streaming', 'اشتراك'],
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: generateId('prod_'),
+                            name: 'جوجل بلاي 10$',
+                            price: 45,
+                            categoryId: this.categories[2].id,
+                            description: 'بطاقة جوجل بلاي بقيمة 10 دولار',
+                            stock: 100,
+                            discount: 5,
+                            image: '',
+                            icon: 'fa-google-play',
+                            rating: 4.9,
+                            reviews: 89,
+                            featured: true,
+                            inputFields: [
+                                { name: 'email', label: 'البريد الإلكتروني', type: 'email', required: true }
+                            ],
+                            fulfillment: { type: 'code', value: 'سيتم إرسال الكود عبر البريد' },
+                            gallery: [],
+                            tags: ['google', 'play', 'بطاقة'],
+                            createdAt: new Date().toISOString()
                         }
                     ]);
 
-                    // Load orders and cart
+                    // Load orders
                     this.orders = Storage.get(CONFIG.STORAGE_KEYS.ORDERS, []);
+                    
+                    // Load cart
                     this.cart = Storage.get(CONFIG.STORAGE_KEYS.CART, []);
                     
                     // Load notifications
                     this.notifications = Storage.get(CONFIG.STORAGE_KEYS.NOTIFICATIONS, []);
 
+                    // Load coupons
+                    this.coupons = Storage.get(CONFIG.STORAGE_KEYS.COUPONS, [
+                        {
+                            id: generateId('coup_'),
+                            code: 'WELCOME10',
+                            discount: 10,
+                            type: 'percentage',
+                            minPurchase: 0,
+                            maxUses: 100,
+                            used: 0,
+                            expiresAt: new Date(Date.now() + 30*24*60*60*1000).toISOString(),
+                            enabled: true
+                        }
+                    ]);
+
+                    // Load settings
+                    this.settings = Storage.get(CONFIG.STORAGE_KEYS.SETTINGS, this.settings);
+
                     // Load stats
-                    this.stats = Storage.get(CONFIG.STORAGE_KEYS.STATS, { users: 0, dailyOps: 0 });
+                    this.stats = Storage.get(CONFIG.STORAGE_KEYS.STATS, this.stats);
+                    this.updateStats();
+                }
+
+                updateStats() {
+                    this.stats.totalProducts = this.products.length;
+                    this.stats.totalCategories = this.categories.length;
+                    this.stats.totalOrders = this.orders.length;
+                    this.stats.revenue = this.orders.reduce((sum, o) => sum + o.total, 0);
+                    this.stats.lastUpdate = new Date().toISOString();
+                    this.saveStats();
+                }
+
+                // ========== Settings ==========
+                saveSettings() {
+                    Storage.set(CONFIG.STORAGE_KEYS.SETTINGS, this.settings);
+                }
+
+                updateSettings(newSettings) {
+                    this.settings = { ...this.settings, ...newSettings };
+                    this.saveSettings();
                 }
 
                 // ========== Wallet Methods ==========
@@ -678,16 +995,17 @@
                     });
                 }
 
-                addTransaction(type, amount, description) {
+                addTransaction(type, amount, description, metadata = {}) {
                     const tx = {
                         id: generateId('tx_'),
                         type,
                         amount,
                         description,
+                        metadata,
                         date: new Date().toISOString()
                     };
                     this.transactions.unshift(tx);
-                    if (this.transactions.length > 50) this.transactions.pop();
+                    if (this.transactions.length > 100) this.transactions.pop();
                     this.saveWallet();
                     return tx;
                 }
@@ -698,7 +1016,11 @@
                 }
 
                 addPaymentMethod(data) {
-                    const method = { id: generateId('pm_'), ...data };
+                    const method = { 
+                        id: generateId('pm_'), 
+                        enabled: true,
+                        ...data 
+                    };
                     this.paymentMethods.push(method);
                     this.savePaymentMethods();
                     return method;
@@ -719,6 +1041,16 @@
                     this.savePaymentMethods();
                 }
 
+                togglePaymentMethod(id) {
+                    const method = this.paymentMethods.find(m => m.id === id);
+                    if (method) {
+                        method.enabled = !method.enabled;
+                        this.savePaymentMethods();
+                        return method.enabled;
+                    }
+                    return false;
+                }
+
                 // ========== Deposit/Withdrawal Requests ==========
                 saveRequests() {
                     Storage.set(CONFIG.STORAGE_KEYS.DEPOSITS, this.deposits);
@@ -726,6 +1058,8 @@
                 }
 
                 addDeposit(amount, methodId, txId, user) {
+                    if (amount < 10) return { success: false, message: 'الحد الأدنى للإيداع 10' };
+                    
                     const method = this.paymentMethods.find(m => m.id === methodId);
                     const deposit = {
                         id: generateId('dep_'),
@@ -741,23 +1075,33 @@
                     this.deposits.push(deposit);
                     this.saveRequests();
                     
-                    // Add notification for admin
-                    this.addNotification(CONFIG.ADMIN_ID, 'طلب شحن جديد', `مبلغ: ${amount} من ${deposit.userName}`, 'info');
+                    this.addNotification(CONFIG.ADMIN_ID, 'طلب شحن جديد', `مبلغ: ${amount} من ${deposit.userName}`, 'info', { depositId: deposit.id });
                     
-                    return deposit;
+                    return { success: true, deposit };
                 }
 
                 addWithdrawal(amount, methodId, details, user) {
+                    if (amount < this.settings.minWithdraw) {
+                        return { success: false, message: `الحد الأدنى للسحب ${this.settings.minWithdraw}` };
+                    }
+                    if (amount > this.settings.maxWithdraw) {
+                        return { success: false, message: `الحد الأقصى للسحب ${this.settings.maxWithdraw}` };
+                    }
                     if (amount > this.balance) {
                         return { success: false, message: 'الرصيد غير كافٍ' };
                     }
                     
                     const method = this.paymentMethods.find(m => m.id === methodId);
+                    const fee = (amount * this.settings.withdrawFee) / 100;
+                    const finalAmount = amount - fee;
+                    
                     const withdrawal = {
                         id: generateId('with_'),
                         userId: user.id,
                         userName: `${user.first_name} ${user.last_name || ''}`.trim(),
                         amount,
+                        finalAmount,
+                        fee,
                         method: method ? method.name : 'غير معروف',
                         methodId,
                         details,
@@ -767,8 +1111,7 @@
                     this.withdrawals.push(withdrawal);
                     this.saveRequests();
                     
-                    // Add notification for admin
-                    this.addNotification(CONFIG.ADMIN_ID, 'طلب سحب جديد', `مبلغ: ${amount} من ${withdrawal.userName}`, 'info');
+                    this.addNotification(CONFIG.ADMIN_ID, 'طلب سحب جديد', `مبلغ: ${amount} من ${withdrawal.userName}`, 'info', { withdrawalId: withdrawal.id });
                     
                     return { success: true, withdrawal };
                 }
@@ -778,26 +1121,27 @@
                     if (deposit && deposit.status === 'pending') {
                         deposit.status = 'approved';
                         this.balance += deposit.amount;
-                        this.addTransaction('deposit', deposit.amount, `شحن عبر ${deposit.method}`);
+                        this.addTransaction('deposit', deposit.amount, `شحن عبر ${deposit.method}`, { depositId: id });
                         this.saveWallet();
                         this.saveRequests();
                         
-                        // Notify user
                         this.addNotification(deposit.userId, '✅ تم قبول طلب الشحن', `تم شحن مبلغ ${deposit.amount} إلى محفظتك`, 'success');
+                        this.stats.dailyOps++;
+                        this.saveStats();
                         
                         return true;
                     }
                     return false;
                 }
 
-                rejectDeposit(id) {
+                rejectDeposit(id, reason = '') {
                     const deposit = this.deposits.find(d => d.id === id);
                     if (deposit) {
                         deposit.status = 'rejected';
+                        deposit.rejectReason = reason;
                         this.saveRequests();
                         
-                        // Notify user
-                        this.addNotification(deposit.userId, '❌ تم رفض طلب الشحن', `تم رفض طلب الشحن بمبلغ ${deposit.amount}`, 'error');
+                        this.addNotification(deposit.userId, '❌ تم رفض طلب الشحن', `تم رفض طلب الشحن بمبلغ ${deposit.amount}${reason ? ': ' + reason : ''}`, 'error');
                         
                         return true;
                     }
@@ -809,26 +1153,27 @@
                     if (withdrawal && withdrawal.status === 'pending' && this.balance >= withdrawal.amount) {
                         withdrawal.status = 'approved';
                         this.balance -= withdrawal.amount;
-                        this.addTransaction('withdraw', -withdrawal.amount, `سحب عبر ${withdrawal.method}`);
+                        this.addTransaction('withdraw', -withdrawal.amount, `سحب عبر ${withdrawal.method}`, { withdrawalId: id });
                         this.saveWallet();
                         this.saveRequests();
                         
-                        // Notify user
                         this.addNotification(withdrawal.userId, '✅ تم قبول طلب السحب', `تم سحب مبلغ ${withdrawal.amount} من محفظتك`, 'success');
+                        this.stats.dailyOps++;
+                        this.saveStats();
                         
                         return true;
                     }
                     return false;
                 }
 
-                rejectWithdrawal(id) {
+                rejectWithdrawal(id, reason = '') {
                     const withdrawal = this.withdrawals.find(w => w.id === id);
                     if (withdrawal) {
                         withdrawal.status = 'rejected';
+                        withdrawal.rejectReason = reason;
                         this.saveRequests();
                         
-                        // Notify user
-                        this.addNotification(withdrawal.userId, '❌ تم رفض طلب السحب', `تم رفض طلب السحب بمبلغ ${withdrawal.amount}`, 'error');
+                        this.addNotification(withdrawal.userId, '❌ تم رفض طلب السحب', `تم رفض طلب السحب بمبلغ ${withdrawal.amount}${reason ? ': ' + reason : ''}`, 'error');
                         
                         return true;
                     }
@@ -843,15 +1188,29 @@
                     return this.withdrawals.filter(w => w.status === 'pending');
                 }
 
+                getUserDeposits(userId) {
+                    return this.deposits.filter(d => d.userId === userId);
+                }
+
+                getUserWithdrawals(userId) {
+                    return this.withdrawals.filter(w => w.userId === userId);
+                }
+
                 // ========== Categories ==========
                 saveCategories() {
                     Storage.set(CONFIG.STORAGE_KEYS.CATEGORIES, this.categories);
                 }
 
                 addCategory(data) {
-                    const category = { id: generateId('cat_'), ...data };
+                    const category = { 
+                        id: generateId('cat_'), 
+                        order: this.categories.length,
+                        enabled: true,
+                        ...data 
+                    };
                     this.categories.push(category);
                     this.saveCategories();
+                    this.updateStats();
                     return category;
                 }
 
@@ -866,7 +1225,33 @@
                 }
 
                 deleteCategory(id) {
+                    // Check if category has products
+                    const hasProducts = this.products.some(p => p.categoryId === id);
+                    if (hasProducts) {
+                        return { success: false, message: 'لا يمكن حذف قسم يحتوي على منتجات' };
+                    }
                     this.categories = this.categories.filter(c => c.id !== id);
+                    this.saveCategories();
+                    this.updateStats();
+                    return { success: true };
+                }
+
+                toggleCategory(id) {
+                    const category = this.categories.find(c => c.id === id);
+                    if (category) {
+                        category.enabled = !category.enabled;
+                        this.saveCategories();
+                        return category.enabled;
+                    }
+                    return false;
+                }
+
+                reorderCategories(order) {
+                    order.forEach((id, index) => {
+                        const cat = this.categories.find(c => c.id === id);
+                        if (cat) cat.order = index;
+                    });
+                    this.categories.sort((a, b) => a.order - b.order);
                     this.saveCategories();
                 }
 
@@ -876,9 +1261,18 @@
                 }
 
                 addProduct(data) {
-                    const product = { id: generateId('prod_'), ...data };
+                    const product = { 
+                        id: generateId('prod_'), 
+                        rating: 0,
+                        reviews: 0,
+                        createdAt: new Date().toISOString(),
+                        gallery: [],
+                        tags: [],
+                        ...data 
+                    };
                     this.products.push(product);
                     this.saveProducts();
+                    this.updateStats();
                     return product;
                 }
 
@@ -887,6 +1281,7 @@
                     if (index !== -1) {
                         this.products[index] = { ...this.products[index], ...data };
                         this.saveProducts();
+                        this.updateStats();
                         return true;
                     }
                     return false;
@@ -895,6 +1290,24 @@
                 deleteProduct(id) {
                     this.products = this.products.filter(p => p.id !== id);
                     this.saveProducts();
+                    this.updateStats();
+                }
+
+                getProductsByCategory(categoryId) {
+                    return this.products.filter(p => p.categoryId === categoryId);
+                }
+
+                searchProducts(query) {
+                    const q = query.toLowerCase();
+                    return this.products.filter(p => 
+                        p.name.toLowerCase().includes(q) || 
+                        (p.description && p.description.toLowerCase().includes(q)) ||
+                        (p.tags && p.tags.some(tag => tag.toLowerCase().includes(q)))
+                    );
+                }
+
+                getFeaturedProducts() {
+                    return this.products.filter(p => p.featured);
                 }
 
                 // ========== Cart ==========
@@ -957,18 +1370,21 @@
                 }
 
                 createOrder(product, inputData, quantity = 1) {
-                    const total = product.price * quantity * (1 - (product.discount || 0) / 100);
+                    const finalPrice = product.price * (1 - (product.discount || 0) / 100);
+                    const total = finalPrice * quantity;
                     
                     const order = {
                         id: generateId('ord_'),
                         userId: this.user?.id,
+                        userName: this.user ? `${this.user.first_name} ${this.user.last_name || ''}`.trim() : 'مستخدم',
                         productId: product.id,
                         productName: product.name,
                         price: product.price,
+                        finalPrice,
                         quantity,
                         total,
                         inputData,
-                        status: product.fulfillment.type === 'manual' ? 'pending' : 'confirmed',
+                        status: 'pending',
                         fulfillment: product.fulfillment,
                         date: new Date().toISOString()
                     };
@@ -982,11 +1398,36 @@
                         this.saveProducts();
                     }
                     
+                    // Update stats
+                    this.stats.totalSales++;
+                    this.stats.dailyOps++;
+                    this.saveStats();
+                    
                     return order;
                 }
 
-                checkout() {
-                    const total = this.getCartTotal();
+                checkout(couponCode = null) {
+                    let total = this.getCartTotal();
+                    let discount = 0;
+                    
+                    // Apply coupon
+                    if (couponCode) {
+                        const coupon = this.coupons.find(c => c.code === couponCode && c.enabled);
+                        if (coupon && (!coupon.expiresAt || new Date(coupon.expiresAt) > new Date())) {
+                            if (coupon.maxUses > coupon.used) {
+                                if (total >= coupon.minPurchase) {
+                                    if (coupon.type === 'percentage') {
+                                        discount = (total * coupon.discount) / 100;
+                                    } else {
+                                        discount = coupon.discount;
+                                    }
+                                    total -= discount;
+                                    coupon.used++;
+                                    this.saveCoupons();
+                                }
+                            }
+                        }
+                    }
                     
                     if (total > this.balance) {
                         return { success: false, message: 'الرصيد غير كافٍ' };
@@ -1007,19 +1448,22 @@
                         const order = this.createOrder(product, item.inputData, item.quantity);
                         orders.push(order);
                         
-                        // Add notification
-                        this.addNotification(this.user.id, '✅ تم الطلب بنجاح', `تم طلب ${product.name} بنجاح`, 'success');
+                        this.addNotification(this.user.id, '✅ تم الطلب بنجاح', `تم طلب ${product.name} بنجاح`, 'success', { orderId: order.id });
                     }
                     
                     // Update balance
                     this.balance -= total;
-                    this.addTransaction('purchase', -total, `شراء من المتجر`);
+                    this.addTransaction('purchase', -total, 'شراء من المتجر', { 
+                        orders: orders.map(o => o.id),
+                        discount,
+                        coupon: couponCode
+                    });
                     this.saveWallet();
                     
                     // Clear cart
                     this.clearCart();
                     
-                    return { success: true, orders };
+                    return { success: true, orders, total, discount };
                 }
 
                 getUserOrders() {
@@ -1028,18 +1472,93 @@
                         .sort((a, b) => new Date(b.date) - new Date(a.date));
                 }
 
+                getAllOrders() {
+                    return this.orders.sort((a, b) => new Date(b.date) - new Date(a.date));
+                }
+
                 updateOrderStatus(id, status) {
                     const order = this.orders.find(o => o.id === id);
                     if (order) {
                         order.status = status;
                         this.saveOrders();
                         
-                        // Notify user
-                        this.addNotification(order.userId, '🔄 تحديث حالة الطلب', `تم تحديث حالة طلب ${order.productName} إلى ${status}`, 'info');
+                        this.addNotification(order.userId, '🔄 تحديث حالة الطلب', `تم تحديث حالة طلب ${order.productName} إلى ${status}`, 'info', { orderId: id });
                         
                         return true;
                     }
                     return false;
+                }
+
+                // ========== Coupons ==========
+                saveCoupons() {
+                    Storage.set(CONFIG.STORAGE_KEYS.COUPONS, this.coupons);
+                }
+
+                addCoupon(data) {
+                    const coupon = { 
+                        id: generateId('coup_'), 
+                        used: 0,
+                        enabled: true,
+                        ...data 
+                    };
+                    this.coupons.push(coupon);
+                    this.saveCoupons();
+                    return coupon;
+                }
+
+                updateCoupon(id, data) {
+                    const index = this.coupons.findIndex(c => c.id === id);
+                    if (index !== -1) {
+                        this.coupons[index] = { ...this.coupons[index], ...data };
+                        this.saveCoupons();
+                        return true;
+                    }
+                    return false;
+                }
+
+                deleteCoupon(id) {
+                    this.coupons = this.coupons.filter(c => c.id !== id);
+                    this.saveCoupons();
+                }
+
+                toggleCoupon(id) {
+                    const coupon = this.coupons.find(c => c.id === id);
+                    if (coupon) {
+                        coupon.enabled = !coupon.enabled;
+                        this.saveCoupons();
+                        return coupon.enabled;
+                    }
+                    return false;
+                }
+
+                validateCoupon(code, total) {
+                    const coupon = this.coupons.find(c => c.code === code && c.enabled);
+                    if (!coupon) return { valid: false, message: 'كوبون غير صالح' };
+                    
+                    if (coupon.expiresAt && new Date(coupon.expiresAt) < new Date()) {
+                        return { valid: false, message: 'الكوبون منتهي الصلاحية' };
+                    }
+                    
+                    if (coupon.maxUses <= coupon.used) {
+                        return { valid: false, message: 'تم استنفاذ عدد استخدامات الكوبون' };
+                    }
+                    
+                    if (total < coupon.minPurchase) {
+                        return { valid: false, message: `الحد الأدنى للشراء ${coupon.minPurchase}` };
+                    }
+                    
+                    let discount = 0;
+                    if (coupon.type === 'percentage') {
+                        discount = (total * coupon.discount) / 100;
+                    } else {
+                        discount = coupon.discount;
+                    }
+                    
+                    return { 
+                        valid: true, 
+                        discount,
+                        coupon
+                    };
                 }
 
                 // ========== Notifications ==========
@@ -1047,13 +1566,14 @@
                     Storage.set(CONFIG.STORAGE_KEYS.NOTIFICATIONS, this.notifications);
                 }
 
-                addNotification(userId, title, message, type = 'info') {
+                addNotification(userId, title, message, type = 'info', metadata = {}) {
                     const notification = {
                         id: generateId('notif_'),
                         userId,
                         title,
                         message,
                         type,
+                        metadata,
                         read: false,
                         date: new Date().toISOString()
                     };
@@ -1093,18 +1613,55 @@
                 }
 
                 registerUser(userId) {
-                    // This would be handled by backend in real app
                     this.stats.users++;
                     this.saveStats();
                 }
 
-                incrementDailyOps() {
-                    this.stats.dailyOps++;
-                    this.saveStats();
+                getSalesByDay(days = 7) {
+                    const result = [];
+                    const now = new Date();
+                    
+                    for (let i = days - 1; i >= 0; i--) {
+                        const date = new Date(now);
+                        date.setDate(date.getDate() - i);
+                        const dateStr = date.toISOString().split('T')[0];
+                        
+                        const sales = this.orders.filter(o => 
+                            o.date.startsWith(dateStr)
+                        ).reduce((sum, o) => sum + o.total, 0);
+                        
+                        result.push({
+                            date: dateStr,
+                            sales
+                        });
+                    }
+                    
+                    return result;
+                }
+
+                getTopProducts(limit = 5) {
+                    const productSales = {};
+                    
+                    this.orders.forEach(order => {
+                        if (!productSales[order.productId]) {
+                            productSales[order.productId] = {
+                                id: order.productId,
+                                name: order.productName,
+                                quantity: 0,
+                                revenue: 0
+                            };
+                        }
+                        productSales[order.productId].quantity += order.quantity;
+                        productSales[order.productId].revenue += order.total;
+                    });
+                    
+                    return Object.values(productSales)
+                        .sort((a, b) => b.revenue - a.revenue)
+                        .slice(0, limit);
                 }
             }
 
-            // ======================== UI Manager محسن ========================
+            // ======================== Advanced UI Manager ========================
             class UIManager {
                 constructor(data, telegram, toast) {
                     this.data = data;
@@ -1125,6 +1682,11 @@
                     const user = this.data.user;
                     const isAdmin = user?.id === CONFIG.ADMIN_ID;
                     
+                    if (this.data.settings.maintenance && !isAdmin) {
+                        this.renderMaintenance();
+                        return;
+                    }
+                    
                     if (!user) {
                         this.renderAccessDenied();
                         return;
@@ -1137,10 +1699,27 @@
                     }
                 }
 
+                renderMaintenance() {
+                    this.app.innerHTML = `
+                        <div class="glass-card p-8 rounded-3xl text-center animate-slide">
+                            <div class="w-20 h-20 bg-yellow-500/10 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
+                                <i class="fa-solid fa-tools"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold mb-2">جاري الصيانة</h2>
+                            <p class="text-gray-400 mb-6">${this.data.settings.maintenanceMessage || 'نعمل على تحسين المتجر، يرجى المحاولة لاحقاً'}</p>
+                            <button class="btn-primary" onclick="location.reload()">
+                                <i class="fa-solid fa-rotate ml-2"></i>
+                                إعادة تحميل
+                            </button>
+                        </div>
+                    `;
+                }
+
                 renderUserDashboard() {
                     const user = this.data.user;
                     const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
                     const unreadCount = this.data.getUnreadCount();
+                    const featuredProducts = this.data.getFeaturedProducts().slice(0, 3);
                     
                     this.app.innerHTML = `
                         <div class="space-y-4 animate-slide">
@@ -1176,11 +1755,11 @@
                             <div class="glass-card p-6 rounded-3xl text-center">
                                 <div class="text-gray-400 text-sm mb-1">الرصيد الحالي</div>
                                 <div class="text-4xl font-bold text-blue-400">${this.data.balance.toLocaleString('ar-EG')}</div>
-                                <div class="text-xs text-gray-400 mt-2">عملة البوت</div>
+                                <div class="text-xs text-gray-400 mt-2">${this.data.settings.storeName}</div>
                             </div>
                             
                             <!-- Quick Actions -->
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-3 gap-3">
                                 <button class="glass-card p-4 rounded-2xl flex flex-col items-center gap-2 hover:border-blue-500 transition" id="storeBtn">
                                     <i class="fa-solid fa-store text-2xl text-green-400"></i>
                                     <span class="text-sm">المتجر</span>
@@ -1189,7 +1768,32 @@
                                     <i class="fa-solid fa-box text-2xl text-blue-400"></i>
                                     <span class="text-sm">طلباتي</span>
                                 </button>
+                                <button class="glass-card p-4 rounded-2xl flex flex-col items-center gap-2 hover:border-blue-500 transition" id="historyBtn">
+                                    <i class="fa-solid fa-clock-rotate-left text-2xl text-purple-400"></i>
+                                    <span class="text-sm">السجل</span>
+                                </button>
                             </div>
+                            
+                            <!-- Featured Products -->
+                            ${featuredProducts.length > 0 ? `
+                                <div class="glass-card p-4 rounded-2xl">
+                                    <h3 class="font-bold mb-3 flex items-center gap-2">
+                                        <i class="fa-solid fa-star text-yellow-400"></i>
+                                        منتجات مميزة
+                                    </h3>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        ${featuredProducts.map(p => `
+                                            <div class="text-center cursor-pointer product-featured" data-product-id="${p.id}">
+                                                <div class="w-full aspect-square rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center mb-1">
+                                                    <i class="${p.icon} text-2xl text-blue-400"></i>
+                                                </div>
+                                                <div class="text-xs truncate">${p.name}</div>
+                                                <div class="text-xs text-blue-400">${p.price}</div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
                             
                             <!-- Logout -->
                             <button class="w-full py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition" id="logoutBtn">
@@ -1208,6 +1812,7 @@
                     const pendingDeposits = this.data.getPendingDeposits().length;
                     const pendingWithdrawals = this.data.getPendingWithdrawals().length;
                     const totalPending = pendingDeposits + pendingWithdrawals;
+                    const pendingOrders = this.data.orders.filter(o => o.status === 'pending').length;
                     
                     this.app.innerHTML = `
                         <div class="space-y-4 animate-slide">
@@ -1231,32 +1836,55 @@
                             </div>
                             
                             <!-- Stats Cards -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="glass-card p-4 rounded-2xl">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-gray-400">المستخدمين</span>
+                                        <i class="fa-solid fa-users text-blue-400"></i>
+                                    </div>
+                                    <div class="text-2xl font-bold">${this.data.stats.users}</div>
+                                    <div class="text-xs text-gray-400">+${Math.floor(Math.random() * 10)} هذا الأسبوع</div>
+                                </div>
+                                <div class="glass-card p-4 rounded-2xl">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-gray-400">المبيعات</span>
+                                        <i class="fa-solid fa-chart-line text-green-400"></i>
+                                    </div>
+                                    <div class="text-2xl font-bold">${this.data.stats.totalSales}</div>
+                                    <div class="text-xs text-gray-400">${this.data.stats.revenue} إجمالي</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Pending Requests -->
                             <div class="grid grid-cols-3 gap-2">
-                                <div class="glass-card p-3 rounded-2xl text-center">
-                                    <div class="text-2xl font-bold text-blue-400">${this.data.stats.users}</div>
-                                    <div class="text-xs text-gray-400">المستخدمين</div>
+                                <div class="glass-card p-3 rounded-2xl text-center relative cursor-pointer" id="pendingDepositsBtn">
+                                    <div class="text-xl font-bold text-yellow-400">${pendingDeposits}</div>
+                                    <div class="text-xs text-gray-400">شحن</div>
+                                    ${pendingDeposits > 0 ? `
+                                        <span class="notification-badge" style="top: -5px; right: -5px;">${pendingDeposits}</span>
+                                    ` : ''}
                                 </div>
-                                <div class="glass-card p-3 rounded-2xl text-center">
-                                    <div class="text-2xl font-bold text-green-400">${this.data.stats.dailyOps}</div>
-                                    <div class="text-xs text-gray-400">عمليات اليوم</div>
+                                <div class="glass-card p-3 rounded-2xl text-center relative cursor-pointer" id="pendingWithdrawalsBtn">
+                                    <div class="text-xl font-bold text-yellow-400">${pendingWithdrawals}</div>
+                                    <div class="text-xs text-gray-400">سحب</div>
+                                    ${pendingWithdrawals > 0 ? `
+                                        <span class="notification-badge" style="top: -5px; right: -5px;">${pendingWithdrawals}</span>
+                                    ` : ''}
                                 </div>
-                                <div class="glass-card p-3 rounded-2xl text-center relative cursor-pointer" id="pendingRequestsBtn">
-                                    <div class="text-2xl font-bold text-yellow-400">${totalPending}</div>
-                                    <div class="text-xs text-gray-400">معلقة</div>
-                                    ${totalPending > 0 ? `
-                                        <span class="notification-badge" style="top: -5px; right: -5px;">${totalPending}</span>
+                                <div class="glass-card p-3 rounded-2xl text-center relative cursor-pointer" id="pendingOrdersBtn">
+                                    <div class="text-xl font-bold text-yellow-400">${pendingOrders}</div>
+                                    <div class="text-xs text-gray-400">طلبات</div>
+                                    ${pendingOrders > 0 ? `
+                                        <span class="notification-badge" style="top: -5px; right: -5px;">${pendingOrders}</span>
                                     ` : ''}
                                 </div>
                             </div>
                             
                             <!-- Admin Actions -->
-                            <div class="grid grid-cols-2 gap-3 mt-4">
+                            <div class="grid grid-cols-2 gap-3">
                                 <button class="glass-card p-4 rounded-2xl flex flex-col items-center gap-2 hover:border-yellow-500 transition" id="adminPanelBtn">
                                     <i class="fa-solid fa-gear text-2xl text-yellow-400"></i>
-                                    <span class="text-sm">لوحة الإدارة</span>
-                                    ${totalPending > 0 ? `
-                                        <span class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">${totalPending}</span>
-                                    ` : ''}
+                                    <span class="text-sm">لوحة التحكم</span>
                                 </button>
                                 <button class="glass-card p-4 rounded-2xl flex flex-col items-center gap-2 hover:border-blue-500 transition" id="storeBtn">
                                     <i class="fa-solid fa-store text-2xl text-green-400"></i>
@@ -1266,20 +1894,47 @@
                             
                             <!-- Quick Links -->
                             <div class="glass-card p-4 rounded-2xl">
-                                <h3 class="font-bold mb-3">روابط سريعة</h3>
-                                <div class="space-y-2">
-                                    <button class="w-full text-right p-2 hover:bg-white/5 rounded-lg transition" id="paymentMethodsBtn">
+                                <h3 class="font-bold mb-3">الإدارة السريعة</h3>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button class="text-right p-2 hover:bg-white/5 rounded-lg transition" id="paymentMethodsBtn">
                                         <i class="fa-solid fa-credit-card ml-2 text-blue-400"></i>
                                         طرق الدفع
                                     </button>
-                                    <button class="w-full text-right p-2 hover:bg-white/5 rounded-lg transition" id="storeManagementBtn">
+                                    <button class="text-right p-2 hover:bg-white/5 rounded-lg transition" id="couponsBtn">
+                                        <i class="fa-solid fa-ticket ml-2 text-purple-400"></i>
+                                        الكوبونات
+                                    </button>
+                                    <button class="text-right p-2 hover:bg-white/5 rounded-lg transition" id="storeManagementBtn">
                                         <i class="fa-solid fa-store ml-2 text-green-400"></i>
                                         إدارة المتجر
                                     </button>
-                                    <button class="w-full text-right p-2 hover:bg-white/5 rounded-lg transition" id="allOrdersBtn">
-                                        <i class="fa-solid fa-box ml-2 text-purple-400"></i>
-                                        جميع الطلبات
+                                    <button class="text-right p-2 hover:bg-white/5 rounded-lg transition" id="settingsBtn">
+                                        <i class="fa-solid fa-sliders ml-2 text-orange-400"></i>
+                                        الإعدادات
                                     </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Stats -->
+                            <div class="glass-card p-4 rounded-2xl">
+                                <h3 class="font-bold mb-3">إحصائيات سريعة</h3>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">إجمالي المنتجات:</span>
+                                        <span>${this.data.stats.totalProducts}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">إجمالي الأقسام:</span>
+                                        <span>${this.data.stats.totalCategories}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">إجمالي الطلبات:</span>
+                                        <span>${this.data.stats.totalOrders}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">الإيرادات:</span>
+                                        <span class="text-green-400">${this.data.stats.revenue}</span>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -1315,23 +1970,38 @@
                     document.getElementById('notificationsBtn')?.addEventListener('click', () => this.openNotificationsModal());
                     document.getElementById('storeBtn')?.addEventListener('click', () => this.openStoreModal());
                     document.getElementById('ordersBtn')?.addEventListener('click', () => this.openOrdersModal());
+                    document.getElementById('historyBtn')?.addEventListener('click', () => this.openHistoryModal());
+                    
+                    document.querySelectorAll('.product-featured').forEach(el => {
+                        el.addEventListener('click', () => {
+                            const productId = el.dataset.productId;
+                            this.openProductDetails(productId);
+                        });
+                    });
                     
                     document.getElementById('logoutBtn')?.addEventListener('click', () => {
-                        this.tg.close();
+                        this.tg.showConfirm('هل أنت متأكد من تسجيل الخروج؟', 'تأكيد', () => {
+                            this.tg.close();
+                        });
                     });
                 }
 
                 bindAdminEvents() {
-                    document.getElementById('walletBtn')?.addEventListener('click', () => this.openWalletModal());
                     document.getElementById('adminPanelBtn')?.addEventListener('click', () => this.openAdminPanel());
                     document.getElementById('paymentMethodsBtn')?.addEventListener('click', () => this.openPaymentMethodsModal());
+                    document.getElementById('couponsBtn')?.addEventListener('click', () => this.openCouponsModal());
                     document.getElementById('storeManagementBtn')?.addEventListener('click', () => this.openStoreManagementModal());
-                    document.getElementById('allOrdersBtn')?.addEventListener('click', () => this.openAllOrdersModal());
+                    document.getElementById('settingsBtn')?.addEventListener('click', () => this.openSettingsModal());
                     document.getElementById('storeBtn')?.addEventListener('click', () => this.openStoreModal());
-                    document.getElementById('pendingRequestsBtn')?.addEventListener('click', () => this.openAdminPanel());
+                    
+                    document.getElementById('pendingDepositsBtn')?.addEventListener('click', () => this.openAdminPanel('deposits'));
+                    document.getElementById('pendingWithdrawalsBtn')?.addEventListener('click', () => this.openAdminPanel('withdrawals'));
+                    document.getElementById('pendingOrdersBtn')?.addEventListener('click', () => this.openAllOrdersModal());
                     
                     document.getElementById('logoutBtn')?.addEventListener('click', () => {
-                        this.tg.close();
+                        this.tg.showConfirm('هل أنت متأكد من تسجيل الخروج؟', 'تأكيد', () => {
+                            this.tg.close();
+                        });
                     });
                 }
 
@@ -1346,7 +2016,7 @@
                             <div class="flex items-center justify-between p-3 border-b border-white/5">
                                 <div>
                                     <div class="font-medium">${tx.description || tx.type}</div>
-                                    <div class="text-xs text-gray-400">${formatDate(tx.date)}</div>
+                                    <div class="text-xs text-gray-400">${formatRelativeTime(tx.date)}</div>
                                 </div>
                                 <div class="${tx.amount > 0 ? 'text-green-400' : 'text-red-400'} font-bold">
                                     ${tx.amount > 0 ? '+' : ''}${tx.amount}
@@ -1376,7 +2046,7 @@
                         <div id="depositTab" class="tab-content">
                             <p class="text-sm text-gray-300 mb-3">اختر طريقة الدفع:</p>
                             <div class="space-y-2 mb-4">
-                                ${this.data.paymentMethods.map(m => `
+                                ${this.data.paymentMethods.filter(m => m.enabled).map(m => `
                                     <div class="payment-item" data-method-id="${m.id}">
                                         <div class="payment-icon"><i class="${m.icon}"></i></div>
                                         <div class="flex-1">
@@ -1403,7 +2073,7 @@
                         <div id="withdrawTab" class="tab-content hidden">
                             <p class="text-sm text-gray-300 mb-3">اختر طريقة السحب:</p>
                             <div class="space-y-2 mb-4">
-                                ${this.data.paymentMethods.map(m => `
+                                ${this.data.paymentMethods.filter(m => m.enabled).map(m => `
                                     <div class="payment-item" data-withdraw-method="${m.id}">
                                         <div class="payment-icon"><i class="${m.icon}"></i></div>
                                         <div class="flex-1">
@@ -1418,7 +2088,7 @@
                                 <input type="number" id="withdrawAmount" class="custom-input flex-1" placeholder="المبلغ">
                                 <button id="submitWithdraw" class="btn-primary flex-1">طلب</button>
                             </div>
-                            <p class="text-xs text-gray-400">الحد الأدنى للسحب: 10</p>
+                            <p class="text-xs text-gray-400">الحد الأدنى: ${this.data.settings.minWithdraw} | الحد الأقصى: ${this.data.settings.maxWithdraw}</p>
                         </div>
                         
                         <div id="historyTab" class="tab-content hidden scroll-custom" style="max-height: 400px; overflow-y: auto;">
@@ -1491,10 +2161,14 @@
                             return;
                         }
                         
-                        const deposit = this.data.addDeposit(amount, selectedMethod, txId, this.data.user);
-                        this.toast.success(`✅ تم تقديم طلب الشحن رقم ${deposit.id.slice(-6)}`);
+                        const result = this.data.addDeposit(amount, selectedMethod, txId, this.data.user);
                         
-                        this.modalOverlay.classList.remove('active');
+                        if (result.success) {
+                            this.toast.success(`✅ تم تقديم طلب الشحن رقم ${result.deposit.id.slice(-6)}`);
+                            this.modalOverlay.classList.remove('active');
+                        } else {
+                            this.toast.error(result.message);
+                        }
                     });
                     
                     // Withdraw method selection
@@ -1513,8 +2187,8 @@
                         const amount = parseFloat(this.modalContent.getElementById('withdrawAmount').value);
                         const details = this.modalContent.getElementById('withdrawDetails').value.trim();
                         
-                        if (isNaN(amount) || amount < 10) {
-                            this.toast.error('أدخل مبلغ صحيح (10 فأكثر)');
+                        if (isNaN(amount) || amount < this.data.settings.minWithdraw) {
+                            this.toast.error(`أدخل مبلغ صحيح (${this.data.settings.minWithdraw} فأكثر)`);
                             return;
                         }
                         
@@ -1548,16 +2222,16 @@
                         : notifications.map(n => `
                             <div class="p-3 border-b border-white/5 ${n.read ? 'opacity-60' : ''}">
                                 <div class="flex items-start gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-${n.type === 'success' ? 'green' : n.type === 'error' ? 'red' : 'blue'}-500/20 flex items-center justify-center">
+                                    <div class="w-8 h-8 rounded-full bg-${n.type === 'success' ? 'green' : n.type === 'error' ? 'red' : 'blue'}-500/20 flex items-center justify-center shrink-0">
                                         <i class="fa-${n.type === 'success' ? 'check' : n.type === 'error' ? 'exclamation' : 'info'}-circle text-${n.type === 'success' ? 'green' : n.type === 'error' ? 'red' : 'blue'}-400"></i>
                                     </div>
-                                    <div class="flex-1">
-                                        <div class="font-bold">${n.title}</div>
-                                        <div class="text-sm text-gray-300">${n.message}</div>
-                                        <div class="text-xs text-gray-400 mt-1">${formatDate(n.date)}</div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-bold text-sm">${n.title}</div>
+                                        <div class="text-sm text-gray-300 truncate">${n.message}</div>
+                                        <div class="text-xs text-gray-400 mt-1">${formatRelativeTime(n.date)}</div>
                                     </div>
                                     ${!n.read ? `
-                                        <button class="mark-read text-xs text-blue-400 hover:text-blue-300" data-id="${n.id}">
+                                        <button class="mark-read text-xs text-blue-400 hover:text-blue-300 shrink-0" data-id="${n.id}">
                                             <i class="fa-regular fa-circle-check"></i>
                                         </button>
                                     ` : ''}
@@ -1586,10 +2260,7 @@
                     `;
                     
                     this.modalOverlay.classList.add('active');
-                    this.bindNotificationsModalEvents();
-                }
-
-                bindNotificationsModalEvents() {
+                    
                     const closeBtn = this.modalContent.querySelector('.close-modal');
                     closeBtn?.addEventListener('click', () => this.modalOverlay.classList.remove('active'));
                     
@@ -1612,12 +2283,12 @@
 
                 // ========== Store Modal ==========
                 openStoreModal() {
-                    const categories = this.data.categories;
+                    const categories = this.data.categories.filter(c => c.enabled);
                     const products = this.data.products;
                     const cart = this.data.cart;
                     
                     const categoriesHtml = categories.map(c => `
-                        <button class="category-tab px-4 py-2 rounded-full text-sm bg-white/5 hover:bg-white/10 transition" data-cat="${c.id}">
+                        <button class="category-tab px-4 py-2 rounded-full text-sm bg-white/5 hover:bg-white/10 transition whitespace-nowrap" data-cat="${c.id}">
                             <i class="${c.icon} ml-1"></i>
                             ${c.name}
                         </button>
@@ -1630,13 +2301,17 @@
                         return `
                             <div class="product-card" data-product-id="${p.id}">
                                 ${p.discount ? `<span class="discount-badge">-${p.discount}%</span>` : ''}
-                                <div class="w-full h-32 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl flex items-center justify-center mb-3">
+                                <div class="product-image">
                                     <i class="${p.icon} text-4xl text-blue-400"></i>
                                 </div>
-                                <h3 class="font-bold mb-1">${p.name}</h3>
+                                <h3 class="font-bold mb-1 truncate">${p.name}</h3>
                                 <div class="flex items-center gap-1 mb-2">
-                                    <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
-                                    <span class="text-xs">${p.rating || '0'}</span>
+                                    <div class="stars">
+                                        ${Array(5).fill(0).map((_, i) => `
+                                            <i class="fa-solid fa-star ${i < Math.floor(p.rating) ? 'text-yellow-400' : 'text-gray-600'}"></i>
+                                        `).join('')}
+                                    </div>
+                                    <span class="text-xs text-gray-400">(${p.reviews || 0})</span>
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <div>
@@ -1661,15 +2336,15 @@
                             const itemTotal = item.price * item.quantity * (1 - (item.discount || 0) / 100);
                             return `
                                 <div class="flex items-center gap-3 p-3 border-b border-white/5">
-                                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+                                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center shrink-0">
                                         <i class="${item.icon} text-xl text-blue-400"></i>
                                     </div>
-                                    <div class="flex-1">
-                                        <div class="font-bold text-sm">${item.name}</div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-bold text-sm truncate">${item.name}</div>
                                         <div class="text-xs text-gray-400">الكمية: ${item.quantity}</div>
                                     </div>
                                     <div class="text-blue-400 font-bold">${itemTotal.toFixed(2)}</div>
-                                    <button class="remove-cart text-red-400 hover:text-red-300" data-cart-id="${item.id}">
+                                    <button class="remove-cart text-red-400 hover:text-red-300 shrink-0" data-cart-id="${item.id}">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </div>
@@ -1678,7 +2353,7 @@
                     
                     this.modalContent.innerHTML = `
                         <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">المتجر الإلكتروني</h2>
+                            <h2 class="text-xl font-bold">${this.data.settings.storeName}</h2>
                             <button class="close-modal w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 transition">
                                 <i class="fa-solid fa-times"></i>
                             </button>
@@ -1691,7 +2366,7 @@
                         
                         <!-- Categories -->
                         <div class="flex gap-2 mb-4 overflow-x-auto pb-2 scroll-custom">
-                            <button class="category-tab px-4 py-2 rounded-full text-sm bg-blue-600" data-cat="all">الكل</button>
+                            <button class="category-tab px-4 py-2 rounded-full text-sm bg-blue-600 whitespace-nowrap" data-cat="all">الكل</button>
                             ${categoriesHtml}
                         </div>
                         
@@ -1702,19 +2377,26 @@
                         
                         <!-- Cart -->
                         <div class="glass-card p-4 rounded-2xl">
-                            <h3 class="font-bold mb-3 flex items-center gap-2">
-                                <i class="fa-solid fa-cart-shopping"></i>
-                                سلة التسوق
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                    سلة التسوق
+                                </h3>
                                 <span class="text-xs bg-blue-600 px-2 py-0.5 rounded-full">${cart.length}</span>
-                            </h3>
+                            </div>
                             
                             <div class="max-h-48 overflow-y-auto scroll-custom mb-3" id="cartItems">
                                 ${cartHtml}
                             </div>
                             
+                            <!-- Coupon -->
+                            <div class="mb-3">
+                                <input type="text" id="couponCode" class="custom-input" placeholder="كود الخصم">
+                            </div>
+                            
                             <div class="flex items-center justify-between pt-3 border-t border-white/10">
                                 <span>المجموع:</span>
-                                <span class="text-xl font-bold text-blue-400">${cartTotal.toFixed(2)}</span>
+                                <span class="text-xl font-bold text-blue-400" id="cartTotal">${cartTotal.toFixed(2)}</span>
                             </div>
                             
                             <button class="btn-primary mt-3 ${cart.length === 0 ? 'opacity-50' : ''}" id="checkoutBtn" ${cart.length === 0 ? 'disabled' : ''}>
@@ -1792,7 +2474,8 @@
                     
                     // Checkout
                     this.modalContent.getElementById('checkoutBtn')?.addEventListener('click', () => {
-                        const result = this.data.checkout();
+                        const couponCode = this.modalContent.getElementById('couponCode').value;
+                        const result = this.data.checkout(couponCode);
                         
                         if (result.success) {
                             this.toast.success('✅ تمت عملية الشراء بنجاح');
@@ -1824,13 +2507,17 @@
                         return `
                             <div class="product-card" data-product-id="${p.id}">
                                 ${p.discount ? `<span class="discount-badge">-${p.discount}%</span>` : ''}
-                                <div class="w-full h-32 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl flex items-center justify-center mb-3">
+                                <div class="product-image">
                                     <i class="${p.icon} text-4xl text-blue-400"></i>
                                 </div>
-                                <h3 class="font-bold mb-1">${p.name}</h3>
+                                <h3 class="font-bold mb-1 truncate">${p.name}</h3>
                                 <div class="flex items-center gap-1 mb-2">
-                                    <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
-                                    <span class="text-xs">${p.rating || '0'}</span>
+                                    <div class="stars">
+                                        ${Array(5).fill(0).map((_, i) => `
+                                            <i class="fa-solid fa-star ${i < Math.floor(p.rating) ? 'text-yellow-400' : 'text-gray-600'}"></i>
+                                        `).join('')}
+                                    </div>
+                                    <span class="text-xs text-gray-400">(${p.reviews || 0})</span>
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <div>
@@ -1894,24 +2581,25 @@
                             const itemTotal = item.price * item.quantity * (1 - (item.discount || 0) / 100);
                             return `
                                 <div class="flex items-center gap-3 p-3 border-b border-white/5">
-                                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+                                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center shrink-0">
                                         <i class="${item.icon} text-xl text-blue-400"></i>
                                     </div>
-                                    <div class="flex-1">
-                                        <div class="font-bold text-sm">${item.name}</div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-bold text-sm truncate">${item.name}</div>
                                         <div class="text-xs text-gray-400">الكمية: ${item.quantity}</div>
                                     </div>
                                     <div class="text-blue-400 font-bold">${itemTotal.toFixed(2)}</div>
-                                    <button class="remove-cart text-red-400 hover:text-red-300" data-cart-id="${item.id}">
+                                    <button class="remove-cart text-red-400 hover:text-red-300 shrink-0" data-cart-id="${item.id}">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </div>
                             `;
                         }).join('');
                     
-                    this.modalContent.getElementById('cartItems').innerHTML = cartHtml;
+                    const cartItems = this.modalContent.getElementById('cartItems');
+                    if (cartItems) cartItems.innerHTML = cartHtml;
                     
-                    const totalEl = this.modalContent.querySelector('.text-xl.font-bold.text-blue-400');
+                    const totalEl = this.modalContent.querySelector('#cartTotal');
                     if (totalEl) totalEl.textContent = cartTotal.toFixed(2);
                     
                     const cartCount = this.modalContent.querySelector('.bg-blue-600.px-2.py-0.5');
@@ -1968,6 +2656,16 @@
                         
                         <p class="text-gray-300 text-sm mb-4 text-center">${product.description || ''}</p>
                         
+                        <!-- Rating -->
+                        <div class="flex items-center justify-center gap-2 mb-4">
+                            <div class="stars">
+                                ${Array(5).fill(0).map((_, i) => `
+                                    <i class="fa-solid fa-star ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-600'}"></i>
+                                `).join('')}
+                            </div>
+                            <span class="text-sm text-gray-400">${product.rating} (${product.reviews || 0} تقييم)</span>
+                        </div>
+                        
                         <div class="glass-card p-4 rounded-2xl mb-4">
                             <div class="text-center mb-4">
                                 ${product.discount ? `
@@ -1995,6 +2693,14 @@
                                     </button>
                                 </div>
                             </form>
+                        </div>
+                        
+                        <!-- Fulfillment Info -->
+                        <div class="glass-card p-4 rounded-2xl">
+                            <div class="flex items-center gap-2 text-sm text-gray-300">
+                                <i class="fa-solid fa-truck"></i>
+                                <span>${product.fulfillment?.instructions || 'سيتم توفير المنتج فور الشراء'}</span>
+                            </div>
                         </div>
                     `;
                     
@@ -2046,11 +2752,10 @@
                         
                         // Update balance
                         this.data.balance -= total;
-                        this.data.addTransaction('purchase', -total, `شراء ${product.name}`);
+                        this.data.addTransaction('purchase', -total, `شراء ${product.name}`, { orderId: order.id });
                         this.data.saveWallet();
                         
-                        // Add notification
-                        this.data.addNotification(this.data.user.id, '✅ تم الشراء بنجاح', `تم شراء ${product.name}`, 'success');
+                        this.data.addNotification(this.data.user.id, '✅ تم الشراء بنجاح', `تم شراء ${product.name}`, 'success', { orderId: order.id });
                         
                         this.toast.success('✅ تمت عملية الشراء بنجاح');
                         this.modalOverlay.classList.remove('active');
@@ -2071,7 +2776,7 @@
                                     <span class="status-badge status-${o.status}">${o.status}</span>
                                 </div>
                                 <div class="text-sm text-gray-300 mb-1">الكمية: ${o.quantity} | المجموع: ${o.total}</div>
-                                <div class="text-xs text-gray-400">${formatDate(o.date)}</div>
+                                <div class="text-xs text-gray-400">${formatRelativeTime(o.date)}</div>
                                 ${o.fulfillment?.value ? `
                                     <div class="mt-2 p-2 bg-blue-500/10 rounded-lg text-sm">
                                         <i class="fa-solid fa-key ml-1"></i>
@@ -2100,8 +2805,75 @@
                     closeBtn?.addEventListener('click', () => this.modalOverlay.classList.remove('active'));
                 }
 
+                // ========== History Modal ==========
+                openHistoryModal() {
+                    const deposits = this.data.getUserDeposits(this.data.user.id);
+                    const withdrawals = this.data.getUserWithdrawals(this.data.user.id);
+                    
+                    const depositsHtml = deposits.map(d => `
+                        <div class="p-3 border-b border-white/5">
+                            <div class="flex justify-between">
+                                <span class="text-green-400">شحن</span>
+                                <span class="status-badge status-${d.status}">${d.status}</span>
+                            </div>
+                            <div class="text-sm">المبلغ: ${d.amount}</div>
+                            <div class="text-xs text-gray-400">${formatRelativeTime(d.date)}</div>
+                        </div>
+                    `).join('');
+                    
+                    const withdrawalsHtml = withdrawals.map(w => `
+                        <div class="p-3 border-b border-white/5">
+                            <div class="flex justify-between">
+                                <span class="text-red-400">سحب</span>
+                                <span class="status-badge status-${w.status}">${w.status}</span>
+                            </div>
+                            <div class="text-sm">المبلغ: ${w.amount}</div>
+                            <div class="text-xs text-gray-400">${formatRelativeTime(w.date)}</div>
+                        </div>
+                    `).join('');
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">سجل المعاملات</h2>
+                            <button class="close-modal w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 transition">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="flex gap-2 mb-4">
+                            <button class="modal-tab active" data-tab="deposits">شحن</button>
+                            <button class="modal-tab" data-tab="withdrawals">سحب</button>
+                        </div>
+                        
+                        <div id="depositsTab" class="tab-content scroll-custom" style="max-height: 500px; overflow-y: auto;">
+                            ${depositsHtml || '<p class="text-center text-gray-400 py-4">لا توجد عمليات شحن</p>'}
+                        </div>
+                        
+                        <div id="withdrawalsTab" class="tab-content hidden scroll-custom" style="max-height: 500px; overflow-y: auto;">
+                            ${withdrawalsHtml || '<p class="text-center text-gray-400 py-4">لا توجد عمليات سحب</p>'}
+                        </div>
+                    `;
+                    
+                    this.modalOverlay.classList.add('active');
+                    
+                    const closeBtn = this.modalContent.querySelector('.close-modal');
+                    closeBtn?.addEventListener('click', () => this.modalOverlay.classList.remove('active'));
+                    
+                    const tabs = this.modalContent.querySelectorAll('.modal-tab');
+                    tabs.forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            tabs.forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            
+                            const tabName = tab.dataset.tab;
+                            this.modalContent.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                            this.modalContent.getElementById(`${tabName}Tab`).classList.remove('hidden');
+                        });
+                    });
+                }
+
                 // ========== Admin Panel ==========
-                openAdminPanel() {
+                openAdminPanel(initialTab = 'deposits') {
                     const pendingDeposits = this.data.getPendingDeposits();
                     const pendingWithdrawals = this.data.getPendingWithdrawals();
                     
@@ -2114,6 +2886,7 @@
                             <div class="text-sm">المبلغ: <span class="text-blue-400">${d.amount}</span></div>
                             <div class="text-xs text-gray-400">الطريقة: ${d.method}</div>
                             <div class="text-xs text-gray-400">TXID: ${d.txId}</div>
+                            <div class="text-xs text-gray-400">${formatRelativeTime(d.date)}</div>
                             <div class="flex gap-2 mt-3">
                                 <button class="approve-deposit flex-1 bg-green-600/20 text-green-400 py-2 rounded-lg text-sm hover:bg-green-600/30" data-id="${d.id}">
                                     <i class="fa-solid fa-check ml-1"></i>
@@ -2136,6 +2909,7 @@
                             <div class="text-sm">المبلغ: <span class="text-red-400">${w.amount}</span></div>
                             <div class="text-xs text-gray-400">الطريقة: ${w.method}</div>
                             <div class="text-xs text-gray-400">التفاصيل: ${w.details}</div>
+                            <div class="text-xs text-gray-400">${formatRelativeTime(w.date)}</div>
                             <div class="flex gap-2 mt-3">
                                 <button class="approve-withdrawal flex-1 bg-green-600/20 text-green-400 py-2 rounded-lg text-sm hover:bg-green-600/30" data-id="${w.id}">
                                     <i class="fa-solid fa-check ml-1"></i>
@@ -2158,28 +2932,24 @@
                         </div>
                         
                         <div class="flex gap-2 mb-4">
-                            <button class="modal-tab active" data-tab="deposits">طلبات الشحن</button>
-                            <button class="modal-tab" data-tab="withdrawals">طلبات السحب</button>
+                            <button class="modal-tab ${initialTab === 'deposits' ? 'active' : ''}" data-tab="deposits">طلبات الشحن (${pendingDeposits.length})</button>
+                            <button class="modal-tab ${initialTab === 'withdrawals' ? 'active' : ''}" data-tab="withdrawals">طلبات السحب (${pendingWithdrawals.length})</button>
                         </div>
                         
-                        <div id="depositsTab" class="tab-content scroll-custom" style="max-height: 600px; overflow-y: auto;">
+                        <div id="depositsTab" class="tab-content ${initialTab === 'deposits' ? '' : 'hidden'} scroll-custom" style="max-height: 600px; overflow-y: auto;">
                             ${depositsHtml || '<p class="text-center text-gray-400 py-8">لا توجد طلبات شحن معلقة</p>'}
                         </div>
                         
-                        <div id="withdrawalsTab" class="tab-content hidden scroll-custom" style="max-height: 600px; overflow-y: auto;">
+                        <div id="withdrawalsTab" class="tab-content ${initialTab === 'withdrawals' ? '' : 'hidden'} scroll-custom" style="max-height: 600px; overflow-y: auto;">
                             ${withdrawalsHtml || '<p class="text-center text-gray-400 py-8">لا توجد طلبات سحب معلقة</p>'}
                         </div>
                     `;
                     
                     this.modalOverlay.classList.add('active');
-                    this.bindAdminPanelEvents();
-                }
-
-                bindAdminPanelEvents() {
+                    
                     const closeBtn = this.modalContent.querySelector('.close-modal');
                     closeBtn?.addEventListener('click', () => this.modalOverlay.classList.remove('active'));
                     
-                    // Tab switching
                     const tabs = this.modalContent.querySelectorAll('.modal-tab');
                     tabs.forEach(tab => {
                         tab.addEventListener('click', () => {
@@ -2192,7 +2962,6 @@
                         });
                     });
                     
-                    // Approve deposit
                     this.modalContent.querySelectorAll('.approve-deposit').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const id = btn.dataset.id;
@@ -2204,7 +2973,6 @@
                         });
                     });
                     
-                    // Reject deposit
                     this.modalContent.querySelectorAll('.reject-deposit').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const id = btn.dataset.id;
@@ -2216,7 +2984,6 @@
                         });
                     });
                     
-                    // Approve withdrawal
                     this.modalContent.querySelectorAll('.approve-withdrawal').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const id = btn.dataset.id;
@@ -2228,7 +2995,6 @@
                         });
                     });
                     
-                    // Reject withdrawal
                     this.modalContent.querySelectorAll('.reject-withdrawal').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const id = btn.dataset.id;
@@ -2254,7 +3020,11 @@
                                     <div class="text-xs text-gray-400">${m.description || ''}</div>
                                 </div>
                             </div>
-                            <div class="flex gap-2">
+                            <div class="flex items-center gap-2">
+                                <label class="switch">
+                                    <input type="checkbox" class="toggle-payment" data-id="${m.id}" ${m.enabled ? 'checked' : ''}>
+                                    <span class="slider"></span>
+                                </label>
                                 <button class="edit-method text-blue-400 hover:text-blue-300" data-id="${m.id}">
                                     <i class="fa-solid fa-pen"></i>
                                 </button>
@@ -2284,15 +3054,20 @@
                     `;
                     
                     this.modalOverlay.classList.add('active');
-                    this.bindPaymentMethodsEvents();
-                }
-
-                bindPaymentMethodsEvents() {
+                    
                     const closeBtn = this.modalContent.querySelector('.close-modal');
                     closeBtn?.addEventListener('click', () => this.modalOverlay.classList.remove('active'));
                     
                     this.modalContent.getElementById('addMethodBtn')?.addEventListener('click', () => {
                         this.openPaymentMethodForm();
+                    });
+                    
+                    this.modalContent.querySelectorAll('.toggle-payment').forEach(checkbox => {
+                        checkbox.addEventListener('change', (e) => {
+                            const id = checkbox.dataset.id;
+                            const enabled = this.data.togglePaymentMethod(id);
+                            this.toast.success(`طريقة الدفع ${enabled ? 'مفعلة' : 'معطلة'}`);
+                        });
                     });
                     
                     this.modalContent.querySelectorAll('.edit-method').forEach(btn => {
@@ -2304,12 +3079,12 @@
                     
                     this.modalContent.querySelectorAll('.delete-method').forEach(btn => {
                         btn.addEventListener('click', () => {
-                            if (confirm('هل أنت متأكد من حذف طريقة الدفع هذه؟')) {
+                            this.tg.showConfirm('هل أنت متأكد من حذف طريقة الدفع هذه؟', 'تأكيد', () => {
                                 const id = btn.dataset.id;
                                 this.data.deletePaymentMethod(id);
                                 this.toast.success('تم الحذف بنجاح');
                                 this.modalOverlay.classList.remove('active');
-                            }
+                            });
                         });
                     });
                 }
@@ -2394,22 +3169,196 @@
                     });
                 }
 
+                // ========== Coupons Management ==========
+                openCouponsModal() {
+                    const coupons = this.data.coupons;
+                    
+                    const couponsHtml = coupons.map(c => `
+                        <div class="flex items-center justify-between p-4 border-b border-white/5">
+                            <div>
+                                <div class="font-bold">${c.code}</div>
+                                <div class="text-xs text-gray-400">${c.type === 'percentage' ? c.discount + '%' : c.discount + ' عملة'} خصم</div>
+                                <div class="text-xs text-gray-400">استخدم ${c.used}/${c.maxUses} مرة</div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <label class="switch">
+                                    <input type="checkbox" class="toggle-coupon" data-id="${c.id}" ${c.enabled ? 'checked' : ''}>
+                                    <span class="slider"></span>
+                                </label>
+                                <button class="edit-coupon text-blue-400 hover:text-blue-300" data-id="${c.id}">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button class="delete-coupon text-red-400 hover:text-red-300" data-id="${c.id}">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">كوبونات الخصم</h2>
+                            <button class="close-modal w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 transition">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <button id="addCouponBtn" class="btn-primary mb-4">
+                            <i class="fa-solid fa-plus ml-1"></i>
+                            إضافة كوبون جديد
+                        </button>
+                        
+                        <div class="scroll-custom" style="max-height: 500px; overflow-y: auto;">
+                            ${couponsHtml}
+                        </div>
+                    `;
+                    
+                    this.modalOverlay.classList.add('active');
+                    
+                    const closeBtn = this.modalContent.querySelector('.close-modal');
+                    closeBtn?.addEventListener('click', () => this.modalOverlay.classList.remove('active'));
+                    
+                    this.modalContent.getElementById('addCouponBtn')?.addEventListener('click', () => {
+                        this.openCouponForm();
+                    });
+                    
+                    this.modalContent.querySelectorAll('.toggle-coupon').forEach(checkbox => {
+                        checkbox.addEventListener('change', (e) => {
+                            const id = checkbox.dataset.id;
+                            const enabled = this.data.toggleCoupon(id);
+                            this.toast.success(`الكوبون ${enabled ? 'مفعل' : 'معطل'}`);
+                        });
+                    });
+                    
+                    this.modalContent.querySelectorAll('.edit-coupon').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            this.openCouponForm(id);
+                        });
+                    });
+                    
+                    this.modalContent.querySelectorAll('.delete-coupon').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            this.tg.showConfirm('هل أنت متأكد من حذف هذا الكوبون؟', 'تأكيد', () => {
+                                const id = btn.dataset.id;
+                                this.data.deleteCoupon(id);
+                                this.toast.success('تم الحذف بنجاح');
+                                this.modalOverlay.classList.remove('active');
+                            });
+                        });
+                    });
+                }
+
+                openCouponForm(editingId = null) {
+                    const coupon = editingId ? this.data.coupons.find(c => c.id === editingId) : null;
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">${coupon ? 'تعديل' : 'إضافة'} كوبون</h2>
+                            <button class="close-modal w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 transition">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <form id="couponForm">
+                            <input type="hidden" id="couponId" value="${coupon?.id || ''}">
+                            
+                            <div class="mb-3">
+                                <label class="block text-sm text-gray-400 mb-1">الكود</label>
+                                <input type="text" id="couponCode" class="custom-input" value="${coupon?.code || ''}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="block text-sm text-gray-400 mb-1">نوع الخصم</label>
+                                <select id="couponType" class="custom-input">
+                                    <option value="percentage" ${coupon?.type === 'percentage' ? 'selected' : ''}>نسبة مئوية</option>
+                                    <option value="fixed" ${coupon?.type === 'fixed' ? 'selected' : ''}>قيمة ثابتة</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="block text-sm text-gray-400 mb-1">قيمة الخصم</label>
+                                <input type="number" id="couponDiscount" class="custom-input" value="${coupon?.discount || ''}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="block text-sm text-gray-400 mb-1">الحد الأدنى للشراء</label>
+                                <input type="number" id="couponMinPurchase" class="custom-input" value="${coupon?.minPurchase || 0}">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="block text-sm text-gray-400 mb-1">الحد الأقصى للاستخدام</label>
+                                <input type="number" id="couponMaxUses" class="custom-input" value="${coupon?.maxUses || 100}">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="block text-sm text-gray-400 mb-1">تاريخ الانتهاء (اختياري)</label>
+                                <input type="date" id="couponExpires" class="custom-input" value="${coupon?.expiresAt ? coupon.expiresAt.split('T')[0] : ''}">
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button type="submit" class="btn-primary flex-1">حفظ</button>
+                                <button type="button" class="btn-secondary flex-1" id="cancelBtn">إلغاء</button>
+                            </div>
+                        </form>
+                    `;
+                    
+                    this.modalOverlay.classList.add('active');
+                    
+                    const closeBtn = this.modalContent.querySelector('.close-modal');
+                    closeBtn?.addEventListener('click', () => this.modalOverlay.classList.remove('active'));
+                    
+                    this.modalContent.getElementById('cancelBtn')?.addEventListener('click', () => {
+                        this.modalOverlay.classList.remove('active');
+                    });
+                    
+                    this.modalContent.getElementById('couponForm')?.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        
+                        const formData = {
+                            code: this.modalContent.getElementById('couponCode').value.toUpperCase(),
+                            type: this.modalContent.getElementById('couponType').value,
+                            discount: parseFloat(this.modalContent.getElementById('couponDiscount').value),
+                            minPurchase: parseFloat(this.modalContent.getElementById('couponMinPurchase').value),
+                            maxUses: parseInt(this.modalContent.getElementById('couponMaxUses').value),
+                            expiresAt: this.modalContent.getElementById('couponExpires').value ? new Date(this.modalContent.getElementById('couponExpires').value).toISOString() : null
+                        };
+                        
+                        const id = this.modalContent.getElementById('couponId').value;
+                        
+                        if (id) {
+                            this.data.updateCoupon(id, formData);
+                            this.toast.success('تم التحديث بنجاح');
+                        } else {
+                            this.data.addCoupon(formData);
+                            this.toast.success('تمت الإضافة بنجاح');
+                        }
+                        
+                        this.modalOverlay.classList.remove('active');
+                    });
+                }
+
                 // ========== Store Management ==========
                 openStoreManagementModal() {
                     const categories = this.data.categories;
                     const products = this.data.products;
                     
                     const categoriesHtml = categories.map(c => `
-                        <div class="flex items-center justify-between p-3 border-b border-white/5">
+                        <div class="flex items-center justify-between p-4 border-b border-white/5">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
                                     <i class="${c.icon} text-blue-400"></i>
                                 </div>
                                 <div>
                                     <div class="font-bold">${c.name}</div>
+                                    <div class="text-xs text-gray-400">${c.enabled ? 'مفعل' : 'معطل'}</div>
                                 </div>
                             </div>
-                            <div class="flex gap-2">
+                            <div class="flex items-center gap-2">
+                                <label class="switch">
+                                    <input type="checkbox" class="toggle-category" data-id="${c.id}" ${c.enabled ? 'checked' : ''}>
+                                    <span class="slider"></span>
+                                </label>
                                 <button class="edit-category text-blue-400 hover:text-blue-300" data-id="${c.id}">
                                     <i class="fa-solid fa-pen"></i>
                                 </button>
@@ -2423,14 +3372,14 @@
                     const productsHtml = products.map(p => {
                         const category = categories.find(c => c.id === p.categoryId);
                         return `
-                            <div class="flex items-center justify-between p-3 border-b border-white/5">
+                            <div class="flex items-center justify-between p-4 border-b border-white/5">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
                                         <i class="${p.icon} text-blue-400"></i>
                                     </div>
                                     <div>
                                         <div class="font-bold">${p.name}</div>
-                                        <div class="text-xs text-gray-400">${category?.name || ''} | ${p.price}</div>
+                                        <div class="text-xs text-gray-400">${category?.name || ''} | ${p.price} | مخزون: ${p.stock === -1 ? '∞' : p.stock}</div>
                                     </div>
                                 </div>
                                 <div class="flex gap-2">
@@ -2480,14 +3429,10 @@
                     `;
                     
                     this.modalOverlay.classList.add('active');
-                    this.bindStoreManagementEvents();
-                }
-
-                bindStoreManagementEvents() {
+                    
                     const closeBtn = this.modalContent.querySelector('.close-modal');
                     closeBtn?.addEventListener('click', () => this.modalOverlay.classList.remove('active'));
                     
-                    // Tab switching
                     const tabs = this.modalContent.querySelectorAll('.modal-tab');
                     tabs.forEach(tab => {
                         tab.addEventListener('click', () => {
@@ -2500,9 +3445,16 @@
                         });
                     });
                     
-                    // Category buttons
                     this.modalContent.getElementById('addCategoryBtn')?.addEventListener('click', () => {
                         this.openCategoryForm();
+                    });
+                    
+                    this.modalContent.querySelectorAll('.toggle-category').forEach(checkbox => {
+                        checkbox.addEventListener('change', (e) => {
+                            const id = checkbox.dataset.id;
+                            const enabled = this.data.toggleCategory(id);
+                            this.toast.success(`القسم ${enabled ? 'مفعل' : 'معطل'}`);
+                        });
                     });
                     
                     this.modalContent.querySelectorAll('.edit-category').forEach(btn => {
@@ -2514,16 +3466,17 @@
                     
                     this.modalContent.querySelectorAll('.delete-category').forEach(btn => {
                         btn.addEventListener('click', () => {
-                            if (confirm('هل أنت متأكد من حذف هذا القسم؟')) {
-                                const id = btn.dataset.id;
-                                this.data.deleteCategory(id);
+                            const id = btn.dataset.id;
+                            const result = this.data.deleteCategory(id);
+                            if (result.success) {
                                 this.toast.success('تم الحذف بنجاح');
                                 this.modalOverlay.classList.remove('active');
+                            } else {
+                                this.toast.error(result.message);
                             }
                         });
                     });
                     
-                    // Product buttons
                     this.modalContent.getElementById('addProductBtn')?.addEventListener('click', () => {
                         this.openProductForm();
                     });
@@ -2537,12 +3490,12 @@
                     
                     this.modalContent.querySelectorAll('.delete-product').forEach(btn => {
                         btn.addEventListener('click', () => {
-                            if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+                            this.tg.showConfirm('هل أنت متأكد من حذف هذا المنتج؟', 'تأكيد', () => {
                                 const id = btn.dataset.id;
                                 this.data.deleteProduct(id);
                                 this.toast.success('تم الحذف بنجاح');
                                 this.modalOverlay.classList.remove('active');
-                            }
+                            });
                         });
                     });
                 }
@@ -2651,7 +3604,7 @@
                             
                             <div class="mb-3">
                                 <label class="block text-sm text-gray-400 mb-1">القسم</label>
-                                <select id="productCategoryId" class="custom-input">
+                                <select id="productCategoryId" class="custom-input" required>
                                     ${categoryOptions}
                                 </select>
                             </div>
@@ -2672,8 +3625,21 @@
                             </div>
                             
                             <div class="mb-3">
+                                <label class="block text-sm text-gray-400 mb-1">مميز؟</label>
+                                <select id="productFeatured" class="custom-input">
+                                    <option value="true" ${product?.featured ? 'selected' : ''}>نعم</option>
+                                    <option value="false" ${!product?.featured ? 'selected' : ''}>لا</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
                                 <label class="block text-sm text-gray-400 mb-1">التقييم</label>
                                 <input type="number" id="productRating" class="custom-input" value="${product?.rating || 0}" step="0.1" min="0" max="5">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="block text-sm text-gray-400 mb-1">العلامات (tags) - مفصولة بفاصلة</label>
+                                <input type="text" id="productTags" class="custom-input" value="${product?.tags?.join(', ') || ''}">
                             </div>
                             
                             <div class="mb-3">
@@ -2684,7 +3650,7 @@
                             
                             <div class="mb-3">
                                 <label class="block text-sm text-gray-400 mb-1">بيانات التسليم (JSON)</label>
-                                <textarea id="productFulfillment" rows="3" class="custom-input">${JSON.stringify(product?.fulfillment || { type: 'manual' }, null, 2)}</textarea>
+                                <textarea id="productFulfillment" rows="3" class="custom-input">${JSON.stringify(product?.fulfillment || { type: 'manual', instructions: 'سيتم توفير المنتج فور الشراء' }, null, 2)}</textarea>
                             </div>
                             
                             <div class="flex gap-2 mt-4">
@@ -2715,9 +3681,11 @@
                                 icon: this.modalContent.getElementById('productIcon').value,
                                 stock: parseInt(this.modalContent.getElementById('productStock').value),
                                 discount: parseFloat(this.modalContent.getElementById('productDiscount').value) || 0,
+                                featured: this.modalContent.getElementById('productFeatured').value === 'true',
                                 rating: parseFloat(this.modalContent.getElementById('productRating').value) || 0,
-                                inputFields: JSON.parse(this.modalContent.getElementById('productFields').value),
-                                fulfillment: JSON.parse(this.modalContent.getElementById('productFulfillment').value)
+                                tags: this.modalContent.getElementById('productTags').value.split(',').map(t => t.trim()).filter(t => t),
+                                inputFields: JSON.parse(this.modalContent.getElementById('productFields').value || '[]'),
+                                fulfillment: JSON.parse(this.modalContent.getElementById('productFulfillment').value || '{}')
                             };
                             
                             const id = this.modalContent.getElementById('productId').value;
@@ -2737,30 +3705,160 @@
                     });
                 }
 
+                // ========== Settings Modal ==========
+                openSettingsModal() {
+                    this.modalContent.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">إعدادات المتجر</h2>
+                            <button class="close-modal w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 transition">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <form id="settingsForm" class="scroll-custom" style="max-height: 600px; overflow-y: auto;">
+                            <div class="mb-4">
+                                <h3 class="font-bold mb-2 text-blue-400">الإعدادات العامة</h3>
+                                
+                                <div class="mb-3">
+                                    <label class="block text-sm text-gray-400 mb-1">اسم المتجر</label>
+                                    <input type="text" id="storeName" class="custom-input" value="${this.data.settings.storeName}">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="block text-sm text-gray-400 mb-1">اللون الرئيسي</label>
+                                    <div class="flex gap-2">
+                                        <input type="color" id="primaryColor" class="color-picker" value="${this.data.settings.primaryColor}">
+                                        <input type="text" id="primaryColorText" class="custom-input" value="${this.data.settings.primaryColor}">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="font-bold mb-2 text-blue-400">إعدادات السحب</h3>
+                                
+                                <div class="mb-3">
+                                    <label class="block text-sm text-gray-400 mb-1">الحد الأدنى للسحب</label>
+                                    <input type="number" id="minWithdraw" class="custom-input" value="${this.data.settings.minWithdraw}">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="block text-sm text-gray-400 mb-1">الحد الأقصى للسحب</label>
+                                    <input type="number" id="maxWithdraw" class="custom-input" value="${this.data.settings.maxWithdraw}">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="block text-sm text-gray-400 mb-1">نسبة رسوم السحب (%)</label>
+                                    <input type="number" id="withdrawFee" class="custom-input" value="${this.data.settings.withdrawFee}" step="0.1">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="font-bold mb-2 text-blue-400">إعدادات المتجر</h3>
+                                
+                                <div class="flex items-center justify-between mb-3">
+                                    <label class="text-sm text-gray-400">تفعيل التقييمات</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="enableReviews" ${this.data.settings.enableReviews ? 'checked' : ''}>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between mb-3">
+                                    <label class="text-sm text-gray-400">تفعيل الكوبونات</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="enableCoupons" ${this.data.settings.enableCoupons ? 'checked' : ''}>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between mb-3">
+                                    <label class="text-sm text-gray-400">تفعيل الإشعارات</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="enableNotifications" ${this.data.settings.enableNotifications ? 'checked' : ''}>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between mb-3">
+                                    <label class="text-sm text-gray-400 text-red-400">وضع الصيانة</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="maintenance" ${this.data.settings.maintenance ? 'checked' : ''}>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button type="submit" class="btn-primary flex-1">حفظ الإعدادات</button>
+                                <button type="button" class="btn-secondary flex-1" id="cancelBtn">إلغاء</button>
+                            </div>
+                        </form>
+                    `;
+                    
+                    this.modalOverlay.classList.add('active');
+                    
+                    const closeBtn = this.modalContent.querySelector('.close-modal');
+                    closeBtn?.addEventListener('click', () => this.modalOverlay.classList.remove('active'));
+                    
+                    this.modalContent.getElementById('cancelBtn')?.addEventListener('click', () => {
+                        this.modalOverlay.classList.remove('active');
+                    });
+                    
+                    // Sync color picker with text input
+                    const colorPicker = this.modalContent.getElementById('primaryColor');
+                    const colorText = this.modalContent.getElementById('primaryColorText');
+                    
+                    colorPicker?.addEventListener('input', (e) => {
+                        colorText.value = e.target.value;
+                    });
+                    
+                    colorText?.addEventListener('input', (e) => {
+                        colorPicker.value = e.target.value;
+                    });
+                    
+                    this.modalContent.getElementById('settingsForm')?.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        
+                        const settings = {
+                            storeName: this.modalContent.getElementById('storeName').value,
+                            primaryColor: this.modalContent.getElementById('primaryColor').value,
+                            minWithdraw: parseFloat(this.modalContent.getElementById('minWithdraw').value),
+                            maxWithdraw: parseFloat(this.modalContent.getElementById('maxWithdraw').value),
+                            withdrawFee: parseFloat(this.modalContent.getElementById('withdrawFee').value),
+                            enableReviews: this.modalContent.getElementById('enableReviews').checked,
+                            enableCoupons: this.modalContent.getElementById('enableCoupons').checked,
+                            enableNotifications: this.modalContent.getElementById('enableNotifications').checked,
+                            maintenance: this.modalContent.getElementById('maintenance').checked
+                        };
+                        
+                        this.data.updateSettings(settings);
+                        this.toast.success('تم حفظ الإعدادات بنجاح');
+                        this.modalOverlay.classList.remove('active');
+                    });
+                }
+
                 // ========== All Orders Modal ==========
                 openAllOrdersModal() {
-                    const orders = this.data.orders;
+                    const orders = this.data.getAllOrders();
                     
-                    const ordersHtml = orders.map(o => {
-                        const user = this.data.users?.find(u => u.id === o.userId) || { first_name: 'مستخدم' };
-                        return `
-                            <div class="p-4 border-b border-white/5">
-                                <div class="flex justify-between items-start mb-2">
+                    const ordersHtml = orders.map(o => `
+                        <div class="p-4 border-b border-white/5">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
                                     <div class="font-bold">${o.productName}</div>
-                                    <select class="order-status bg-slate-700 text-white text-sm rounded-lg px-2 py-1" data-order-id="${o.id}">
-                                        <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>قيد الانتظار</option>
-                                        <option value="confirmed" ${o.status === 'confirmed' ? 'selected' : ''}>مؤكد</option>
-                                        <option value="shipped" ${o.status === 'shipped' ? 'selected' : ''}>تم الشحن</option>
-                                        <option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>تم التسليم</option>
-                                        <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>ملغي</option>
-                                    </select>
+                                    <div class="text-xs text-gray-400">${o.userName}</div>
                                 </div>
-                                <div class="text-sm">المستخدم: ${o.userId}</div>
-                                <div class="text-sm">الكمية: ${o.quantity} | المجموع: ${o.total}</div>
-                                <div class="text-xs text-gray-400">${formatDate(o.date)}</div>
+                                <select class="order-status bg-slate-700 text-white text-sm rounded-lg px-2 py-1" data-order-id="${o.id}">
+                                    <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>قيد الانتظار</option>
+                                    <option value="processing" ${o.status === 'processing' ? 'selected' : ''}>قيد المعالجة</option>
+                                    <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>مكتمل</option>
+                                    <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>ملغي</option>
+                                </select>
                             </div>
-                        `;
-                    }).join('');
+                            <div class="text-sm">الكمية: ${o.quantity} | المجموع: ${o.total}</div>
+                            <div class="text-xs text-gray-400">${formatRelativeTime(o.date)}</div>
+                        </div>
+                    `).join('');
                     
                     this.modalContent.innerHTML = `
                         <div class="flex justify-between items-center mb-4">
