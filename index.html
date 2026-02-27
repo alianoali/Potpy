@@ -754,6 +754,11 @@
             pointer-events: none;
         }
 
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
         /* ========== التبويبات ========== */
         .tabs {
             display: flex;
@@ -939,6 +944,10 @@
             overflow: hidden;
         }
 
+        .hidden {
+            display: none;
+        }
+
         /* ========== التجاوب ========== */
         @media (max-width: 640px) {
             .modal {
@@ -951,6 +960,120 @@
                 height: 70px;
                 font-size: 28px;
             }
+        }
+
+        /* ========== تصنيفات شيب ========== */
+        .category-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 8px 16px;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .category-chip.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* ========== السلة ========== */
+        .cart-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cart-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .cart-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* ========== طرق الدفع ========== */
+        .payment-method-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            margin-bottom: 8px;
+        }
+
+        .payment-method-card:hover {
+            background: rgba(59, 130, 246, 0.05);
+            border-color: var(--primary);
+            transform: translateX(-4px);
+        }
+
+        .payment-method-card.selected {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid var(--primary);
+        }
+
+        .payment-method-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        /* ========== الفواتير ========== */
+        .invoice {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 24px;
+            padding: 24px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .invoice::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .invoice-detail {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
@@ -1053,7 +1176,8 @@
                     PRODUCTS: 'store_products_v2',
                     ORDERS: 'store_orders_v2',
                     IMAGES: 'store_images_v2',
-                    CACHE: 'app_cache_v2'
+                    CACHE: 'app_cache_v2',
+                    CART: 'cart_v2'
                 },
                 CACHE_DURATION: 1000 * 60 * 60, // ساعة واحدة
                 API_TIMEOUT: 10000,
@@ -1786,12 +1910,13 @@
                             minAmount: 10,
                             maxAmount: 10000,
                             fields: [
-                                { name: 'transactionId', label: 'رقم العملية', type: 'text', required: true }
+                                { name: 'transactionId', label: 'رقم العملية', type: 'text', required: true, placeholder: 'أدخل رقم العملية' }
                             ],
                             details: {
                                 address: 'T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ',
                                 network: 'TRC20'
-                            }
+                            },
+                            instructions: 'أرسل المبلغ إلى العنوان أعلاه ثم أرفق رقم العملية'
                         },
                         {
                             id: IdGenerator.generate('pm'),
@@ -1804,10 +1929,11 @@
                             minAmount: 5,
                             maxAmount: 5000,
                             fields: [
-                                { name: 'cardNumber', label: 'رقم البطاقة', type: 'text', required: true },
-                                { name: 'expiry', label: 'تاريخ الانتهاء', type: 'text', required: true },
-                                { name: 'cvv', label: 'CVV', type: 'password', required: true }
-                            ]
+                                { name: 'cardNumber', label: 'رقم البطاقة', type: 'text', required: true, placeholder: 'XXXX XXXX XXXX XXXX' },
+                                { name: 'expiry', label: 'تاريخ الانتهاء', type: 'text', required: true, placeholder: 'MM/YY' },
+                                { name: 'cvv', label: 'CVV', type: 'password', required: true, placeholder: '123' }
+                            ],
+                            instructions: 'أدخل بيانات بطاقتك بشكل آمن'
                         },
                         {
                             id: IdGenerator.generate('pm'),
@@ -1820,14 +1946,28 @@
                             minAmount: 20,
                             maxAmount: 50000,
                             fields: [
-                                { name: 'reference', label: 'رقم المرجع', type: 'text', required: true },
-                                { name: 'accountName', label: 'اسم صاحب الحساب', type: 'text', required: true }
+                                { name: 'reference', label: 'رقم المرجع', type: 'text', required: true, placeholder: 'رقم الحوالة' },
+                                { name: 'accountName', label: 'اسم صاحب الحساب', type: 'text', required: true, placeholder: 'الاسم كاملاً' }
                             ],
                             details: {
                                 iban: 'SA0380000000608010167519',
                                 beneficiary: 'شركة المدفوعات الإلكترونية',
                                 bank: 'البنك الأهلي السعودي'
-                            }
+                            },
+                            instructions: 'حول المبلغ إلى الحساب أعلاه ثم أرسل رقم المرجع'
+                        },
+                        {
+                            id: IdGenerator.generate('pm'),
+                            name: 'محفظة التطبيق',
+                            icon: 'fa-solid fa-wallet',
+                            type: 'wallet',
+                            description: 'الدفع من رصيد المحفظة',
+                            enabled: true,
+                            fee: 0,
+                            minAmount: 1,
+                            maxAmount: 10000,
+                            fields: [],
+                            instructions: 'سيتم خصم المبلغ من رصيد محفظتك'
                         }
                     ];
                 }
@@ -1925,6 +2065,10 @@
 
                 getPending() {
                     return this.requests.filter(r => r.status === 'pending');
+                }
+
+                getUserRequests(userId) {
+                    return this.requests.filter(r => r.userId === userId);
                 }
 
                 approve(id, metadata = {}) {
@@ -2432,7 +2576,7 @@
                     StorageService.set(this.ORDERS_KEY, this.orders);
                 }
 
-                createOrder(product, fields, userId, userData = {}) {
+                createOrder(product, fields, userId, userData = {}, paymentMethod = null) {
                     const order = {
                         id: IdGenerator.generate('ord'),
                         userId,
@@ -2441,6 +2585,11 @@
                         productName: product.name,
                         price: product.price,
                         fields,
+                        paymentMethod: paymentMethod ? {
+                            id: paymentMethod.id,
+                            name: paymentMethod.name,
+                            type: paymentMethod.type
+                        } : null,
                         status: product.fulfillment.type === 'auto' ? 'completed' : 'pending',
                         fulfillment: product.fulfillment,
                         createdAt: new Date().toISOString(),
@@ -2509,6 +2658,62 @@
                         cancelled,
                         totalRevenue
                     };
+                }
+            }
+
+            // ======================== إدارة السلة ========================
+            class CartService {
+                constructor() {
+                    this.STORAGE_KEY = CONFIG.STORAGE_KEYS.CART;
+                    this.items = this.load();
+                }
+
+                load() {
+                    return StorageService.get(this.STORAGE_KEY, []);
+                }
+
+                save() {
+                    StorageService.set(this.STORAGE_KEY, this.items);
+                }
+
+                add(product, fields = {}) {
+                    const cartItem = {
+                        id: IdGenerator.generate('cart'),
+                        productId: product.id,
+                        name: product.name,
+                        price: product.price,
+                        imageId: product.imageId,
+                        icon: product.icon,
+                        fields,
+                        addedAt: new Date().toISOString()
+                    };
+                    
+                    this.items.push(cartItem);
+                    this.save();
+                    
+                    return cartItem;
+                }
+
+                remove(id) {
+                    this.items = this.items.filter(item => item.id !== id);
+                    this.save();
+                }
+
+                clear() {
+                    this.items = [];
+                    this.save();
+                }
+
+                getAll() {
+                    return [...this.items];
+                }
+
+                getCount() {
+                    return this.items.length;
+                }
+
+                getTotal() {
+                    return this.items.reduce((sum, item) => sum + item.price, 0);
                 }
             }
 
@@ -2761,6 +2966,7 @@
                     const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
                     const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
                     const unreadCount = this.app.notifications.getUnreadCount(user.id);
+                    const cartCount = this.app.cart.getCount();
                     
                     this.container.innerHTML = `
                         <div class="space-y-5 animate-enter pb-10">
@@ -2795,15 +3001,27 @@
                                 </div>
                             </div>
 
-                            <!-- المحفظة -->
-                            <div class="flex flex-col items-center my-4">
-                                <button class="wallet-icon-large" id="walletBtn">
-                                    <i class="fa-solid fa-wallet"></i>
+                            <!-- المحفظة والسلة -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <button class="wallet-quick-btn glass-card p-4 rounded-2xl text-center" id="walletBtn">
+                                    <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-yellow-500/20 to-orange-500/20 flex items-center justify-center mb-2">
+                                        <i class="fa-solid fa-wallet text-yellow-400 text-xl"></i>
+                                    </div>
+                                    <span class="font-bold">${this.app.wallet.getBalance().toLocaleString('ar-EG')}</span>
+                                    <span class="block text-xs text-gray-400">الرصيد</span>
                                 </button>
-                                <div class="balance-badge mt-4" id="balanceDisplay">
-                                    <i class="fa-solid fa-coins"></i>
-                                    <span>${this.app.wallet.getBalance().toLocaleString('ar-EG')}</span>
-                                </div>
+                                <button class="cart-quick-btn glass-card p-4 rounded-2xl text-center relative" id="cartBtn">
+                                    <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center mb-2">
+                                        <i class="fa-solid fa-cart-shopping text-green-400 text-xl"></i>
+                                    </div>
+                                    <span class="font-bold">${cartCount}</span>
+                                    <span class="block text-xs text-gray-400">السلة</span>
+                                    ${cartCount > 0 ? `
+                                        <span class="absolute top-2 left-2 bg-green-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                                            ${cartCount}
+                                        </span>
+                                    ` : ''}
+                                </button>
                             </div>
 
                             <!-- أقسام سريعة -->
@@ -2824,11 +3042,28 @@
                                 `).join('')}
                             </div>
 
-                            <!-- زر المتجر -->
-                            <button id="openStoreBtn" class="btn btn-primary w-full py-4">
-                                <i class="fa-solid fa-store ml-2"></i>
-                                المتجر الإلكتروني
-                            </button>
+                            <!-- أزرار الإجراءات السريعة -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <button id="openStoreBtn" class="btn btn-primary">
+                                    <i class="fa-solid fa-store ml-2"></i>
+                                    المتجر
+                                </button>
+                                <button id="depositBtn" class="btn btn-success">
+                                    <i class="fa-solid fa-arrow-down ml-2"></i>
+                                    شحن رصيد
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <button id="withdrawBtn" class="btn btn-outline">
+                                    <i class="fa-solid fa-arrow-up ml-2"></i>
+                                    سحب
+                                </button>
+                                <button id="transactionsBtn" class="btn btn-outline">
+                                    <i class="fa-regular fa-clock ml-2"></i>
+                                    المعاملات
+                                </button>
+                            </div>
 
                             <!-- طلباتي الأخيرة -->
                             <div class="glass-card p-4 rounded-2xl">
@@ -2955,6 +3190,18 @@
                                 </div>
                             </div>
 
+                            <!-- إدارة طرق الدفع -->
+                            <div class="glass-card p-4 rounded-2xl">
+                                <h3 class="font-bold mb-3 flex items-center gap-2">
+                                    <i class="fa-regular fa-credit-card text-green-400"></i>
+                                    طرق الدفع
+                                </h3>
+                                <button id="managePaymentMethodsBtn" class="btn btn-outline w-full">
+                                    <i class="fa-solid fa-gear ml-2"></i>
+                                    إدارة طرق الدفع
+                                </button>
+                            </div>
+
                             <!-- زر المتجر -->
                             <button id="openStoreBtn" class="btn btn-primary w-full py-4">
                                 <i class="fa-solid fa-store ml-2"></i>
@@ -2978,7 +3225,7 @@
                     }
                     
                     return orders.map(order => `
-                        <div class="transaction-item">
+                        <div class="transaction-item cursor-pointer" onclick="app.ui.showOrderDetails('${order.id}')">
                             <div class="flex-1">
                                 <div class="flex justify-between items-center">
                                     <span class="font-bold text-sm">${order.productName}</span>
@@ -3203,9 +3450,12 @@
 
                             <!-- حقول الإدخال -->
                             ${product.fields && product.fields.length > 0 ? `
-                                <form id="productFieldsForm" class="space-y-3">
-                                    ${product.fields.map(field => this.renderInputField(field)).join('')}
-                                </form>
+                                <div class="glass-card p-4 rounded-xl">
+                                    <h3 class="font-bold mb-2">بيانات الطلب</h3>
+                                    <form id="productFieldsForm" class="space-y-3">
+                                        ${product.fields.map(field => this.renderInputField(field)).join('')}
+                                    </form>
+                                </div>
                             ` : ''}
 
                             <!-- أزرار الإجراء -->
@@ -3247,6 +3497,416 @@
                                    ${field.required ? 'required' : ''}>
                         </div>
                     `;
+                }
+
+                // ========== المحفظة والمعاملات ==========
+                openWallet() {
+                    const transactions = this.app.wallet.getTransactions(20);
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="modal-header">
+                            <h2 class="modal-title">💰 المحفظة</h2>
+                            <button class="modal-close" id="closeModalBtn">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="text-center mb-6">
+                            <div class="wallet-icon-large mx-auto">
+                                <i class="fa-solid fa-wallet"></i>
+                            </div>
+                            <div class="text-3xl font-bold mt-4 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                                ${this.app.wallet.getBalance().toLocaleString('ar-EG')}
+                            </div>
+                            <div class="text-sm text-gray-400">الرصيد الحالي</div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <button id="depositBtn" class="btn btn-success">
+                                <i class="fa-solid fa-arrow-down ml-2"></i>
+                                شحن
+                            </button>
+                            <button id="withdrawBtn" class="btn btn-danger">
+                                <i class="fa-solid fa-arrow-up ml-2"></i>
+                                سحب
+                            </button>
+                        </div>
+
+                        <h3 class="font-bold mb-2 flex items-center gap-2">
+                            <i class="fa-regular fa-clock text-blue-400"></i>
+                            آخر المعاملات
+                        </h3>
+                        <div class="space-y-2 max-h-80 overflow-y-auto custom-scroll">
+                            ${transactions.length === 0 ? `
+                                <p class="text-gray-400 text-center py-4">لا توجد معاملات</p>
+                            ` : transactions.map(tx => `
+                                <div class="transaction-item">
+                                    <div class="transaction-icon ${tx.amount > 0 ? 'deposit' : 'withdraw'}">
+                                        <i class="fa-solid ${tx.amount > 0 ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between">
+                                            <span class="font-bold ${tx.amount > 0 ? 'text-green-400' : 'text-red-400'}">
+                                                ${tx.amount > 0 ? '+' : ''}${tx.amount}
+                                            </span>
+                                            <span class="text-xs text-gray-400">${DateUtils.timeAgo(tx.createdAt)}</span>
+                                        </div>
+                                        <p class="text-xs text-gray-400">${tx.note || 'معاملة'}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="mt-4">
+                            <p class="text-xs text-gray-400 text-center">
+                                عنوان المحفظة: ${this.app.wallet.getAddress()}
+                            </p>
+                        </div>
+                    `;
+
+                    this.modal.classList.add('open');
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                    
+                    document.getElementById('depositBtn').addEventListener('click', () => {
+                        this.openDeposit();
+                    });
+                    
+                    document.getElementById('withdrawBtn').addEventListener('click', () => {
+                        this.openWithdraw();
+                    });
+                }
+
+                openDeposit() {
+                    const methods = this.app.paymentMethods.getAll();
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="modal-header">
+                            <h2 class="modal-title">💳 شحن الرصيد</h2>
+                            <button class="modal-close" id="closeModalBtn">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="input-label">المبلغ</label>
+                            <input type="number" id="depositAmount" class="input-field" placeholder="أدخل المبلغ" min="1">
+                        </div>
+
+                        <h3 class="font-bold mb-2">طريقة الدفع</h3>
+                        <div class="space-y-2 mb-4" id="paymentMethodsList">
+                            ${methods.map(method => `
+                                <div class="payment-method-card" data-method-id="${method.id}">
+                                    <div class="payment-method-icon">
+                                        <i class="${method.icon}"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="font-bold">${method.name}</div>
+                                        <div class="text-xs text-gray-400">${method.description}</div>
+                                        ${method.fee > 0 ? `
+                                            <div class="text-xs text-yellow-400">رسوم: ${method.fee}%</div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <button id="submitDepositBtn" class="btn btn-primary w-full" disabled>
+                            تأكيد الشحن
+                        </button>
+                    `;
+
+                    this.modal.classList.add('open');
+                    
+                    let selectedMethod = null;
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                    
+                    document.querySelectorAll('.payment-method-card').forEach(card => {
+                        card.addEventListener('click', () => {
+                            document.querySelectorAll('.payment-method-card').forEach(c => c.classList.remove('selected'));
+                            card.classList.add('selected');
+                            selectedMethod = card.dataset.methodId;
+                            
+                            const amount = document.getElementById('depositAmount').value;
+                            document.getElementById('submitDepositBtn').disabled = !amount || amount <= 0;
+                        });
+                    });
+                    
+                    document.getElementById('depositAmount').addEventListener('input', (e) => {
+                        const amount = e.target.value;
+                        document.getElementById('submitDepositBtn').disabled = !amount || amount <= 0 || !selectedMethod;
+                    });
+                    
+                    document.getElementById('submitDepositBtn').addEventListener('click', () => {
+                        const amount = parseFloat(document.getElementById('depositAmount').value);
+                        const method = this.app.paymentMethods.get(selectedMethod);
+                        
+                        if (amount && method) {
+                            this.app.createDeposit(amount, method);
+                        }
+                    });
+                }
+
+                openWithdraw() {
+                    const balance = this.app.wallet.getBalance();
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="modal-header">
+                            <h2 class="modal-title">💸 سحب الرصيد</h2>
+                            <button class="modal-close" id="closeModalBtn">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="input-label">المبلغ</label>
+                            <input type="number" id="withdrawAmount" class="input-field" placeholder="أدخل المبلغ" min="10" max="${balance}">
+                            <p class="text-xs text-gray-400 mt-1">الحد الأدنى: 10 | الحد الأقصى: ${balance}</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="input-label">عنوان المحفظة</label>
+                            <input type="text" id="withdrawAddress" class="input-field" value="${this.app.wallet.getAddress()}">
+                        </div>
+
+                        <button id="submitWithdrawBtn" class="btn btn-danger w-full" disabled>
+                            تأكيد السحب
+                        </button>
+                    `;
+
+                    this.modal.classList.add('open');
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                    
+                    document.getElementById('withdrawAmount').addEventListener('input', (e) => {
+                        const amount = e.target.value;
+                        const address = document.getElementById('withdrawAddress').value;
+                        document.getElementById('submitWithdrawBtn').disabled = !amount || amount < 10 || amount > balance || !address;
+                    });
+                    
+                    document.getElementById('withdrawAddress').addEventListener('input', () => {
+                        const amount = document.getElementById('withdrawAmount').value;
+                        const address = document.getElementById('withdrawAddress').value;
+                        document.getElementById('submitWithdrawBtn').disabled = !amount || amount < 10 || amount > balance || !address;
+                    });
+                    
+                    document.getElementById('submitWithdrawBtn').addEventListener('click', () => {
+                        const amount = parseFloat(document.getElementById('withdrawAmount').value);
+                        const address = document.getElementById('withdrawAddress').value;
+                        
+                        if (amount && address) {
+                            this.app.createWithdrawal(amount, address);
+                        }
+                    });
+                }
+
+                openTransactions() {
+                    const transactions = this.app.wallet.getTransactions(50);
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="modal-header">
+                            <h2 class="modal-title">📊 جميع المعاملات</h2>
+                            <button class="modal-close" id="closeModalBtn">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-2 max-h-[70vh] overflow-y-auto custom-scroll">
+                            ${transactions.length === 0 ? `
+                                <p class="text-gray-400 text-center py-8">لا توجد معاملات</p>
+                            ` : transactions.map(tx => `
+                                <div class="transaction-item">
+                                    <div class="transaction-icon ${tx.amount > 0 ? 'deposit' : 'withdraw'}">
+                                        <i class="fa-solid ${tx.amount > 0 ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-center">
+                                            <span class="font-bold ${tx.amount > 0 ? 'text-green-400' : 'text-red-400'}">
+                                                ${tx.amount > 0 ? '+' : ''}${tx.amount}
+                                            </span>
+                                            <span class="text-xs text-gray-400">${DateUtils.format(tx.createdAt)}</span>
+                                        </div>
+                                        <p class="text-xs text-gray-400">${tx.note || 'معاملة'}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+
+                    this.modal.classList.add('open');
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                }
+
+                // ========== السلة ==========
+                openCart() {
+                    const cartItems = this.app.cart.getAll();
+                    const total = this.app.cart.getTotal();
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="modal-header">
+                            <h2 class="modal-title">🛒 سلة التسوق</h2>
+                            <button class="modal-close" id="closeModalBtn">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        ${cartItems.length === 0 ? `
+                            <div class="text-center py-8">
+                                <i class="fa-solid fa-cart-shopping text-5xl text-gray-600 mb-3"></i>
+                                <p class="text-gray-400">السلة فارغة</p>
+                            </div>
+                        ` : `
+                            <div class="space-y-2 mb-4 max-h-96 overflow-y-auto custom-scroll">
+                                ${cartItems.map(item => `
+                                    <div class="cart-item">
+                                        <div class="cart-item-image">
+                                            <i class="${item.icon || 'fa-box'} text-white text-xl"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between">
+                                                <span class="font-bold">${item.name}</span>
+                                                <button class="remove-from-cart text-red-400" data-cart-id="${item.id}">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </div>
+                                            <div class="flex justify-between items-center mt-1">
+                                                <span class="text-sm text-blue-400">${item.price}</span>
+                                                <span class="text-xs text-gray-400">${Object.keys(item.fields || {}).length} حقول</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <div class="glass-card p-4 rounded-xl mb-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold">الإجمالي:</span>
+                                    <span class="text-xl font-bold text-blue-400">${total}</span>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-3">
+                                <button id="clearCartBtn" class="btn btn-outline flex-1">
+                                    <i class="fa-regular fa-trash-can ml-2"></i>
+                                    تفريغ
+                                </button>
+                                <button id="checkoutBtn" class="btn btn-success flex-1">
+                                    <i class="fa-regular fa-credit-card ml-2"></i>
+                                    شراء الكل
+                                </button>
+                            </div>
+                        `}
+                    `;
+
+                    this.modal.classList.add('open');
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                    
+                    document.querySelectorAll('.remove-from-cart').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const cartId = btn.dataset.cartId;
+                            this.app.removeFromCart(cartId);
+                            this.openCart();
+                        });
+                    });
+                    
+                    document.getElementById('clearCartBtn')?.addEventListener('click', () => {
+                        this.app.clearCart();
+                        this.openCart();
+                    });
+                    
+                    document.getElementById('checkoutBtn')?.addEventListener('click', () => {
+                        this.openCheckout();
+                    });
+                }
+
+                openCheckout() {
+                    const cartItems = this.app.cart.getAll();
+                    const total = this.app.cart.getTotal();
+                    const methods = this.app.paymentMethods.getAll();
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="modal-header">
+                            <h2 class="modal-title">💳 إتمام الشراء</h2>
+                            <button class="modal-close" id="closeModalBtn">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="invoice mb-4">
+                            <h3 class="font-bold text-lg mb-2">فاتورة الشراء</h3>
+                            <div class="space-y-1 text-sm">
+                                ${cartItems.map(item => `
+                                    <div class="flex justify-between">
+                                        <span>${item.name}</span>
+                                        <span>${item.price}</span>
+                                    </div>
+                                `).join('')}
+                                <div class="border-t border-white/20 my-2 pt-2 flex justify-between font-bold">
+                                    <span>الإجمالي</span>
+                                    <span>${total}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 class="font-bold mb-2">طريقة الدفع</h3>
+                        <div class="space-y-2 mb-4" id="paymentMethodsList">
+                            ${methods.map(method => `
+                                <div class="payment-method-card" data-method-id="${method.id}">
+                                    <div class="payment-method-icon">
+                                        <i class="${method.icon}"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="font-bold">${method.name}</div>
+                                        <div class="text-xs text-gray-400">${method.description}</div>
+                                        ${method.fee > 0 ? `
+                                            <div class="text-xs text-yellow-400">رسوم: ${method.fee}%</div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <button id="confirmCheckoutBtn" class="btn btn-success w-full" disabled>
+                            تأكيد الشراء
+                        </button>
+                    `;
+
+                    this.modal.classList.add('open');
+                    
+                    let selectedMethod = null;
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                    
+                    document.querySelectorAll('.payment-method-card').forEach(card => {
+                        card.addEventListener('click', () => {
+                            document.querySelectorAll('.payment-method-card').forEach(c => c.classList.remove('selected'));
+                            card.classList.add('selected');
+                            selectedMethod = card.dataset.methodId;
+                            document.getElementById('confirmCheckoutBtn').disabled = false;
+                        });
+                    });
+                    
+                    document.getElementById('confirmCheckoutBtn').addEventListener('click', () => {
+                        const method = this.app.paymentMethods.get(selectedMethod);
+                        if (method) {
+                            this.app.checkout(method);
+                        }
+                    });
                 }
 
                 // ========== لوحة الإدارة ==========
@@ -3335,6 +3995,7 @@
                                 <div class="font-bold">${req.userName}</div>
                                 <div class="text-sm">المبلغ: ${req.amount}</div>
                                 <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
+                                <div class="text-xs text-gray-400">${DateUtils.format(req.createdAt)}</div>
                             </div>
                             <div class="actions">
                                 <button class="approve-deposit" data-id="${req.id}" title="قبول">
@@ -3360,7 +4021,8 @@
                             <div>
                                 <div class="font-bold">${req.userName}</div>
                                 <div class="text-sm">المبلغ: ${req.amount}</div>
-                                <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
+                                <div class="text-xs text-gray-400">العنوان: ${req.address}</div>
+                                <div class="text-xs text-gray-400">${DateUtils.format(req.createdAt)}</div>
                             </div>
                             <div class="actions">
                                 <button class="approve-withdrawal" data-id="${req.id}" title="قبول">
@@ -3372,6 +4034,184 @@
                             </div>
                         </div>
                     `).join('');
+                }
+
+                // ========== إدارة طرق الدفع ==========
+                openPaymentMethodsManagement() {
+                    const methods = this.app.paymentMethods.getAll();
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="modal-header">
+                            <h2 class="modal-title">💳 إدارة طرق الدفع</h2>
+                            <button class="modal-close" id="closeModalBtn">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-2 mb-4">
+                            ${methods.map(method => `
+                                <div class="admin-item">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+                                            <i class="${method.icon}"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-bold">${method.name}</div>
+                                            <div class="text-xs text-gray-400">${method.type}</div>
+                                        </div>
+                                    </div>
+                                    <div class="actions">
+                                        <button class="toggle-payment-method" data-id="${method.id}" title="${method.enabled ? 'تعطيل' : 'تفعيل'}">
+                                            <i class="fa-solid ${method.enabled ? 'fa-toggle-on text-green-400' : 'fa-toggle-off text-gray-400'}"></i>
+                                        </button>
+                                        <button class="edit-payment-method" data-id="${method.id}" title="تعديل">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <button id="addPaymentMethodBtn" class="btn btn-primary w-full">
+                            <i class="fa-solid fa-plus ml-2"></i>
+                            إضافة طريقة دفع جديدة
+                        </button>
+                    `;
+
+                    this.modal.classList.add('open');
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                    
+                    document.querySelectorAll('.toggle-payment-method').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            this.app.togglePaymentMethod(id);
+                        });
+                    });
+                    
+                    document.querySelectorAll('.edit-payment-method').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            this.openPaymentMethodModal(id);
+                        });
+                    });
+                    
+                    document.getElementById('addPaymentMethodBtn').addEventListener('click', () => {
+                        this.openPaymentMethodModal();
+                    });
+                }
+
+                openPaymentMethodModal(id = null) {
+                    const method = id ? this.app.paymentMethods.get(id) : null;
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="modal-header">
+                            <h2 class="modal-title">${method ? 'تعديل' : 'إضافة'} طريقة دفع</h2>
+                            <button class="modal-close" id="closeModalBtn">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <form id="paymentMethodForm" class="space-y-4">
+                            <input type="hidden" id="paymentMethodId" value="${method?.id || ''}">
+                            
+                            <div>
+                                <label class="input-label">اسم الطريقة</label>
+                                <input type="text" id="methodName" value="${method?.name || ''}" class="input-field" required>
+                            </div>
+
+                            <div>
+                                <label class="input-label">الأيقونة</label>
+                                <input type="text" id="methodIcon" value="${method?.icon || 'fa-credit-card'}" class="input-field" required>
+                            </div>
+
+                            <div>
+                                <label class="input-label">النوع</label>
+                                <select id="methodType" class="input-field">
+                                    <option value="crypto" ${method?.type === 'crypto' ? 'selected' : ''}>عملة رقمية</option>
+                                    <option value="card" ${method?.type === 'card' ? 'selected' : ''}>بطاقة ائتمان</option>
+                                    <option value="bank" ${method?.type === 'bank' ? 'selected' : ''}}>تحويل بنكي</option>
+                                    <option value="wallet" ${method?.type === 'wallet' ? 'selected' : ''}}>محفظة</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="input-label">الوصف</label>
+                                <input type="text" id="methodDescription" value="${method?.description || ''}" class="input-field">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="input-label">الحد الأدنى</label>
+                                    <input type="number" id="methodMinAmount" value="${method?.minAmount || 1}" class="input-field">
+                                </div>
+                                <div>
+                                    <label class="input-label">الحد الأقصى</label>
+                                    <input type="number" id="methodMaxAmount" value="${method?.maxAmount || 10000}" class="input-field">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="input-label">الرسوم (%)</label>
+                                <input type="number" id="methodFee" value="${method?.fee || 0}" class="input-field" step="0.1">
+                            </div>
+
+                            <div>
+                                <label class="input-label">التعليمات</label>
+                                <textarea id="methodInstructions" class="input-field" rows="2">${method?.instructions || ''}</textarea>
+                            </div>
+
+                            <div>
+                                <label class="input-label">التفاصيل (JSON)</label>
+                                <textarea id="methodDetails" class="input-field" rows="3">${JSON.stringify(method?.details || {}, null, 2)}</textarea>
+                            </div>
+
+                            <div class="flex gap-3 pt-4">
+                                <button type="submit" class="btn btn-primary flex-1">حفظ</button>
+                                <button type="button" id="cancelBtn" class="btn btn-outline flex-1">إلغاء</button>
+                            </div>
+                        </form>
+                    `;
+
+                    this.modal.classList.add('open');
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                    
+                    document.getElementById('cancelBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                    
+                    document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        
+                        try {
+                            const formData = {
+                                name: document.getElementById('methodName').value,
+                                icon: document.getElementById('methodIcon').value,
+                                type: document.getElementById('methodType').value,
+                                description: document.getElementById('methodDescription').value,
+                                minAmount: parseFloat(document.getElementById('methodMinAmount').value) || 1,
+                                maxAmount: parseFloat(document.getElementById('methodMaxAmount').value) || 10000,
+                                fee: parseFloat(document.getElementById('methodFee').value) || 0,
+                                instructions: document.getElementById('methodInstructions').value,
+                                details: JSON.parse(document.getElementById('methodDetails').value || '{}')
+                            };
+                            
+                            const id = document.getElementById('paymentMethodId').value;
+                            
+                            if (id) {
+                                this.app.updatePaymentMethod(id, formData);
+                            } else {
+                                this.app.addPaymentMethod(formData);
+                            }
+                        } catch (error) {
+                            this.app.toast.error('خطأ في صيغة JSON');
+                        }
+                    });
                 }
 
                 // ========== إدارة المتجر ==========
@@ -3531,6 +4371,10 @@
                                         ${order.status === 'completed' ? 'مكتمل' : 'معلق'}
                                     </span>
                                 </div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-bold">طريقة الدفع</span>
+                                    <span>${order.paymentMethod?.name || 'غير محدد'}</span>
+                                </div>
                                 <div class="flex justify-between items-center">
                                     <span class="font-bold">التاريخ</span>
                                     <span class="text-sm">${DateUtils.format(order.createdAt)}</span>
@@ -3563,258 +4407,6 @@
                             this.app.completeOrder(order.id);
                         });
                     }
-                }
-
-                // ========== ربط الأحداث ==========
-                bindEvents() {
-                    // زر المحفظة
-                    document.getElementById('walletBtn')?.addEventListener('click', () => {
-                        this.openWallet();
-                    });
-                    
-                    // زر المتجر
-                    document.getElementById('openStoreBtn')?.addEventListener('click', () => {
-                        this.openStore();
-                    });
-                    
-                    // زر الإشعارات
-                    document.getElementById('notificationBell')?.addEventListener('click', () => {
-                        this.openNotifications();
-                    });
-                    
-                    // أزرار التصنيفات السريعة
-                    document.querySelectorAll('.quick-cat-btn').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const catId = btn.dataset.cat;
-                            this.openStore(catId);
-                        });
-                    });
-                    
-                    // زر لوحة الإدارة
-                    document.getElementById('adminPanelBtn')?.addEventListener('click', () => {
-                        this.openAdminPanel();
-                    });
-                    
-                    // زر إدارة المتجر
-                    document.getElementById('storeManagementBtn')?.addEventListener('click', () => {
-                        this.openStoreManagement();
-                    });
-                    
-                    // زر تسجيل الخروج
-                    document.getElementById('logoutBtn')?.addEventListener('click', () => {
-                        this.app.logout();
-                    });
-                }
-
-                bindStoreEvents() {
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.modal.classList.remove('open');
-                    });
-                    
-                    // البحث
-                    const searchInput = document.getElementById('searchInput');
-                    if (searchInput) {
-                        searchInput.addEventListener('input', (e) => {
-                            this.filterProducts(e.target.value);
-                        });
-                    }
-                    
-                    // أزرار التصنيفات
-                    document.querySelectorAll('.category-chip').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const catId = btn.dataset.cat;
-                            this.openStore(catId);
-                        });
-                    });
-                    
-                    // أزرار المنتجات
-                    document.querySelectorAll('.product-card').forEach(card => {
-                        card.addEventListener('click', (e) => {
-                            if (e.target.closest('.add-to-cart-btn')) return;
-                            const prodId = card.dataset.prodId;
-                            this.showProductDetails(prodId);
-                        });
-                    });
-                    
-                    // أزرار الإضافة للسلة
-                    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const prodId = btn.dataset.prodId;
-                            this.app.addToCart(prodId);
-                        });
-                    });
-                }
-
-                bindProductEvents(product) {
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.modal.classList.remove('open');
-                    });
-                    
-                    document.getElementById('addToCartBtn').addEventListener('click', () => {
-                        const fields = this.collectFields(product.fields);
-                        this.app.addToCart(product.id, fields);
-                    });
-                    
-                    document.getElementById('buyNowBtn').addEventListener('click', () => {
-                        const fields = this.collectFields(product.fields);
-                        this.app.buyNow(product.id, fields);
-                    });
-                }
-
-                bindAdminPanelEvents() {
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.modal.classList.remove('open');
-                    });
-                    
-                    // تبديل التبويبات
-                    document.querySelectorAll('.tab').forEach(tab => {
-                        tab.addEventListener('click', () => {
-                            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                            tab.classList.add('active');
-                            
-                            const tabName = tab.dataset.tab;
-                            document.querySelectorAll('.tab-content').forEach(content => {
-                                content.classList.add('hidden');
-                            });
-                            document.getElementById(`${tabName}Tab`).classList.remove('hidden');
-                        });
-                    });
-                    
-                    // قبول طلبات الشحن
-                    document.querySelectorAll('.approve-deposit').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            this.app.approveDeposit(id);
-                        });
-                    });
-                    
-                    // رفض طلبات الشحن
-                    document.querySelectorAll('.reject-deposit').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            this.app.rejectDeposit(id);
-                        });
-                    });
-                    
-                    // قبول طلبات السحب
-                    document.querySelectorAll('.approve-withdrawal').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            this.app.approveWithdrawal(id);
-                        });
-                    });
-                    
-                    // رفض طلبات السحب
-                    document.querySelectorAll('.reject-withdrawal').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            this.app.rejectWithdrawal(id);
-                        });
-                    });
-                    
-                    // إعادة تعيين التطبيق
-                    document.getElementById('resetAppBtn')?.addEventListener('click', () => {
-                        if (confirm('هل أنت متأكد؟ سيتم حذف جميع البيانات')) {
-                            this.app.resetApp();
-                        }
-                    });
-                }
-
-                bindStoreManagementEvents() {
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.modal.classList.remove('open');
-                    });
-                    
-                    // تبديل التبويبات
-                    document.querySelectorAll('.tab').forEach(tab => {
-                        tab.addEventListener('click', () => {
-                            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                            tab.classList.add('active');
-                            
-                            const tabName = tab.dataset.tab;
-                            document.querySelectorAll('.tab-content').forEach(content => {
-                                content.classList.add('hidden');
-                            });
-                            document.getElementById(`${tabName}Tab`).classList.remove('hidden');
-                        });
-                    });
-                    
-                    // إضافة تصنيف
-                    document.getElementById('addCategoryBtn').addEventListener('click', () => {
-                        this.openCategoryModal();
-                    });
-                    
-                    // تعديل تصنيف
-                    document.querySelectorAll('.edit-category').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            this.openCategoryModal(id);
-                        });
-                    });
-                    
-                    // حذف تصنيف
-                    document.querySelectorAll('.delete-category').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            if (confirm('هل أنت متأكد من حذف هذا التصنيف؟')) {
-                                this.app.deleteCategory(id);
-                            }
-                        });
-                    });
-                    
-                    // إضافة منتج
-                    document.getElementById('addProductBtn').addEventListener('click', () => {
-                        this.openProductModal();
-                    });
-                    
-                    // تعديل منتج
-                    document.querySelectorAll('.edit-product').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            this.openProductModal(id);
-                        });
-                    });
-                    
-                    // حذف منتج
-                    document.querySelectorAll('.delete-product').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
-                                this.app.deleteProduct(id);
-                            }
-                        });
-                    });
-                    
-                    // بحث في المنتجات
-                    document.getElementById('productSearch')?.addEventListener('input', (e) => {
-                        const term = e.target.value.toLowerCase();
-                        const products = this.app.store.getProducts().filter(p => 
-                            p.name.toLowerCase().includes(term) || 
-                            p.description.toLowerCase().includes(term)
-                        );
-                        
-                        const list = document.getElementById('productsList');
-                        list.innerHTML = products.map(prod => `
-                            <div class="admin-item">
-                                <div>
-                                    <div class="font-bold">${prod.name}</div>
-                                    <div class="text-sm">${prod.price}</div>
-                                </div>
-                                <div class="actions">
-                                    <button class="edit-product" data-id="${prod.id}" title="تعديل">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </button>
-                                    <button class="delete-product" data-id="${prod.id}" title="حذف">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('');
-                        
-                        // إعادة ربط الأحداث
-                        this.bindStoreManagementEvents();
-                    });
                 }
 
                 openCategoryModal(id = null) {
@@ -4161,14 +4753,51 @@
                     return data;
                 }
 
-                openWallet() {
-                    // TODO: تنفيذ المحفظة
-                    this.app.toast.info('قريباً...');
-                }
-
                 openNotifications() {
-                    // TODO: تنفيذ الإشعارات
-                    this.app.toast.info('قريباً...');
+                    const userId = this.app.user.id;
+                    const notifications = this.app.notifications.getForUser(userId, 50);
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="modal-header">
+                            <h2 class="modal-title">🔔 الإشعارات</h2>
+                            <button class="modal-close" id="closeModalBtn">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-2 max-h-[70vh] overflow-y-auto custom-scroll">
+                            ${notifications.length === 0 ? `
+                                <p class="text-gray-400 text-center py-8">لا توجد إشعارات</p>
+                            ` : notifications.map(notif => `
+                                <div class="glass-card p-4 rounded-xl ${notif.read ? 'opacity-50' : ''}">
+                                    <div class="flex justify-between items-start">
+                                        <div class="font-bold">${notif.title}</div>
+                                        <span class="text-xs text-gray-400">${DateUtils.timeAgo(notif.createdAt)}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-300 mt-1">${notif.message}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        ${notifications.length > 0 ? `
+                            <button id="markAllReadBtn" class="btn btn-outline w-full mt-4">
+                                <i class="fa-regular fa-circle-check ml-2"></i>
+                                تحديد الكل كمقروء
+                            </button>
+                        ` : ''}
+                    `;
+
+                    this.modal.classList.add('open');
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                    
+                    document.getElementById('markAllReadBtn')?.addEventListener('click', () => {
+                        this.app.notifications.markAllAsRead(userId);
+                        this.app.toast.success('تم تحديد الكل كمقروء');
+                        this.modal.classList.remove('open');
+                    });
                 }
 
                 updateBalance() {
@@ -4176,6 +4805,283 @@
                     if (balanceEl) {
                         balanceEl.textContent = this.app.wallet.getBalance().toLocaleString('ar-EG');
                     }
+                }
+
+                // ========== ربط الأحداث ==========
+                bindEvents() {
+                    // زر المحفظة
+                    document.getElementById('walletBtn')?.addEventListener('click', () => {
+                        this.openWallet();
+                    });
+                    
+                    // زر السلة
+                    document.getElementById('cartBtn')?.addEventListener('click', () => {
+                        this.openCart();
+                    });
+                    
+                    // زر المتجر
+                    document.getElementById('openStoreBtn')?.addEventListener('click', () => {
+                        this.openStore();
+                    });
+                    
+                    // زر الشحن
+                    document.getElementById('depositBtn')?.addEventListener('click', () => {
+                        this.openDeposit();
+                    });
+                    
+                    // زر السحب
+                    document.getElementById('withdrawBtn')?.addEventListener('click', () => {
+                        this.openWithdraw();
+                    });
+                    
+                    // زر المعاملات
+                    document.getElementById('transactionsBtn')?.addEventListener('click', () => {
+                        this.openTransactions();
+                    });
+                    
+                    // زر الإشعارات
+                    document.getElementById('notificationBell')?.addEventListener('click', () => {
+                        this.openNotifications();
+                    });
+                    
+                    // أزرار التصنيفات السريعة
+                    document.querySelectorAll('.quick-cat-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const catId = btn.dataset.cat;
+                            this.openStore(catId);
+                        });
+                    });
+                    
+                    // زر لوحة الإدارة
+                    document.getElementById('adminPanelBtn')?.addEventListener('click', () => {
+                        this.openAdminPanel();
+                    });
+                    
+                    // زر إدارة المتجر
+                    document.getElementById('storeManagementBtn')?.addEventListener('click', () => {
+                        this.openStoreManagement();
+                    });
+                    
+                    // زر إدارة طرق الدفع
+                    document.getElementById('managePaymentMethodsBtn')?.addEventListener('click', () => {
+                        this.openPaymentMethodsManagement();
+                    });
+                    
+                    // زر تسجيل الخروج
+                    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+                        this.app.logout();
+                    });
+                }
+
+                bindStoreEvents() {
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                    
+                    // البحث
+                    const searchInput = document.getElementById('searchInput');
+                    if (searchInput) {
+                        searchInput.addEventListener('input', (e) => {
+                            this.filterProducts(e.target.value);
+                        });
+                    }
+                    
+                    // أزرار التصنيفات
+                    document.querySelectorAll('.category-chip').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const catId = btn.dataset.cat;
+                            this.openStore(catId);
+                        });
+                    });
+                    
+                    // أزرار المنتجات
+                    document.querySelectorAll('.product-card').forEach(card => {
+                        card.addEventListener('click', (e) => {
+                            if (e.target.closest('.add-to-cart-btn')) return;
+                            const prodId = card.dataset.prodId;
+                            this.showProductDetails(prodId);
+                        });
+                    });
+                    
+                    // أزرار الإضافة للسلة
+                    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const prodId = btn.dataset.prodId;
+                            this.app.addToCart(prodId);
+                        });
+                    });
+                }
+
+                bindProductEvents(product) {
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                    
+                    document.getElementById('addToCartBtn').addEventListener('click', () => {
+                        const fields = this.collectFields(product.fields);
+                        this.app.addToCart(product.id, fields);
+                    });
+                    
+                    document.getElementById('buyNowBtn').addEventListener('click', () => {
+                        const fields = this.collectFields(product.fields);
+                        this.app.buyNow(product.id, fields);
+                    });
+                }
+
+                bindAdminPanelEvents() {
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                    
+                    // تبديل التبويبات
+                    document.querySelectorAll('.tab').forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            
+                            const tabName = tab.dataset.tab;
+                            document.querySelectorAll('.tab-content').forEach(content => {
+                                content.classList.add('hidden');
+                            });
+                            document.getElementById(`${tabName}Tab`).classList.remove('hidden');
+                        });
+                    });
+                    
+                    // قبول طلبات الشحن
+                    document.querySelectorAll('.approve-deposit').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            this.app.approveDeposit(id);
+                        });
+                    });
+                    
+                    // رفض طلبات الشحن
+                    document.querySelectorAll('.reject-deposit').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            this.app.rejectDeposit(id);
+                        });
+                    });
+                    
+                    // قبول طلبات السحب
+                    document.querySelectorAll('.approve-withdrawal').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            this.app.approveWithdrawal(id);
+                        });
+                    });
+                    
+                    // رفض طلبات السحب
+                    document.querySelectorAll('.reject-withdrawal').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            this.app.rejectWithdrawal(id);
+                        });
+                    });
+                    
+                    // إعادة تعيين التطبيق
+                    document.getElementById('resetAppBtn')?.addEventListener('click', () => {
+                        if (confirm('هل أنت متأكد؟ سيتم حذف جميع البيانات')) {
+                            this.app.resetApp();
+                        }
+                    });
+                }
+
+                bindStoreManagementEvents() {
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.modal.classList.remove('open');
+                    });
+                    
+                    // تبديل التبويبات
+                    document.querySelectorAll('.tab').forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            
+                            const tabName = tab.dataset.tab;
+                            document.querySelectorAll('.tab-content').forEach(content => {
+                                content.classList.add('hidden');
+                            });
+                            document.getElementById(`${tabName}Tab`).classList.remove('hidden');
+                        });
+                    });
+                    
+                    // إضافة تصنيف
+                    document.getElementById('addCategoryBtn').addEventListener('click', () => {
+                        this.openCategoryModal();
+                    });
+                    
+                    // تعديل تصنيف
+                    document.querySelectorAll('.edit-category').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            this.openCategoryModal(id);
+                        });
+                    });
+                    
+                    // حذف تصنيف
+                    document.querySelectorAll('.delete-category').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            if (confirm('هل أنت متأكد من حذف هذا التصنيف؟')) {
+                                this.app.deleteCategory(id);
+                            }
+                        });
+                    });
+                    
+                    // إضافة منتج
+                    document.getElementById('addProductBtn').addEventListener('click', () => {
+                        this.openProductModal();
+                    });
+                    
+                    // تعديل منتج
+                    document.querySelectorAll('.edit-product').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            this.openProductModal(id);
+                        });
+                    });
+                    
+                    // حذف منتج
+                    document.querySelectorAll('.delete-product').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+                                this.app.deleteProduct(id);
+                            }
+                        });
+                    });
+                    
+                    // بحث في المنتجات
+                    document.getElementById('productSearch')?.addEventListener('input', (e) => {
+                        const term = e.target.value.toLowerCase();
+                        const products = this.app.store.getProducts().filter(p => 
+                            p.name.toLowerCase().includes(term) || 
+                            p.description.toLowerCase().includes(term)
+                        );
+                        
+                        const list = document.getElementById('productsList');
+                        list.innerHTML = products.map(prod => `
+                            <div class="admin-item">
+                                <div>
+                                    <div class="font-bold">${prod.name}</div>
+                                    <div class="text-sm">${prod.price}</div>
+                                </div>
+                                <div class="actions">
+                                    <button class="edit-product" data-id="${prod.id}" title="تعديل">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button class="delete-product" data-id="${prod.id}" title="حذف">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('');
+                        
+                        // إعادة ربط الأحداث
+                        this.bindStoreManagementEvents();
+                    });
                 }
             }
 
@@ -4198,6 +5104,7 @@
                     this.settings = new SettingsService();
                     this.stats = new StatsService();
                     this.store = new StoreService(this.images);
+                    this.cart = new CartService();
                     
                     // واجهة المستخدم
                     this.ui = new UIManager(this);
@@ -4208,9 +5115,6 @@
                     this.loading = true;
                     this.accessDenied = false;
                     this.telegramMissing = false;
-                    
-                    // سلة التسوق المؤقتة
-                    this.cart = [];
                     
                     // ربط التطبيق بالكائن العام
                     window.app = this;
@@ -4304,14 +5208,23 @@
                     const product = this.store.getProduct(productId);
                     if (!product) return;
                     
-                    this.cart.push({
-                        ...product,
-                        fields,
-                        cartId: IdGenerator.generate('cart')
-                    });
+                    this.cart.add(product, fields);
                     
                     this.toast.success(`تمت إضافة ${product.name} إلى السلة`);
                     this.telegram.hapticFeedback('notification', 'success');
+                    
+                    // تحديث عداد السلة في الواجهة
+                    this.ui.render();
+                }
+
+                removeFromCart(cartId) {
+                    this.cart.remove(cartId);
+                    this.toast.success('تمت إزالة المنتج من السلة');
+                }
+
+                clearCart() {
+                    this.cart.clear();
+                    this.toast.success('تم تفريغ السلة');
                 }
 
                 async buyNow(productId, fields = {}) {
@@ -4332,7 +5245,7 @@
                     // إنشاء الطلب
                     const order = this.store.createOrder(product, fields, this.user.id, {
                         name: `${this.user.first_name} ${this.user.last_name || ''}`.trim()
-                    });
+                    }, null);
                     
                     // تحديث إحصائيات المستخدم
                     this.users.updateStats(this.user.id, 'order', product.price);
@@ -4356,6 +5269,198 @@
                     
                     // تحديث واجهة المستخدم
                     this.ui.updateBalance();
+                    this.ui.modal.classList.remove('open');
+                }
+
+                async checkout(paymentMethod) {
+                    const cartItems = this.cart.getAll();
+                    const total = this.cart.getTotal();
+                    
+                    if (cartItems.length === 0) {
+                        this.toast.error('السلة فارغة');
+                        return;
+                    }
+                    
+                    // التحقق من الرصيد إذا كانت طريقة الدفع هي المحفظة
+                    if (paymentMethod.type === 'wallet') {
+                        const balance = this.wallet.getBalance();
+                        if (balance < total) {
+                            this.toast.error('الرصيد غير كافٍ');
+                            return;
+                        }
+                        
+                        // خصم الرصيد
+                        this.wallet.subtractBalance(total, 'شراء منتجات من السلة');
+                    } else {
+                        // إنشاء طلب شحن للطرق الأخرى
+                        this.createDeposit(total, paymentMethod, {
+                            type: 'checkout',
+                            items: cartItems.map(item => ({
+                                productId: item.productId,
+                                name: item.name,
+                                price: item.price,
+                                fields: item.fields
+                            }))
+                        });
+                        
+                        this.toast.info('سيتم إكمال الطلب بعد تأكيد الدفع');
+                        this.ui.modal.classList.remove('open');
+                        return;
+                    }
+                    
+                    // إنشاء الطلبات
+                    const orders = [];
+                    cartItems.forEach(item => {
+                        const product = this.store.getProduct(item.productId);
+                        if (product) {
+                            const order = this.store.createOrder(
+                                product, 
+                                item.fields, 
+                                this.user.id,
+                                { name: `${this.user.first_name} ${this.user.last_name || ''}`.trim() },
+                                paymentMethod
+                            );
+                            orders.push(order);
+                        }
+                    });
+                    
+                    // تحديث الإحصائيات
+                    this.stats.increment('orders', orders.length);
+                    this.stats.increment('revenue', total);
+                    
+                    // تفريغ السلة
+                    this.cart.clear();
+                    
+                    // إشعار
+                    this.notifications.add(
+                        this.user.id,
+                        '✅ تم الشراء بنجاح',
+                        `تم شراء ${orders.length} منتج بقيمة ${total}`,
+                        'success',
+                        { orders: orders.map(o => o.id) }
+                    );
+                    
+                    this.toast.success('تمت عملية الشراء بنجاح!');
+                    this.telegram.hapticFeedback('notification', 'success');
+                    
+                    this.ui.updateBalance();
+                    this.ui.modal.classList.remove('open');
+                }
+
+                // ========== إجراءات المحفظة ==========
+                createDeposit(amount, method, metadata = {}) {
+                    if (amount <= 0) {
+                        this.toast.error('المبلغ غير صحيح');
+                        return;
+                    }
+                    
+                    const request = this.depositRequests.add({
+                        userId: this.user.id,
+                        userName: `${this.user.first_name} ${this.user.last_name || ''}`.trim(),
+                        amount,
+                        method: method.name,
+                        methodId: method.id,
+                        status: 'pending',
+                        metadata
+                    });
+                    
+                    this.notifications.add(
+                        CONFIG.ADMIN_ID,
+                        '💰 طلب شحن جديد',
+                        `مبلغ: ${amount} - الطريقة: ${method.name}`,
+                        'info',
+                        { requestId: request.id }
+                    );
+                    
+                    this.toast.success('تم إرسال طلب الشحن بنجاح');
+                    this.telegram.hapticFeedback('notification', 'success');
+                    
+                    // عرض تفاصيل الدفع
+                    this.ui.modalContent.innerHTML = `
+                        <div class="modal-header">
+                            <h2 class="modal-title">💰 طلب الشحن</h2>
+                            <button class="modal-close" id="closeModalBtn">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="invoice text-center mb-4">
+                            <i class="fa-solid fa-circle-check text-4xl mb-2"></i>
+                            <h3 class="font-bold text-xl">تم إرسال طلبك</h3>
+                            <p class="text-sm opacity-90">رقم الطلب: ${request.id}</p>
+                        </div>
+
+                        <div class="glass-card p-4 rounded-xl mb-4">
+                            <h3 class="font-bold mb-2">طريقة الدفع: ${method.name}</h3>
+                            <p class="text-sm text-gray-300 mb-2">${method.instructions}</p>
+                            
+                            ${method.details ? `
+                                <div class="mt-3 space-y-2">
+                                    ${Object.entries(method.details).map(([key, value]) => `
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-400">${key}:</span>
+                                            <span class="font-mono text-sm">${value}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="glass-card p-4 rounded-xl mb-4">
+                            <div class="flex justify-between mb-2">
+                                <span>المبلغ:</span>
+                                <span class="font-bold">${amount}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>الحالة:</span>
+                                <span class="badge badge-warning">قيد الانتظار</span>
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-gray-400 text-center">
+                            سيتم إشعارك عند قبول الطلب
+                        </p>
+                    `;
+
+                    this.ui.modal.classList.add('open');
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.ui.modal.classList.remove('open');
+                    });
+                }
+
+                createWithdrawal(amount, address) {
+                    if (amount < 10) {
+                        this.toast.error('الحد الأدنى للسحب 10');
+                        return;
+                    }
+                    
+                    const balance = this.wallet.getBalance();
+                    if (amount > balance) {
+                        this.toast.error('الرصيد غير كافٍ');
+                        return;
+                    }
+                    
+                    const request = this.withdrawalRequests.add({
+                        userId: this.user.id,
+                        userName: `${this.user.first_name} ${this.user.last_name || ''}`.trim(),
+                        amount,
+                        address,
+                        status: 'pending'
+                    });
+                    
+                    this.notifications.add(
+                        CONFIG.ADMIN_ID,
+                        '💸 طلب سحب جديد',
+                        `مبلغ: ${amount} - العنوان: ${address}`,
+                        'info',
+                        { requestId: request.id }
+                    );
+                    
+                    this.toast.success('تم إرسال طلب السحب بنجاح');
+                    this.telegram.hapticFeedback('notification', 'success');
+                    
+                    this.ui.modal.classList.remove('open');
                 }
 
                 // ========== إجراءات المدير ==========
@@ -4410,7 +5515,7 @@
                     this.withdrawalRequests.approve(requestId);
                     
                     // خصم الرصيد
-                    this.wallet.subtractBalance(request.amount, `سحب عبر ${request.method}`, { requestId });
+                    this.wallet.subtractBalance(request.amount, `سحب إلى ${request.address}`, { requestId });
                     
                     this.notifications.add(
                         request.userId,
@@ -4438,6 +5543,28 @@
                     
                     this.toast.success('تم رفض طلب السحب');
                     this.ui.openAdminPanel();
+                }
+
+                // ========== إدارة طرق الدفع ==========
+                addPaymentMethod(data) {
+                    this.paymentMethods.add(data);
+                    this.toast.success('تم إضافة طريقة الدفع بنجاح');
+                    this.ui.openPaymentMethodsManagement();
+                    this.telegram.hapticFeedback('notification', 'success');
+                }
+
+                updatePaymentMethod(id, data) {
+                    this.paymentMethods.update(id, data);
+                    this.toast.success('تم تحديث طريقة الدفع بنجاح');
+                    this.ui.openPaymentMethodsManagement();
+                    this.telegram.hapticFeedback('notification', 'success');
+                }
+
+                togglePaymentMethod(id) {
+                    const enabled = this.paymentMethods.toggle(id);
+                    this.toast.success(`تم ${enabled ? 'تفعيل' : 'تعطيل'} طريقة الدفع`);
+                    this.ui.openPaymentMethodsManagement();
+                    this.telegram.hapticFeedback('notification', 'success');
                 }
 
                 // ========== إدارة المتجر ==========
@@ -4515,7 +5642,9 @@
                     
                     // إعادة تهيئة الخدمات
                     this.wallet = new WalletService();
+                    this.paymentMethods = new PaymentMethodService();
                     this.store = new StoreService(this.images);
+                    this.cart = new CartService();
                     this.depositRequests = new RequestService('deposit');
                     this.withdrawalRequests = new RequestService('withdrawal');
                     
