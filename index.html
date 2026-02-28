@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-88">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>⚡ Russian Roulette Elite | روليت روسي احترافي</title>
+    <title>بوابة تيليجرام المتطورة - محفظة احترافية</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Telegram Web App -->
+    <!-- Telegram Web App Script -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Font Awesome 6 -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts - Cairo & Orbitron -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Orbitron:wght@400;600;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -26,1250 +26,2496 @@
 
         body {
             font-family: 'Cairo', sans-serif;
-            background: linear-gradient(145deg, #0a0c14 0%, #1a1f2e 100%);
-            color: #ffffff;
+            background-color: var(--tg-theme-bg-color, #0f172a);
+            color: var(--tg-theme-text-color, #ffffff);
+            overflow-x: hidden;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* خلفية متحركة سينمائية */
-        .cinematic-bg {
+        /* الخلفية المتحركة */
+        .ambient-light {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -2;
-        }
-
-        .gradient-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.3;
-            animation: floatOrb 15s infinite alternate;
-        }
-
-        .orb-1 {
-            top: -20%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, #ff3b3b, #8b0000);
-        }
-
-        .orb-2 {
-            bottom: -20%;
-            left: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, #3b82f6, #1e3a8a);
-            animation-delay: -5s;
-        }
-
-        .orb-3 {
-            top: 40%;
-            left: 30%;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, #a855f7, #581c87);
-            animation-delay: -10s;
-            opacity: 0.2;
-        }
-
-        @keyframes floatOrb {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(100px, 100px) scale(1.2); }
-        }
-
-        /* تأثير الضباب */
-        .vignette {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0,0,0,0.7) 100%);
+            overflow: hidden;
             z-index: -1;
             pointer-events: none;
         }
+        
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 10s infinite ease-in-out;
+        }
+        
+        .orb-1 { top: -10%; right: -10%; width: 300px; height: 300px; background: #3b82f6; animation-delay: 0s; }
+        .orb-2 { bottom: -10%; left: -10%; width: 250px; height: 250px; background: #8b5cf6; animation-delay: 5s; }
 
-        /* الحاوية الرئيسية */
-        .app-container {
-            width: 100%;
-            max-width: 420px;
-            padding: 16px;
-            position: relative;
-            z-index: 10;
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 40px); }
         }
 
-        /* بطاقات زجاجية فاخرة */
-        .premium-card {
-            background: rgba(20, 25, 40, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 32px;
-            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.5),
-                        0 0 0 1px rgba(255, 255, 255, 0.02) inset;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
 
-        .premium-card:hover {
-            transform: translateY(-5px);
+        .glass-card:hover {
+            background: rgba(40, 51, 69, 0.8);
             border-color: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.6);
         }
 
-        /* تصميم السلاح الفاخر */
-        .gun-premium {
-            width: 100%;
-            height: 140px;
-            background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
-            border-radius: 80px 80px 40px 40px;
-            position: relative;
-            margin: 40px 0 60px;
-            box-shadow: 0 20px 30px -5px rgba(0, 0, 0, 0.8),
-                        0 0 0 2px rgba(255, 215, 0, 0.3) inset,
-                        0 0 20px rgba(255, 215, 0, 0.2);
-            transform: perspective(500px) rotateX(5deg);
+        /* Animations */
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .gun-barrel {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            height: 30px;
-            background: linear-gradient(90deg, #4a5568, #718096, #4a5568);
-            border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        .animate-enter {
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* الغرف الدوارة */
-        .chambers-container {
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            z-index: 20;
-        }
-
-        .chamber-premium {
+        /* Loader */
+        .spinner {
             width: 50px;
             height: 50px;
-            background: linear-gradient(145deg, #2d3748, #1a202c);
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--tg-theme-button-color, #3b82f6);
             border-radius: 50%;
-            border: 3px solid #ffd700;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5),
-                        0 0 20px rgba(255, 215, 0, 0.3);
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Avatar */
+        .default-avatar {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
-            font-weight: bold;
-            color: #fff;
-            position: relative;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .chamber-premium.loaded {
-            border-color: #ff4444;
-            box-shadow: 0 0 30px #ff4444;
-            animation: pulseRed 1.5s infinite;
-        }
-
-        .chamber-premium.current {
-            transform: scale(1.2);
-            border-color: #00ff88;
-            box-shadow: 0 0 30px #00ff88;
-            z-index: 30;
-        }
-
-        .chamber-premium.shot {
-            background: #330000;
-            border-color: #660000;
-            transform: scale(0.9);
-            opacity: 0.5;
-        }
-
-        @keyframes pulseRed {
-            0%, 100% { box-shadow: 0 0 30px #ff4444; }
-            50% { box-shadow: 0 0 60px #ff4444; }
-        }
-
-        /* اللاعبين */
-        .player-card {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 24px;
-            padding: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .player-card.current-turn {
-            border-color: #ffd700;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-            transform: scale(1.02);
-        }
-
-        .player-card.winner {
-            border-color: #00ff88;
-            box-shadow: 0 0 40px rgba(0, 255, 136, 0.4);
-        }
-
-        .player-card.loser {
-            border-color: #ff4444;
-            opacity: 0.6;
-            filter: grayscale(0.5);
-        }
-
-        .player-avatar-premium {
-            width: 70px;
-            height: 70px;
-            border-radius: 35px;
-            background: linear-gradient(135deg, #ffd700, #ff8800);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: bold;
-            border: 3px solid #fff;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        /* مؤشر الرصاص */
-        .bullet-track {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin: 20px 0;
-        }
-
-        .bullet-cell {
-            width: 30px;
-            height: 30px;
-            border-radius: 8px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .bullet-cell.live {
-            background: #ff4444;
-            border-color: #ff0000;
-            box-shadow: 0 0 20px #ff4444;
-        }
-
-        .bullet-cell.spent {
-            background: #330000;
-            opacity: 0.3;
-        }
-
-        .bullet-cell.current {
-            border-color: #00ff88;
-            transform: scale(1.2);
-        }
-
-        /* زر الزناد */
-        .trigger-btn {
-            width: 100%;
-            padding: 20px;
-            border: none;
-            border-radius: 60px;
-            background: linear-gradient(145deg, #ff4444, #cc0000);
             color: white;
-            font-size: 24px;
-            font-weight: 900;
-            font-family: 'Orbitron', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.2s ease;
-            box-shadow: 0 20px 30px -5px rgba(255, 0, 0, 0.5),
-                        0 0 0 2px rgba(255, 255, 255, 0.3) inset;
+            font-weight: bold;
         }
 
-        .trigger-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 30px 40px -5px rgba(255, 0, 0, 0.7);
-        }
-
-        .trigger-btn:active {
-            transform: scale(0.95);
-        }
-
-        .trigger-btn::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.3), transparent 70%);
-            animation: rotate 4s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* شريط الرهان */
-        .bet-slider-premium {
-            width: 100%;
-            height: 10px;
-            background: linear-gradient(90deg, #00ff88, #ffd700, #ff4444);
-            border-radius: 10px;
-            -webkit-appearance: none;
-        }
-
-        .bet-slider-premium::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 30px;
-            height: 30px;
-            background: #ffd700;
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 0 20px #ffd700;
-            cursor: pointer;
-        }
-
-        /* أيقونة المحفظة */
-        .wallet-icon-3d {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(145deg, #ffd700, #ff8800);
-            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            color: #1a1a1a;
-            box-shadow: 0 20px 30px rgba(255, 215, 0, 0.4),
-                        0 0 0 3px rgba(255,255,255,0.2) inset;
-            animation: float 3s infinite ease-in-out;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .wallet-icon-3d:hover {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 30px 40px rgba(255, 215, 0, 0.6);
-        }
-
-        /* إشعارات */
-        .toast-premium {
+        /* Toast Notifications - متطور */
+        .toast-container {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(20, 25, 40, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 60px;
-            padding: 16px 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 90%;
+            max-width: 350px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: rgba(20, 30, 40, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            padding: 12px 20px;
             color: white;
             font-size: 14px;
+            font-weight: 500;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            z-index: 10000;
-            animation: slideUp 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: toastSlideUp 0.3s ease, toastFadeOut 0.3s ease 5.7s forwards;
+            pointer-events: auto;
+            direction: rtl;
+            white-space: pre-line;
+            line-height: 1.6;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translate(-50%, 20px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
-        }
+        .toast.success { border-right: 4px solid #10b981; }
+        .toast.error { border-right: 4px solid #ef4444; }
+        .toast.warning { border-right: 4px solid #f59e0b; }
+        .toast.info { border-right: 4px solid #3b82f6; }
 
-        /* تحديات نشطة */
-        .challenge-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ff4444;
-            color: white;
-            border-radius: 50%;
+        .toast-icon {
             width: 24px;
             height: 24px;
-            font-size: 12px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            border: 2px solid white;
-            animation: pulseBadge 1.5s infinite;
+            font-size: 14px;
+            flex-shrink: 0;
         }
 
-        @keyframes pulseBadge {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+        .toast.success .toast-icon { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .toast.error .toast-icon { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .toast.warning .toast-icon { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .toast.info .toast-icon { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+
+        .toast-message {
+            flex: 1;
         }
 
-        /* النوافذ المنبثقة */
-        .modal-premium {
+        @keyframes toastSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes toastFadeOut {
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 100;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(40, 51, 69, 0.8);
+        }
+
+        /* Settings panel */
+        .settings-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(20, 30, 40, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            border-radius: 30px 30px 0 0;
+        }
+
+        .settings-panel.open {
+            transform: translateY(0);
+        }
+
+        .settings-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
 
-        .modal-premium.open {
+        .settings-overlay.open {
             opacity: 1;
             pointer-events: all;
         }
 
-        .modal-content-premium {
-            width: 90%;
-            max-width: 400px;
-            background: linear-gradient(145deg, #1a1f2e, #0a0c14);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 40px;
-            padding: 24px;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
+        /* Wallet Modal */
+        .wallet-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
         }
 
-        .modal-premium.open .modal-content-premium {
+        .wallet-modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .wallet-modal {
+            background: rgba(20, 30, 40, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 32px;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        .wallet-modal-overlay.open .wallet-modal {
             transform: scale(1);
         }
 
-        /* شارة المستخدم */
-        .user-tag {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.3);
+        .wallet-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .wallet-tab {
+            flex: 1;
+            min-width: 70px;
+            padding: 8px 5px;
+            text-align: center;
+            border-radius: 12px;
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+
+        .wallet-tab.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .wallet-tab i {
+            margin-left: 6px;
+            font-size: 14px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-amount.positive { color: #10b981; }
+        .transaction-amount.negative { color: #ef4444; }
+
+        /* أيقونة المحفظة الكبيرة والمتطورة */
+        .wallet-icon-large {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(145deg, #3b82f6, #8b5cf6);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5), 0 0 0 2px rgba(255,255,255,0.1) inset;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: floatWallet 3s infinite ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wallet-icon-large::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 70%);
+            opacity: 0.6;
+        }
+
+        .wallet-icon-large i {
+            font-size: 36px;
+            color: white;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            animation: pulseIcon 2s infinite ease-in-out;
+            position: relative;
+            z-index: 2;
+        }
+
+        .wallet-icon-large:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.8), 0 0 0 4px rgba(255,255,255,0.2) inset;
+        }
+
+        @keyframes floatWallet {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulseIcon {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* بطاقة الرصيد الصغيرة */
+        .balance-badge {
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 40px;
             padding: 6px 14px;
-            font-size: 12px;
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 12px;
         }
 
-        /* أزرار */
-        .btn-premium {
-            padding: 14px 24px;
-            border-radius: 40px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: none;
-            font-size: 16px;
+        .balance-badge i {
+            color: #fbbf24;
         }
 
-        .btn-gold {
-            background: linear-gradient(145deg, #ffd700, #ff8800);
-            color: #1a1a1a;
-            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
-        }
-
-        .btn-gold:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 30px rgba(255, 215, 0, 0.4);
-        }
-
-        .btn-red {
-            background: linear-gradient(145deg, #ff4444, #cc0000);
+        /* شارة الإشعارات */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
             color: white;
-            box-shadow: 0 10px 20px rgba(255, 0, 0, 0.3);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+            animation: pulse-badge 1.5s infinite;
         }
 
-        .btn-red:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 30px rgba(255, 0, 0, 0.4);
+        @keyframes pulse-badge {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
+
+        /* طرق الدفع - صور وأيقونات */
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .payment-method:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .payment-method.selected {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+        }
+
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: #334155;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .payment-icon img {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        /* تفاصيل طريقة الدفع عند الاختيار */
+        .payment-details {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 10px 0 15px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .payment-details strong {
+            color: #3b82f6;
+        }
+
+        /* لوحة المشرف */
+        .admin-requests-panel {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .request-item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .request-id {
+            font-size: 10px;
+            color: #94a3b8;
+            font-family: monospace;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-accept {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-accept:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-reject {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-reject:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            padding: 2px 10px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* أزرار تحرير طرق الدفع */
+        .payment-method-admin {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        .payment-method-admin .actions button {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            margin: 0 4px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .payment-method-admin .actions button:hover {
+            color: white;
+        }
+        .payment-method-admin .actions button.delete:hover { color: #ef4444; }
+        .payment-method-admin .actions button.edit:hover { color: #3b82f6; }
     </style>
 </head>
 <body>
-    <!-- خلفية سينمائية -->
-    <div class="cinematic-bg">
-        <div class="gradient-orb orb-1"></div>
-        <div class="gradient-orb orb-2"></div>
-        <div class="gradient-orb orb-3"></div>
+    <!-- Background Elements -->
+    <div class="ambient-light">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
     </div>
-    <div class="vignette"></div>
 
-    <!-- الحاوية الرئيسية -->
-    <div class="app-container" id="app"></div>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fa-solid fa-moon" id="themeIcon"></i>
+        <span class="text-sm">السمة</span>
+    </div>
 
-    <!-- قالب اللعبة -->
-    <template id="game-template">
-        <div class="premium-card p-6 mb-4">
-            <!-- رأس اللعبة -->
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-black" style="font-family: 'Orbitron';">🔫 ROULETTE</h2>
-                <div class="user-tag">
-                    <i class="fa-regular fa-user"></i>
-                    <span id="playerName">Player</span>
-                </div>
+    <!-- Main Container -->
+    <div id="app" class="w-full max-w-md p-5 relative"></div>
+
+    <!-- Settings Panel -->
+    <div class="settings-overlay" id="settingsOverlay"></div>
+    <div class="settings-panel" id="settingsPanel">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold">الإعدادات</h3>
+            <button id="closeSettings" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <span>اللغة</span>
+                <select class="bg-white/10 rounded-lg p-2" id="languageSelect">
+                    <option value="ar">العربية</option>
+                    <option value="en">English</option>
+                </select>
             </div>
-
-            <!-- السلاح الفاخر -->
-            <div class="gun-premium" id="gunModel">
-                <div class="gun-barrel"></div>
-                <div class="chambers-container" id="chambers"></div>
+            <div class="flex items-center justify-between">
+                <span>الإشعارات</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" id="notificationsToggle">
+                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600"></div>
+                </label>
             </div>
-
-            <!-- اللاعبين -->
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="player-card" id="player1Card">
-                    <div class="flex flex-col items-center">
-                        <div class="player-avatar-premium mb-2" id="player1Avatar">P1</div>
-                        <div class="font-bold" id="player1Name">اللاعب 1</div>
-                        <div class="text-sm text-yellow-400" id="player1Status"></div>
-                    </div>
-                </div>
-                <div class="player-card" id="player2Card">
-                    <div class="flex flex-col items-center">
-                        <div class="player-avatar-premium mb-2" id="player2Avatar">P2</div>
-                        <div class="font-bold" id="player2Name">في انتظار...</div>
-                        <div class="text-sm text-yellow-400" id="player2Status"></div>
-                    </div>
-                </div>
+            <div class="flex items-center justify-between">
+                <span>تنبيه صوتي</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" id="soundToggle" checked>
+                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600"></div>
+                </label>
             </div>
-
-            <!-- مؤشر الرصاص -->
-            <div class="bullet-track" id="bulletTrack"></div>
-
-            <!-- معلومات الرهان -->
-            <div class="flex justify-between items-center mb-4">
-                <div class="text-sm text-gray-400">💰 الرهان</div>
-                <div class="text-2xl font-bold text-yellow-400" id="betAmount">1000</div>
-            </div>
-
-            <!-- شريط الرهان (لإنشاء التحدي) -->
-            <div class="mb-6" id="betSliderContainer">
-                <input type="range" class="bet-slider-premium" id="betSlider" min="100" max="10000" step="100" value="1000">
-                <div class="flex justify-between text-xs text-gray-400 mt-2">
-                    <span>100</span>
-                    <span>5000</span>
-                    <span>10000</span>
-                </div>
-            </div>
-
-            <!-- أزرار التحكم -->
-            <div class="space-y-3">
-                <button class="trigger-btn" id="triggerBtn">
-                    <i class="fa-solid fa-gun ml-2"></i>
-                    اسحب الزناد
-                </button>
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <button class="btn-premium btn-gold" id="createChallengeBtn">
-                        <i class="fa-solid fa-plus"></i> تحدٍ جديد
-                    </button>
-                    <button class="btn-premium btn-gold" id="joinChallengeBtn">
-                        <i class="fa-solid fa-users"></i> انضمام
-                    </button>
-                </div>
-
-                <button class="btn-premium btn-red w-full" id="cancelGameBtn">
-                    <i class="fa-solid fa-xmark"></i> إلغاء
-                </button>
+            <div class="flex items-center justify-between">
+                <span>اهتزاز</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" id="vibrateToggle" checked>
+                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600"></div>
+                </label>
             </div>
         </div>
-    </template>
+    </div>
+
+    <!-- Toast Container للتنبيهات المتطورة -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Wallet Modal (يستخدم أيضاً للإشعارات) -->
+    <div class="wallet-modal-overlay" id="walletModalOverlay">
+        <div class="wallet-modal" id="walletModalContent"></div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div class="wallet-modal-overlay" id="adminPanelOverlay">
+        <div class="wallet-modal" id="adminPanelContent" style="max-width: 500px;"></div>
+    </div>
+
+    <!-- Payment Method Modal -->
+    <div class="wallet-modal-overlay" id="paymentMethodModalOverlay">
+        <div class="wallet-modal" id="paymentMethodModalContent" style="max-width: 450px;"></div>
+    </div>
 
     <script>
         (function() {
-            // ==================== الإعدادات الثابتة ====================
+            // ======================== الإعدادات الثابتة ========================
             const CONFIG = {
-                ADMIN_ID: 7609492965,
-                DEFAULT_BALANCE: 5000,
-                STORAGE_KEY: 'roulette_elite_data'
+                ADMIN_ID: 7609492965, // غير هذا إلى معرف المشرف الخاص بك
+                DEFAULT_BALANCE: 1000,
+                MAX_TRANSACTIONS: 50,
+                STORAGE_KEYS: {
+                    USERS: 'app_users',
+                    BOTS: 'app_bots',
+                    DAILY_OPS: 'daily_ops',
+                    WALLET: 'wallet_data',
+                    PAYMENT_METHODS: 'payment_methods',
+                    DEPOSIT_REQUESTS: 'deposit_requests',
+                    WITHDRAWAL_REQUESTS: 'withdrawal_requests',
+                    THEME: 'theme',
+                    SETTINGS: 'settings',
+                    NOTIFICATIONS: 'notifications' // مفتاح جديد للإشعارات
+                }
             };
 
-            // ==================== نظام التخزين المحلي ====================
-            class StorageManager {
-                static getUserData(userId) {
-                    const key = `${CONFIG.STORAGE_KEY}_${userId}`;
-                    const data = localStorage.getItem(key);
-                    return data ? JSON.parse(data) : {
-                        balance: CONFIG.DEFAULT_BALANCE,
-                        gamesPlayed: 0,
-                        gamesWon: 0,
-                        totalEarned: 0,
-                        transactions: []
+            // ======================== خدمات مساعدة ========================
+            class StorageService {
+                static get(key, defaultValue = null) {
+                    try {
+                        const value = localStorage.getItem(key);
+                        return value !== null ? JSON.parse(value) : defaultValue;
+                    } catch (e) {
+                        console.warn(`Storage read error for key ${key}:`, e);
+                        return defaultValue;
+                    }
+                }
+
+                static set(key, value) {
+                    try {
+                        localStorage.setItem(key, JSON.stringify(value));
+                        return true;
+                    } catch (e) {
+                        console.warn(`Storage write error for key ${key}:`, e);
+                        return false;
+                    }
+                }
+
+                static remove(key) {
+                    try {
+                        localStorage.removeItem(key);
+                        return true;
+                    } catch (e) {
+                        console.warn(`Storage remove error for key ${key}:`, e);
+                        return false;
+                    }
+                }
+            }
+
+            class DateUtils {
+                static getTodayDate() {
+                    return new Date().toISOString().split('T')[0];
+                }
+
+                static formatDateTime(isoString) {
+                    return new Date(isoString).toLocaleString('ar-EG');
+                }
+
+                static formatDate(isoString) {
+                    return new Date(isoString).toLocaleDateString('ar-EG');
+                }
+            }
+
+            class IdGenerator {
+                static generate(prefix = '') {
+                    return prefix + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                }
+            }
+
+            // ======================== نظام التنبيهات المتطور ========================
+            class ToastManager {
+                constructor(containerId) {
+                    this.container = document.getElementById(containerId);
+                    if (!this.container) {
+                        this.container = document.createElement('div');
+                        this.container.id = containerId;
+                        this.container.className = 'toast-container';
+                        document.body.appendChild(this.container);
+                    }
+                    this.activeToasts = [];
+                    this.soundEnabled = true;
+                    this.vibrateEnabled = true;
+                }
+
+                show(message, type = 'info', duration = 5000) {
+                    const toast = document.createElement('div');
+                    toast.className = `toast ${type}`;
+                    
+                    const iconMap = {
+                        success: 'fa-solid fa-check',
+                        error: 'fa-solid fa-exclamation',
+                        warning: 'fa-solid fa-triangle-exclamation',
+                        info: 'fa-solid fa-info'
                     };
+                    
+                    toast.innerHTML = `
+                        <div class="toast-icon"><i class="${iconMap[type] || iconMap.info}"></i></div>
+                        <div class="toast-message">${message}</div>
+                    `;
+                    
+                    this.container.appendChild(toast);
+                    this.activeToasts.push(toast);
+                    
+                    // تشغيل صوت إذا كان مفعلاً
+                    if (this.soundEnabled && (type === 'success' || type === 'warning' || type === 'info')) {
+                        this.playSound(type);
+                    }
+                    
+                    // اهتزاز إذا كان مفعلاً (للموبايل)
+                    if (this.vibrateEnabled && navigator.vibrate) {
+                        navigator.vibrate(200);
+                    }
+                    
+                    setTimeout(() => {
+                        toast.remove();
+                        this.activeToasts = this.activeToasts.filter(t => t !== toast);
+                    }, duration);
                 }
 
-                static saveUserData(userId, data) {
-                    const key = `${CONFIG.STORAGE_KEY}_${userId}`;
-                    localStorage.setItem(key, JSON.stringify(data));
+                playSound(type) {
+                    // إنشاء صوت بسيط باستخدام Web Audio API
+                    try {
+                        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                        const oscillator = audioCtx.createOscillator();
+                        const gainNode = audioCtx.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioCtx.destination);
+                        
+                        oscillator.type = 'sine';
+                        oscillator.frequency.value = type === 'success' ? 800 : (type === 'warning' ? 600 : 400);
+                        gainNode.gain.value = 0.1;
+                        
+                        oscillator.start();
+                        oscillator.stop(audioCtx.currentTime + 0.2);
+                    } catch (e) {
+                        console.log('Web Audio not supported');
+                    }
                 }
 
-                static updateBalance(userId, amount, type, note) {
-                    const data = this.getUserData(userId);
-                    data.balance += amount;
-                    data.transactions.unshift({
+                success(message) { this.show(message, 'success'); }
+                error(message) { this.show(message, 'error'); }
+                warning(message) { this.show(message, 'warning'); }
+                info(message) { this.show(message, 'info'); }
+            }
+
+            // ======================== خدمة تيليجرام ========================
+            class TelegramService {
+                constructor() {
+                    this.tg = window.Telegram?.WebApp || null;
+                    this.isAvailable = !!this.tg;
+                }
+
+                init() {
+                    if (!this.isAvailable) return false;
+                    this.tg.expand();
+                    this.tg.ready();
+                    return true;
+                }
+
+                getUser() {
+                    return this.tg?.initDataUnsafe?.user || null;
+                }
+
+                isValid() {
+                    return this.isAvailable && this.tg?.initData;
+                }
+
+                close() {
+                    this.tg?.close();
+                }
+
+                showPopup(params) {
+                    this.tg?.showPopup(params);
+                }
+
+                setMainButton(text, color = '#3b82f6', textColor = '#ffffff', isVisible = true, callback = null) {
+                    if (!this.tg) return;
+                    const btn = this.tg.MainButton;
+                    btn.setText(text);
+                    btn.setColor(color);
+                    btn.setTextColor(textColor);
+                    if (isVisible) btn.show(); else btn.hide();
+                    if (callback) btn.onClick(callback);
+                }
+
+                hideMainButton() {
+                    this.tg?.MainButton.hide();
+                }
+            }
+
+            // ======================== نظام الإشعارات الجديد ========================
+            class NotificationService {
+                constructor(state) {
+                    this.state = state;
+                    this.STORAGE_KEY = CONFIG.STORAGE_KEYS.NOTIFICATIONS;
+                }
+
+                // تحميل الإشعارات من localStorage
+                loadNotifications() {
+                    const saved = StorageService.get(this.STORAGE_KEY, []);
+                    this.state.notifications = saved;
+                }
+
+                // حفظ الإشعارات
+                saveNotifications() {
+                    StorageService.set(this.STORAGE_KEY, this.state.notifications);
+                }
+
+                // إضافة إشعار جديد
+                addNotification(userId, title, message, type = 'info') {
+                    const notification = {
+                        id: IdGenerator.generate('notif_'),
+                        userId,
+                        title,
+                        message,
+                        type, // success, error, info, warning
+                        read: false,
+                        date: new Date().toISOString()
+                    };
+                    this.state.notifications.push(notification);
+                    this.saveNotifications();
+                    
+                    // إرسال حدث للإشعار الجديد (لمن يرغب في الاستماع)
+                    window.dispatchEvent(new CustomEvent('newNotification', { detail: notification }));
+                    
+                    return notification;
+                }
+
+                // تحديد إشعار كمقروء
+                markAsRead(notificationId) {
+                    const notif = this.state.notifications.find(n => n.id === notificationId);
+                    if (notif) {
+                        notif.read = true;
+                        this.saveNotifications();
+                    }
+                }
+
+                // تحديد كل إشعارات مستخدم معين كمقروءة
+                markAllAsRead(userId) {
+                    this.state.notifications.forEach(n => {
+                        if (n.userId === userId && !n.read) n.read = true;
+                    });
+                    this.saveNotifications();
+                }
+
+                // جلب إشعارات مستخدم معين (مرتبة من الأحدث)
+                getUserNotifications(userId) {
+                    return this.state.notifications
+                        .filter(n => n.userId === userId)
+                        .sort((a, b) => new Date(b.date) - new Date(a.date));
+                }
+
+                // عدد الإشعارات غير المقروءة لمستخدم
+                getUnreadCount(userId) {
+                    return this.state.notifications.filter(n => n.userId === userId && !n.read).length;
+                }
+            }
+
+            // ======================== إدارة الحالة المركزية (State) ========================
+            class AppState extends EventTarget {
+                constructor() {
+                    super();
+                    this.user = null;
+                    this.isAdmin = false;
+                    this.loading = true;
+                    this.accessDenied = false;
+                    this.telegramMissing = false;
+                    this.balance = CONFIG.DEFAULT_BALANCE;
+                    this.stats = { users: 0, bots: 0, dailyOps: 0 };
+                    this.theme = 'dark';
+                    this.settings = { language: 'ar', notifications: true, sound: true, vibrate: true };
+                    this.wallet = { transactions: [], address: 'T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ' };
+                    this.depositRequests = [];
+                    this.withdrawalRequests = [];
+                    this.paymentMethods = [];
+                    this.notifications = []; // خاصية الإشعارات
+                }
+
+                // تحديث حالة معينة وإرسال حدث
+                set(key, value) {
+                    if (this[key] !== undefined) {
+                        this[key] = value;
+                        this.dispatchEvent(new CustomEvent('stateChanged', { detail: { key, value } }));
+                    }
+                }
+
+                updateStats(stats) {
+                    this.stats = { ...this.stats, ...stats };
+                    this.dispatchEvent(new CustomEvent('statsUpdated', { detail: this.stats }));
+                }
+
+                updateBalance(amount) {
+                    this.balance = amount;
+                    this.dispatchEvent(new CustomEvent('balanceUpdated', { detail: amount }));
+                }
+
+                addTransaction(tx) {
+                    this.wallet.transactions.unshift(tx);
+                    if (this.wallet.transactions.length > CONFIG.MAX_TRANSACTIONS) {
+                        this.wallet.transactions.pop();
+                    }
+                    this.dispatchEvent(new CustomEvent('transactionsUpdated', { detail: this.wallet.transactions }));
+                }
+            }
+
+            // ======================== إدارة البيانات (Data Layer) ========================
+            class DataService {
+                constructor(state) {
+                    this.state = state;
+                    this.notificationService = new NotificationService(state); // ربط نظام الإشعارات
+                    this.loadInitialData();
+                }
+
+                loadInitialData() {
+                    this.loadWallet();
+                    this.loadRequests();
+                    this.loadPaymentMethods();
+                    this.loadSettings();
+                    this.loadStats();
+                    this.notificationService.loadNotifications(); // تحميل الإشعارات
+                }
+
+                // المحفظة
+                loadWallet() {
+                    const data = StorageService.get(CONFIG.STORAGE_KEYS.WALLET, null);
+                    if (data) {
+                        this.state.balance = data.balance || CONFIG.DEFAULT_BALANCE;
+                        this.state.wallet.transactions = data.transactions || [];
+                        this.state.wallet.address = data.address || this.state.wallet.address;
+                    } else {
+                        this.state.balance = CONFIG.DEFAULT_BALANCE;
+                        this.state.wallet.transactions = [];
+                    }
+                }
+
+                saveWallet() {
+                    StorageService.set(CONFIG.STORAGE_KEYS.WALLET, {
+                        balance: this.state.balance,
+                        transactions: this.state.wallet.transactions,
+                        address: this.state.wallet.address
+                    });
+                }
+
+                // طرق الدفع
+                loadPaymentMethods() {
+                    const saved = StorageService.get(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, null);
+                    if (saved && Array.isArray(saved) && saved.length > 0) {
+                        this.state.paymentMethods = saved;
+                    } else {
+                        // الطرق الافتراضية
+                        this.state.paymentMethods = [
+                            { id: IdGenerator.generate('usdt_'), name: 'USDT (TRC20)', icon: 'fa-brands fa-tether', description: 'عملة رقمية مستقرة', depositDetails: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ\nشبكة: TRC20', withdrawDetails: 'أدخل عنوان USDT الخاص بك' },
+                            { id: IdGenerator.generate('visa_'), name: 'Visa / Mastercard', icon: 'fa-regular fa-credit-card', description: 'بطاقات ائتمانية', depositDetails: 'رقم البطاقة: **** **** **** 1234\nتاريخ الانتهاء: 12/25\nCVV: ***', withdrawDetails: 'أدخل بيانات بطاقتك' },
+                            { id: IdGenerator.generate('bank_'), name: 'تحويل بنكي', icon: 'fa-solid fa-building-columns', description: 'حوالة بنكية محلية', depositDetails: 'IBAN: SA0380000000608010167519\nاسم المستفيد: شركة المدفوعات\nالبنك: الأهلي السعودي', withdrawDetails: 'أدخل رقم IBAN الخاص بك' },
+                            { id: IdGenerator.generate('telegram_'), name: 'محفظة تيليجرام', icon: 'fa-brands fa-telegram', description: '@wallet_bot', depositDetails: '@wallet_bot\nأرسل المبلغ إلى بوت المحفظة', withdrawDetails: 'أدخل معرف تيليجرام للمحفظة' }
+                        ];
+                    }
+                }
+
+                savePaymentMethods() {
+                    StorageService.set(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, this.state.paymentMethods);
+                }
+
+                addPaymentMethod(methodData) {
+                    const newMethod = { id: IdGenerator.generate('pm_'), ...methodData };
+                    this.state.paymentMethods.push(newMethod);
+                    this.savePaymentMethods();
+                    return newMethod;
+                }
+
+                updatePaymentMethod(id, newData) {
+                    const index = this.state.paymentMethods.findIndex(m => m.id === id);
+                    if (index !== -1) {
+                        this.state.paymentMethods[index] = { ...this.state.paymentMethods[index], ...newData };
+                        this.savePaymentMethods();
+                        return true;
+                    }
+                    return false;
+                }
+
+                deletePaymentMethod(id) {
+                    this.state.paymentMethods = this.state.paymentMethods.filter(m => m.id !== id);
+                    this.savePaymentMethods();
+                }
+
+                // الطلبات
+                loadRequests() {
+                    this.state.depositRequests = StorageService.get(CONFIG.STORAGE_KEYS.DEPOSIT_REQUESTS, []);
+                    this.state.withdrawalRequests = StorageService.get(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, []);
+                }
+
+                saveRequests() {
+                    StorageService.set(CONFIG.STORAGE_KEYS.DEPOSIT_REQUESTS, this.state.depositRequests);
+                    StorageService.set(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, this.state.withdrawalRequests);
+                }
+
+                addDepositRequest(amount, methodId, transactionId, user) {
+                    const method = this.state.paymentMethods.find(m => m.id === methodId);
+                    const request = {
+                        id: IdGenerator.generate('dep_'),
+                        userId: user.id,
+                        userName: `${user.first_name} ${user.last_name || ''}`.trim(),
+                        amount,
+                        method: method ? method.name : methodId,
+                        methodId,
+                        transactionId,
+                        status: 'pending',
+                        date: new Date().toISOString()
+                    };
+                    this.state.depositRequests.push(request);
+                    this.saveRequests();
+                    this.incrementDailyOps();
+                    
+                    // إرسال حدث لإعلام المشرفين (إذا كان المستخدم الحالي مشرفاً فسيتم استقباله)
+                    window.dispatchEvent(new CustomEvent('newDepositRequest', { detail: request }));
+                    
+                    return request;
+                }
+
+                addWithdrawalRequest(amount, methodId, details, user) {
+                    if (amount > this.state.balance) {
+                        return { success: false, message: 'الرصيد غير كافٍ', request: null };
+                    }
+                    const method = this.state.paymentMethods.find(m => m.id === methodId);
+                    const request = {
+                        id: IdGenerator.generate('with_'),
+                        userId: user.id,
+                        userName: `${user.first_name} ${user.last_name || ''}`.trim(),
+                        amount,
+                        method: method ? method.name : methodId,
+                        methodId,
+                        details,
+                        status: 'pending',
+                        date: new Date().toISOString()
+                    };
+                    this.state.withdrawalRequests.push(request);
+                    this.saveRequests();
+                    this.incrementDailyOps();
+                    
+                    // إرسال حدث لإعلام المشرفين
+                    window.dispatchEvent(new CustomEvent('newWithdrawalRequest', { detail: request }));
+                    
+                    return { success: true, id: request.id, request };
+                }
+
+                acceptRequest(request, type) {
+                    if (type === 'deposit') {
+                        const req = this.state.depositRequests.find(r => r.id === request.id);
+                        if (req && req.status === 'pending') {
+                            req.status = 'approved';
+                            this.state.balance += req.amount;
+                            this.addTransaction('deposit', req.amount, `شحن عبر ${req.method} (رقم العملية: ${req.transactionId || 'غير محدد'})`);
+                            this.saveWallet();
+                            this.saveRequests();
+                            
+                            // إضافة إشعار للمستخدم
+                            this.notificationService.addNotification(
+                                req.userId,
+                                '✅ تم قبول طلب الشحن',
+                                `تم قبول طلب الشحن بمبلغ ${req.amount} عبر ${req.method}. رقم العملية: ${req.transactionId || 'غير محدد'}`,
+                                'success'
+                            );
+                            
+                            return true;
+                        }
+                    } else if (type === 'withdrawal') {
+                        const req = this.state.withdrawalRequests.find(r => r.id === request.id);
+                        if (req && req.status === 'pending' && this.state.balance >= req.amount) {
+                            req.status = 'approved';
+                            this.state.balance -= req.amount;
+                            this.addTransaction('withdraw', -req.amount, `سحب عبر ${req.method} إلى ${req.details || 'محفظة'}`);
+                            this.saveWallet();
+                            this.saveRequests();
+                            
+                            this.notificationService.addNotification(
+                                req.userId,
+                                '✅ تم قبول طلب السحب',
+                                `تم قبول طلب السحب بمبلغ ${req.amount} عبر ${req.method}. التفاصيل: ${req.details}`,
+                                'success'
+                            );
+                            
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                rejectRequest(request, type) {
+                    if (type === 'deposit') {
+                        const req = this.state.depositRequests.find(r => r.id === request.id);
+                        if (req) {
+                            req.status = 'rejected';
+                            this.saveRequests();
+                            
+                            this.notificationService.addNotification(
+                                req.userId,
+                                '❌ تم رفض طلب الشحن',
+                                `تم رفض طلب الشحن بمبلغ ${req.amount} عبر ${req.method}.`,
+                                'error'
+                            );
+                            
+                            return true;
+                        }
+                    } else if (type === 'withdrawal') {
+                        const req = this.state.withdrawalRequests.find(r => r.id === request.id);
+                        if (req) {
+                            req.status = 'rejected';
+                            this.saveRequests();
+                            
+                            this.notificationService.addNotification(
+                                req.userId,
+                                '❌ تم رفض طلب السحب',
+                                `تم رفض طلب السحب بمبلغ ${req.amount} عبر ${req.method}.`,
+                                'error'
+                            );
+                            
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                getPendingDeposits() {
+                    return this.state.depositRequests.filter(r => r.status === 'pending');
+                }
+
+                getPendingWithdrawals() {
+                    return this.state.withdrawalRequests.filter(r => r.status === 'pending');
+                }
+
+                getPendingRequestsCount() {
+                    return this.getPendingDeposits().length + this.getPendingWithdrawals().length;
+                }
+
+                addTransaction(type, amount, note = '', status = 'مكتمل') {
+                    const tx = {
+                        id: IdGenerator.generate('tx_'),
                         type,
                         amount,
                         note,
-                        date: new Date().toISOString(),
-                        balance: data.balance
+                        status,
+                        date: new Date().toISOString()
+                    };
+                    this.state.wallet.transactions.unshift(tx);
+                    if (this.state.wallet.transactions.length > CONFIG.MAX_TRANSACTIONS) {
+                        this.state.wallet.transactions.pop();
+                    }
+                    this.saveWallet();
+                }
+
+                // الإحصائيات
+                loadStats() {
+                    const users = StorageService.get(CONFIG.STORAGE_KEYS.USERS, []);
+                    const bots = StorageService.get(CONFIG.STORAGE_KEYS.BOTS, [{ id: 123456, name: 'البوت الرسمي' }]);
+                    const dailyOpsData = StorageService.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
+                    const today = DateUtils.getTodayDate();
+                    
+                    this.state.stats = {
+                        users: users.length,
+                        bots: bots.length,
+                        dailyOps: dailyOpsData[today] || 0
+                    };
+                }
+
+                incrementDailyOps() {
+                    const today = DateUtils.getTodayDate();
+                    const dailyOpsData = StorageService.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
+                    dailyOpsData[today] = (dailyOpsData[today] || 0) + 1;
+                    StorageService.set(CONFIG.STORAGE_KEYS.DAILY_OPS, dailyOpsData);
+                    this.loadStats();
+                }
+
+                registerUser(userId) {
+                    const users = StorageService.get(CONFIG.STORAGE_KEYS.USERS, []);
+                    if (!users.includes(userId)) {
+                        users.push(userId);
+                        StorageService.set(CONFIG.STORAGE_KEYS.USERS, users);
+                        this.loadStats();
+                    }
+                }
+
+                // الإعدادات
+                loadSettings() {
+                    const settings = StorageService.get(CONFIG.STORAGE_KEYS.SETTINGS, null);
+                    if (settings) {
+                        this.state.settings = settings;
+                    }
+                }
+
+                saveSettings() {
+                    StorageService.set(CONFIG.STORAGE_KEYS.SETTINGS, this.state.settings);
+                }
+
+                // الثيم
+                loadTheme() {
+                    const theme = StorageService.get(CONFIG.STORAGE_KEYS.THEME, 'dark');
+                    this.state.theme = theme;
+                    return theme;
+                }
+
+                saveTheme(theme) {
+                    StorageService.set(CONFIG.STORAGE_KEYS.THEME, theme);
+                    this.state.theme = theme;
+                }
+            }
+
+            // ======================== مدير واجهة المستخدم (UI Manager) ========================
+            class UIManager {
+                constructor(state, dataService, telegramService, toast) {
+                    this.state = state;
+                    this.data = dataService;
+                    this.tg = telegramService;
+                    this.toast = toast;
+                    this.appContainer = document.getElementById('app');
+                    this.currentModal = null;
+                    
+                    // ربط أحداث الحالة
+                    this.state.addEventListener('balanceUpdated', () => this.updateBalanceDisplay());
+                    this.state.addEventListener('statsUpdated', () => this.updateStatsDisplay());
+                    
+                    // الاستماع للأحداث الجديدة للطلبات
+                    window.addEventListener('newDepositRequest', (e) => this.handleNewRequest(e.detail, 'شحن'));
+                    window.addEventListener('newWithdrawalRequest', (e) => this.handleNewRequest(e.detail, 'سحب'));
+                    
+                    // الاستماع للإشعارات الجديدة
+                    window.addEventListener('newNotification', (e) => this.handleNewNotification(e.detail));
+                }
+
+                // معالج الطلبات الجديدة للمشرف
+                handleNewRequest(request, type) {
+                    // إذا كان المستخدم الحالي هو المشرف، نعرض تنبيه فوري
+                    if (this.state.isAdmin) {
+                        this.toast.success(`🔔 طلب ${type} جديد
+                            • المستخدم: ${request.userName}
+                            • المبلغ: ${request.amount}
+                            • الطريقة: ${request.method}
+                            ${type === 'شحن' ? `• رقم العملية: ${request.transactionId}` : `• التفاصيل: ${request.details}`}
+                            • الرجاء مراجعة الطلب في لوحة الإدارة`);
+                        
+                        // تحديث عداد الطلبات المعلقة في أيقونة المحفظة إذا كان موجوداً
+                        this.updatePendingBadge();
+                    }
+                }
+
+                // معالج الإشعارات الجديدة (للمستخدم العادي)
+                handleNewNotification(notification) {
+                    // إذا كان المستخدم الحالي هو صاحب الإشعار، نعرض Toast فوري
+                    if (this.state.user && this.state.user.id === notification.userId) {
+                        const type = notification.type;
+                        this.toast.show(notification.message, type);
+                        
+                        // تحديث عداد الإشعارات
+                        this.updateNotificationBadge();
+                        
+                        // إذا كان المستخدم في واجهة المستخدم العادي، نحدث العداد
+                        if (!this.state.isAdmin) {
+                            this.render(); // إعادة رسم لتحديث العداد (يمكن تحسين الأداء)
+                        }
+                    }
+                }
+
+                // تحديث شارة الطلبات المعلقة (للمشرف)
+                updatePendingBadge() {
+                    const walletIcon = document.getElementById('walletIconLarge');
+                    if (!walletIcon) return;
+                    
+                    const count = this.data.getPendingRequestsCount();
+                    let badge = walletIcon.querySelector('.notification-badge');
+                    
+                    if (count > 0) {
+                        if (!badge) {
+                            badge = document.createElement('span');
+                            badge.className = 'notification-badge';
+                            walletIcon.style.position = 'relative';
+                            walletIcon.appendChild(badge);
+                        }
+                        badge.textContent = count > 9 ? '9+' : count;
+                    } else {
+                        if (badge) badge.remove();
+                    }
+                    
+                    // تحديث عنوان الصفحة بعدد الطلبات
+                    document.title = count > 0 ? `(${count}) بوابة تيليجرام` : 'بوابة تيليجرام المتطورة';
+                }
+
+                // تحديث شارة الإشعارات (للمستخدم)
+                updateNotificationBadge() {
+                    const bell = document.getElementById('notificationBell');
+                    if (!bell) return;
+                    
+                    const userId = this.state.user?.id;
+                    if (!userId) return;
+                    
+                    const unreadCount = this.data.notificationService.getUnreadCount(userId);
+                    let badge = bell.querySelector('.notification-badge');
+                    
+                    if (unreadCount > 0) {
+                        if (!badge) {
+                            badge = document.createElement('span');
+                            badge.className = 'notification-badge';
+                            bell.style.position = 'relative';
+                            bell.appendChild(badge);
+                        }
+                        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                    } else {
+                        if (badge) badge.remove();
+                    }
+                }
+
+                // التصيير الرئيسي
+                render() {
+                    if (this.state.telegramMissing) {
+                        this.appContainer.innerHTML = this.renderTelegramMissing();
+                    } else if (this.state.loading) {
+                        this.appContainer.innerHTML = this.renderLoading();
+                    } else if (this.state.accessDenied) {
+                        this.appContainer.innerHTML = this.renderAccessDenied();
+                    } else if (this.state.isAdmin) {
+                        this.appContainer.innerHTML = this.renderAdminDashboard();
+                    } else {
+                        this.appContainer.innerHTML = this.renderUserDashboard();
+                    }
+                    
+                    this.bindEvents();
+                    this.updatePendingBadge(); // تحديث الشارة بعد التصيير
+                    this.updateNotificationBadge(); // تحديث شارة الإشعارات
+                }
+
+                // مكونات التصيير
+                renderLoading() {
+                    return `
+                        <div class="flex flex-col items-center justify-center text-center space-y-6 animate-enter">
+                            <div class="spinner"></div>
+                            <div>
+                                <h2 class="text-xl font-bold mb-1">جاري التحقق...</h2>
+                                <p class="text-sm text-gray-400">نحن نتأكد من هويتك عبر تيليجرام</p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                renderAccessDenied() {
+                    return `
+                        <div class="glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter border-red-500/20">
+                            <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold mb-2">دخول محظور</h2>
+                            <p class="text-gray-400 mb-8 leading-relaxed text-sm">
+                                يجب فتح هذا التطبيق حصراً من خلال بوت تيليجرام الرسمي لضمان الأمان.
+                            </p>
+                            <a href="https://telegram.org" target="_blank" class="block w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg shadow-blue-500/20">
+                                <i class="fa-brands fa-telegram ml-2"></i>
+                                فتح تيليجرام
+                            </a>
+                        </div>
+                    `;
+                }
+
+                renderTelegramMissing() {
+                    return `
+                        <div class="glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter border-orange-500/20">
+                            <div class="w-20 h-20 bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
+                                <i class="fa-solid fa-exclamation-triangle"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold mb-2">بيئة غير مدعومة</h2>
+                            <p class="text-gray-400 mb-8 leading-relaxed text-sm">
+                                لم يتم العثور على بيئة تيليجرام. يرجى فتح هذا الرابط من داخل تطبيق تيليجرام على هاتفك.
+                            </p>
+                            <a href="https://t.me/your_bot_username" target="_blank" class="block w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 transition-all shadow-lg shadow-orange-500/20">
+                                <i class="fa-brands fa-telegram ml-2"></i>
+                                فتح البوت في تيليجرام
+                            </a>
+                        </div>
+                    `;
+                }
+
+                // دالة لعرض أيقونة الجرس مع العداد
+                renderNotificationBell() {
+                    const userId = this.state.user?.id;
+                    if (!userId) return '';
+                    const unreadCount = this.data.notificationService.getUnreadCount(userId);
+                    
+                    return `
+                        <div class="relative cursor-pointer" id="notificationBell">
+                            <i class="fa-regular fa-bell text-xl"></i>
+                            ${unreadCount > 0 ? `
+                                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                                    ${unreadCount > 9 ? '9+' : unreadCount}
+                                </span>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+
+                renderUserDashboard() {
+                    const user = this.state.user;
+                    const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
+                    const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
+                    
+                    return `
+                        <div class="space-y-5 animate-enter pb-10">
+                            <!-- Header Profile Card -->
+                            <div class="glass-card p-5 rounded-3xl relative overflow-hidden group">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+                                <div class="flex items-center gap-4 relative z-10">
+                                    <div class="w-16 h-16 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">
+                                        ${user.photo_url ? 
+                                            `<img src="${user.photo_url}" alt="User" class="w-full h-full object-cover">` : 
+                                            `<div class="w-full h-full default-avatar"><span>${initials}</span></div>`
+                                        }
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between">
+                                            <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
+                                            ${this.renderNotificationBell()}
+                                        </div>
+                                        <p class="text-xs text-gray-400 font-mono mt-0.5">ID: ${user.id}</p>
+                                        <div class="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-green-500/10 border border-green-500/20">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                            <span class="text-[10px] font-bold text-green-400 uppercase tracking-wide">نشط الآن</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- أيقونة المحفظة -->
+                            <div class="flex justify-center my-4">
+                                <div class="wallet-icon-large" id="walletIconLarge">
+                                    <i class="fa-solid fa-wallet"></i>
+                                </div>
+                            </div>
+
+                            <!-- بطاقة الرصيد -->
+                            <div class="flex justify-center">
+                                <div class="balance-badge" id="balanceBadge">
+                                    <i class="fa-solid fa-coins"></i>
+                                    <span>${this.state.balance.toLocaleString('ar-EG')}</span>
+                                </div>
+                            </div>
+
+                            <!-- Stats Grid -->
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
+                                    <div class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2">
+                                        <i class="fa-solid fa-chart-pie"></i>
+                                    </div>
+                                    <span class="text-gray-400 text-xs mb-1">الإحصائيات</span>
+                                    <span class="text-white font-bold text-lg">100%</span>
+                                </div>
+                                <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
+                                    <div class="w-10 h-10 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2">
+                                        <i class="fa-solid fa-crown"></i>
+                                    </div>
+                                    <span class="text-gray-400 text-xs mb-1">الرتبة</span>
+                                    <span class="text-white font-bold text-lg">مميز</span>
+                                </div>
+                            </div>
+
+                            <!-- Logout Button -->
+                            <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
+                                <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
+                                تسجيل الخروج
+                            </button>
+                        </div>
+                    `;
+                }
+
+                renderAdminDashboard() {
+                    const user = this.state.user;
+                    const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
+                    const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
+                    const stats = this.state.stats;
+                    const pendingCount = this.data.getPendingRequestsCount();
+
+                    return `
+                        <div class="space-y-5 animate-enter pb-10">
+                            <!-- Header Profile Card -->
+                            <div class="glass-card p-5 rounded-3xl relative overflow-hidden border-2 border-yellow-500/30">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+                                <div class="flex items-center gap-4 relative z-10">
+                                    <div class="w-16 h-16 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">
+                                        ${user.photo_url ? 
+                                            `<img src="${user.photo_url}" alt="Admin" class="w-full h-full object-cover">` : 
+                                            `<div class="w-full h-full default-avatar"><span>${initials}</span></div>`
+                                        }
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between">
+                                            <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
+                                            ${this.renderNotificationBell()}
+                                        </div>
+                                        <p class="text-xs text-gray-400 font-mono mt-0.5">ID: ${user.id}</p>
+                                        <div class="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-yellow-500/20 border border-yellow-500/30">
+                                            <i class="fa-solid fa-crown text-yellow-400 text-[10px]"></i>
+                                            <span class="text-[10px] font-bold text-yellow-300 uppercase tracking-wide">مدير النظام</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- أيقونة المحفظة مع عداد الطلبات -->
+                            <div class="flex justify-center my-4">
+                                <div class="wallet-icon-large" id="walletIconLarge">
+                                    <i class="fa-solid fa-wallet"></i>
+                                    ${pendingCount > 0 ? `<span class="notification-badge">${pendingCount > 9 ? '9+' : pendingCount}</span>` : ''}
+                                </div>
+                            </div>
+
+                            <!-- بطاقة الرصيد -->
+                            <div class="flex justify-center">
+                                <div class="balance-badge" id="balanceBadge">
+                                    <i class="fa-solid fa-coins"></i>
+                                    <span>${this.state.balance.toLocaleString('ar-EG')}</span>
+                                </div>
+                            </div>
+
+                            <!-- إحصائيات -->
+                            <div class="grid grid-cols-3 gap-2 mt-4">
+                                <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
+                                    <div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-1">
+                                        <i class="fa-solid fa-users text-sm"></i>
+                                    </div>
+                                    <span class="text-gray-400 text-[10px]">المستخدمين</span>
+                                    <span class="text-white font-bold text-base" id="statsUsers">${stats.users.toLocaleString('ar-EG')}</span>
+                                </div>
+                                <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
+                                    <div class="w-8 h-8 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center mx-auto mb-1">
+                                        <i class="fa-solid fa-robot text-sm"></i>
+                                    </div>
+                                    <span class="text-gray-400 text-[10px]">البوتات</span>
+                                    <span class="text-white font-bold text-base" id="statsBots">${stats.bots}</span>
+                                </div>
+                                <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
+                                    <div class="w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto mb-1">
+                                        <i class="fa-solid fa-chart-line text-sm"></i>
+                                    </div>
+                                    <span class="text-gray-400 text-[10px]">عمليات اليوم</span>
+                                    <span class="text-white font-bold text-base" id="statsDailyOps">${stats.dailyOps}</span>
+                                </div>
+                            </div>
+
+                            <!-- زر لوحة الإدارة -->
+                            <button id="openAdminPanelBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2 mt-2">
+                                <i class="fa-solid fa-gears"></i>
+                                لوحة الإدارة (الطلبات وطرق الدفع)
+                                ${pendingCount > 0 ? `<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">${pendingCount}</span>` : ''}
+                            </button>
+
+                            <!-- Logout Button -->
+                            <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
+                                <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
+                                تسجيل الخروج
+                            </button>
+                        </div>
+                    `;
+                }
+
+                // تحديث عرض الرصيد
+                updateBalanceDisplay() {
+                    const balanceSpan = document.querySelector('#balanceBadge span');
+                    if (balanceSpan) {
+                        balanceSpan.textContent = this.state.balance.toLocaleString('ar-EG');
+                    }
+                }
+
+                // تحديث عرض الإحصائيات
+                updateStatsDisplay() {
+                    const stats = this.state.stats;
+                    const usersEl = document.getElementById('statsUsers');
+                    const botsEl = document.getElementById('statsBots');
+                    const dailyOpsEl = document.getElementById('statsDailyOps');
+                    if (usersEl) usersEl.textContent = stats.users.toLocaleString('ar-EG');
+                    if (botsEl) botsEl.textContent = stats.bots;
+                    if (dailyOpsEl) dailyOpsEl.textContent = stats.dailyOps;
+                }
+
+                // ربط الأحداث
+                bindEvents() {
+                    const logoutBtn = document.getElementById('logoutBtn');
+                    if (logoutBtn) {
+                        logoutBtn.addEventListener('click', () => {
+                            this.tg.close();
+                            this.toast.info('تم تسجيل الخروج بنجاح');
+                        });
+                    }
+
+                    const walletIcon = document.getElementById('walletIconLarge');
+                    if (walletIcon) {
+                        walletIcon.addEventListener('click', () => this.openWalletModal());
+                    }
+
+                    const adminPanelBtn = document.getElementById('openAdminPanelBtn');
+                    if (adminPanelBtn) {
+                        adminPanelBtn.addEventListener('click', () => this.openAdminPanel());
+                    }
+
+                    // ربط حدث النقر على جرس الإشعارات
+                    const notificationBell = document.getElementById('notificationBell');
+                    if (notificationBell) {
+                        notificationBell.addEventListener('click', () => this.openNotificationsModal());
+                    }
+                }
+
+                // ========== نوافذ مودال ==========
+                openWalletModal() {
+                    const modalOverlay = document.getElementById('walletModalOverlay');
+                    const modalContent = document.getElementById('walletModalContent');
+                    modalContent.innerHTML = this.renderWalletModal();
+                    modalOverlay.classList.add('open');
+                    this.bindWalletModalEvents();
+                }
+
+                renderWalletModal() {
+                    const balance = this.state.balance;
+                    const transactions = this.state.wallet.transactions;
+                    const paymentMethods = this.state.paymentMethods;
+
+                    const transactionsHtml = transactions.length === 0 
+                        ? '<p class="text-center text-gray-400 py-4">لا توجد معاملات بعد</p>'
+                        : transactions.map(tx => {
+                            const amountClass = tx.amount > 0 ? 'positive' : 'negative';
+                            const amountStr = (tx.amount > 0 ? '+' : '') + tx.amount.toLocaleString('ar-EG');
+                            return `
+                                <div class="transaction-item">
+                                    <div>
+                                        <div class="font-medium">${tx.note || tx.type}</div>
+                                        <div class="text-xs text-gray-400">${DateUtils.formatDateTime(tx.date)}</div>
+                                    </div>
+                                    <div class="transaction-amount ${amountClass} font-bold">${amountStr}</div>
+                                </div>
+                            `;
+                        }).join('');
+
+                    const paymentMethodsHtml = paymentMethods.map(m => `
+                        <div class="payment-method" data-method-id="${m.id}">
+                            <div class="payment-icon">
+                                <i class="${m.icon}"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-bold">${m.name}</div>
+                                <div class="text-xs text-gray-400">${(m.description || '').substring(0, 30)}...</div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    const withdrawMethodsHtml = paymentMethods.map(m => `
+                        <div class="payment-method" data-method-id="${m.id}">
+                            <div class="payment-icon">
+                                <i class="${m.icon}"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-bold">${m.name}</div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    return `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">محفظتي</h2>
+                            <button id="closeWalletModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl text-center mb-4">
+                            <div class="text-gray-400 text-sm mb-1">الرصيد الحالي</div>
+                            <div class="text-3xl font-bold text-white">${balance.toLocaleString('ar-EG')}</div>
+                            <div class="text-xs text-gray-400 mt-1">عملة البوت</div>
+                        </div>
+
+                        <div class="wallet-tabs">
+                            <button class="wallet-tab active" data-tab="deposit"><i class="fa-solid fa-arrow-down"></i> شحن</button>
+                            <button class="wallet-tab" data-tab="withdraw"><i class="fa-solid fa-arrow-up"></i> سحب</button>
+                            <button class="wallet-tab" data-tab="transfer"><i class="fa-solid fa-exchange-alt"></i> تحويل</button>
+                            <button class="wallet-tab" data-tab="history"><i class="fa-solid fa-history"></i> السجل</button>
+                        </div>
+
+                        <div id="walletTabContent">
+                            <!-- تبويب الشحن -->
+                            <div class="tab-pane active" id="tab-deposit">
+                                <p class="text-sm text-gray-300 mb-3">اختر طريقة الدفع:</p>
+                                <div class="payment-methods-list mb-4">
+                                    ${paymentMethodsHtml}
+                                </div>
+                                
+                                <div id="depositDetailsDisplay" class="payment-details hidden">
+                                    <strong>تفاصيل الإيداع:</strong>
+                                    <div id="depositDetailsText"></div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="text-sm text-gray-400">رقم العملية (TXID):</label>
+                                    <input type="text" id="depositTransactionId" placeholder="أدخل رقم العملية" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                </div>
+
+                                <div class="flex gap-2">
+                                    <input type="number" id="depositAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                    <button id="depositBtn" class="bg-blue-600 px-4 rounded-lg font-bold">تقديم طلب</button>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلبك من قبل الإدارة.</p>
+                            </div>
+
+                            <!-- تبويب السحب -->
+                            <div class="tab-pane hidden" id="tab-withdraw">
+                                <p class="text-sm text-gray-300 mb-3">اختر طريقة السحب:</p>
+                                <div class="payment-methods-list mb-4" id="withdrawMethodsList">
+                                    ${withdrawMethodsHtml}
+                                </div>
+                                <div id="withdrawDetailsContainer" class="mb-3">
+                                    <input type="text" id="withdrawDetails" placeholder="أدخل التفاصيل" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
+                                </div>
+                                <div class="flex gap-2">
+                                    <input type="number" id="withdrawAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                    <button id="withdrawBtn" class="bg-red-600 px-4 rounded-lg font-bold">طلب سحب</button>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلب السحب من قبل الإدارة.</p>
+                            </div>
+
+                            <!-- تبويب التحويل -->
+                            <div class="tab-pane hidden" id="tab-transfer">
+                                <p class="text-sm text-gray-300 mb-2">تحويل إلى مستخدم آخر:</p>
+                                <input type="text" id="transferUserId" placeholder="معرف المستخدم" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
+                                <div class="flex gap-2">
+                                    <input type="number" id="transferAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                    <button id="transferBtn" class="bg-green-600 px-4 rounded-lg font-bold">تحويل</button>
+                                </div>
+                            </div>
+
+                            <!-- تبويب السجل -->
+                            <div class="tab-pane hidden" id="tab-history">
+                                <div class="max-h-64 overflow-y-auto">
+                                    ${transactionsHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                bindWalletModalEvents() {
+                    const modalOverlay = document.getElementById('walletModalOverlay');
+                    document.getElementById('closeWalletModal').addEventListener('click', () => {
+                        modalOverlay.classList.remove('open');
+                    });
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay) modalOverlay.classList.remove('open');
+                    });
+
+                    // تبديل التبويبات
+                    const tabs = document.querySelectorAll('.wallet-tab');
+                    tabs.forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            tabs.forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            const tabId = tab.dataset.tab;
+                            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+                            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+                        });
+                    });
+
+                    // اختيار طريقة الشحن
+                    const paymentMethods = document.querySelectorAll('.payment-methods-list .payment-method');
+                    let selectedMethod = null;
+                    const detailsDisplay = document.getElementById('depositDetailsDisplay');
+                    const detailsText = document.getElementById('depositDetailsText');
+                    
+                    paymentMethods.forEach(method => {
+                        method.addEventListener('click', () => {
+                            paymentMethods.forEach(m => m.classList.remove('selected'));
+                            method.classList.add('selected');
+                            selectedMethod = method.dataset.methodId;
+                            
+                            const methodObj = this.state.paymentMethods.find(m => m.id === selectedMethod);
+                            if (methodObj && methodObj.depositDetails) {
+                                detailsText.innerHTML = methodObj.depositDetails.replace(/\n/g, '<br>');
+                                detailsDisplay.classList.remove('hidden');
+                            } else {
+                                detailsDisplay.classList.add('hidden');
+                            }
+                        });
+                    });
+
+                    // طلب شحن
+                    document.getElementById('depositBtn')?.addEventListener('click', () => {
+                        const amount = parseFloat(document.getElementById('depositAmount').value);
+                        const transactionId = document.getElementById('depositTransactionId').value.trim();
+                        
+                        if (isNaN(amount) || amount <= 0) {
+                            this.toast.error('أدخل مبلغ صحيح');
+                            return;
+                        }
+                        if (!selectedMethod) {
+                            this.toast.error('اختر طريقة دفع أولاً');
+                            return;
+                        }
+                        if (!transactionId) {
+                            this.toast.error('يرجى إدخال رقم العملية');
+                            return;
+                        }
+                        
+                        const request = this.data.addDepositRequest(amount, selectedMethod, transactionId, this.state.user);
+                        
+                        // رسالة تفصيلية محملة بجميع المعلومات
+                        this.toast.success(`✅ تم تقديم طلب الشحن بنجاح
+                            • المستخدم: ${this.state.user.first_name} ${this.state.user.last_name || ''}
+                            • المبلغ: ${amount}
+                            • الطريقة: ${request.method}
+                            • رقم العملية: ${transactionId}
+                            • رقم الطلب: ${request.id}
+                            • التاريخ: ${new Date(request.date).toLocaleString('ar-EG')}
+                            • الحالة: قيد المراجعة
+                            سيتم إشعارك عند اكتمال المعاملة.`);
+                        
+                        // إعادة تعيين الحقول
+                        document.getElementById('depositAmount').value = '';
+                        document.getElementById('depositTransactionId').value = '';
+                        paymentMethods.forEach(m => m.classList.remove('selected'));
+                        selectedMethod = null;
+                        detailsDisplay.classList.add('hidden');
+                    });
+
+                    // اختيار طريقة السحب
+                    const withdrawMethods = document.querySelectorAll('#withdrawMethodsList .payment-method');
+                    let selectedWithdrawMethod = null;
+                    withdrawMethods.forEach(method => {
+                        method.addEventListener('click', () => {
+                            withdrawMethods.forEach(m => m.classList.remove('selected'));
+                            method.classList.add('selected');
+                            selectedWithdrawMethod = method.dataset.methodId;
+                            
+                            const methodObj = this.state.paymentMethods.find(m => m.id === selectedWithdrawMethod);
+                            const detailsInput = document.getElementById('withdrawDetails');
+                            if (methodObj) {
+                                detailsInput.placeholder = methodObj.withdrawDetails || 'أدخل التفاصيل';
+                            }
+                        });
+                    });
+
+                    // طلب سحب
+                    document.getElementById('withdrawBtn')?.addEventListener('click', () => {
+                        const amount = parseFloat(document.getElementById('withdrawAmount').value);
+                        const details = document.getElementById('withdrawDetails').value.trim();
+                        if (isNaN(amount) || amount <= 0) {
+                            this.toast.error('أدخل مبلغ صحيح');
+                            return;
+                        }
+                        if (!selectedWithdrawMethod) {
+                            this.toast.error('اختر طريقة سحب أولاً');
+                            return;
+                        }
+                        if (!details) {
+                            this.toast.error('أدخل التفاصيل المطلوبة');
+                            return;
+                        }
+                        const result = this.data.addWithdrawalRequest(amount, selectedWithdrawMethod, details, this.state.user);
+                        if (result.success) {
+                            const request = result.request;
+                            // رسالة تفصيلية للسحب
+                            this.toast.success(`✅ تم تقديم طلب السحب بنجاح
+                                • المستخدم: ${this.state.user.first_name} ${this.state.user.last_name || ''}
+                                • المبلغ: ${amount}
+                                • الطريقة: ${request.method}
+                                • التفاصيل: ${details}
+                                • رقم الطلب: ${request.id}
+                                • التاريخ: ${new Date(request.date).toLocaleString('ar-EG')}
+                                • الحالة: قيد المراجعة
+                                سيتم خصم المبلغ من رصيدك بعد الموافقة.`);
+                            
+                            document.getElementById('withdrawAmount').value = '';
+                            document.getElementById('withdrawDetails').value = '';
+                            withdrawMethods.forEach(m => m.classList.remove('selected'));
+                            selectedWithdrawMethod = null;
+                        } else {
+                            this.toast.error(result.message);
+                        }
+                    });
+
+                    // تحويل
+                    document.getElementById('transferBtn')?.addEventListener('click', () => {
+                        const amount = parseFloat(document.getElementById('transferAmount').value);
+                        const targetId = document.getElementById('transferUserId').value.trim();
+                        if (isNaN(amount) || amount <= 0) {
+                            this.toast.error('أدخل مبلغ صحيح');
+                            return;
+                        }
+                        if (!targetId) {
+                            this.toast.error('أدخل معرف المستخدم');
+                            return;
+                        }
+                        if (amount > this.state.balance) {
+                            this.toast.error('الرصيد غير كافٍ');
+                            return;
+                        }
+                        this.state.balance -= amount;
+                        this.data.addTransaction('transfer', -amount, `تحويل إلى المستخدم ${targetId}`);
+                        this.data.saveWallet();
+                        this.toast.success('تم التحويل بنجاح');
+                        document.getElementById('transferAmount').value = '';
+                        document.getElementById('transferUserId').value = '';
+                        this.updateBalanceDisplay();
+                        // تحديث المحتوى
+                        this.openWalletModal(); // إعادة فتح المودال لتحديث الرصيد
+                    });
+                }
+
+                // لوحة المشرف
+                openAdminPanel() {
+                    const modalOverlay = document.getElementById('adminPanelOverlay');
+                    const modalContent = document.getElementById('adminPanelContent');
+                    modalContent.innerHTML = this.renderAdminPanel();
+                    modalOverlay.classList.add('open');
+                    this.bindAdminPanelEvents();
+                }
+
+                renderAdminPanel() {
+                    const pendingDeposits = this.data.getPendingDeposits();
+                    const pendingWithdrawals = this.data.getPendingWithdrawals();
+
+                    const depositsHtml = pendingDeposits.length === 0 
+                        ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات شحن معلقة</p>'
+                        : pendingDeposits.map(req => `
+                            <div class="request-item" data-id="${req.id}" data-type="deposit">
+                                <div class="request-header">
+                                    <span class="font-bold">${req.userName}</span>
+                                    <span class="badge-pending">قيد الانتظار</span>
+                                </div>
+                                <div class="text-sm">المبلغ: <span class="text-blue-400">${req.amount.toLocaleString('ar-EG')}</span></div>
+                                <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
+                                <div class="text-xs text-gray-400">رقم العملية: <span class="text-yellow-400">${req.transactionId || 'غير محدد'}</span></div>
+                                <div class="text-xs text-gray-400">التاريخ: ${DateUtils.formatDateTime(req.date)}</div>
+                                <div class="request-actions">
+                                    <button class="btn-accept accept-request" data-id="${req.id}" data-type="deposit">قبول</button>
+                                    <button class="btn-reject reject-request" data-id="${req.id}" data-type="deposit">رفض</button>
+                                </div>
+                            </div>
+                        `).join('');
+
+                    const withdrawalsHtml = pendingWithdrawals.length === 0 
+                        ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات سحب معلقة</p>'
+                        : pendingWithdrawals.map(req => `
+                            <div class="request-item" data-id="${req.id}" data-type="withdrawal">
+                                <div class="request-header">
+                                    <span class="font-bold">${req.userName}</span>
+                                    <span class="badge-pending">قيد الانتظار</span>
+                                </div>
+                                <div class="text-sm">المبلغ: <span class="text-red-400">${req.amount.toLocaleString('ar-EG')}</span></div>
+                                <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
+                                <div class="text-xs text-gray-400">التفاصيل: ${req.details || 'غير محدد'}</div>
+                                <div class="text-xs text-gray-400">التاريخ: ${DateUtils.formatDateTime(req.date)}</div>
+                                <div class="request-actions">
+                                    <button class="btn-accept accept-request" data-id="${req.id}" data-type="withdrawal">قبول</button>
+                                    <button class="btn-reject reject-request" data-id="${req.id}" data-type="withdrawal">رفض</button>
+                                </div>
+                            </div>
+                        `).join('');
+
+                    const paymentMethodsHtml = this.state.paymentMethods.map(m => `
+                        <div class="payment-method-admin">
+                            <div class="flex items-center gap-3">
+                                <div class="payment-icon">
+                                    <i class="${m.icon}"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold">${m.name}</div>
+                                    <div class="text-xs text-gray-400">${m.description || ''}</div>
+                                </div>
+                            </div>
+                            <div class="actions">
+                                <button class="edit-payment-method" data-id="${m.id}" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="delete-payment-method" data-id="${m.id}" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    return `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">لوحة الإدارة</h2>
+                            <button id="closeAdminPanel" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="wallet-tabs mb-3">
+                            <button class="wallet-tab active" data-admin-tab="requests">الطلبات</button>
+                            <button class="wallet-tab" data-admin-tab="payment-methods">طرق الدفع</button>
+                        </div>
+
+                        <div id="adminRequestsTab" class="admin-tab-content">
+                            <div class="space-y-6">
+                                <div>
+                                    <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+                                        <i class="fa-solid fa-arrow-down text-green-400"></i>
+                                        طلبات الشحن المعلقة
+                                        <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${pendingDeposits.length}</span>
+                                    </h3>
+                                    <div class="admin-requests-panel">${depositsHtml}</div>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+                                        <i class="fa-solid fa-arrow-up text-red-400"></i>
+                                        طلبات السحب المعلقة
+                                        <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${pendingWithdrawals.length}</span>
+                                    </h3>
+                                    <div class="admin-requests-panel">${withdrawalsHtml}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="adminPaymentMethodsTab" class="admin-tab-content hidden">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-lg font-bold">طرق الدفع المتاحة</h3>
+                                <button id="addPaymentMethodBtn" class="bg-blue-600 px-3 py-1 rounded-lg text-sm"><i class="fa-solid fa-plus"></i> إضافة</button>
+                            </div>
+                            <div class="space-y-2 max-h-96 overflow-y-auto">
+                                ${paymentMethodsHtml}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                bindAdminPanelEvents() {
+                    const modalOverlay = document.getElementById('adminPanelOverlay');
+                    document.getElementById('closeAdminPanel').addEventListener('click', () => {
+                        modalOverlay.classList.remove('open');
+                    });
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay) modalOverlay.classList.remove('open');
+                    });
+
+                    // تبديل التبويبات
+                    const adminTabs = document.querySelectorAll('[data-admin-tab]');
+                    adminTabs.forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            adminTabs.forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            const tabName = tab.dataset.adminTab;
+                            if (tabName === 'requests') {
+                                document.getElementById('adminRequestsTab').classList.remove('hidden');
+                                document.getElementById('adminPaymentMethodsTab').classList.add('hidden');
+                            } else {
+                                document.getElementById('adminRequestsTab').classList.add('hidden');
+                                document.getElementById('adminPaymentMethodsTab').classList.remove('hidden');
+                            }
+                        });
+                    });
+
+                    // قبول الطلبات
+                    document.querySelectorAll('.accept-request').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            const type = btn.dataset.type;
+                            const request = type === 'deposit' 
+                                ? this.state.depositRequests.find(r => r.id === id)
+                                : this.state.withdrawalRequests.find(r => r.id === id);
+                            if (request) {
+                                const success = this.data.acceptRequest(request, type);
+                                if (success) {
+                                    this.toast.success(`✅ تم قبول طلب ${type === 'deposit' ? 'الشحن' : 'السحب'}
+                                        • المستخدم: ${request.userName}
+                                        • المبلغ: ${request.amount}
+                                        • الطريقة: ${request.method}
+                                        ${type === 'deposit' ? `• رقم العملية: ${request.transactionId}` : `• التفاصيل: ${request.details}`}
+                                        • رقم الطلب: ${request.id}
+                                        • تاريخ الطلب: ${DateUtils.formatDateTime(request.date)}
+                                        تم تحديث الرصيد تلقائياً.`);
+                                    this.openAdminPanel(); // إعادة فتح اللوحة
+                                } else {
+                                    this.toast.error('❌ حدث خطأ (قد يكون الرصيد غير كافٍ)');
+                                }
+                            }
+                        });
+                    });
+
+                    // رفض الطلبات
+                    document.querySelectorAll('.reject-request').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            const type = btn.dataset.type;
+                            const request = type === 'deposit' 
+                                ? this.state.depositRequests.find(r => r.id === id)
+                                : this.state.withdrawalRequests.find(r => r.id === id);
+                            if (request) {
+                                this.data.rejectRequest(request, type);
+                                this.toast.info(`❌ تم رفض طلب ${type === 'deposit' ? 'الشحن' : 'السحب'}
+                                    • المستخدم: ${request.userName}
+                                    • المبلغ: ${request.amount}
+                                    • الطريقة: ${request.method}
+                                    ${type === 'deposit' ? `• رقم العملية: ${request.transactionId}` : `• التفاصيل: ${request.details}`}
+                                    • رقم الطلب: ${request.id}
+                                    • تاريخ الطلب: ${DateUtils.formatDateTime(request.date)}`);
+                                this.openAdminPanel();
+                            }
+                        });
+                    });
+
+                    // إضافة طريقة دفع
+                    document.getElementById('addPaymentMethodBtn')?.addEventListener('click', () => {
+                        this.openPaymentMethodModal();
+                    });
+
+                    // تعديل وحذف
+                    document.querySelectorAll('.edit-payment-method').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            this.openPaymentMethodModal(id);
+                        });
+                    });
+
+                    document.querySelectorAll('.delete-payment-method').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            if (confirm('هل أنت متأكد من حذف طريقة الدفع هذه؟')) {
+                                this.data.deletePaymentMethod(id);
+                                this.toast.success('تم الحذف بنجاح');
+                                this.openAdminPanel();
+                            }
+                        });
+                    });
+                }
+
+                // مودال إضافة/تعديل طريقة دفع
+                openPaymentMethodModal(editingId = null) {
+                    const modalOverlay = document.getElementById('paymentMethodModalOverlay');
+                    const modalContent = document.getElementById('paymentMethodModalContent');
+                    const method = editingId ? this.state.paymentMethods.find(m => m.id === editingId) : null;
+                    
+                    modalContent.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">${method ? 'تعديل طريقة دفع' : 'إضافة طريقة دفع جديدة'}</h2>
+                            <button id="closePaymentMethodModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                        <form id="paymentMethodForm" class="space-y-3">
+                            <input type="hidden" id="methodId" value="${method?.id || ''}">
+                            <div>
+                                <label class="text-sm text-gray-400">اسم الطريقة</label>
+                                <input type="text" id="methodName" required value="${method?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-400">الأيقونة (class FontAwesome)</label>
+                                <input type="text" id="methodIcon" value="${method?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-400">وصف مختصر</label>
+                                <input type="text" id="methodDescription" value="${method?.description || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-400">تفاصيل الإيداع</label>
+                                <textarea id="methodDepositDetails" rows="2" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">${method?.depositDetails || ''}</textarea>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-400">تفاصيل السحب (placeholder)</label>
+                                <input type="text" id="methodWithdrawDetails" value="${method?.withdrawDetails || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button>
+                                <button type="button" id="cancelPaymentMethod" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button>
+                            </div>
+                        </form>
+                    `;
+                    
+                    modalOverlay.classList.add('open');
+                    this.bindPaymentMethodModalEvents();
+                }
+
+                bindPaymentMethodModalEvents() {
+                    const modalOverlay = document.getElementById('paymentMethodModalOverlay');
+                    document.getElementById('closePaymentMethodModal').addEventListener('click', () => {
+                        modalOverlay.classList.remove('open');
+                    });
+                    document.getElementById('cancelPaymentMethod').addEventListener('click', () => {
+                        modalOverlay.classList.remove('open');
+                    });
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay) modalOverlay.classList.remove('open');
+                    });
+
+                    document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const formData = {
+                            name: document.getElementById('methodName').value,
+                            icon: document.getElementById('methodIcon').value,
+                            description: document.getElementById('methodDescription').value,
+                            depositDetails: document.getElementById('methodDepositDetails').value,
+                            withdrawDetails: document.getElementById('methodWithdrawDetails').value
+                        };
+                        const id = document.getElementById('methodId').value;
+                        
+                        if (id) {
+                            this.data.updatePaymentMethod(id, formData);
+                            this.toast.success('تم التحديث بنجاح');
+                        } else {
+                            this.data.addPaymentMethod(formData);
+                            this.toast.success('تمت الإضافة بنجاح');
+                        }
+                        
+                        modalOverlay.classList.remove('open');
+                        this.openAdminPanel(); // إعادة فتح لوحة المشرف
+                    });
+                }
+
+                // مودال الإشعارات
+                openNotificationsModal() {
+                    const modalOverlay = document.getElementById('walletModalOverlay');
+                    const modalContent = document.getElementById('walletModalContent');
+                    modalContent.innerHTML = this.renderNotificationsModal();
+                    modalOverlay.classList.add('open');
+                    this.bindNotificationsModalEvents();
+                }
+
+                renderNotificationsModal() {
+                    const userId = this.state.user.id;
+                    const notifications = this.data.notificationService.getUserNotifications(userId);
+                    
+                    const notificationsHtml = notifications.length === 0 
+                        ? '<p class="text-center text-gray-400 py-8">لا توجد إشعارات</p>'
+                        : notifications.map(n => `
+                            <div class="transaction-item ${n.read ? 'opacity-60' : ''}" data-id="${n.id}">
+                                <div class="flex-1">
+                                    <div class="font-bold flex items-center gap-2">
+                                        ${!n.read ? '<span class="w-2 h-2 bg-blue-500 rounded-full"></span>' : ''}
+                                        ${n.title}
+                                    </div>
+                                    <div class="text-sm">${n.message}</div>
+                                    <div class="text-xs text-gray-400 mt-1">${DateUtils.formatDateTime(n.date)}</div>
+                                </div>
+                                ${!n.read ? `
+                                    <button class="mark-read text-xs text-blue-400 hover:text-blue-300" data-id="${n.id}">
+                                        <i class="fa-regular fa-circle-check"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        `).join('');
+                    
+                    return `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">الإشعارات</h2>
+                            <button id="closeNotificationsModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="flex justify-end mb-3">
+                            <button id="markAllRead" class="text-sm bg-blue-600 px-3 py-1 rounded-lg">
+                                <i class="fa-regular fa-bell-slash ml-1"></i> تحديد الكل كمقروء
+                            </button>
+                        </div>
+                        <div class="max-h-96 overflow-y-auto space-y-2">
+                            ${notificationsHtml}
+                        </div>
+                    `;
+                }
+
+                bindNotificationsModalEvents() {
+                    const modalOverlay = document.getElementById('walletModalOverlay');
+                    document.getElementById('closeNotificationsModal').addEventListener('click', () => {
+                        modalOverlay.classList.remove('open');
                     });
                     
-                    if (data.transactions.length > 50) data.transactions.pop();
-                    this.saveUserData(userId, data);
-                    return data;
-                }
-
-                static getAllChallenges() {
-                    const challenges = localStorage.getItem('roulette_challenges');
-                    return challenges ? JSON.parse(challenges) : [];
-                }
-
-                static saveChallenges(challenges) {
-                    localStorage.setItem('roulette_challenges', JSON.stringify(challenges));
-                }
-            }
-
-            // ==================== نظام الإشعارات ====================
-            class ToastSystem {
-                constructor() {
-                    this.container = document.createElement('div');
-                    this.container.style.cssText = `
-                        position: fixed;
-                        bottom: 20px;
-                        left: 50%;
-                        transform: translateX(-50%);
-                        z-index: 10000;
-                        display: flex;
-                        flex-direction: column;
-                        gap: 10px;
-                        width: 90%;
-                        max-width: 350px;
-                        pointer-events: none;
-                    `;
-                    document.body.appendChild(this.container);
-                }
-
-                show(message, type = 'info', duration = 4000) {
-                    const toast = document.createElement('div');
-                    toast.className = 'toast-premium';
+                    document.getElementById('markAllRead')?.addEventListener('click', () => {
+                        this.data.notificationService.markAllAsRead(this.state.user.id);
+                        this.toast.success('تم تحديد الكل كمقروء');
+                        this.openNotificationsModal(); // إعادة فتح المودال
+                        this.updateNotificationBadge(); // تحديث العداد
+                    });
                     
-                    const icons = {
-                        success: 'fa-circle-check',
-                        error: 'fa-circle-exclamation',
-                        warning: 'fa-triangle-exclamation',
-                        info: 'fa-circle-info'
-                    };
-
-                    const colors = {
-                        success: '#00ff88',
-                        error: '#ff4444',
-                        warning: '#ffd700',
-                        info: '#3b82f6'
-                    };
-
-                    toast.innerHTML = `
-                        <i class="fa-solid ${icons[type]}" style="color: ${colors[type]};"></i>
-                        <span>${message}</span>
-                    `;
-
-                    this.container.appendChild(toast);
-
-                    setTimeout(() => {
-                        toast.style.animation = 'slideUp 0.3s ease reverse';
-                        setTimeout(() => toast.remove(), 300);
-                    }, duration);
-
-                    // اهتزاز للموبايل
-                    if (navigator.vibrate) navigator.vibrate(100);
+                    // زر تحديد كمقروء لكل إشعار
+                    document.querySelectorAll('.mark-read').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const id = btn.dataset.id;
+                            this.data.notificationService.markAsRead(id);
+                            this.openNotificationsModal();
+                            this.updateNotificationBadge();
+                        });
+                    });
+                    
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay) modalOverlay.classList.remove('open');
+                    });
                 }
-
-                success(msg) { this.show(msg, 'success'); }
-                error(msg) { this.show(msg, 'error'); }
-                warning(msg) { this.show(msg, 'warning'); }
-                info(msg) { this.show(msg, 'info'); }
             }
 
-            // ==================== فئة اللعبة الرئيسية ====================
-            class RussianRouletteElite {
+            // ======================== التطبيق الرئيسي ========================
+            class App {
                 constructor() {
-                    this.toast = new ToastSystem();
-                    this.tg = window.Telegram?.WebApp;
-                    this.user = null;
-                    this.userData = null;
-                    this.currentChallenge = null;
-                    this.challenges = [];
+                    this.state = new AppState();
+                    this.telegram = new TelegramService();
+                    this.toast = new ToastManager('toastContainer');
+                    this.data = new DataService(this.state);
+                    this.ui = new UIManager(this.state, this.data, this.telegram, this.toast);
                     
                     this.init();
                 }
 
-                init() {
+                async init() {
                     // التحقق من بيئة تيليجرام
-                    if (!this.tg) {
-                        this.renderError('يجب فتح التطبيق من داخل تيليجرام');
+                    if (!this.telegram.isAvailable) {
+                        this.state.telegramMissing = true;
+                        this.state.loading = false;
+                        this.ui.render();
                         return;
                     }
 
-                    this.tg.expand();
-                    this.tg.ready();
-                    
-                    this.user = this.tg.initDataUnsafe?.user;
-                    
-                    if (!this.user) {
-                        this.renderError('لم يتم التحقق من هويتك');
+                    this.telegram.init();
+
+                    // التحقق من صحة البيانات
+                    if (!this.telegram.isValid() || !this.telegram.getUser()) {
+                        this.state.accessDenied = true;
+                        this.state.loading = false;
+                        this.ui.render();
                         return;
                     }
 
-                    // تحميل بيانات المستخدم
-                    this.userData = StorageManager.getUserData(this.user.id);
-                    this.challenges = StorageManager.getAllChallenges();
-                    
-                    // التحقق من وجود تحدي نشط للمستخدم
-                    this.currentChallenge = this.challenges.find(c => 
-                        (c.player1.id === this.user.id || c.player2?.id === this.user.id) && 
-                        c.status !== 'finished'
-                    );
+                    const user = this.telegram.getUser();
+                    this.state.user = user;
+                    this.state.isAdmin = (user.id === CONFIG.ADMIN_ID);
 
-                    this.render();
+                    // تسجيل المستخدم
+                    this.data.registerUser(user.id);
+
+                    // تحميل الثيم
+                    const savedTheme = this.data.loadTheme();
+                    this.applyTheme(savedTheme);
+
+                    // تحميل الإعدادات وتطبيقها على الـ Toast
+                    this.loadSettings();
+
+                    // محاكاة تحميل البيانات
+                    this.state.loading = true;
+                    this.ui.render();
+
+                    try {
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        this.data.loadStats();
+                        this.state.loading = false;
+                        this.ui.render();
+
+                        // إعداد زر MainButton
+                        this.telegram.setMainButton(
+                            this.state.isAdmin ? "لوحة التحكم" : "تحديث البيانات",
+                            '#3b82f6',
+                            '#ffffff',
+                            true,
+                            () => {
+                                this.telegram.showPopup({
+                                    title: this.state.isAdmin ? 'مرحباً أيها المدير' : 'نظام آمن',
+                                    message: this.state.isAdmin 
+                                        ? `لديك صلاحيات كاملة. الطلبات المعلقة: ${this.data.getPendingDeposits().length + this.data.getPendingWithdrawals().length}`
+                                        : `أهلاً ${user.first_name}، اتصالك آمن.`,
+                                    buttons: [{ type: 'ok', text: 'حسناً' }]
+                                });
+                            }
+                        );
+
+                        this.toast.success(`مرحباً ${user.first_name}، أهلاً بك في المحفظة المتطورة`);
+                    } catch (error) {
+                        console.error('Initialization error:', error);
+                        this.toast.error('حدث خطأ أثناء تحميل البيانات');
+                        this.state.loading = false;
+                        this.ui.render();
+                    }
                 }
 
-                render() {
-                    const app = document.getElementById('app');
-                    const template = document.getElementById('game-template').content.cloneNode(true);
+                loadSettings() {
+                    const settings = this.state.settings;
+                    this.toast.soundEnabled = settings.sound;
+                    this.toast.vibrateEnabled = settings.vibrate;
                     
-                    // تعبئة بيانات المستخدم
-                    template.getElementById('playerName').textContent = this.user.first_name;
-                    
-                    // عرض الرصيد
-                    const balanceEl = document.createElement('div');
-                    balanceEl.className = 'wallet-icon-3d mx-auto my-4';
-                    balanceEl.innerHTML = '<i class="fa-solid fa-wallet"></i>';
-                    balanceEl.onclick = () => this.showWallet();
-                    
-                    // عرض الرصيد
-                    const balanceText = document.createElement('div');
-                    balanceText.className = 'text-center text-yellow-400 font-bold text-xl mb-4';
-                    balanceText.innerHTML = `${this.userData.balance.toLocaleString()} <span class="text-sm text-gray-400">نقاط</span>`;
-                    
-                    app.innerHTML = '';
-                    app.appendChild(balanceEl);
-                    app.appendChild(balanceText);
-                    app.appendChild(template);
-
-                    // تجهيز اللعبة
-                    this.setupGame();
+                    // تطبيق الإعدادات على الواجهة
+                    document.getElementById('soundToggle').checked = settings.sound;
+                    document.getElementById('vibrateToggle').checked = settings.vibrate;
                 }
 
-                setupGame() {
-                    // تحديث واجهة اللعبة حسب حالة التحدي
-                    if (this.currentChallenge) {
-                        this.updateGameUI(this.currentChallenge);
+                applyTheme(theme) {
+                    const root = document.documentElement;
+                    const themeIcon = document.getElementById('themeIcon');
+                    
+                    if (theme === 'light') {
+                        root.style.setProperty('--tg-theme-bg-color', '#f8fafc');
+                        root.style.setProperty('--tg-theme-text-color', '#0f172a');
+                        root.style.setProperty('--tg-theme-button-color', '#3b82f6');
+                        root.style.setProperty('--tg-theme-button-text-color', '#ffffff');
+                        themeIcon.className = 'fa-solid fa-sun';
                     } else {
-                        this.showLobby();
+                        root.style.setProperty('--tg-theme-bg-color', '#0f172a');
+                        root.style.setProperty('--tg-theme-text-color', '#ffffff');
+                        root.style.setProperty('--tg-theme-button-color', '#3b82f6');
+                        root.style.setProperty('--tg-theme-button-text-color', '#ffffff');
+                        themeIcon.className = 'fa-solid fa-moon';
                     }
-
-                    // ربط الأزرار
-                    document.getElementById('triggerBtn').onclick = () => this.pullTrigger();
-                    document.getElementById('createChallengeBtn').onclick = () => this.createChallenge();
-                    document.getElementById('joinChallengeBtn').onclick = () => this.showChallenges();
-                    document.getElementById('cancelGameBtn').onclick = () => this.cancelGame();
-
-                    // شريط الرهان
-                    const slider = document.getElementById('betSlider');
-                    slider.oninput = (e) => {
-                        document.getElementById('betAmount').textContent = e.target.value;
-                    };
-                }
-
-                createChallenge() {
-                    const betAmount = parseInt(document.getElementById('betSlider').value);
-                    
-                    if (betAmount > this.userData.balance) {
-                        this.toast.error('الرصيد غير كافٍ');
-                        return;
-                    }
-
-                    if (this.currentChallenge) {
-                        this.toast.warning('لديك تحدي نشط بالفعل');
-                        return;
-                    }
-
-                    const challenge = {
-                        id: Date.now().toString(),
-                        player1: {
-                            id: this.user.id,
-                            name: this.user.first_name,
-                            avatar: this.user.first_name.charAt(0)
-                        },
-                        player2: null,
-                        betAmount,
-                        status: 'waiting',
-                        createdAt: new Date().toISOString(),
-                        gameState: {
-                            chambers: 6,
-                            bulletPosition: Math.floor(Math.random() * 6),
-                            currentChamber: 0,
-                            turn: this.user.id,
-                            results: []
-                        }
-                    };
-
-                    // خصم الرهان
-                    this.userData = StorageManager.updateBalance(
-                        this.user.id, 
-                        -betAmount, 
-                        'challenge_created',
-                        `إنشاء تحدي بمبلغ ${betAmount}`
-                    );
-
-                    this.challenges.push(challenge);
-                    StorageManager.saveChallenges(this.challenges);
-                    
-                    this.currentChallenge = challenge;
-                    this.updateGameUI(challenge);
-                    this.toast.success('تم إنشاء التحدي بنجاح! في انتظار المنافس');
-                }
-
-                joinChallenge(challengeId) {
-                    const challenge = this.challenges.find(c => c.id === challengeId);
-                    
-                    if (!challenge || challenge.player2) {
-                        this.toast.error('هذا التحدي غير متاح');
-                        return;
-                    }
-
-                    if (challenge.betAmount > this.userData.balance) {
-                        this.toast.error('الرصيد غير كافٍ للانضمام');
-                        return;
-                    }
-
-                    if (challenge.player1.id === this.user.id) {
-                        this.toast.warning('لا يمكنك الانضمام إلى تحديك الخاص');
-                        return;
-                    }
-
-                    // خصم الرهان
-                    this.userData = StorageManager.updateBalance(
-                        this.user.id,
-                        -challenge.betAmount,
-                        'challenge_joined',
-                        `انضمام إلى تحدي بمبلغ ${challenge.betAmount}`
-                    );
-
-                    challenge.player2 = {
-                        id: this.user.id,
-                        name: this.user.first_name,
-                        avatar: this.user.first_name.charAt(0)
-                    };
-                    
-                    challenge.status = 'active';
-                    
-                    // اختيار من يبدأ عشوائياً
-                    challenge.gameState.turn = Math.random() < 0.5 ? 
-                        challenge.player1.id : challenge.player2.id;
-
-                    this.challenges = this.challenges.map(c => 
-                        c.id === challenge.id ? challenge : c
-                    );
-                    
-                    StorageManager.saveChallenges(this.challenges);
-                    
-                    this.currentChallenge = challenge;
-                    this.updateGameUI(challenge);
-                    
-                    this.toast.success('تم الانضمام إلى التحدي! حظاً موفقاً');
-                }
-
-                pullTrigger() {
-                    if (!this.currentChallenge) {
-                        this.toast.warning('لا يوجد تحدي نشط');
-                        return;
-                    }
-
-                    const challenge = this.currentChallenge;
-                    
-                    if (challenge.status !== 'active') {
-                        this.toast.warning('اللعبة غير نشطة');
-                        return;
-                    }
-
-                    if (challenge.gameState.turn !== this.user.id) {
-                        this.toast.warning('ليس دورك الآن');
-                        return;
-                    }
-
-                    if (!challenge.player2) {
-                        this.toast.warning('في انتظار المنافس');
-                        return;
-                    }
-
-                    const state = challenge.gameState;
-                    const currentChamber = state.currentChamber;
-                    const isShot = currentChamber === state.bulletPosition;
-
-                    // تسجيل النتيجة
-                    state.results.push({
-                        playerId: this.user.id,
-                        chamber: currentChamber,
-                        isShot,
-                        timestamp: new Date().toISOString()
-                    });
-
-                    // تحديث واجهة الغرف
-                    this.animateChamber(currentChamber, isShot);
-
-                    if (isShot) {
-                        // اللاعب خسر
-                        const loser = this.user;
-                        const winner = challenge.player1.id === this.user.id ? 
-                            challenge.player2 : challenge.player1;
-
-                        // تحويل الرهان إلى الفائز
-                        const totalPrize = challenge.betAmount * 2;
-                        
-                        StorageManager.updateBalance(
-                            winner.id,
-                            totalPrize,
-                            'game_win',
-                            `فوز في الروليت ضد ${loser.name}`
-                        );
-
-                        // تحديث إحصائيات
-                        const winnerData = StorageManager.getUserData(winner.id);
-                        winnerData.gamesWon++;
-                        winnerData.totalEarned += totalPrize;
-                        StorageManager.saveUserData(winner.id, winnerData);
-
-                        const loserData = StorageManager.getUserData(loser.id);
-                        loserData.gamesPlayed++;
-                        StorageManager.saveUserData(loser.id, loserData);
-
-                        challenge.status = 'finished';
-                        challenge.winner = winner.id;
-
-                        this.toast.error(`💥 انفجرت الرصاصة! ${loser.name} خسر التحدي`);
-                        this.toast.success(`🏆 ${winner.name} فاز بمبلغ ${totalPrize}`);
-
-                        // تحديث الرصيد للمستخدم الحالي
-                        if (this.user.id === winner.id) {
-                            this.userData.balance += totalPrize;
-                        }
-
-                        // إنهاء اللعبة
-                        setTimeout(() => {
-                            this.currentChallenge = null;
-                            this.challenges = this.challenges.filter(c => c.id !== challenge.id);
-                            StorageManager.saveChallenges(this.challenges);
-                            this.render();
-                        }, 3000);
-                    } else {
-                        // طلقة فارغة
-                        state.currentChamber++;
-                        
-                        // تبديل الدور
-                        state.turn = challenge.player1.id === this.user.id ? 
-                            challenge.player2.id : challenge.player1.id;
-
-                        this.toast.info('💨 طلقة فارغة...');
-
-                        // تحديث واجهة اللعبة
-                        this.updateGameUI(challenge);
-                        
-                        // حفظ التغييرات
-                        this.challenges = this.challenges.map(c => 
-                            c.id === challenge.id ? challenge : c
-                        );
-                        StorageManager.saveChallenges(this.challenges);
-                    }
-                }
-
-                animateChamber(chamberIndex, isShot) {
-                    const chambers = document.querySelectorAll('.chamber-premium');
-                    if (chambers[chamberIndex]) {
-                        chambers[chamberIndex].classList.add(isShot ? 'shot' : 'current');
-                        
-                        if (isShot) {
-                            chambers[chamberIndex].innerHTML = '💥';
-                            
-                            // تأثير الاهتزاز
-                            document.querySelector('.gun-premium').style.animation = 'shake 0.5s ease';
-                            setTimeout(() => {
-                                document.querySelector('.gun-premium').style.animation = '';
-                            }, 500);
-                        }
-                    }
-                }
-
-                updateGameUI(challenge) {
-                    const player1Card = document.getElementById('player1Card');
-                    const player2Card = document.getElementById('player2Card');
-                    
-                    // تحديث معلومات اللاعب 1
-                    document.getElementById('player1Name').textContent = challenge.player1.name;
-                    document.getElementById('player1Avatar').textContent = challenge.player1.avatar;
-                    
-                    // تحديث معلومات اللاعب 2
-                    if (challenge.player2) {
-                        document.getElementById('player2Name').textContent = challenge.player2.name;
-                        document.getElementById('player2Avatar').textContent = challenge.player2.avatar;
-                    }
-
-                    // تحديث حالة الأدوار
-                    player1Card.classList.remove('current-turn', 'winner', 'loser');
-                    player2Card.classList.remove('current-turn', 'winner', 'loser');
-
-                    if (challenge.status === 'active') {
-                        if (challenge.gameState.turn === challenge.player1.id) {
-                            player1Card.classList.add('current-turn');
-                            document.getElementById('player1Status').textContent = '🔫 دورك';
-                        } else {
-                            player2Card.classList.add('current-turn');
-                            document.getElementById('player2Status').textContent = '🔫 دورك';
-                        }
-                    } else if (challenge.status === 'finished') {
-                        if (challenge.winner === challenge.player1.id) {
-                            player1Card.classList.add('winner');
-                            player2Card.classList.add('loser');
-                        } else {
-                            player2Card.classList.add('winner');
-                            player1Card.classList.add('loser');
-                        }
-                    }
-
-                    // تحديث الغرف
-                    this.updateChambers(challenge);
-                    
-                    // تحديث مؤشر الرصاص
-                    this.updateBulletTrack(challenge);
-                    
-                    // تحديث مبلغ الرهان
-                    document.getElementById('betAmount').textContent = challenge.betAmount;
-                    
-                    // إخفاء شريط الرهان في اللعبة النشطة
-                    if (challenge.player2) {
-                        document.getElementById('betSliderContainer').style.display = 'none';
-                    }
-                }
-
-                updateChambers(challenge) {
-                    const chambersContainer = document.getElementById('chambers');
-                    const state = challenge.gameState;
-                    
-                    let html = '';
-                    for (let i = 0; i < state.chambers; i++) {
-                        const isLoaded = i === state.bulletPosition;
-                        const isCurrent = i === state.currentChamber && challenge.status === 'active';
-                        const isShot = state.results.some(r => r.chamber === i && r.isShot);
-                        
-                        html += `
-                            <div class="chamber-premium ${isLoaded ? 'loaded' : ''} ${isCurrent ? 'current' : ''} ${isShot ? 'shot' : ''}">
-                                ${isShot ? '💥' : (isLoaded && i < state.currentChamber ? '💀' : '')}
-                            </div>
-                        `;
-                    }
-                    chambersContainer.innerHTML = html;
-                }
-
-                updateBulletTrack(challenge) {
-                    const track = document.getElementById('bulletTrack');
-                    const state = challenge.gameState;
-                    
-                    let html = '';
-                    for (let i = 0; i < state.chambers; i++) {
-                        const isLive = i === state.bulletPosition;
-                        const isSpent = i < state.currentChamber;
-                        const isCurrent = i === state.currentChamber;
-                        
-                        html += `
-                            <div class="bullet-cell ${isLive ? 'live' : ''} ${isSpent ? 'spent' : ''} ${isCurrent ? 'current' : ''}">
-                                ${i + 1}
-                            </div>
-                        `;
-                    }
-                    track.innerHTML = html;
-                }
-
-                showLobby() {
-                    document.getElementById('betSliderContainer').style.display = 'block';
-                    document.getElementById('triggerBtn').disabled = true;
-                    document.getElementById('triggerBtn').style.opacity = '0.5';
-                }
-
-                showChallenges() {
-                    const availableChallenges = this.challenges.filter(c => 
-                        c.status === 'waiting' && 
-                        c.player1.id !== this.user.id
-                    );
-
-                    if (availableChallenges.length === 0) {
-                        this.toast.info('لا توجد تحديات متاحة حالياً');
-                        return;
-                    }
-
-                    // عرض قائمة التحديات
-                    const modal = document.createElement('div');
-                    modal.className = 'modal-premium open';
-                    
-                    let challengesList = '';
-                    availableChallenges.forEach(c => {
-                        challengesList += `
-                            <div class="premium-card p-4 mb-3 cursor-pointer hover:border-yellow-400 transition-all"
-                                 onclick="app.joinChallenge('${c.id}')">
-                                <div class="flex justify-between items-center">
-                                    <div>
-                                        <div class="font-bold">${c.player1.name}</div>
-                                        <div class="text-sm text-gray-400">رهان: ${c.betAmount}</div>
-                                    </div>
-                                    <button class="btn-premium btn-gold text-sm py-2">انضمام</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-
-                    modal.innerHTML = `
-                        <div class="modal-content-premium">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-xl font-bold">التحديات المتاحة</h3>
-                                <button class="w-8 h-8 rounded-full bg-white/10" onclick="this.closest('.modal-premium').remove()">
-                                    <i class="fa-solid fa-times"></i>
-                                </button>
-                            </div>
-                            <div class="max-h-96 overflow-y-auto">
-                                ${challengesList}
-                            </div>
-                        </div>
-                    `;
-
-                    document.body.appendChild(modal);
-                }
-
-                cancelGame() {
-                    if (!this.currentChallenge) return;
-
-                    const challenge = this.currentChallenge;
-                    
-                    if (challenge.player2) {
-                        this.toast.warning('لا يمكن إلغاء التحدي بعد بدئه');
-                        return;
-                    }
-
-                    // استرجاع الرصيد
-                    if (challenge.player1.id === this.user.id) {
-                        this.userData = StorageManager.updateBalance(
-                            this.user.id,
-                            challenge.betAmount,
-                            'challenge_cancelled',
-                            'إلغاء التحدي'
-                        );
-                    }
-
-                    this.challenges = this.challenges.filter(c => c.id !== challenge.id);
-                    StorageManager.saveChallenges(this.challenges);
-                    
-                    this.currentChallenge = null;
-                    this.render();
-                    
-                    this.toast.info('تم إلغاء التحدي');
-                }
-
-                showWallet() {
-                    const modal = document.createElement('div');
-                    modal.className = 'modal-premium open';
-                    
-                    const transactions = this.userData.transactions.slice(0, 10);
-                    
-                    modal.innerHTML = `
-                        <div class="modal-content-premium">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-xl font-bold">محفظتي</h3>
-                                <button class="w-8 h-8 rounded-full bg-white/10" onclick="this.closest('.modal-premium').remove()">
-                                    <i class="fa-solid fa-times"></i>
-                                </button>
-                            </div>
-                            
-                            <div class="text-center mb-6">
-                                <div class="text-3xl font-bold text-yellow-400">${this.userData.balance.toLocaleString()}</div>
-                                <div class="text-sm text-gray-400">الرصيد الحالي</div>
-                            </div>
-
-                            <div class="mb-4">
-                                <div class="text-sm font-bold mb-2">آخر المعاملات</div>
-                                <div class="space-y-2 max-h-60 overflow-y-auto">
-                                    ${transactions.map(t => `
-                                        <div class="flex justify-between items-center p-2 bg-black/20 rounded-lg">
-                                            <div>
-                                                <div class="text-sm">${t.note}</div>
-                                                <div class="text-xs text-gray-400">${new Date(t.date).toLocaleString('ar-EG')}</div>
-                                            </div>
-                                            <div class="${t.amount > 0 ? 'text-green-400' : 'text-red-400'} font-bold">
-                                                ${t.amount > 0 ? '+' : ''}${t.amount}
-                                            </div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="text-center p-3 bg-blue-600/20 rounded-lg">
-                                    <div class="text-xl font-bold">${this.userData.gamesPlayed || 0}</div>
-                                    <div class="text-xs">عدد الألعاب</div>
-                                </div>
-                                <div class="text-center p-3 bg-green-600/20 rounded-lg">
-                                    <div class="text-xl font-bold">${this.userData.gamesWon || 0}</div>
-                                    <div class="text-xs">مرات الفوز</div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    document.body.appendChild(modal);
-                }
-
-                renderError(message) {
-                    document.getElementById('app').innerHTML = `
-                        <div class="premium-card p-8 text-center">
-                            <i class="fa-solid fa-circle-exclamation text-6xl text-red-500 mb-4"></i>
-                            <h2 class="text-2xl font-bold mb-2">خطأ</h2>
-                            <p class="text-gray-400">${message}</p>
-                        </div>
-                    `;
                 }
             }
 
-            // ==================== تشغيل التطبيق ====================
-            window.app = new RussianRouletteElite();
+            // ======================== بدء التطبيق ========================
+            const app = new App();
 
-            // إضافة تأثير الاهتزاز
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes shake {
-                    0%, 100% { transform: perspective(500px) rotateX(5deg) translateX(0); }
-                    25% { transform: perspective(500px) rotateX(5deg) translateX(-10px); }
-                    75% { transform: perspective(500px) rotateX(5deg) translateX(10px); }
-                }
-            `;
-            document.head.appendChild(style);
+            // أحداث عامة (السمة والإعدادات)
+            document.getElementById('themeToggle').addEventListener('click', () => {
+                const newTheme = app.state.theme === 'dark' ? 'light' : 'dark';
+                app.state.theme = newTheme;
+                app.data.saveTheme(newTheme);
+                app.applyTheme(newTheme);
+                app.toast.info(`تم تغيير السمة إلى ${newTheme === 'dark' ? 'الداكنة' : 'الفاتحة'}`);
+            });
+
+            // إعدادات
+            const settingsOverlay = document.getElementById('settingsOverlay');
+            const settingsPanel = document.getElementById('settingsPanel');
+            
+            document.getElementById('closeSettings').addEventListener('click', () => {
+                settingsOverlay.classList.remove('open');
+                settingsPanel.classList.remove('open');
+            });
+
+            settingsOverlay.addEventListener('click', () => {
+                settingsOverlay.classList.remove('open');
+                settingsPanel.classList.remove('open');
+            });
+
+            document.getElementById('languageSelect').addEventListener('change', (e) => {
+                app.state.settings.language = e.target.value;
+                app.data.saveSettings();
+                app.toast.success(`تم تغيير اللغة إلى ${e.target.value === 'ar' ? 'العربية' : 'الإنجليزية'}`);
+            });
+
+            document.getElementById('notificationsToggle').addEventListener('change', (e) => {
+                app.state.settings.notifications = e.target.checked;
+                app.data.saveSettings();
+                app.toast.success(e.target.checked ? 'تم تفعيل الإشعارات' : 'تم إيقاف الإشعارات');
+            });
+
+            document.getElementById('soundToggle').addEventListener('change', (e) => {
+                app.state.settings.sound = e.target.checked;
+                app.data.saveSettings();
+                app.toast.soundEnabled = e.target.checked;
+                app.toast.success(e.target.checked ? 'تم تفعيل التنبيه الصوتي' : 'تم إيقاف التنبيه الصوتي');
+            });
+
+            document.getElementById('vibrateToggle').addEventListener('change', (e) => {
+                app.state.settings.vibrate = e.target.checked;
+                app.data.saveSettings();
+                app.toast.vibrateEnabled = e.target.checked;
+                app.toast.success(e.target.checked ? 'تم تفعيل الاهتزاز' : 'تم إيقاف الاهتزاز');
+            });
         })();
     </script>
 </body>
