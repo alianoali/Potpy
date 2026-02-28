@@ -18,7 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* ========== المتغيرات الأساسية ========== */
+        /* ========== نفس الأنماط السابقة (لم يتم تغييرها) ========== */
         :root {
             --primary: #3b82f6;
             --primary-dark: #2563eb;
@@ -36,7 +36,6 @@
             --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
 
-        /* ========== إعادة التعيين والتحسينات الأساسية ========== */
         * {
             margin: 0;
             padding: 0;
@@ -54,7 +53,6 @@
             line-height: 1.6;
         }
 
-        /* ========== تأثيرات الخلفية المتحركة ========== */
         .ambient-bg {
             position: fixed;
             top: 0;
@@ -96,7 +94,6 @@
             66% { transform: translate(-20px, 20px) scale(0.9); }
         }
 
-        /* ========== تصميم الزجاج المحسن ========== */
         .glass {
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(12px);
@@ -118,32 +115,14 @@
             border-radius: 1.5rem;
         }
 
-        /* ========== الأنيميشن المتقدم ========== */
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .animate-enter {
@@ -154,7 +133,6 @@
             animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* ========== تحميل متطور ========== */
         .loader {
             width: 48px;
             height: 48px;
@@ -173,16 +151,12 @@
             animation: pulse 1.5s ease-in-out infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
+        @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 0.8; }
             50% { transform: scale(1.1); opacity: 1; }
         }
 
-        /* ========== الصورة الرمزية ========== */
         .avatar {
             width: 64px;
             height: 64px;
@@ -198,13 +172,8 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
 
-        .avatar-sm {
-            width: 40px;
-            height: 40px;
-            font-size: 16px;
-        }
+        .avatar-sm { width: 40px; height: 40px; font-size: 16px; }
 
-        /* ========== الإشعارات المحسنة ========== */
         .toast-container {
             position: fixed;
             bottom: 20px;
@@ -267,7 +236,6 @@
             to { opacity: 0; transform: translateY(-10px); }
         }
 
-        /* ========== زر السمة المحسن ========== */
         .theme-toggle {
             position: fixed;
             top: 16px;
@@ -291,7 +259,6 @@
             transform: scale(1.05);
         }
 
-        /* ========== لوحة الإعدادات ========== */
         .settings-panel {
             position: fixed;
             bottom: 0;
@@ -309,9 +276,7 @@
             overflow-y: auto;
         }
 
-        .settings-panel.open {
-            transform: translateY(0);
-        }
+        .settings-panel.open { transform: translateY(0); }
 
         .settings-overlay {
             position: fixed;
@@ -327,12 +292,8 @@
             transition: opacity 0.3s ease;
         }
 
-        .settings-overlay.open {
-            opacity: 1;
-            pointer-events: all;
-        }
+        .settings-overlay.open { opacity: 1; pointer-events: all; }
 
-        /* ========== المودالات المحسنة ========== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -351,10 +312,7 @@
             padding: 16px;
         }
 
-        .modal-overlay.open {
-            opacity: 1;
-            pointer-events: all;
-        }
+        .modal-overlay.open { opacity: 1; pointer-events: all; }
 
         .modal {
             background: rgba(20, 30, 40, 0.98);
@@ -371,9 +329,7 @@
             box-shadow: var(--shadow-xl);
         }
 
-        .modal-overlay.open .modal {
-            transform: scale(1) translateY(0);
-        }
+        .modal-overlay.open .modal { transform: scale(1) translateY(0); }
 
         .modal-header {
             display: flex;
@@ -407,7 +363,6 @@
             transform: rotate(90deg);
         }
 
-        /* ========== شارات الحالة ========== */
         .badge {
             display: inline-flex;
             align-items: center;
@@ -443,7 +398,12 @@
             border: 1px solid rgba(59, 130, 246, 0.2);
         }
 
-        /* ========== ترويسة المتجر ========== */
+        .badge-secondary {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--secondary);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
         .store-header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 24px;
@@ -460,7 +420,7 @@
             right: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
             animation: rotate 20s linear infinite;
         }
 
@@ -471,7 +431,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(0, 0, 0, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(0,0,0,0.1) 0%, transparent 70%);
             animation: rotate 15s linear infinite reverse;
         }
 
@@ -480,7 +440,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ========== بطاقات التصنيفات ========== */
         .category-card {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 20px;
@@ -517,7 +476,6 @@
             flex-shrink: 0;
         }
 
-        /* ========== بطاقات المنتجات ========== */
         .product-card {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 24px;
@@ -600,16 +558,12 @@
             z-index: 3;
         }
 
-        .product-card:hover .quick-view {
-            opacity: 1;
-        }
-
+        .product-card:hover .quick-view { opacity: 1; }
         .quick-view:hover {
             background: var(--primary);
             transform: translateX(50%) scale(1.1);
         }
 
-        /* ========== السلايدر ========== */
         .slider-container {
             position: relative;
             width: 100%;
@@ -621,10 +575,7 @@
             padding: 10px 0;
         }
 
-        .slider-container::-webkit-scrollbar {
-            display: none;
-        }
-
+        .slider-container::-webkit-scrollbar { display: none; }
         .slider-item {
             display: inline-block;
             scroll-snap-align: start;
@@ -632,7 +583,6 @@
             margin-left: 12px;
         }
 
-        /* ========== رفع الصور ========== */
         .upload-area {
             border: 2px dashed var(--primary);
             border-radius: 16px;
@@ -669,7 +619,6 @@
             box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
         }
 
-        /* ========== حقول الإدخال ========== */
         .input-field {
             width: 100%;
             background: rgba(255, 255, 255, 0.05);
@@ -687,10 +636,7 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        .input-field::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
+        .input-field::placeholder { color: rgba(255, 255, 255, 0.3); }
         .input-label {
             display: block;
             font-size: 14px;
@@ -698,7 +644,6 @@
             margin-bottom: 6px;
         }
 
-        /* ========== الأزرار ========== */
         .btn {
             padding: 12px 24px;
             border-radius: 12px;
@@ -723,9 +668,7 @@
             box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4);
         }
 
-        .btn-primary:active {
-            transform: translateY(0);
-        }
+        .btn-primary:active { transform: translateY(0); }
 
         .btn-success {
             background: linear-gradient(135deg, var(--success), #059669);
@@ -754,12 +697,8 @@
             pointer-events: none;
         }
 
-        .btn-sm {
-            padding: 8px 16px;
-            font-size: 12px;
-        }
+        .btn-sm { padding: 8px 16px; font-size: 12px; }
 
-        /* ========== التبويبات ========== */
         .tabs {
             display: flex;
             gap: 8px;
@@ -784,7 +723,6 @@
             color: white;
         }
 
-        /* ========== المحفظة ========== */
         .wallet-icon-large {
             width: 80px;
             height: 80px;
@@ -836,7 +774,6 @@
             box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
         }
 
-        /* ========== قائمة المنتجات الإدارية ========== */
         .admin-item {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 16px;
@@ -876,7 +813,6 @@
             transform: scale(1.1);
         }
 
-        /* ========== المعاملات ========== */
         .transaction-item {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
@@ -912,57 +848,29 @@
             color: var(--danger);
         }
 
-        /* ========== التمرير المخصص ========== */
         .custom-scroll {
             scrollbar-width: thin;
             scrollbar-color: var(--primary) rgba(255, 255, 255, 0.05);
         }
 
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
-        .custom-scroll::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-        }
-
-        /* ========== فائدة للصور ========== */
-        .object-cover {
-            object-fit: cover;
-        }
-
+        .object-cover { object-fit: cover; }
         .line-clamp-2 {
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+        .hidden { display: none; }
 
-        .hidden {
-            display: none;
-        }
-
-        /* ========== التجاوب ========== */
         @media (max-width: 640px) {
-            .modal {
-                max-height: 90vh;
-                padding: 16px;
-            }
-            
-            .wallet-icon-large {
-                width: 70px;
-                height: 70px;
-                font-size: 28px;
-            }
+            .modal { max-height: 90vh; padding: 16px; }
+            .wallet-icon-large { width: 70px; height: 70px; font-size: 28px; }
         }
 
-        /* ========== تصنيفات شيب ========== */
         .category-chip {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -982,7 +890,6 @@
             color: var(--primary);
         }
 
-        /* ========== السلة ========== */
         .cart-item {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 16px;
@@ -1010,7 +917,6 @@
             flex-shrink: 0;
         }
 
-        /* ========== طرق الدفع ========== */
         .payment-method-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -1048,13 +954,8 @@
             overflow: hidden;
         }
 
-        .payment-method-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .payment-method-icon img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* ========== الفواتير ========== */
         .invoice {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 24px;
@@ -1071,7 +972,7 @@
             right: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
             animation: rotate 20s linear infinite;
         }
 
@@ -1160,7 +1061,7 @@
         <div class="modal" id="modalContent"></div>
     </div>
 
-    <!-- سكريبت التطبيق المحسن (بدون متجر إلكتروني) -->
+    <!-- سكريبت التطبيق المحسن (بدون متجر إلكتروني) مع إدارة مستخدمين متكاملة -->
     <script>
         (function() {
             'use strict';
@@ -1172,7 +1073,7 @@
                 MAX_TRANSACTIONS: 100,
                 STORAGE_KEYS: {
                     USERS: 'app_users_v2',
-                    WALLET: 'wallet_data_v2',
+                    USER_WALLETS: 'user_wallets_v2',      // مفتاح جديد للمحافظ المستقلة
                     PAYMENT_METHODS: 'payment_methods_v2',
                     DEPOSITS: 'deposit_requests_v2',
                     WITHDRAWALS: 'withdrawal_requests_v2',
@@ -1232,7 +1133,6 @@
                         
                         const parsed = JSON.parse(item);
                         
-                        // التحقق من انتهاء الصلاحية
                         if (parsed.expiry && Date.now() > parsed.expiry) {
                             this.remove(key);
                             return defaultValue;
@@ -1261,7 +1161,6 @@
                     } catch (error) {
                         console.warn(`StorageService.set error for ${key}:`, error);
                         
-                        // محاولة تنظيف المساحة إذا كان الخطأ بسبب الامتلاء
                         if (error.name === 'QuotaExceededError') {
                             this.cleanup();
                             try {
@@ -1304,10 +1203,8 @@
                             ...JSON.parse(localStorage.getItem(key))
                         })).filter(item => item.timestamp);
                         
-                        // ترتيب حسب الأقدمية
                         items.sort((a, b) => a.timestamp - b.timestamp);
                         
-                        // حذف أقدم 20% من العناصر
                         const toDelete = Math.floor(items.length * 0.2);
                         items.slice(0, toDelete).forEach(item => this.remove(item.key));
                     } catch (error) {
@@ -1333,31 +1230,19 @@
                     this.defaultTTL = CONFIG.CACHE_DURATION;
                 }
 
-                get(key) {
-                    return StorageService.get(this.prefix + key);
-                }
-
-                set(key, value, ttl = this.defaultTTL) {
-                    return StorageService.set(this.prefix + key, value, ttl);
-                }
-
-                remove(key) {
-                    return StorageService.remove(this.prefix + key);
-                }
-
+                get(key) { return StorageService.get(this.prefix + key); }
+                set(key, value, ttl = this.defaultTTL) { return StorageService.set(this.prefix + key, value, ttl); }
+                remove(key) { return StorageService.remove(this.prefix + key); }
                 clear() {
                     const keys = Object.keys(localStorage).filter(k => k.startsWith(this.prefix));
                     keys.forEach(k => StorageService.remove(k));
                 }
-
                 async remember(key, callback, ttl = this.defaultTTL) {
                     let value = this.get(key);
-                    
                     if (value === null) {
                         value = await callback();
                         this.set(key, value, ttl);
                     }
-                    
                     return value;
                 }
             }
@@ -1372,16 +1257,12 @@
 
                 init() {
                     if (!this.isAvailable) return false;
-                    
                     try {
                         this.tg.expand();
                         this.tg.ready();
                         this.tg.disableVerticalSwipes();
                         this.ready = true;
-                        
-                        // تكوين الألوان تلقائياً
                         this.applyTheme();
-                        
                         return true;
                     } catch (error) {
                         console.error('Telegram init error:', error);
@@ -1389,21 +1270,10 @@
                     }
                 }
 
-                getUser() {
-                    return this.tg?.initDataUnsafe?.user || null;
-                }
-
-                getStartParam() {
-                    return this.tg?.initDataUnsafe?.start_param || null;
-                }
-
-                isValid() {
-                    return this.isAvailable && !!this.tg?.initData;
-                }
-
-                close() {
-                    this.tg?.close();
-                }
+                getUser() { return this.tg?.initDataUnsafe?.user || null; }
+                getStartParam() { return this.tg?.initDataUnsafe?.start_param || null; }
+                isValid() { return this.isAvailable && !!this.tg?.initData; }
+                close() { this.tg?.close(); }
 
                 showPopup(params) {
                     return new Promise((resolve) => {
@@ -1432,62 +1302,40 @@
 
                 setMainButton(text, options = {}) {
                     if (!this.tg) return;
-                    
                     const btn = this.tg.MainButton;
                     btn.setText(text);
-                    
                     if (options.color) btn.setColor(options.color);
                     if (options.textColor) btn.setTextColor(options.textColor);
                     if (options.isVisible) btn.show(); else btn.hide();
                     if (options.isActive) btn.enable(); else btn.disable();
                     if (options.callback) btn.onClick(options.callback);
-                    
                     return btn;
                 }
 
-                hideMainButton() {
-                    this.tg?.MainButton.hide();
-                }
-
+                hideMainButton() { this.tg?.MainButton.hide(); }
                 setBackButton(callback) {
                     if (!this.tg) return;
-                    
                     const btn = this.tg.BackButton;
                     btn.show();
                     btn.onClick(callback);
-                    
                     return btn;
                 }
-
-                hideBackButton() {
-                    this.tg?.BackButton.hide();
-                }
+                hideBackButton() { this.tg?.BackButton.hide(); }
 
                 hapticFeedback(type = 'impact', style = 'medium') {
                     try {
                         if (!this.tg?.HapticFeedback) return;
-                        
                         const haptic = this.tg.HapticFeedback;
-                        
                         switch (type) {
-                            case 'impact':
-                                haptic.impactOccurred(style);
-                                break;
-                            case 'notification':
-                                haptic.notificationOccurred(style);
-                                break;
-                            case 'selection':
-                                haptic.selectionChanged();
-                                break;
+                            case 'impact': haptic.impactOccurred(style); break;
+                            case 'notification': haptic.notificationOccurred(style); break;
+                            case 'selection': haptic.selectionChanged(); break;
                         }
-                    } catch (error) {
-                        console.warn('Haptic feedback error:', error);
-                    }
+                    } catch (error) { console.warn('Haptic feedback error:', error); }
                 }
 
                 applyTheme() {
                     if (!this.tg) return;
-                    
                     const theme = this.tg.themeParams;
                     document.documentElement.style.setProperty('--tg-theme-bg-color', theme.bg_color || '#0f172a');
                     document.documentElement.style.setProperty('--tg-theme-text-color', theme.text_color || '#ffffff');
@@ -1500,20 +1348,16 @@
             class ToastManager {
                 constructor(containerId) {
                     this.container = document.getElementById(containerId);
-                    
                     if (!this.container) {
                         this.container = document.createElement('div');
                         this.container.id = containerId;
                         this.container.className = 'toast-container';
                         document.body.appendChild(this.container);
                     }
-                    
                     this.soundEnabled = true;
                     this.vibrateEnabled = true;
                     this.maxToasts = 5;
                     this.activeToasts = [];
-                    
-                    // تحميل الإعدادات
                     this.loadSettings();
                 }
 
@@ -1524,7 +1368,6 @@
                 }
 
                 show(message, type = 'info', duration = 5000) {
-                    // إزالة الإشعارات الزائدة
                     while (this.activeToasts.length >= this.maxToasts) {
                         const oldest = this.activeToasts.shift();
                         oldest.remove();
@@ -1548,10 +1391,8 @@
                     this.container.appendChild(toast);
                     this.activeToasts.push(toast);
                     
-                    // التأثيرات الحسية
                     this.triggerFeedback(type);
                     
-                    // إزالة تلقائية
                     setTimeout(() => {
                         toast.style.opacity = '0';
                         setTimeout(() => {
@@ -1562,15 +1403,8 @@
                 }
 
                 triggerFeedback(type) {
-                    // الصوت
-                    if (this.soundEnabled) {
-                        this.playSound(type);
-                    }
-                    
-                    // الاهتزاز
-                    if (this.vibrateEnabled && navigator.vibrate) {
-                        navigator.vibrate(type === 'error' ? 300 : 200);
-                    }
+                    if (this.soundEnabled) this.playSound(type);
+                    if (this.vibrateEnabled && navigator.vibrate) navigator.vibrate(type === 'error' ? 300 : 200);
                 }
 
                 playSound(type) {
@@ -1598,16 +1432,13 @@
                                 oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
                                 oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.2);
                                 break;
-                            default:
-                                oscillator.frequency.value = 500;
+                            default: oscillator.frequency.value = 500;
                         }
                         
                         gainNode.gain.value = 0.1;
                         oscillator.start();
                         oscillator.stop(audioContext.currentTime + 0.3);
-                    } catch (error) {
-                        console.log('Audio not supported:', error);
-                    }
+                    } catch (error) { console.log('Audio not supported:', error); }
                 }
 
                 success(message) { this.show(message, 'success'); }
@@ -1624,13 +1455,8 @@
                     this.listeners = new Set();
                 }
 
-                load() {
-                    return StorageService.get(this.STORAGE_KEY, []);
-                }
-
-                save() {
-                    StorageService.set(this.STORAGE_KEY, this.notifications);
-                }
+                load() { return StorageService.get(this.STORAGE_KEY, []); }
+                save() { StorageService.set(this.STORAGE_KEY, this.notifications); }
 
                 add(userId, title, message, type = 'info', data = {}) {
                     const notification = {
@@ -1645,15 +1471,10 @@
                     };
                     
                     this.notifications.unshift(notification);
-                    
-                    // الحد الأقصى 100 إشعار
-                    if (this.notifications.length > 100) {
-                        this.notifications.pop();
-                    }
+                    if (this.notifications.length > 100) this.notifications.pop();
                     
                     this.save();
                     this.notifyListeners('add', notification);
-                    
                     return notification;
                 }
 
@@ -1669,24 +1490,17 @@
                 markAllAsRead(userId) {
                     let count = 0;
                     this.notifications.forEach(n => {
-                        if (n.userId === userId && !n.read) {
-                            n.read = true;
-                            count++;
-                        }
+                        if (n.userId === userId && !n.read) { n.read = true; count++; }
                     });
-                    
                     if (count > 0) {
                         this.save();
                         this.notifyListeners('markAll', { userId, count });
                     }
-                    
                     return count;
                 }
 
                 getForUser(userId, limit = 50) {
-                    return this.notifications
-                        .filter(n => n.userId === userId)
-                        .slice(0, limit);
+                    return this.notifications.filter(n => n.userId === userId).slice(0, limit);
                 }
 
                 getUnreadCount(userId) {
@@ -1710,18 +1524,10 @@
                     this.notifyListeners('deleteAll', userId);
                 }
 
-                addListener(callback) {
-                    this.listeners.add(callback);
-                    return () => this.listeners.delete(callback);
-                }
-
+                addListener(callback) { this.listeners.add(callback); return () => this.listeners.delete(callback); }
                 notifyListeners(event, data) {
                     this.listeners.forEach(callback => {
-                        try {
-                            callback(event, data);
-                        } catch (error) {
-                            console.error('Notification listener error:', error);
-                        }
+                        try { callback(event, data); } catch (error) { console.error('Notification listener error:', error); }
                     });
                 }
             }
@@ -1733,22 +1539,16 @@
                     this.users = this.load();
                 }
 
-                load() {
-                    return StorageService.get(this.STORAGE_KEY, []);
-                }
+                load() { return StorageService.get(this.STORAGE_KEY, []); }
+                save() { StorageService.set(this.STORAGE_KEY, this.users); }
 
-                save() {
-                    StorageService.set(this.STORAGE_KEY, this.users);
-                }
-
-                register(userData) {
+                // تعديل: إضافة حالة المستخدم (نشط/محظور) وإنشاء المحفظة عند التسجيل
+                register(userData, walletService) {
                     const existing = this.users.find(u => u.id === userData.id);
                     
                     if (existing) {
-                        // تحديث آخر ظهور
                         existing.lastSeen = new Date().toISOString();
                     } else {
-                        // مستخدم جديد
                         const user = {
                             id: userData.id,
                             firstName: userData.first_name,
@@ -1757,6 +1557,7 @@
                             photoUrl: userData.photo_url || null,
                             languageCode: userData.language_code || 'ar',
                             isBot: userData.is_bot || false,
+                            status: 'active', // new: active, blocked
                             registeredAt: new Date().toISOString(),
                             lastSeen: new Date().toISOString(),
                             stats: {
@@ -1765,22 +1566,19 @@
                                 visits: 1
                             }
                         };
-                        
                         this.users.push(user);
+                        // إنشاء محفظة للمستخدم الجديد برصيد افتراضي
+                        if (walletService) {
+                            walletService.getWallet(user.id); // creates default wallet
+                        }
                     }
                     
                     this.save();
-                    
                     return existing || this.users[this.users.length - 1];
                 }
 
-                get(id) {
-                    return this.users.find(u => u.id === id);
-                }
-
-                getAll() {
-                    return [...this.users];
-                }
+                get(id) { return this.users.find(u => u.id === id); }
+                getAll() { return [...this.users]; }
 
                 updateStats(id, type, value) {
                     const user = this.get(id);
@@ -1794,56 +1592,76 @@
                     }
                 }
 
-                getCount() {
-                    return this.users.length;
-                }
+                getCount() { return this.users.length; }
 
                 getActiveToday() {
                     const today = DateUtils.getToday();
                     return this.users.filter(u => u.lastSeen?.startsWith(today)).length;
                 }
+
+                // دالة جديدة لتحديث حالة المستخدم (تفعيل/حظر)
+                setStatus(id, status) {
+                    const user = this.get(id);
+                    if (user) {
+                        user.status = status;
+                        this.save();
+                        return true;
+                    }
+                    return false;
+                }
             }
 
-            // ======================== إدارة المحفظة ========================
-            class WalletService {
+            // ======================== إدارة المحافظ المستقلة لكل مستخدم (جديد) ========================
+            class UserWalletService {
                 constructor() {
-                    this.STORAGE_KEY = CONFIG.STORAGE_KEYS.WALLET;
-                    this.data = this.load();
+                    this.STORAGE_KEY = CONFIG.STORAGE_KEYS.USER_WALLETS;
+                    this.wallets = this.load();
                 }
 
-                load() {
-                    return StorageService.get(this.STORAGE_KEY, {
-                        balance: CONFIG.DEFAULT_BALANCE,
-                        transactions: [],
-                        address: 'T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ'
-                    });
+                load() { return StorageService.get(this.STORAGE_KEY, {}); }
+                save() { StorageService.set(this.STORAGE_KEY, this.wallets); }
+
+                // الحصول على محفظة مستخدم (تنشئ واحدة افتراضية إن لم توجد)
+                getWallet(userId) {
+                    let wallet = this.wallets[userId];
+                    if (!wallet) {
+                        wallet = {
+                            balance: CONFIG.DEFAULT_BALANCE,
+                            transactions: [],
+                            address: this.generateAddress()
+                        };
+                        this.wallets[userId] = wallet;
+                        this.save();
+                    }
+                    return wallet;
                 }
 
-                save() {
-                    StorageService.set(this.STORAGE_KEY, this.data);
+                generateAddress() {
+                    return 'T' + Math.random().toString(36).substring(2, 10).toUpperCase();
                 }
 
-                getBalance() {
-                    return this.data.balance;
-                }
+                getBalance(userId) { return this.getWallet(userId).balance; }
 
-                addBalance(amount, note = '', metadata = {}) {
-                    this.data.balance += amount;
-                    this.addTransaction('deposit', amount, note, 'completed', metadata);
+                addBalance(userId, amount, note = '', metadata = {}) {
+                    const wallet = this.getWallet(userId);
+                    wallet.balance += amount;
+                    this.addTransaction(userId, 'deposit', amount, note, 'completed', metadata);
                     this.save();
                 }
 
-                subtractBalance(amount, note = '', metadata = {}) {
-                    if (this.data.balance >= amount) {
-                        this.data.balance -= amount;
-                        this.addTransaction('withdraw', -amount, note, 'completed', metadata);
+                subtractBalance(userId, amount, note = '', metadata = {}) {
+                    const wallet = this.getWallet(userId);
+                    if (wallet.balance >= amount) {
+                        wallet.balance -= amount;
+                        this.addTransaction(userId, 'withdraw', -amount, note, 'completed', metadata);
                         this.save();
                         return true;
                     }
                     return false;
                 }
 
-                addTransaction(type, amount, note = '', status = 'completed', metadata = {}) {
+                addTransaction(userId, type, amount, note, status, metadata) {
+                    const wallet = this.getWallet(userId);
                     const transaction = {
                         id: IdGenerator.generate('tx'),
                         type,
@@ -1853,36 +1671,33 @@
                         metadata,
                         createdAt: new Date().toISOString()
                     };
-                    
-                    this.data.transactions.unshift(transaction);
-                    
-                    if (this.data.transactions.length > CONFIG.MAX_TRANSACTIONS) {
-                        this.data.transactions.pop();
-                    }
-                    
+                    wallet.transactions.unshift(transaction);
+                    if (wallet.transactions.length > CONFIG.MAX_TRANSACTIONS) wallet.transactions.pop();
                     return transaction;
                 }
 
-                getTransactions(limit = 50) {
-                    return this.data.transactions.slice(0, limit);
+                getTransactions(userId, limit = 50) {
+                    return this.getWallet(userId).transactions.slice(0, limit);
                 }
 
-                getAddress() {
-                    return this.data.address;
-                }
-
-                setAddress(address) {
-                    this.data.address = address;
+                getAddress(userId) { return this.getWallet(userId).address; }
+                setAddress(userId, address) {
+                    this.getWallet(userId).address = address;
                     this.save();
                 }
 
-                reset() {
-                    this.data = {
+                reset(userId) {
+                    this.wallets[userId] = {
                         balance: CONFIG.DEFAULT_BALANCE,
                         transactions: [],
-                        address: 'T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ'
+                        address: this.generateAddress()
                     };
                     this.save();
+                }
+
+                getAllWallets() { return this.wallets; }
+                getTotalBalance() {
+                    return Object.values(this.wallets).reduce((sum, w) => sum + w.balance, 0);
                 }
             }
 
@@ -1896,10 +1711,7 @@
 
                 load() {
                     const saved = StorageService.get(this.STORAGE_KEY);
-                    
-                    if (saved && saved.length > 0) {
-                        return saved;
-                    }
+                    if (saved && saved.length > 0) return saved;
                     
                     // الطرق الافتراضية
                     return [
@@ -1980,41 +1792,25 @@
                     ];
                 }
 
-                save() {
-                    StorageService.set(this.STORAGE_KEY, this.methods);
-                }
+                save() { StorageService.set(this.STORAGE_KEY, this.methods); }
 
-                getAll() {
-                    return this.methods.filter(m => m.enabled);
-                }
-
-                get(id) {
-                    return this.methods.find(m => m.id === id);
-                }
+                getAll() { return this.methods.filter(m => m.enabled); }
+                get(id) { return this.methods.find(m => m.id === id); }
 
                 add(methodData) {
-                    const method = {
-                        id: IdGenerator.generate('pm'),
-                        enabled: true,
-                        imageId: methodData.imageId || null,
-                        ...methodData
-                    };
-                    
+                    const method = { id: IdGenerator.generate('pm'), enabled: true, imageId: null, ...methodData };
                     this.methods.push(method);
                     this.save();
-                    
                     return method;
                 }
 
                 update(id, data) {
                     const index = this.methods.findIndex(m => m.id === id);
                     if (index !== -1) {
-                        // حذف الصورة القديمة إذا تم تغييرها
                         const oldMethod = this.methods[index];
                         if (data.imageId && oldMethod.imageId && oldMethod.imageId !== data.imageId) {
                             this.imageService.delete(oldMethod.imageId);
                         }
-                        
                         this.methods[index] = { ...this.methods[index], ...data };
                         this.save();
                         return true;
@@ -2025,10 +1821,7 @@
                 delete(id) {
                     const index = this.methods.findIndex(m => m.id === id);
                     if (index !== -1) {
-                        // حذف الصورة المرتبطة
-                        if (this.methods[index].imageId) {
-                            this.imageService.delete(this.methods[index].imageId);
-                        }
+                        if (this.methods[index].imageId) this.imageService.delete(this.methods[index].imageId);
                         this.methods.splice(index, 1);
                         this.save();
                     }
@@ -2045,23 +1838,16 @@
                 }
             }
 
-            // ======================== إدارة الطلبات (الشحن والسحب فقط) ========================
+            // ======================== إدارة الطلبات (الشحن والسحب) ========================
             class RequestService {
                 constructor(type) {
                     this.type = type; // 'deposit' or 'withdrawal'
-                    this.STORAGE_KEY = type === 'deposit' 
-                        ? CONFIG.STORAGE_KEYS.DEPOSITS 
-                        : CONFIG.STORAGE_KEYS.WITHDRAWALS;
+                    this.STORAGE_KEY = type === 'deposit' ? CONFIG.STORAGE_KEYS.DEPOSITS : CONFIG.STORAGE_KEYS.WITHDRAWALS;
                     this.requests = this.load();
                 }
 
-                load() {
-                    return StorageService.get(this.STORAGE_KEY, []);
-                }
-
-                save() {
-                    StorageService.set(this.STORAGE_KEY, this.requests);
-                }
+                load() { return StorageService.get(this.STORAGE_KEY, []); }
+                save() { StorageService.set(this.STORAGE_KEY, this.requests); }
 
                 add(requestData) {
                     const request = {
@@ -2070,28 +1856,15 @@
                         createdAt: new Date().toISOString(),
                         ...requestData
                     };
-                    
                     this.requests.unshift(request);
                     this.save();
-                    
                     return request;
                 }
 
-                get(id) {
-                    return this.requests.find(r => r.id === id);
-                }
-
-                getAll() {
-                    return [...this.requests];
-                }
-
-                getPending() {
-                    return this.requests.filter(r => r.status === 'pending');
-                }
-
-                getUserRequests(userId) {
-                    return this.requests.filter(r => r.userId === userId);
-                }
+                get(id) { return this.requests.find(r => r.id === id); }
+                getAll() { return [...this.requests]; }
+                getPending() { return this.requests.filter(r => r.status === 'pending'); }
+                getUserRequests(userId) { return this.requests.filter(r => r.userId === userId); }
 
                 approve(id, metadata = {}) {
                     const request = this.get(id);
@@ -2141,33 +1914,21 @@
                     this.maxSize = CONFIG.MAX_IMAGE_SIZE;
                 }
 
-                load() {
-                    return StorageService.get(this.STORAGE_KEY, {});
-                }
-
-                save() {
-                    StorageService.set(this.STORAGE_KEY, this.images);
-                }
+                load() { return StorageService.get(this.STORAGE_KEY, {}); }
+                save() { StorageService.set(this.STORAGE_KEY, this.images); }
 
                 async upload(file, options = {}) {
                     return new Promise((resolve, reject) => {
-                        // التحقق من النوع
                         if (!CONFIG.SUPPORTED_IMAGE_TYPES.includes(file.type)) {
-                            reject(new Error('نوع الملف غير مدعوم'));
-                            return;
+                            reject(new Error('نوع الملف غير مدعوم')); return;
                         }
-                        
-                        // التحقق من الحجم
                         if (file.size > this.maxSize) {
-                            reject(new Error(`حجم الملف كبير جداً (الحد الأقصى ${this.maxSize / 1024 / 1024} ميجابايت)`));
-                            return;
+                            reject(new Error(`حجم الملف كبير جداً (الحد الأقصى ${this.maxSize / 1024 / 1024} ميجابايت)`)); return;
                         }
                         
                         const reader = new FileReader();
-                        
                         reader.onload = (e) => {
                             const imageId = options.id || IdGenerator.generate('img');
-                            
                             this.images[imageId] = {
                                 data: e.target.result,
                                 name: file.name,
@@ -2176,84 +1937,48 @@
                                 uploadedAt: new Date().toISOString(),
                                 ...options.metadata
                             };
-                            
                             this.save();
-                            
-                            // تنظيف الصور القديمة إذا لزم الأمر
                             this.cleanup();
-                            
                             resolve(imageId);
                         };
-                        
                         reader.onerror = () => reject(new Error('فشل قراءة الملف'));
                         reader.readAsDataURL(file);
                     });
                 }
 
-                get(id) {
-                    return this.images[id];
-                }
-
-                getUrl(id) {
-                    return this.images[id]?.data || null;
-                }
-
-                delete(id) {
-                    delete this.images[id];
-                    this.save();
-                }
-
-                deleteMultiple(ids) {
-                    ids.forEach(id => delete this.images[id]);
-                    this.save();
-                }
+                get(id) { return this.images[id]; }
+                getUrl(id) { return this.images[id]?.data || null; }
+                delete(id) { delete this.images[id]; this.save(); }
+                deleteMultiple(ids) { ids.forEach(id => delete this.images[id]); this.save(); }
 
                 cleanup(maxImages = 100) {
                     const ids = Object.keys(this.images);
-                    
                     if (ids.length > maxImages) {
-                        // ترتيب حسب تاريخ الرفع
-                        const sorted = ids
-                            .map(id => ({ id, ...this.images[id] }))
-                            .sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
-                        
-                        // الاحتفاظ بأحدث maxImages صورة فقط
+                        const sorted = ids.map(id => ({ id, ...this.images[id] })).sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
                         const toDelete = sorted.slice(maxImages).map(item => item.id);
                         this.deleteMultiple(toDelete);
                     }
                 }
 
-                clear() {
-                    this.images = {};
-                    this.save();
-                }
-
-                getSize() {
-                    return Object.keys(this.images).length;
-                }
+                clear() { this.images = {}; this.save(); }
+                getSize() { return Object.keys(this.images).length; }
 
                 async compress(imageId, quality = 0.8) {
                     const image = this.get(imageId);
                     if (!image) return null;
-                    
                     return new Promise((resolve) => {
                         const img = new Image();
                         img.src = image.data;
-                        
                         img.onload = () => {
                             const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
-                            
                             canvas.width = img.width;
                             canvas.height = img.height;
                             ctx.drawImage(img, 0, 0);
-                            
                             const compressed = canvas.toDataURL(image.type, quality);
-                            
                             image.data = compressed;
                             image.compressed = true;
                             this.save();
-                            
                             resolve(compressed);
                         };
                     });
@@ -2267,51 +1992,24 @@
                     this.settings = this.load();
                 }
 
-                load() {
-                    return StorageService.get(this.STORAGE_KEY, {
-                        language: 'ar',
-                        theme: 'dark',
-                        notifications: true,
-                        sound: true,
-                        vibrate: true,
-                        autoSave: true,
-                        currency: 'ر.س',
-                        dateFormat: 'ar-EG'
-                    });
-                }
-
-                save() {
-                    StorageService.set(this.STORAGE_KEY, this.settings);
-                }
-
-                get(key) {
-                    return this.settings[key];
-                }
-
-                set(key, value) {
-                    this.settings[key] = value;
-                    this.save();
-                }
-
-                update(data) {
-                    this.settings = { ...this.settings, ...data };
-                    this.save();
-                }
-
+                load() { return StorageService.get(this.STORAGE_KEY, {
+                    language: 'ar',
+                    theme: 'dark',
+                    notifications: true,
+                    sound: true,
+                    vibrate: true,
+                    autoSave: true,
+                    currency: 'ر.س',
+                    dateFormat: 'ar-EG'
+                }); }
+                save() { StorageService.set(this.STORAGE_KEY, this.settings); }
+                get(key) { return this.settings[key]; }
+                set(key, value) { this.settings[key] = value; this.save(); }
+                update(data) { this.settings = { ...this.settings, ...data }; this.save(); }
                 reset() {
-                    this.settings = {
-                        language: 'ar',
-                        theme: 'dark',
-                        notifications: true,
-                        sound: true,
-                        vibrate: true,
-                        autoSave: true,
-                        currency: 'ر.س',
-                        dateFormat: 'ar-EG'
-                    };
+                    this.settings = { language: 'ar', theme: 'dark', notifications: true, sound: true, vibrate: true, autoSave: true, currency: 'ر.س', dateFormat: 'ar-EG' };
                     this.save();
                 }
-
                 toggle(key) {
                     if (typeof this.settings[key] === 'boolean') {
                         this.settings[key] = !this.settings[key];
@@ -2329,103 +2027,58 @@
                     this.stats = this.load();
                 }
 
-                load() {
-                    return StorageService.get(this.STORAGE_KEY, {
-                        users: 0,
-                        products: 0, // سنبقيه للتوافق لكن لن نستخدمه
-                        orders: 0,
-                        revenue: 0,
-                        daily: {},
-                        monthly: {}
-                    });
-                }
-
-                save() {
-                    StorageService.set(this.STORAGE_KEY, this.stats);
-                }
+                load() { return StorageService.get(this.STORAGE_KEY, {
+                    users: 0,
+                    products: 0,
+                    orders: 0,
+                    revenue: 0,
+                    daily: {},
+                    monthly: {}
+                }); }
+                save() { StorageService.set(this.STORAGE_KEY, this.stats); }
 
                 increment(key, value = 1) {
-                    if (this.stats.hasOwnProperty(key)) {
-                        this.stats[key] += value;
-                    }
-                    
-                    // تحديث الإحصائيات اليومية
+                    if (this.stats.hasOwnProperty(key)) this.stats[key] += value;
                     const today = DateUtils.getToday();
                     this.stats.daily[today] = this.stats.daily[today] || { orders: 0, revenue: 0 };
-                    
-                    if (key === 'orders') {
-                        this.stats.daily[today].orders += value;
-                    } else if (key === 'revenue') {
-                        this.stats.daily[today].revenue += value;
-                    }
-                    
+                    if (key === 'orders') this.stats.daily[today].orders += value;
+                    else if (key === 'revenue') this.stats.daily[today].revenue += value;
                     this.save();
                 }
 
-                set(key, value) {
-                    this.stats[key] = value;
-                    this.save();
-                }
-
-                get(key) {
-                    return this.stats[key];
-                }
-
-                getAll() {
-                    return { ...this.stats };
-                }
-
-                getDaily(date = null) {
-                    const day = date || DateUtils.getToday();
-                    return this.stats.daily[day] || { orders: 0, revenue: 0 };
-                }
-
+                set(key, value) { this.stats[key] = value; this.save(); }
+                get(key) { return this.stats[key]; }
+                getAll() { return { ...this.stats }; }
+                getDaily(date = null) { const day = date || DateUtils.getToday(); return this.stats.daily[day] || { orders: 0, revenue: 0 }; }
                 getWeekly() {
                     const result = { orders: 0, revenue: 0 };
                     const today = new Date();
-                    
                     for (let i = 0; i < 7; i++) {
-                        const date = new Date(today);
-                        date.setDate(date.getDate() - i);
+                        const date = new Date(today); date.setDate(date.getDate() - i);
                         const dayKey = date.toISOString().split('T')[0];
                         const dayStats = this.stats.daily[dayKey] || { orders: 0, revenue: 0 };
-                        
-                        result.orders += dayStats.orders;
-                        result.revenue += dayStats.revenue;
+                        result.orders += dayStats.orders; result.revenue += dayStats.revenue;
                     }
-                    
                     return result;
                 }
-
                 getMonthly() {
                     const result = { orders: 0, revenue: 0 };
                     const today = new Date();
                     const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-                    
                     Object.entries(this.stats.daily).forEach(([date, stats]) => {
                         if (date.startsWith(currentMonth)) {
-                            result.orders += stats.orders;
-                            result.revenue += stats.revenue;
+                            result.orders += stats.orders; result.revenue += stats.revenue;
                         }
                     });
-                    
                     return result;
                 }
-
                 reset() {
-                    this.stats = {
-                        users: 0,
-                        products: 0,
-                        orders: 0,
-                        revenue: 0,
-                        daily: {},
-                        monthly: {}
-                    };
+                    this.stats = { users: 0, products: 0, orders: 0, revenue: 0, daily: {}, monthly: {} };
                     this.save();
                 }
             }
 
-            // ======================== واجهة المستخدم المحسنة (بدون متجر) ========================
+            // ======================== واجهة المستخدم المحسنة (بدون متجر) مع إدارة المستخدمين ========================
             class UIManager {
                 constructor(app) {
                     this.app = app;
@@ -2436,17 +2089,11 @@
                 }
 
                 render() {
-                    if (this.app.telegramMissing) {
-                        this.renderTelegramMissing();
-                    } else if (this.app.loading) {
-                        this.renderLoading();
-                    } else if (this.app.accessDenied) {
-                        this.renderAccessDenied();
-                    } else if (this.app.isAdmin) {
-                        this.renderAdminDashboard();
-                    } else {
-                        this.renderUserDashboard();
-                    }
+                    if (this.app.telegramMissing) this.renderTelegramMissing();
+                    else if (this.app.loading) this.renderLoading();
+                    else if (this.app.accessDenied) this.renderAccessDenied();
+                    else if (this.app.isAdmin) this.renderAdminDashboard();
+                    else this.renderUserDashboard();
                     
                     this.bindEvents();
                 }
@@ -2456,9 +2103,7 @@
                         <div class="flex flex-col items-center justify-center text-center space-y-6 animate-enter">
                             <div class="loader-pulse"></div>
                             <div>
-                                <h2 class="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                                    جاري التحميل
-                                </h2>
+                                <h2 class="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">جاري التحميل</h2>
                                 <p class="text-sm text-gray-400">نحن نجهز لك أفضل تجربة</p>
                             </div>
                             <div class="w-48 h-1 bg-gray-700 rounded-full overflow-hidden">
@@ -2471,17 +2116,10 @@
                 renderAccessDenied() {
                     this.container.innerHTML = `
                         <div class="glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter">
-                            <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
-                                <i class="fa-solid fa-shield-halved"></i>
-                            </div>
+                            <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl"><i class="fa-solid fa-shield-halved"></i></div>
                             <h2 class="text-2xl font-bold mb-2">دخول محظور</h2>
-                            <p class="text-gray-400 mb-8 leading-relaxed">
-                                يجب فتح هذا التطبيق حصراً من خلال بوت تيليجرام الرسمي
-                            </p>
-                            <a href="https://t.me/your_bot" target="_blank" class="btn btn-primary w-full">
-                                <i class="fa-brands fa-telegram ml-2"></i>
-                                فتح البوت في تيليجرام
-                            </a>
+                            <p class="text-gray-400 mb-8 leading-relaxed">يجب فتح هذا التطبيق حصراً من خلال بوت تيليجرام الرسمي</p>
+                            <a href="https://t.me/your_bot" target="_blank" class="btn btn-primary w-full"><i class="fa-brands fa-telegram ml-2"></i> فتح البوت في تيليجرام</a>
                         </div>
                     `;
                 }
@@ -2489,17 +2127,10 @@
                 renderTelegramMissing() {
                     this.container.innerHTML = `
                         <div class="glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter">
-                            <div class="w-20 h-20 bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
-                                <i class="fa-solid fa-exclamation-triangle"></i>
-                            </div>
+                            <div class="w-20 h-20 bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl"><i class="fa-solid fa-exclamation-triangle"></i></div>
                             <h2 class="text-2xl font-bold mb-2">بيئة غير مدعومة</h2>
-                            <p class="text-gray-400 mb-8 leading-relaxed">
-                                لم يتم العثور على بيئة تيليجرام. يرجى فتح الرابط من داخل التطبيق
-                            </p>
-                            <a href="https://t.me/your_bot" target="_blank" class="btn btn-primary w-full">
-                                <i class="fa-brands fa-telegram ml-2"></i>
-                                فتح البوت
-                            </a>
+                            <p class="text-gray-400 mb-8 leading-relaxed">لم يتم العثور على بيئة تيليجرام. يرجى فتح الرابط من داخل التطبيق</p>
+                            <a href="https://t.me/your_bot" target="_blank" class="btn btn-primary w-full"><i class="fa-brands fa-telegram ml-2"></i> فتح البوت</a>
                         </div>
                     `;
                 }
@@ -2509,90 +2140,46 @@
                     const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
                     const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
                     const unreadCount = this.app.notifications.getUnreadCount(user.id);
+                    const userWallet = this.app.userWallets.getWallet(user.id);
                     
                     this.container.innerHTML = `
                         <div class="space-y-5 animate-enter pb-10">
-                            <!-- بطاقة المستخدم -->
                             <div class="glass-card p-5 rounded-3xl relative overflow-hidden">
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
                                 <div class="flex items-center gap-4 relative z-10">
-                                    <div class="avatar">
-                                        ${user.photo_url ? 
-                                            `<img src="${user.photo_url}" alt="${fullName}" class="w-full h-full object-cover">` : 
-                                            `<span>${initials}</span>`
-                                        }
-                                    </div>
+                                    <div class="avatar">${user.photo_url ? `<img src="${user.photo_url}" alt="${fullName}" class="w-full h-full object-cover">` : `<span>${initials}</span>`}</div>
                                     <div class="flex-1">
                                         <div class="flex items-center justify-between">
                                             <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
-                                            <button class="notification-bell relative" id="notificationBell">
-                                                <i class="fa-regular fa-bell text-xl"></i>
-                                                ${unreadCount > 0 ? `
-                                                    <span class="notification-badge">${unreadCount > 9 ? '9+' : unreadCount}</span>
-                                                ` : ''}
-                                            </button>
+                                            <button class="notification-bell relative" id="notificationBell"><i class="fa-regular fa-bell text-xl"></i>${unreadCount > 0 ? `<span class="notification-badge">${unreadCount > 9 ? '9+' : unreadCount}</span>` : ''}</button>
                                         </div>
                                         <p class="text-xs text-gray-400 mt-1">ID: ${user.id}</p>
-                                        <div class="flex items-center gap-2 mt-2">
-                                            <span class="badge badge-success">
-                                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse ml-1"></span>
-                                                نشط
-                                            </span>
-                                        </div>
+                                        <div class="flex items-center gap-2 mt-2"><span class="badge badge-success"><span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse ml-1"></span>نشط</span></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- المحفظة -->
                             <div class="flex flex-col items-center my-4">
-                                <button class="wallet-icon-large" id="walletBtn">
-                                    <i class="fa-solid fa-wallet"></i>
-                                </button>
-                                <div class="balance-badge mt-4" id="balanceDisplay">
-                                    <i class="fa-solid fa-coins"></i>
-                                    <span>${this.app.wallet.getBalance().toLocaleString('ar-EG')}</span>
-                                </div>
-                            </div>
-
-                            <!-- أزرار الإجراءات السريعة -->
-                            <div class="grid grid-cols-2 gap-3">
-                                <button id="depositBtn" class="btn btn-success">
-                                    <i class="fa-solid fa-arrow-down ml-2"></i>
-                                    شحن رصيد
-                                </button>
-                                <button id="withdrawBtn" class="btn btn-danger">
-                                    <i class="fa-solid fa-arrow-up ml-2"></i>
-                                    سحب
-                                </button>
+                                <button class="wallet-icon-large" id="walletBtn"><i class="fa-solid fa-wallet"></i></button>
+                                <div class="balance-badge mt-4" id="balanceDisplay"><i class="fa-solid fa-coins"></i><span>${userWallet.balance.toLocaleString('ar-EG')}</span></div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-3">
-                                <button id="transactionsBtn" class="btn btn-outline">
-                                    <i class="fa-regular fa-clock ml-2"></i>
-                                    المعاملات
-                                </button>
-                                <button id="paymentMethodsBtn" class="btn btn-outline">
-                                    <i class="fa-regular fa-credit-card ml-2"></i>
-                                    طرق الدفع
-                                </button>
+                                <button id="depositBtn" class="btn btn-success"><i class="fa-solid fa-arrow-down ml-2"></i>شحن رصيد</button>
+                                <button id="withdrawBtn" class="btn btn-danger"><i class="fa-solid fa-arrow-up ml-2"></i>سحب</button>
                             </div>
 
-                            <!-- آخر المعاملات -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <button id="transactionsBtn" class="btn btn-outline"><i class="fa-regular fa-clock ml-2"></i>المعاملات</button>
+                                <button id="paymentMethodsBtn" class="btn btn-outline"><i class="fa-regular fa-credit-card ml-2"></i>طرق الدفع</button>
+                            </div>
+
                             <div class="glass-card p-4 rounded-2xl">
-                                <h3 class="font-bold mb-3 flex items-center gap-2">
-                                    <i class="fa-regular fa-clock text-blue-400"></i>
-                                    آخر المعاملات
-                                </h3>
-                                <div class="space-y-2 max-h-40 overflow-y-auto custom-scroll">
-                                    ${this.renderRecentTransactions()}
-                                </div>
+                                <h3 class="font-bold mb-3 flex items-center gap-2"><i class="fa-regular fa-clock text-blue-400"></i>آخر المعاملات</h3>
+                                <div class="space-y-2 max-h-40 overflow-y-auto custom-scroll">${this.renderRecentTransactions()}</div>
                             </div>
 
-                            <!-- زر تسجيل الخروج -->
-                            <button id="logoutBtn" class="w-full py-4 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
-                                <i class="fa-solid fa-arrow-right-from-bracket ml-2"></i>
-                                تسجيل الخروج
-                            </button>
+                            <button id="logoutBtn" class="w-full py-4 rounded-xl text-red-400 hover:bg-red-500/10 transition-all"><i class="fa-solid fa-arrow-right-from-bracket ml-2"></i>تسجيل الخروج</button>
                         </div>
                     `;
                 }
@@ -2605,124 +2192,65 @@
                     const pendingDeposits = this.app.depositRequests.getPending().length;
                     const pendingWithdrawals = this.app.withdrawalRequests.getPending().length;
                     const pendingRequests = pendingDeposits + pendingWithdrawals;
+                    const totalBalance = this.app.userWallets.getTotalBalance();
                     
                     this.container.innerHTML = `
                         <div class="space-y-5 animate-enter pb-10">
-                            <!-- بطاقة المدير -->
                             <div class="glass-card p-5 rounded-3xl relative overflow-hidden border-2 border-yellow-500/30">
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
                                 <div class="flex items-center gap-4 relative z-10">
-                                    <div class="avatar">
-                                        ${user.photo_url ? 
-                                            `<img src="${user.photo_url}" alt="${fullName}" class="w-full h-full object-cover">` : 
-                                            `<span>${initials}</span>`
-                                        }
-                                    </div>
+                                    <div class="avatar">${user.photo_url ? `<img src="${user.photo_url}" alt="${fullName}" class="w-full h-full object-cover">` : `<span>${initials}</span>`}</div>
                                     <div class="flex-1">
                                         <div class="flex items-center justify-between">
                                             <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
-                                            <button class="notification-bell relative" id="notificationBell">
-                                                <i class="fa-regular fa-bell text-xl"></i>
-                                            </button>
+                                            <button class="notification-bell relative" id="notificationBell"><i class="fa-regular fa-bell text-xl"></i></button>
                                         </div>
-                                        <div class="badge badge-warning mt-2">
-                                            <i class="fa-solid fa-crown text-yellow-400 ml-1 text-xs"></i>
-                                            مدير النظام
-                                        </div>
+                                        <div class="badge badge-warning mt-2"><i class="fa-solid fa-crown text-yellow-400 ml-1 text-xs"></i>مدير النظام</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- المحفظة مع الإشعارات -->
                             <div class="flex flex-col items-center my-4">
-                                <button class="wallet-icon-large" id="walletBtn">
-                                    <i class="fa-solid fa-wallet"></i>
-                                    ${pendingRequests > 0 ? `
-                                        <span class="notification-badge">${pendingRequests > 9 ? '9+' : pendingRequests}</span>
-                                    ` : ''}
-                                </button>
-                                <div class="balance-badge mt-4" id="balanceDisplay">
-                                    <i class="fa-solid fa-coins"></i>
-                                    <span>${this.app.wallet.getBalance().toLocaleString('ar-EG')}</span>
-                                </div>
+                                <button class="wallet-icon-large" id="walletBtn"><i class="fa-solid fa-wallet"></i>${pendingRequests > 0 ? `<span class="notification-badge">${pendingRequests > 9 ? '9+' : pendingRequests}</span>` : ''}</button>
+                                <div class="balance-badge mt-4" id="balanceDisplay"><i class="fa-solid fa-coins"></i><span>${this.app.userWallets.getBalance(user.id).toLocaleString('ar-EG')}</span></div>
                             </div>
 
-                            <!-- الإحصائيات السريعة -->
                             <div class="grid grid-cols-4 gap-2">
-                                <div class="glass-card p-3 rounded-2xl text-center">
-                                    <div class="text-2xl font-bold text-blue-400">${stats.users}</div>
-                                    <div class="text-xs text-gray-400">المستخدمين</div>
-                                </div>
-                                <div class="glass-card p-3 rounded-2xl text-center">
-                                    <div class="text-2xl font-bold text-green-400">${this.app.paymentMethods.getAll().length}</div>
-                                    <div class="text-xs text-gray-400">طرق الدفع</div>
-                                </div>
-                                <div class="glass-card p-3 rounded-2xl text-center">
-                                    <div class="text-2xl font-bold text-purple-400">${stats.orders}</div>
-                                    <div class="text-xs text-gray-400">الطلبات</div>
-                                </div>
-                                <div class="glass-card p-3 rounded-2xl text-center">
-                                    <div class="text-2xl font-bold text-yellow-400">${stats.revenue}</div>
-                                    <div class="text-xs text-gray-400">الإيرادات</div>
-                                </div>
+                                <div class="glass-card p-3 rounded-2xl text-center"><div class="text-2xl font-bold text-blue-400">${stats.users}</div><div class="text-xs text-gray-400">المستخدمين</div></div>
+                                <div class="glass-card p-3 rounded-2xl text-center"><div class="text-2xl font-bold text-green-400">${this.app.paymentMethods.getAll().length}</div><div class="text-xs text-gray-400">طرق الدفع</div></div>
+                                <div class="glass-card p-3 rounded-2xl text-center"><div class="text-2xl font-bold text-purple-400">${stats.orders}</div><div class="text-xs text-gray-400">الطلبات</div></div>
+                                <div class="glass-card p-3 rounded-2xl text-center"><div class="text-2xl font-bold text-yellow-400">${totalBalance}</div><div class="text-xs text-gray-400">إجمالي الأرصدة</div></div>
                             </div>
 
-                            <!-- أزرار الإدارة -->
                             <div class="grid grid-cols-2 gap-3">
-                                <button id="adminPanelBtn" class="btn btn-primary relative">
-                                    <i class="fa-solid fa-gears ml-2"></i>
-                                    إدارة الطلبات
-                                    ${pendingRequests > 0 ? `
-                                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                                            ${pendingRequests}
-                                        </span>
-                                    ` : ''}
-                                </button>
-                                <button id="managePaymentMethodsBtn" class="btn btn-success">
-                                    <i class="fa-regular fa-credit-card ml-2"></i>
-                                    طرق الدفع
-                                </button>
+                                <button id="adminPanelBtn" class="btn btn-primary relative"><i class="fa-solid fa-gears ml-2"></i>إدارة الطلبات${pendingRequests > 0 ? `<span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">${pendingRequests}</span>` : ''}</button>
+                                <button id="manageUsersBtn" class="btn btn-secondary relative" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);"><i class="fa-solid fa-users ml-2"></i>إدارة المستخدمين</button>
                             </div>
 
-                            <!-- طلبات معلقة سريعة -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <button id="managePaymentMethodsBtn" class="btn btn-success"><i class="fa-regular fa-credit-card ml-2"></i>طرق الدفع</button>
+                                <button id="transactionsBtn" class="btn btn-outline"><i class="fa-regular fa-clock ml-2"></i>معاملاتي</button>
+                            </div>
+
                             <div class="glass-card p-4 rounded-2xl">
-                                <h3 class="font-bold mb-3 flex items-center gap-2">
-                                    <i class="fa-regular fa-clock text-yellow-400"></i>
-                                    طلبات معلقة
-                                </h3>
-                                <div class="space-y-2 max-h-40 overflow-y-auto custom-scroll">
-                                    ${this.renderPendingRequests()}
-                                </div>
+                                <h3 class="font-bold mb-3 flex items-center gap-2"><i class="fa-regular fa-clock text-yellow-400"></i>طلبات معلقة</h3>
+                                <div class="space-y-2 max-h-40 overflow-y-auto custom-scroll">${this.renderPendingRequests()}</div>
                             </div>
 
-                            <!-- زر تسجيل الخروج -->
-                            <button id="logoutBtn" class="w-full py-4 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
-                                <i class="fa-solid fa-arrow-right-from-bracket ml-2"></i>
-                                تسجيل الخروج
-                            </button>
+                            <button id="logoutBtn" class="w-full py-4 rounded-xl text-red-400 hover:bg-red-500/10 transition-all"><i class="fa-solid fa-arrow-right-from-bracket ml-2"></i>تسجيل الخروج</button>
                         </div>
                     `;
                 }
 
                 renderRecentTransactions() {
-                    const transactions = this.app.wallet.getTransactions(5);
-                    
-                    if (transactions.length === 0) {
-                        return '<p class="text-gray-400 text-sm text-center py-2">لا توجد معاملات</p>';
-                    }
+                    const transactions = this.app.userWallets.getTransactions(this.app.user.id, 5);
+                    if (transactions.length === 0) return '<p class="text-gray-400 text-sm text-center py-2">لا توجد معاملات</p>';
                     
                     return transactions.map(tx => `
                         <div class="transaction-item">
-                            <div class="transaction-icon ${tx.amount > 0 ? 'deposit' : 'withdraw'}">
-                                <i class="fa-solid ${tx.amount > 0 ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
-                            </div>
+                            <div class="transaction-icon ${tx.amount > 0 ? 'deposit' : 'withdraw'}"><i class="fa-solid ${tx.amount > 0 ? 'fa-arrow-down' : 'fa-arrow-up'}"></i></div>
                             <div class="flex-1">
-                                <div class="flex justify-between items-center">
-                                    <span class="font-bold ${tx.amount > 0 ? 'text-green-400' : 'text-red-400'}">
-                                        ${tx.amount > 0 ? '+' : ''}${tx.amount}
-                                    </span>
-                                    <span class="text-xs text-gray-400">${DateUtils.timeAgo(tx.createdAt)}</span>
-                                </div>
+                                <div class="flex justify-between items-center"><span class="font-bold ${tx.amount > 0 ? 'text-green-400' : 'text-red-400'}">${tx.amount > 0 ? '+' : ''}${tx.amount}</span><span class="text-xs text-gray-400">${DateUtils.timeAgo(tx.createdAt)}</span></div>
                                 <p class="text-xs text-gray-400">${tx.note || 'معاملة'}</p>
                             </div>
                         </div>
@@ -2734,162 +2262,89 @@
                     const withdrawals = this.app.withdrawalRequests.getPending().slice(0, 3);
                     const items = [...deposits, ...withdrawals].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
                     
-                    if (items.length === 0) {
-                        return '<p class="text-gray-400 text-sm text-center py-2">لا توجد طلبات معلقة</p>';
-                    }
+                    if (items.length === 0) return '<p class="text-gray-400 text-sm text-center py-2">لا توجد طلبات معلقة</p>';
                     
                     return items.map(req => `
                         <div class="transaction-item cursor-pointer hover:bg-white/5" onclick="app.ui.showRequestDetails('${req.id}', '${req.type}')">
                             <div class="flex-1">
-                                <div class="flex justify-between items-center">
-                                    <span class="font-bold text-sm">${req.type === 'deposit' ? 'شحن' : 'سحب'}</span>
-                                    <span class="text-xs text-yellow-400">معلق</span>
-                                </div>
-                                <div class="flex justify-between items-center mt-1">
-                                    <span class="text-xs text-gray-400">${req.userName || 'مستخدم'}</span>
-                                    <span class="text-sm font-bold text-blue-400">${req.amount}</span>
-                                </div>
+                                <div class="flex justify-between items-center"><span class="font-bold text-sm">${req.type === 'deposit' ? 'شحن' : 'سحب'}</span><span class="text-xs text-yellow-400">معلق</span></div>
+                                <div class="flex justify-between items-center mt-1"><span class="text-xs text-gray-400">${req.userName || 'مستخدم'}</span><span class="text-sm font-bold text-blue-400">${req.amount}</span></div>
                             </div>
                         </div>
                     `).join('');
                 }
 
-                // ========== المحفظة والمعاملات ==========
+                // ========== المحفظة والمعاملات (معدلة لاستخدام المحفظة الخاصة بالمستخدم) ==========
                 openWallet() {
-                    const transactions = this.app.wallet.getTransactions(20);
+                    const userId = this.app.user.id;
+                    const transactions = this.app.userWallets.getTransactions(userId, 20);
                     
                     this.modalContent.innerHTML = `
-                        <div class="modal-header">
-                            <h2 class="modal-title">💰 المحفظة</h2>
-                            <button class="modal-close" id="closeModalBtn">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
+                        <div class="modal-header"><h2 class="modal-title">💰 المحفظة</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
                         <div class="text-center mb-6">
-                            <div class="wallet-icon-large mx-auto">
-                                <i class="fa-solid fa-wallet"></i>
-                            </div>
-                            <div class="text-3xl font-bold mt-4 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                                ${this.app.wallet.getBalance().toLocaleString('ar-EG')}
-                            </div>
+                            <div class="wallet-icon-large mx-auto"><i class="fa-solid fa-wallet"></i></div>
+                            <div class="text-3xl font-bold mt-4 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">${this.app.userWallets.getBalance(userId).toLocaleString('ar-EG')}</div>
                             <div class="text-sm text-gray-400">الرصيد الحالي</div>
                         </div>
-
                         <div class="grid grid-cols-2 gap-3 mb-4">
-                            <button id="depositBtn" class="btn btn-success">
-                                <i class="fa-solid fa-arrow-down ml-2"></i>
-                                شحن
-                            </button>
-                            <button id="withdrawBtn" class="btn btn-danger">
-                                <i class="fa-solid fa-arrow-up ml-2"></i>
-                                سحب
-                            </button>
+                            <button id="depositBtn" class="btn btn-success"><i class="fa-solid fa-arrow-down ml-2"></i>شحن</button>
+                            <button id="withdrawBtn" class="btn btn-danger"><i class="fa-solid fa-arrow-up ml-2"></i>سحب</button>
                         </div>
-
-                        <h3 class="font-bold mb-2 flex items-center gap-2">
-                            <i class="fa-regular fa-clock text-blue-400"></i>
-                            آخر المعاملات
-                        </h3>
+                        <h3 class="font-bold mb-2 flex items-center gap-2"><i class="fa-regular fa-clock text-blue-400"></i>آخر المعاملات</h3>
                         <div class="space-y-2 max-h-80 overflow-y-auto custom-scroll">
-                            ${transactions.length === 0 ? `
-                                <p class="text-gray-400 text-center py-4">لا توجد معاملات</p>
-                            ` : transactions.map(tx => `
+                            ${transactions.length === 0 ? '<p class="text-gray-400 text-center py-4">لا توجد معاملات</p>' : transactions.map(tx => `
                                 <div class="transaction-item">
-                                    <div class="transaction-icon ${tx.amount > 0 ? 'deposit' : 'withdraw'}">
-                                        <i class="fa-solid ${tx.amount > 0 ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
-                                    </div>
+                                    <div class="transaction-icon ${tx.amount > 0 ? 'deposit' : 'withdraw'}"><i class="fa-solid ${tx.amount > 0 ? 'fa-arrow-down' : 'fa-arrow-up'}"></i></div>
                                     <div class="flex-1">
-                                        <div class="flex justify-between">
-                                            <span class="font-bold ${tx.amount > 0 ? 'text-green-400' : 'text-red-400'}">
-                                                ${tx.amount > 0 ? '+' : ''}${tx.amount}
-                                            </span>
-                                            <span class="text-xs text-gray-400">${DateUtils.timeAgo(tx.createdAt)}</span>
-                                        </div>
+                                        <div class="flex justify-between"><span class="font-bold ${tx.amount > 0 ? 'text-green-400' : 'text-red-400'}">${tx.amount > 0 ? '+' : ''}${tx.amount}</span><span class="text-xs text-gray-400">${DateUtils.timeAgo(tx.createdAt)}</span></div>
                                         <p class="text-xs text-gray-400">${tx.note || 'معاملة'}</p>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
-
-                        <div class="mt-4">
-                            <p class="text-xs text-gray-400 text-center">
-                                عنوان المحفظة: ${this.app.wallet.getAddress()}
-                            </p>
-                        </div>
+                        <div class="mt-4"><p class="text-xs text-gray-400 text-center">عنوان المحفظة: ${this.app.userWallets.getAddress(userId)}</p></div>
                     `;
 
                     this.modal.classList.add('open');
                     
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.modal.classList.remove('open');
-                    });
-                    
-                    document.getElementById('depositBtn').addEventListener('click', () => {
-                        this.openDeposit();
-                    });
-                    
-                    document.getElementById('withdrawBtn').addEventListener('click', () => {
-                        this.openWithdraw();
-                    });
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this.modal.classList.remove('open'));
+                    document.getElementById('depositBtn').addEventListener('click', () => this.openDeposit());
+                    document.getElementById('withdrawBtn').addEventListener('click', () => this.openWithdraw());
                 }
 
                 openDeposit() {
                     const methods = this.app.paymentMethods.getAll();
                     
                     this.modalContent.innerHTML = `
-                        <div class="modal-header">
-                            <h2 class="modal-title">💳 شحن الرصيد</h2>
-                            <button class="modal-close" id="closeModalBtn">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="input-label">المبلغ</label>
-                            <input type="number" id="depositAmount" class="input-field" placeholder="أدخل المبلغ" min="1">
-                        </div>
-
+                        <div class="modal-header"><h2 class="modal-title">💳 شحن الرصيد</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
+                        <div class="mb-4"><label class="input-label">المبلغ</label><input type="number" id="depositAmount" class="input-field" placeholder="أدخل المبلغ" min="1"></div>
                         <h3 class="font-bold mb-2">طريقة الدفع</h3>
                         <div class="space-y-2 mb-4" id="paymentMethodsList">
                             ${methods.map(method => `
                                 <div class="payment-method-card" data-method-id="${method.id}">
-                                    <div class="payment-method-icon">
-                                        ${method.imageId ? 
-                                            `<img src="${this.app.images.getUrl(method.imageId)}" class="w-full h-full object-cover">` : 
-                                            `<i class="${method.icon}"></i>`
-                                        }
-                                    </div>
+                                    <div class="payment-method-icon">${method.imageId ? `<img src="${this.app.images.getUrl(method.imageId)}" class="w-full h-full object-cover">` : `<i class="${method.icon}"></i>`}</div>
                                     <div class="flex-1">
                                         <div class="font-bold">${method.name}</div>
                                         <div class="text-xs text-gray-400">${method.description}</div>
-                                        ${method.fee > 0 ? `
-                                            <div class="text-xs text-yellow-400">رسوم: ${method.fee}%</div>
-                                        ` : ''}
+                                        ${method.fee > 0 ? `<div class="text-xs text-yellow-400">رسوم: ${method.fee}%</div>` : ''}
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
-
-                        <button id="submitDepositBtn" class="btn btn-primary w-full" disabled>
-                            تأكيد الشحن
-                        </button>
+                        <button id="submitDepositBtn" class="btn btn-primary w-full" disabled>تأكيد الشحن</button>
                     `;
 
                     this.modal.classList.add('open');
                     
                     let selectedMethod = null;
                     
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.modal.classList.remove('open');
-                    });
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this.modal.classList.remove('open'));
                     
                     document.querySelectorAll('.payment-method-card').forEach(card => {
                         card.addEventListener('click', () => {
                             document.querySelectorAll('.payment-method-card').forEach(c => c.classList.remove('selected'));
                             card.classList.add('selected');
                             selectedMethod = card.dataset.methodId;
-                            
                             const amount = document.getElementById('depositAmount').value;
                             document.getElementById('submitDepositBtn').disabled = !amount || amount <= 0;
                         });
@@ -2903,94 +2358,52 @@
                     document.getElementById('submitDepositBtn').addEventListener('click', () => {
                         const amount = parseFloat(document.getElementById('depositAmount').value);
                         const method = this.app.paymentMethods.get(selectedMethod);
-                        
-                        if (amount && method) {
-                            this.app.createDeposit(amount, method);
-                        }
+                        if (amount && method) this.app.createDeposit(amount, method);
                     });
                 }
 
                 openWithdraw() {
-                    const balance = this.app.wallet.getBalance();
+                    const balance = this.app.userWallets.getBalance(this.app.user.id);
                     
                     this.modalContent.innerHTML = `
-                        <div class="modal-header">
-                            <h2 class="modal-title">💸 سحب الرصيد</h2>
-                            <button class="modal-close" id="closeModalBtn">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="input-label">المبلغ</label>
-                            <input type="number" id="withdrawAmount" class="input-field" placeholder="أدخل المبلغ" min="10" max="${balance}">
-                            <p class="text-xs text-gray-400 mt-1">الحد الأدنى: 10 | الحد الأقصى: ${balance}</p>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="input-label">عنوان المحفظة</label>
-                            <input type="text" id="withdrawAddress" class="input-field" value="${this.app.wallet.getAddress()}">
-                        </div>
-
-                        <button id="submitWithdrawBtn" class="btn btn-danger w-full" disabled>
-                            تأكيد السحب
-                        </button>
+                        <div class="modal-header"><h2 class="modal-title">💸 سحب الرصيد</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
+                        <div class="mb-4"><label class="input-label">المبلغ</label><input type="number" id="withdrawAmount" class="input-field" placeholder="أدخل المبلغ" min="10" max="${balance}"><p class="text-xs text-gray-400 mt-1">الحد الأدنى: 10 | الحد الأقصى: ${balance}</p></div>
+                        <div class="mb-4"><label class="input-label">عنوان المحفظة</label><input type="text" id="withdrawAddress" class="input-field" value="${this.app.userWallets.getAddress(this.app.user.id)}"></div>
+                        <button id="submitWithdrawBtn" class="btn btn-danger w-full" disabled>تأكيد السحب</button>
                     `;
 
                     this.modal.classList.add('open');
                     
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.modal.classList.remove('open');
-                    });
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this.modal.classList.remove('open'));
                     
-                    document.getElementById('withdrawAmount').addEventListener('input', (e) => {
-                        const amount = e.target.value;
-                        const address = document.getElementById('withdrawAddress').value;
-                        document.getElementById('submitWithdrawBtn').disabled = !amount || amount < 10 || amount > balance || !address;
-                    });
-                    
-                    document.getElementById('withdrawAddress').addEventListener('input', () => {
+                    const checkForm = () => {
                         const amount = document.getElementById('withdrawAmount').value;
                         const address = document.getElementById('withdrawAddress').value;
                         document.getElementById('submitWithdrawBtn').disabled = !amount || amount < 10 || amount > balance || !address;
-                    });
+                    };
+                    
+                    document.getElementById('withdrawAmount').addEventListener('input', checkForm);
+                    document.getElementById('withdrawAddress').addEventListener('input', checkForm);
                     
                     document.getElementById('submitWithdrawBtn').addEventListener('click', () => {
                         const amount = parseFloat(document.getElementById('withdrawAmount').value);
                         const address = document.getElementById('withdrawAddress').value;
-                        
-                        if (amount && address) {
-                            this.app.createWithdrawal(amount, address);
-                        }
+                        if (amount && address) this.app.createWithdrawal(amount, address);
                     });
                 }
 
                 openTransactions() {
-                    const transactions = this.app.wallet.getTransactions(50);
+                    const userId = this.app.user.id;
+                    const transactions = this.app.userWallets.getTransactions(userId, 50);
                     
                     this.modalContent.innerHTML = `
-                        <div class="modal-header">
-                            <h2 class="modal-title">📊 جميع المعاملات</h2>
-                            <button class="modal-close" id="closeModalBtn">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
+                        <div class="modal-header"><h2 class="modal-title">📊 جميع المعاملات</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
                         <div class="space-y-2 max-h-[70vh] overflow-y-auto custom-scroll">
-                            ${transactions.length === 0 ? `
-                                <p class="text-gray-400 text-center py-8">لا توجد معاملات</p>
-                            ` : transactions.map(tx => `
+                            ${transactions.length === 0 ? '<p class="text-gray-400 text-center py-8">لا توجد معاملات</p>' : transactions.map(tx => `
                                 <div class="transaction-item">
-                                    <div class="transaction-icon ${tx.amount > 0 ? 'deposit' : 'withdraw'}">
-                                        <i class="fa-solid ${tx.amount > 0 ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
-                                    </div>
+                                    <div class="transaction-icon ${tx.amount > 0 ? 'deposit' : 'withdraw'}"><i class="fa-solid ${tx.amount > 0 ? 'fa-arrow-down' : 'fa-arrow-up'}"></i></div>
                                     <div class="flex-1">
-                                        <div class="flex justify-between items-center">
-                                            <span class="font-bold ${tx.amount > 0 ? 'text-green-400' : 'text-red-400'}">
-                                                ${tx.amount > 0 ? '+' : ''}${tx.amount}
-                                            </span>
-                                            <span class="text-xs text-gray-400">${DateUtils.format(tx.createdAt)}</span>
-                                        </div>
+                                        <div class="flex justify-between items-center"><span class="font-bold ${tx.amount > 0 ? 'text-green-400' : 'text-red-400'}">${tx.amount > 0 ? '+' : ''}${tx.amount}</span><span class="text-xs text-gray-400">${DateUtils.format(tx.createdAt)}</span></div>
                                         <p class="text-xs text-gray-400">${tx.note || 'معاملة'}</p>
                                     </div>
                                 </div>
@@ -2999,38 +2412,22 @@
                     `;
 
                     this.modal.classList.add('open');
-                    
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.modal.classList.remove('open');
-                    });
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this.modal.classList.remove('open'));
                 }
 
                 openPaymentMethodsList() {
                     const methods = this.app.paymentMethods.getAll();
                     
                     this.modalContent.innerHTML = `
-                        <div class="modal-header">
-                            <h2 class="modal-title">💳 طرق الدفع المتاحة</h2>
-                            <button class="modal-close" id="closeModalBtn">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
+                        <div class="modal-header"><h2 class="modal-title">💳 طرق الدفع المتاحة</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
                         <div class="space-y-2 max-h-[70vh] overflow-y-auto custom-scroll">
                             ${methods.map(method => `
                                 <div class="payment-method-card">
-                                    <div class="payment-method-icon">
-                                        ${method.imageId ? 
-                                            `<img src="${this.app.images.getUrl(method.imageId)}" class="w-full h-full object-cover">` : 
-                                            `<i class="${method.icon}"></i>`
-                                        }
-                                    </div>
+                                    <div class="payment-method-icon">${method.imageId ? `<img src="${this.app.images.getUrl(method.imageId)}" class="w-full h-full object-cover">` : `<i class="${method.icon}"></i>`}</div>
                                     <div class="flex-1">
                                         <div class="font-bold">${method.name}</div>
                                         <div class="text-xs text-gray-400">${method.description}</div>
-                                        ${method.fee > 0 ? `
-                                            <div class="text-xs text-yellow-400">رسوم: ${method.fee}%</div>
-                                        ` : ''}
+                                        ${method.fee > 0 ? `<div class="text-xs text-yellow-400">رسوم: ${method.fee}%</div>` : ''}
                                         <div class="text-xs text-gray-400 mt-1">الحد الأدنى: ${method.minAmount} | الحد الأقصى: ${method.maxAmount}</div>
                                     </div>
                                 </div>
@@ -3039,10 +2436,7 @@
                     `;
 
                     this.modal.classList.add('open');
-                    
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.modal.classList.remove('open');
-                    });
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this.modal.classList.remove('open'));
                 }
 
                 // ========== لوحة الإدارة ==========
@@ -3057,48 +2451,25 @@
                     const withdrawalStats = this.app.withdrawalRequests.getStats();
                     
                     return `
-                        <div class="modal-header">
-                            <h2 class="modal-title">⚙️ إدارة الطلبات</h2>
-                            <button class="modal-close" id="closeModalBtn">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
+                        <div class="modal-header"><h2 class="modal-title">⚙️ إدارة الطلبات</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
                         <div class="tabs">
                             <button class="tab active" data-tab="deposits">طلبات الشحن</button>
                             <button class="tab" data-tab="withdrawals">طلبات السحب</button>
                         </div>
-
-                        <!-- طلبات الشحن -->
                         <div id="depositsTab" class="tab-content">
-                            <div class="flex justify-between items-center mb-3">
-                                <h3 class="font-bold">طلبات الشحن</h3>
-                                <span class="badge badge-primary">الإجمالي: ${depositStats.totalAmount}</span>
-                            </div>
-                            <div class="space-y-2 max-h-96 overflow-y-auto custom-scroll">
-                                ${this.renderDepositRequests()}
-                            </div>
+                            <div class="flex justify-between items-center mb-3"><h3 class="font-bold">طلبات الشحن</h3><span class="badge badge-primary">الإجمالي: ${depositStats.totalAmount}</span></div>
+                            <div class="space-y-2 max-h-96 overflow-y-auto custom-scroll">${this.renderDepositRequests()}</div>
                         </div>
-
-                        <!-- طلبات السحب -->
                         <div id="withdrawalsTab" class="tab-content hidden">
-                            <div class="flex justify-between items-center mb-3">
-                                <h3 class="font-bold">طلبات السحب</h3>
-                                <span class="badge badge-primary">الإجمالي: ${withdrawalStats.totalAmount}</span>
-                            </div>
-                            <div class="space-y-2 max-h-96 overflow-y-auto custom-scroll">
-                                ${this.renderWithdrawalRequests()}
-                            </div>
+                            <div class="flex justify-between items-center mb-3"><h3 class="font-bold">طلبات السحب</h3><span class="badge badge-primary">الإجمالي: ${withdrawalStats.totalAmount}</span></div>
+                            <div class="space-y-2 max-h-96 overflow-y-auto custom-scroll">${this.renderWithdrawalRequests()}</div>
                         </div>
                     `;
                 }
 
                 renderDepositRequests() {
                     const requests = this.app.depositRequests.getPending();
-                    
-                    if (requests.length === 0) {
-                        return '<p class="text-gray-400 text-center py-4">لا توجد طلبات شحن معلقة</p>';
-                    }
+                    if (requests.length === 0) return '<p class="text-gray-400 text-center py-4">لا توجد طلبات شحن معلقة</p>';
                     
                     return requests.map(req => `
                         <div class="admin-item">
@@ -3109,12 +2480,8 @@
                                 <div class="text-xs text-gray-400">${DateUtils.format(req.createdAt)}</div>
                             </div>
                             <div class="actions">
-                                <button class="approve-deposit" data-id="${req.id}" title="قبول">
-                                    <i class="fa-solid fa-check text-green-400"></i>
-                                </button>
-                                <button class="reject-deposit" data-id="${req.id}" title="رفض">
-                                    <i class="fa-solid fa-times text-red-400"></i>
-                                </button>
+                                <button class="approve-deposit" data-id="${req.id}" title="قبول"><i class="fa-solid fa-check text-green-400"></i></button>
+                                <button class="reject-deposit" data-id="${req.id}" title="رفض"><i class="fa-solid fa-times text-red-400"></i></button>
                             </div>
                         </div>
                     `).join('');
@@ -3122,10 +2489,7 @@
 
                 renderWithdrawalRequests() {
                     const requests = this.app.withdrawalRequests.getPending();
-                    
-                    if (requests.length === 0) {
-                        return '<p class="text-gray-400 text-center py-4">لا توجد طلبات سحب معلقة</p>';
-                    }
+                    if (requests.length === 0) return '<p class="text-gray-400 text-center py-4">لا توجد طلبات سحب معلقة</p>';
                     
                     return requests.map(req => `
                         <div class="admin-item">
@@ -3136,72 +2500,32 @@
                                 <div class="text-xs text-gray-400">${DateUtils.format(req.createdAt)}</div>
                             </div>
                             <div class="actions">
-                                <button class="approve-withdrawal" data-id="${req.id}" title="قبول">
-                                    <i class="fa-solid fa-check text-green-400"></i>
-                                </button>
-                                <button class="reject-withdrawal" data-id="${req.id}" title="رفض">
-                                    <i class="fa-solid fa-times text-red-400"></i>
-                                </button>
+                                <button class="approve-withdrawal" data-id="${req.id}" title="قبول"><i class="fa-solid fa-check text-green-400"></i></button>
+                                <button class="reject-withdrawal" data-id="${req.id}" title="رفض"><i class="fa-solid fa-times text-red-400"></i></button>
                             </div>
                         </div>
                     `).join('');
                 }
 
                 showRequestDetails(requestId, type) {
-                    const request = type === 'deposit' 
-                        ? this.app.depositRequests.get(requestId)
-                        : this.app.withdrawalRequests.get(requestId);
-                    
+                    const request = type === 'deposit' ? this.app.depositRequests.get(requestId) : this.app.withdrawalRequests.get(requestId);
                     if (!request) return;
                     
                     this.modalContent.innerHTML = `
-                        <div class="modal-header">
-                            <h2 class="modal-title">تفاصيل الطلب</h2>
-                            <button class="modal-close" id="closeModalBtn">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
+                        <div class="modal-header"><h2 class="modal-title">تفاصيل الطلب</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
                         <div class="space-y-4">
                             <div class="glass-card p-4 rounded-xl">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-bold">رقم الطلب</span>
-                                    <span class="font-mono text-sm">${request.id}</span>
-                                </div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-bold">النوع</span>
-                                    <span>${type === 'deposit' ? 'شحن' : 'سحب'}</span>
-                                </div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-bold">المبلغ</span>
-                                    <span class="text-blue-400 font-bold">${request.amount}</span>
-                                </div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-bold">المستخدم</span>
-                                    <span>${request.userName}</span>
-                                </div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-bold">الحالة</span>
-                                    <span class="badge ${request.status === 'pending' ? 'badge-warning' : request.status === 'approved' ? 'badge-success' : 'badge-danger'}">
-                                        ${request.status === 'pending' ? 'معلق' : request.status === 'approved' ? 'مقبول' : 'مرفوض'}
-                                    </span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="font-bold">التاريخ</span>
-                                    <span class="text-sm">${DateUtils.format(request.createdAt)}</span>
-                                </div>
+                                <div class="flex justify-between items-center mb-2"><span class="font-bold">رقم الطلب</span><span class="font-mono text-sm">${request.id}</span></div>
+                                <div class="flex justify-between items-center mb-2"><span class="font-bold">النوع</span><span>${type === 'deposit' ? 'شحن' : 'سحب'}</span></div>
+                                <div class="flex justify-between items-center mb-2"><span class="font-bold">المبلغ</span><span class="text-blue-400 font-bold">${request.amount}</span></div>
+                                <div class="flex justify-between items-center mb-2"><span class="font-bold">المستخدم</span><span>${request.userName}</span></div>
+                                <div class="flex justify-between items-center mb-2"><span class="font-bold">الحالة</span><span class="badge ${request.status === 'pending' ? 'badge-warning' : request.status === 'approved' ? 'badge-success' : 'badge-danger'}">${request.status === 'pending' ? 'معلق' : request.status === 'approved' ? 'مقبول' : 'مرفوض'}</span></div>
+                                <div class="flex justify-between items-center"><span class="font-bold">التاريخ</span><span class="text-sm">${DateUtils.format(request.createdAt)}</span></div>
                             </div>
-
                             ${request.status === 'pending' ? `
                                 <div class="flex gap-3">
-                                    <button class="btn btn-success flex-1 approve-request" data-id="${request.id}" data-type="${type}">
-                                        <i class="fa-regular fa-circle-check ml-2"></i>
-                                        قبول
-                                    </button>
-                                    <button class="btn btn-danger flex-1 reject-request" data-id="${request.id}" data-type="${type}">
-                                        <i class="fa-regular fa-circle-xmark ml-2"></i>
-                                        رفض
-                                    </button>
+                                    <button class="btn btn-success flex-1 approve-request" data-id="${request.id}" data-type="${type}"><i class="fa-regular fa-circle-check ml-2"></i>قبول</button>
+                                    <button class="btn btn-danger flex-1 reject-request" data-id="${request.id}" data-type="${type}"><i class="fa-regular fa-circle-xmark ml-2"></i>رفض</button>
                                 </div>
                             ` : ''}
                         </div>
@@ -3209,150 +2533,79 @@
 
                     this.modal.classList.add('open');
                     
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.modal.classList.remove('open');
-                    });
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this.modal.classList.remove('open'));
                     
                     document.querySelector('.approve-request')?.addEventListener('click', () => {
-                        if (type === 'deposit') {
-                            this.app.approveDeposit(requestId);
-                        } else {
-                            this.app.approveWithdrawal(requestId);
-                        }
+                        if (type === 'deposit') this.app.approveDeposit(requestId);
+                        else this.app.approveWithdrawal(requestId);
                     });
                     
                     document.querySelector('.reject-request')?.addEventListener('click', () => {
-                        if (type === 'deposit') {
-                            this.app.rejectDeposit(requestId);
-                        } else {
-                            this.app.rejectWithdrawal(requestId);
-                        }
+                        if (type === 'deposit') this.app.rejectDeposit(requestId);
+                        else this.app.rejectWithdrawal(requestId);
                     });
                 }
 
-                // ========== إدارة طرق الدفع مع الصور ==========
+                // ========== إدارة طرق الدفع مع الصور (نفس السابق) ==========
                 openPaymentMethodsManagement() {
                     const methods = this.app.paymentMethods.getAll();
                     
                     this.modalContent.innerHTML = `
-                        <div class="modal-header">
-                            <h2 class="modal-title">💳 إدارة طرق الدفع</h2>
-                            <button class="modal-close" id="closeModalBtn">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
+                        <div class="modal-header"><h2 class="modal-title">💳 إدارة طرق الدفع</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
                         <div class="space-y-2 mb-4 max-h-96 overflow-y-auto custom-scroll">
                             ${methods.map(method => `
                                 <div class="admin-item">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
-                                            ${method.imageId ? 
-                                                `<img src="${this.app.images.getUrl(method.imageId)}" class="w-full h-full object-cover">` : 
-                                                `<i class="${method.icon}"></i>`
-                                            }
-                                        </div>
-                                        <div>
-                                            <div class="font-bold">${method.name}</div>
-                                            <div class="text-xs text-gray-400">${method.type}</div>
-                                        </div>
+                                        <div class="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">${method.imageId ? `<img src="${this.app.images.getUrl(method.imageId)}" class="w-full h-full object-cover">` : `<i class="${method.icon}"></i>`}</div>
+                                        <div><div class="font-bold">${method.name}</div><div class="text-xs text-gray-400">${method.type}</div></div>
                                     </div>
                                     <div class="actions">
-                                        <button class="toggle-payment-method" data-id="${method.id}" title="${method.enabled ? 'تعطيل' : 'تفعيل'}">
-                                            <i class="fa-solid ${method.enabled ? 'fa-toggle-on text-green-400' : 'fa-toggle-off text-gray-400'}"></i>
-                                        </button>
-                                        <button class="edit-payment-method" data-id="${method.id}" title="تعديل">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </button>
-                                        <button class="delete-payment-method" data-id="${method.id}" title="حذف">
-                                            <i class="fa-solid fa-trash text-red-400"></i>
-                                        </button>
+                                        <button class="toggle-payment-method" data-id="${method.id}" title="${method.enabled ? 'تعطيل' : 'تفعيل'}"><i class="fa-solid ${method.enabled ? 'fa-toggle-on text-green-400' : 'fa-toggle-off text-gray-400'}"></i></button>
+                                        <button class="edit-payment-method" data-id="${method.id}" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        <button class="delete-payment-method" data-id="${method.id}" title="حذف"><i class="fa-solid fa-trash text-red-400"></i></button>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
-
-                        <button id="addPaymentMethodBtn" class="btn btn-primary w-full">
-                            <i class="fa-solid fa-plus ml-2"></i>
-                            إضافة طريقة دفع جديدة
-                        </button>
+                        <button id="addPaymentMethodBtn" class="btn btn-primary w-full"><i class="fa-solid fa-plus ml-2"></i>إضافة طريقة دفع جديدة</button>
                     `;
 
                     this.modal.classList.add('open');
                     
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.modal.classList.remove('open');
-                    });
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this.modal.classList.remove('open'));
                     
                     document.querySelectorAll('.toggle-payment-method').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            this.app.togglePaymentMethod(id);
-                        });
+                        btn.addEventListener('click', () => { const id = btn.dataset.id; this.app.togglePaymentMethod(id); });
                     });
                     
                     document.querySelectorAll('.edit-payment-method').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            this.openPaymentMethodModal(id);
-                        });
+                        btn.addEventListener('click', () => { const id = btn.dataset.id; this.openPaymentMethodModal(id); });
                     });
                     
                     document.querySelectorAll('.delete-payment-method').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const id = btn.dataset.id;
-                            if (confirm('هل أنت متأكد من حذف طريقة الدفع هذه؟')) {
-                                this.app.deletePaymentMethod(id);
-                            }
+                            if (confirm('هل أنت متأكد من حذف طريقة الدفع هذه؟')) this.app.deletePaymentMethod(id);
                         });
                     });
                     
-                    document.getElementById('addPaymentMethodBtn').addEventListener('click', () => {
-                        this.openPaymentMethodModal();
-                    });
+                    document.getElementById('addPaymentMethodBtn').addEventListener('click', () => this.openPaymentMethodModal());
                 }
 
                 openPaymentMethodModal(id = null) {
                     const method = id ? this.app.paymentMethods.get(id) : null;
                     
                     this.modalContent.innerHTML = `
-                        <div class="modal-header">
-                            <h2 class="modal-title">${method ? 'تعديل' : 'إضافة'} طريقة دفع</h2>
-                            <button class="modal-close" id="closeModalBtn">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
+                        <div class="modal-header"><h2 class="modal-title">${method ? 'تعديل' : 'إضافة'} طريقة دفع</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
                         <form id="paymentMethodForm" class="space-y-4 max-h-[70vh] overflow-y-auto custom-scroll p-2">
                             <input type="hidden" id="paymentMethodId" value="${method?.id || ''}">
-                            
-                            <!-- صورة طريقة الدفع -->
-                            <div>
-                                <label class="input-label">صورة طريقة الدفع</label>
-                                <div class="upload-area" id="paymentMethodImageUpload">
-                                    <i class="fa-solid fa-cloud-upload-alt text-3xl text-blue-400 mb-2"></i>
-                                    <p class="text-sm">اضغط لرفع صورة</p>
-                                    <input type="file" id="paymentMethodImageFile" accept="image/*" class="hidden">
-                                </div>
-                                <div id="paymentMethodImagePreview" class="mt-3 ${method?.imageId ? '' : 'hidden'}">
-                                    <img src="${method?.imageId ? this.app.images.getUrl(method.imageId) : ''}" 
-                                         class="image-preview mx-auto" id="paymentMethodPreviewImg">
-                                </div>
+                            <div><label class="input-label">صورة طريقة الدفع</label>
+                                <div class="upload-area" id="paymentMethodImageUpload"><i class="fa-solid fa-cloud-upload-alt text-3xl text-blue-400 mb-2"></i><p class="text-sm">اضغط لرفع صورة</p><input type="file" id="paymentMethodImageFile" accept="image/*" class="hidden"></div>
+                                <div id="paymentMethodImagePreview" class="mt-3 ${method?.imageId ? '' : 'hidden'}"><img src="${method?.imageId ? this.app.images.getUrl(method.imageId) : ''}" class="image-preview mx-auto" id="paymentMethodPreviewImg"></div>
                             </div>
-
-                            <div>
-                                <label class="input-label">اسم الطريقة</label>
-                                <input type="text" id="methodName" value="${method?.name || ''}" class="input-field" required>
-                            </div>
-
-                            <div>
-                                <label class="input-label">الأيقونة (Font Awesome)</label>
-                                <input type="text" id="methodIcon" value="${method?.icon || 'fa-credit-card'}" class="input-field" required>
-                                <p class="text-xs text-gray-400 mt-1">مثال: fa-brands fa-tether, fa-regular fa-credit-card</p>
-                            </div>
-
-                            <div>
-                                <label class="input-label">النوع</label>
+                            <div><label class="input-label">اسم الطريقة</label><input type="text" id="methodName" value="${method?.name || ''}" class="input-field" required></div>
+                            <div><label class="input-label">الأيقونة (Font Awesome)</label><input type="text" id="methodIcon" value="${method?.icon || 'fa-credit-card'}" class="input-field" required><p class="text-xs text-gray-400 mt-1">مثال: fa-brands fa-tether, fa-regular fa-credit-card</p></div>
+                            <div><label class="input-label">النوع</label>
                                 <select id="methodType" class="input-field">
                                     <option value="crypto" ${method?.type === 'crypto' ? 'selected' : ''}>عملة رقمية</option>
                                     <option value="card" ${method?.type === 'card' ? 'selected' : ''}>بطاقة ائتمان</option>
@@ -3360,62 +2613,25 @@
                                     <option value="wallet" ${method?.type === 'wallet' ? 'selected' : ''}>محفظة</option>
                                 </select>
                             </div>
-
-                            <div>
-                                <label class="input-label">الوصف</label>
-                                <input type="text" id="methodDescription" value="${method?.description || ''}" class="input-field">
-                            </div>
-
+                            <div><label class="input-label">الوصف</label><input type="text" id="methodDescription" value="${method?.description || ''}" class="input-field"></div>
                             <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="input-label">الحد الأدنى</label>
-                                    <input type="number" id="methodMinAmount" value="${method?.minAmount || 1}" class="input-field">
-                                </div>
-                                <div>
-                                    <label class="input-label">الحد الأقصى</label>
-                                    <input type="number" id="methodMaxAmount" value="${method?.maxAmount || 10000}" class="input-field">
-                                </div>
+                                <div><label class="input-label">الحد الأدنى</label><input type="number" id="methodMinAmount" value="${method?.minAmount || 1}" class="input-field"></div>
+                                <div><label class="input-label">الحد الأقصى</label><input type="number" id="methodMaxAmount" value="${method?.maxAmount || 10000}" class="input-field"></div>
                             </div>
-
-                            <div>
-                                <label class="input-label">الرسوم (%)</label>
-                                <input type="number" id="methodFee" value="${method?.fee || 0}" class="input-field" step="0.1">
-                            </div>
-
-                            <div>
-                                <label class="input-label">التعليمات</label>
-                                <textarea id="methodInstructions" class="input-field" rows="2">${method?.instructions || ''}</textarea>
-                            </div>
-
-                            <div>
-                                <label class="input-label">التفاصيل (JSON)</label>
-                                <textarea id="methodDetails" class="input-field" rows="3">${JSON.stringify(method?.details || {}, null, 2)}</textarea>
-                                <p class="text-xs text-gray-400 mt-1">مثال: {"address": "العنوان", "network": "TRC20"}</p>
-                            </div>
-
-                            <div class="flex gap-3 pt-4">
-                                <button type="submit" class="btn btn-primary flex-1">حفظ</button>
-                                <button type="button" id="cancelBtn" class="btn btn-outline flex-1">إلغاء</button>
-                            </div>
+                            <div><label class="input-label">الرسوم (%)</label><input type="number" id="methodFee" value="${method?.fee || 0}" class="input-field" step="0.1"></div>
+                            <div><label class="input-label">التعليمات</label><textarea id="methodInstructions" class="input-field" rows="2">${method?.instructions || ''}</textarea></div>
+                            <div><label class="input-label">التفاصيل (JSON)</label><textarea id="methodDetails" class="input-field" rows="3">${JSON.stringify(method?.details || {}, null, 2)}</textarea><p class="text-xs text-gray-400 mt-1">مثال: {"address": "العنوان", "network": "TRC20"}</p></div>
+                            <div class="flex gap-3 pt-4"><button type="submit" class="btn btn-primary flex-1">حفظ</button><button type="button" id="cancelBtn" class="btn btn-outline flex-1">إلغاء</button></div>
                         </form>
                     `;
 
                     this.modal.classList.add('open');
                     
-                    // متغير مؤقت لتخزين معرف الصورة المرفوعة
                     window.tempPaymentMethodImage = null;
                     
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.cleanupTempImage();
-                        this.modal.classList.remove('open');
-                    });
+                    document.getElementById('closeModalBtn').addEventListener('click', () => { this.cleanupTempImage(); this.modal.classList.remove('open'); });
+                    document.getElementById('cancelBtn').addEventListener('click', () => { this.cleanupTempImage(); this.modal.classList.remove('open'); });
                     
-                    document.getElementById('cancelBtn').addEventListener('click', () => {
-                        this.cleanupTempImage();
-                        this.modal.classList.remove('open');
-                    });
-                    
-                    // رفع الصورة
                     const uploadArea = document.getElementById('paymentMethodImageUpload');
                     const fileInput = document.getElementById('paymentMethodImageFile');
                     
@@ -3425,41 +2641,19 @@
                         const file = e.target.files[0];
                         if (file) {
                             try {
-                                // التحقق من نوع الملف
-                                if (!CONFIG.SUPPORTED_IMAGE_TYPES.includes(file.type)) {
-                                    this.app.toast.error('نوع الملف غير مدعوم');
-                                    return;
-                                }
-                                
-                                // التحقق من الحجم
-                                if (file.size > CONFIG.MAX_IMAGE_SIZE) {
-                                    this.app.toast.error(`حجم الملف كبير جداً (الحد الأقصى ${CONFIG.MAX_IMAGE_SIZE / 1024 / 1024} ميجابايت)`);
-                                    return;
-                                }
-                                
-                                // رفع الصورة
-                                const imageId = await this.app.images.upload(file, {
-                                    metadata: { type: 'payment_method' }
-                                });
-                                
-                                // عرض الصورة
+                                if (!CONFIG.SUPPORTED_IMAGE_TYPES.includes(file.type)) { this.app.toast.error('نوع الملف غير مدعوم'); return; }
+                                if (file.size > CONFIG.MAX_IMAGE_SIZE) { this.app.toast.error(`حجم الملف كبير جداً (الحد الأقصى ${CONFIG.MAX_IMAGE_SIZE / 1024 / 1024} ميجابايت)`); return; }
+                                const imageId = await this.app.images.upload(file, { metadata: { type: 'payment_method' } });
                                 document.getElementById('paymentMethodPreviewImg').src = this.app.images.getUrl(imageId);
                                 document.getElementById('paymentMethodImagePreview').classList.remove('hidden');
-                                
-                                // حفظ معرف الصورة
                                 window.tempPaymentMethodImage = imageId;
-                                
                                 this.app.toast.success('تم رفع الصورة بنجاح');
-                            } catch (error) {
-                                this.app.toast.error(error.message);
-                            }
+                            } catch (error) { this.app.toast.error(error.message); }
                         }
                     });
                     
-                    // حفظ النموذج
                     document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
                         e.preventDefault();
-                        
                         try {
                             const formData = {
                                 name: document.getElementById('methodName').value,
@@ -3472,24 +2666,12 @@
                                 instructions: document.getElementById('methodInstructions').value,
                                 details: JSON.parse(document.getElementById('methodDetails').value || '{}')
                             };
-                            
-                            // إضافة الصورة إذا تم رفعها
-                            if (window.tempPaymentMethodImage) {
-                                formData.imageId = window.tempPaymentMethodImage;
-                            }
-                            
+                            if (window.tempPaymentMethodImage) formData.imageId = window.tempPaymentMethodImage;
                             const id = document.getElementById('paymentMethodId').value;
-                            
-                            if (id) {
-                                this.app.updatePaymentMethod(id, formData);
-                            } else {
-                                this.app.addPaymentMethod(formData);
-                            }
-                            
+                            if (id) this.app.updatePaymentMethod(id, formData);
+                            else this.app.addPaymentMethod(formData);
                             window.tempPaymentMethodImage = null;
-                        } catch (error) {
-                            this.app.toast.error('خطأ في صيغة JSON');
-                        }
+                        } catch (error) { this.app.toast.error('خطأ في صيغة JSON'); }
                     });
                 }
 
@@ -3505,40 +2687,21 @@
                     const notifications = this.app.notifications.getForUser(userId, 50);
                     
                     this.modalContent.innerHTML = `
-                        <div class="modal-header">
-                            <h2 class="modal-title">🔔 الإشعارات</h2>
-                            <button class="modal-close" id="closeModalBtn">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
+                        <div class="modal-header"><h2 class="modal-title">🔔 الإشعارات</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
                         <div class="space-y-2 max-h-[70vh] overflow-y-auto custom-scroll">
-                            ${notifications.length === 0 ? `
-                                <p class="text-gray-400 text-center py-8">لا توجد إشعارات</p>
-                            ` : notifications.map(notif => `
+                            ${notifications.length === 0 ? '<p class="text-gray-400 text-center py-8">لا توجد إشعارات</p>' : notifications.map(notif => `
                                 <div class="glass-card p-4 rounded-xl ${notif.read ? 'opacity-50' : ''}">
-                                    <div class="flex justify-between items-start">
-                                        <div class="font-bold">${notif.title}</div>
-                                        <span class="text-xs text-gray-400">${DateUtils.timeAgo(notif.createdAt)}</span>
-                                    </div>
+                                    <div class="flex justify-between items-start"><div class="font-bold">${notif.title}</div><span class="text-xs text-gray-400">${DateUtils.timeAgo(notif.createdAt)}</span></div>
                                     <p class="text-sm text-gray-300 mt-1">${notif.message}</p>
                                 </div>
                             `).join('')}
                         </div>
-
-                        ${notifications.length > 0 ? `
-                            <button id="markAllReadBtn" class="btn btn-outline w-full mt-4">
-                                <i class="fa-regular fa-circle-check ml-2"></i>
-                                تحديد الكل كمقروء
-                            </button>
-                        ` : ''}
+                        ${notifications.length > 0 ? `<button id="markAllReadBtn" class="btn btn-outline w-full mt-4"><i class="fa-regular fa-circle-check ml-2"></i>تحديد الكل كمقروء</button>` : ''}
                     `;
 
                     this.modal.classList.add('open');
                     
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.modal.classList.remove('open');
-                    });
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this.modal.classList.remove('open'));
                     
                     document.getElementById('markAllReadBtn')?.addEventListener('click', () => {
                         this.app.notifications.markAllAsRead(userId);
@@ -3547,115 +2710,218 @@
                     });
                 }
 
+                // ========== إدارة المستخدمين (جديد) ==========
+                openUserManagement() {
+                    const users = this.app.users.getAll();
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="modal-header"><h2 class="modal-title">👥 إدارة المستخدمين</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
+                        <div class="space-y-2 max-h-[70vh] overflow-y-auto custom-scroll">
+                            ${users.map(user => {
+                                const wallet = this.app.userWallets.getWallet(user.id);
+                                return `
+                                    <div class="admin-item">
+                                        <div class="flex items-center gap-3">
+                                            <div class="avatar-sm">${user.photoUrl ? `<img src="${user.photoUrl}" class="w-full h-full object-cover">` : `<span>${(user.firstName.charAt(0) + (user.lastName?.[0] || '')).toUpperCase()}</span>`}</div>
+                                            <div>
+                                                <div class="font-bold">${user.firstName} ${user.lastName || ''}</div>
+                                                <div class="text-xs text-gray-400">@${user.username || 'لا يوجد'}</div>
+                                                <div class="text-xs text-gray-400">الرصيد: ${wallet.balance}</div>
+                                                <div class="flex gap-1 mt-1">
+                                                    <span class="badge ${user.status === 'active' ? 'badge-success' : 'badge-danger'}">${user.status === 'active' ? 'نشط' : 'محظور'}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="actions">
+                                            <button class="view-user" data-id="${user.id}" title="عرض التفاصيل"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="adjust-balance-user" data-id="${user.id}" title="تعديل الرصيد"><i class="fa-solid fa-coins"></i></button>
+                                            <button class="toggle-user-status" data-id="${user.id}" data-status="${user.status}" title="${user.status === 'active' ? 'حظر' : 'تفعيل'}"><i class="fa-solid ${user.status === 'active' ? 'fa-ban' : 'fa-check-circle'}"></i></button>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+
+                    this.modal.classList.add('open');
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this.modal.classList.remove('open'));
+                    
+                    document.querySelectorAll('.view-user').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const userId = parseInt(btn.dataset.id);
+                            this.openUserDetails(userId);
+                        });
+                    });
+                    
+                    document.querySelectorAll('.adjust-balance-user').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const userId = parseInt(btn.dataset.id);
+                            this.openAdjustBalanceModal(userId);
+                        });
+                    });
+                    
+                    document.querySelectorAll('.toggle-user-status').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const userId = parseInt(btn.dataset.id);
+                            const currentStatus = btn.dataset.status;
+                            this.app.toggleUserStatus(userId, currentStatus);
+                        });
+                    });
+                }
+
+                openUserDetails(userId) {
+                    const user = this.app.users.get(userId);
+                    if (!user) return;
+                    const wallet = this.app.userWallets.getWallet(userId);
+                    const transactions = this.app.userWallets.getTransactions(userId, 20);
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="modal-header"><h2 class="modal-title">تفاصيل المستخدم</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
+                        <div class="space-y-4">
+                            <div class="glass-card p-4 rounded-xl flex items-center gap-4">
+                                <div class="avatar">${user.photoUrl ? `<img src="${user.photoUrl}" class="w-full h-full object-cover">` : `<span>${(user.firstName.charAt(0) + (user.lastName?.[0] || '')).toUpperCase()}</span>`}</div>
+                                <div>
+                                    <div class="font-bold text-xl">${user.firstName} ${user.lastName || ''}</div>
+                                    <div class="text-sm text-gray-400">ID: ${user.id}</div>
+                                    <div class="text-sm text-gray-400">المستخدم: @${user.username || 'لا يوجد'}</div>
+                                    <div class="mt-2"><span class="badge ${user.status === 'active' ? 'badge-success' : 'badge-danger'}">${user.status === 'active' ? 'نشط' : 'محظور'}</span></div>
+                                </div>
+                            </div>
+                            <div class="glass-card p-4 rounded-xl">
+                                <div class="flex justify-between items-center mb-2"><span class="font-bold">الرصيد الحالي</span><span class="text-2xl text-yellow-400">${wallet.balance}</span></div>
+                                <div class="flex justify-between items-center"><span class="font-bold">عنوان المحفظة</span><span class="text-xs font-mono">${wallet.address}</span></div>
+                                <div class="flex justify-between items-center mt-2"><span class="font-bold">تاريخ التسجيل</span><span>${DateUtils.format(user.registeredAt)}</span></div>
+                                <div class="flex justify-between items-center"><span class="font-bold">آخر ظهور</span><span>${DateUtils.timeAgo(user.lastSeen)}</span></div>
+                            </div>
+                            <h3 class="font-bold mb-2">آخر المعاملات</h3>
+                            <div class="space-y-2 max-h-40 overflow-y-auto custom-scroll">
+                                ${transactions.length === 0 ? '<p class="text-gray-400 text-center">لا توجد معاملات</p>' : transactions.map(tx => `
+                                    <div class="transaction-item">
+                                        <div class="transaction-icon ${tx.amount > 0 ? 'deposit' : 'withdraw'}"><i class="fa-solid ${tx.amount > 0 ? 'fa-arrow-down' : 'fa-arrow-up'}"></i></div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between"><span class="font-bold ${tx.amount > 0 ? 'text-green-400' : 'text-red-400'}">${tx.amount > 0 ? '+' : ''}${tx.amount}</span><span class="text-xs text-gray-400">${DateUtils.timeAgo(tx.createdAt)}</span></div>
+                                            <p class="text-xs text-gray-400">${tx.note || 'معاملة'}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="flex gap-3">
+                                <button class="btn btn-success flex-1 adjust-balance" data-id="${userId}"><i class="fa-solid fa-coins ml-2"></i>تعديل الرصيد</button>
+                                <button class="btn btn-outline flex-1" onclick="app.ui.modal.classList.remove('open')">إغلاق</button>
+                            </div>
+                        </div>
+                    `;
+
+                    this.modal.classList.add('open');
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this.modal.classList.remove('open'));
+                    
+                    document.querySelector('.adjust-balance')?.addEventListener('click', () => {
+                        this.openAdjustBalanceModal(userId);
+                    });
+                }
+
+                openAdjustBalanceModal(userId) {
+                    const user = this.app.users.get(userId);
+                    const currentBalance = this.app.userWallets.getBalance(userId);
+                    
+                    this.modalContent.innerHTML = `
+                        <div class="modal-header"><h2 class="modal-title">تعديل رصيد المستخدم</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
+                        <div class="space-y-4">
+                            <p class="text-center">المستخدم: ${user.firstName} ${user.lastName || ''}</p>
+                            <p class="text-center text-xl text-yellow-400">الرصيد الحالي: ${currentBalance}</p>
+                            <div class="flex gap-3">
+                                <div class="flex-1">
+                                    <label class="input-label">المبلغ</label>
+                                    <input type="number" id="balanceAmount" class="input-field" placeholder="أدخل المبلغ">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="input-label">العملية</label>
+                                    <select id="balanceOperation" class="input-field">
+                                        <option value="add">إضافة</option>
+                                        <option value="subtract">خصم</option>
+                                        <option value="set">تعيين</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="input-label">ملاحظة (اختياري)</label>
+                                <input type="text" id="balanceNote" class="input-field" placeholder="سبب التعديل">
+                            </div>
+                            <button id="submitBalanceAdjust" class="btn btn-primary w-full">تأكيد</button>
+                        </div>
+                    `;
+
+                    this.modal.classList.add('open');
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this.modal.classList.remove('open'));
+                    
+                    document.getElementById('submitBalanceAdjust').addEventListener('click', () => {
+                        const amount = parseFloat(document.getElementById('balanceAmount').value);
+                        const operation = document.getElementById('balanceOperation').value;
+                        const note = document.getElementById('balanceNote').value;
+                        
+                        if (isNaN(amount) || amount <= 0) {
+                            this.app.toast.error('الرجاء إدخال مبلغ صحيح');
+                            return;
+                        }
+                        
+                        this.app.adjustUserBalance(userId, amount, operation, note);
+                    });
+                }
+
                 updateBalance() {
                     const balanceEl = document.getElementById('balanceDisplay')?.querySelector('span');
-                    if (balanceEl) {
-                        balanceEl.textContent = this.app.wallet.getBalance().toLocaleString('ar-EG');
-                    }
+                    if (balanceEl) balanceEl.textContent = this.app.userWallets.getBalance(this.app.user.id).toLocaleString('ar-EG');
                 }
 
                 // ========== ربط الأحداث ==========
                 bindEvents() {
-                    // زر المحفظة
-                    document.getElementById('walletBtn')?.addEventListener('click', () => {
-                        this.openWallet();
-                    });
-                    
-                    // زر الشحن
-                    document.getElementById('depositBtn')?.addEventListener('click', () => {
-                        this.openDeposit();
-                    });
-                    
-                    // زر السحب
-                    document.getElementById('withdrawBtn')?.addEventListener('click', () => {
-                        this.openWithdraw();
-                    });
-                    
-                    // زر المعاملات
-                    document.getElementById('transactionsBtn')?.addEventListener('click', () => {
-                        this.openTransactions();
-                    });
-                    
-                    // زر طرق الدفع
-                    document.getElementById('paymentMethodsBtn')?.addEventListener('click', () => {
-                        this.openPaymentMethodsList();
-                    });
-                    
-                    // زر الإشعارات
-                    document.getElementById('notificationBell')?.addEventListener('click', () => {
-                        this.openNotifications();
-                    });
-                    
-                    // زر لوحة الإدارة
-                    document.getElementById('adminPanelBtn')?.addEventListener('click', () => {
-                        this.openAdminPanel();
-                    });
-                    
-                    // زر إدارة طرق الدفع
-                    document.getElementById('managePaymentMethodsBtn')?.addEventListener('click', () => {
-                        this.openPaymentMethodsManagement();
-                    });
-                    
-                    // زر تسجيل الخروج
-                    document.getElementById('logoutBtn')?.addEventListener('click', () => {
-                        this.app.logout();
-                    });
+                    document.getElementById('walletBtn')?.addEventListener('click', () => this.openWallet());
+                    document.getElementById('depositBtn')?.addEventListener('click', () => this.openDeposit());
+                    document.getElementById('withdrawBtn')?.addEventListener('click', () => this.openWithdraw());
+                    document.getElementById('transactionsBtn')?.addEventListener('click', () => this.openTransactions());
+                    document.getElementById('paymentMethodsBtn')?.addEventListener('click', () => this.openPaymentMethodsList());
+                    document.getElementById('notificationBell')?.addEventListener('click', () => this.openNotifications());
+                    document.getElementById('adminPanelBtn')?.addEventListener('click', () => this.openAdminPanel());
+                    document.getElementById('managePaymentMethodsBtn')?.addEventListener('click', () => this.openPaymentMethodsManagement());
+                    document.getElementById('manageUsersBtn')?.addEventListener('click', () => this.openUserManagement());
+                    document.getElementById('logoutBtn')?.addEventListener('click', () => this.app.logout());
                 }
 
                 bindAdminPanelEvents() {
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.modal.classList.remove('open');
-                    });
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this.modal.classList.remove('open'));
                     
-                    // تبديل التبويبات
                     document.querySelectorAll('.tab').forEach(tab => {
                         tab.addEventListener('click', () => {
                             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                             tab.classList.add('active');
-                            
                             const tabName = tab.dataset.tab;
-                            document.querySelectorAll('.tab-content').forEach(content => {
-                                content.classList.add('hidden');
-                            });
+                            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
                             document.getElementById(`${tabName}Tab`).classList.remove('hidden');
                         });
                     });
                     
-                    // قبول طلبات الشحن
                     document.querySelectorAll('.approve-deposit').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            this.app.approveDeposit(id);
-                        });
+                        btn.addEventListener('click', () => { const id = btn.dataset.id; this.app.approveDeposit(id); });
                     });
                     
-                    // رفض طلبات الشحن
                     document.querySelectorAll('.reject-deposit').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            this.app.rejectDeposit(id);
-                        });
+                        btn.addEventListener('click', () => { const id = btn.dataset.id; this.app.rejectDeposit(id); });
                     });
                     
-                    // قبول طلبات السحب
                     document.querySelectorAll('.approve-withdrawal').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            this.app.approveWithdrawal(id);
-                        });
+                        btn.addEventListener('click', () => { const id = btn.dataset.id; this.app.approveWithdrawal(id); });
                     });
                     
-                    // رفض طلبات السحب
                     document.querySelectorAll('.reject-withdrawal').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const id = btn.dataset.id;
-                            this.app.rejectWithdrawal(id);
-                        });
+                        btn.addEventListener('click', () => { const id = btn.dataset.id; this.app.rejectWithdrawal(id); });
                     });
                 }
             }
 
-            // ======================== التطبيق الرئيسي المحسن (بدون متجر) ========================
+            // ======================== التطبيق الرئيسي المحسن مع المحافظ المستقلة ========================
             class TelegramStoreApp {
                 constructor() {
                     // تهيئة الخدمات
@@ -3664,9 +2930,9 @@
                     this.cache = new CacheService();
                     this.images = new ImageService();
                     
-                    // تهيئة مديري البيانات
+                    // مديري البيانات
                     this.users = new UserService();
-                    this.wallet = new WalletService();
+                    this.userWallets = new UserWalletService();   // جديد: محافظ مستقلة
                     this.paymentMethods = new PaymentMethodService(this.images);
                     this.depositRequests = new RequestService('deposit');
                     this.withdrawalRequests = new RequestService('withdrawal');
@@ -3684,15 +2950,12 @@
                     this.accessDenied = false;
                     this.telegramMissing = false;
                     
-                    // ربط التطبيق بالكائن العام
                     window.app = this;
                     
-                    // بدء التشغيل
                     this.init();
                 }
 
                 async init() {
-                    // التحقق من بيئة تيليجرام
                     if (!this.telegram.isAvailable) {
                         this.telegramMissing = true;
                         this.loading = false;
@@ -3709,73 +2972,49 @@
                         return;
                     }
 
-                    // الحصول على بيانات المستخدم
                     this.user = this.telegram.getUser();
                     this.isAdmin = (this.user.id === CONFIG.ADMIN_ID);
                     
-                    // تسجيل المستخدم
-                    this.users.register(this.user);
+                    // تسجيل المستخدم وإنشاء المحفظة تلقائياً
+                    this.users.register(this.user, this.userWallets);
                     
                     // تحديث الإحصائيات
                     this.stats.set('users', this.users.getCount());
                     
-                    // تطبيق السمة المحفوظة
                     this.applyTheme(this.settings.get('theme'));
                     
-                    // إنهاء التحميل
                     this.loading = false;
                     this.ui.render();
                     
-                    // ترحيب
                     this.toast.success(`مرحباً ${this.user.first_name} 👋`);
-                    
-                    // تكوين زر تيليجرام الرئيسي
                     this.setupMainButton();
                 }
 
                 setupMainButton() {
                     if (this.isAdmin) {
-                        this.telegram.setMainButton('الإدارة', {
-                            color: '#f59e0b',
-                            isVisible: true,
-                            callback: () => {
-                                this.ui.openAdminPanel();
-                            }
-                        });
+                        this.telegram.setMainButton('الإدارة', { color: '#f59e0b', isVisible: true, callback: () => this.ui.openAdminPanel() });
                     } else {
-                        this.telegram.setMainButton('المحفظة', {
-                            color: '#3b82f6',
-                            isVisible: true,
-                            callback: () => {
-                                this.ui.openWallet();
-                            }
-                        });
+                        this.telegram.setMainButton('المحفظة', { color: '#3b82f6', isVisible: true, callback: () => this.ui.openWallet() });
                     }
                 }
 
                 applyTheme(theme) {
                     const root = document.documentElement;
                     const themeIcon = document.getElementById('themeIcon');
-                    
                     if (theme === 'light') {
                         root.style.setProperty('--tg-theme-bg-color', '#f8fafc');
                         root.style.setProperty('--tg-theme-text-color', '#0f172a');
-                        themeIcon?.classList.remove('fa-moon');
-                        themeIcon?.classList.add('fa-sun');
+                        themeIcon?.classList.remove('fa-moon'); themeIcon?.classList.add('fa-sun');
                     } else {
                         root.style.setProperty('--tg-theme-bg-color', '#0f172a');
                         root.style.setProperty('--tg-theme-text-color', '#ffffff');
-                        themeIcon?.classList.remove('fa-sun');
-                        themeIcon?.classList.add('fa-moon');
+                        themeIcon?.classList.remove('fa-sun'); themeIcon?.classList.add('fa-moon');
                     }
                 }
 
-                // ========== إجراءات المحفظة ==========
+                // ========== إجراءات المحفظة (مستخدم حالي) ==========
                 createDeposit(amount, method, metadata = {}) {
-                    if (amount <= 0) {
-                        this.toast.error('المبلغ غير صحيح');
-                        return;
-                    }
+                    if (amount <= 0) { this.toast.error('المبلغ غير صحيح'); return; }
                     
                     const request = this.depositRequests.add({
                         userId: this.user.id,
@@ -3787,88 +3026,33 @@
                         metadata
                     });
                     
-                    this.notifications.add(
-                        CONFIG.ADMIN_ID,
-                        '💰 طلب شحن جديد',
-                        `مبلغ: ${amount} - الطريقة: ${method.name}`,
-                        'info',
-                        { requestId: request.id }
-                    );
+                    this.notifications.add(CONFIG.ADMIN_ID, '💰 طلب شحن جديد', `مبلغ: ${amount} - الطريقة: ${method.name}`, 'info', { requestId: request.id });
                     
                     this.toast.success('تم إرسال طلب الشحن بنجاح');
                     this.telegram.hapticFeedback('notification', 'success');
                     
-                    // عرض تفاصيل الدفع
                     this.ui.modalContent.innerHTML = `
-                        <div class="modal-header">
-                            <h2 class="modal-title">💰 طلب الشحن</h2>
-                            <button class="modal-close" id="closeModalBtn">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
-                        <div class="invoice text-center mb-4">
-                            <i class="fa-solid fa-circle-check text-4xl mb-2"></i>
-                            <h3 class="font-bold text-xl">تم إرسال طلبك</h3>
-                            <p class="text-sm opacity-90">رقم الطلب: ${request.id}</p>
-                        </div>
-
+                        <div class="modal-header"><h2 class="modal-title">💰 طلب الشحن</h2><button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-times"></i></button></div>
+                        <div class="invoice text-center mb-4"><i class="fa-solid fa-circle-check text-4xl mb-2"></i><h3 class="font-bold text-xl">تم إرسال طلبك</h3><p class="text-sm opacity-90">رقم الطلب: ${request.id}</p></div>
                         <div class="glass-card p-4 rounded-xl mb-4">
                             <h3 class="font-bold mb-2">طريقة الدفع: ${method.name}</h3>
                             <p class="text-sm text-gray-300 mb-2">${method.instructions}</p>
-                            
-                            ${method.details ? `
-                                <div class="mt-3 space-y-2">
-                                    ${Object.entries(method.details).map(([key, value]) => `
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-400">${key}:</span>
-                                            <span class="font-mono text-sm">${value}</span>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            ` : ''}
-                            
-                            ${method.imageId ? `
-                                <div class="mt-3 flex justify-center">
-                                    <img src="${this.images.getUrl(method.imageId)}" class="w-32 h-32 object-contain rounded-lg">
-                                </div>
-                            ` : ''}
+                            ${method.details ? `<div class="mt-3 space-y-2">${Object.entries(method.details).map(([key, value]) => `<div class="flex justify-between"><span class="text-gray-400">${key}:</span><span class="font-mono text-sm">${value}</span></div>`).join('')}</div>` : ''}
+                            ${method.imageId ? `<div class="mt-3 flex justify-center"><img src="${this.images.getUrl(method.imageId)}" class="w-32 h-32 object-contain rounded-lg"></div>` : ''}
                         </div>
-
-                        <div class="glass-card p-4 rounded-xl mb-4">
-                            <div class="flex justify-between mb-2">
-                                <span>المبلغ:</span>
-                                <span class="font-bold">${amount}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>الحالة:</span>
-                                <span class="badge badge-warning">قيد الانتظار</span>
-                            </div>
-                        </div>
-
-                        <p class="text-xs text-gray-400 text-center">
-                            سيتم إشعارك عند قبول الطلب
-                        </p>
+                        <div class="glass-card p-4 rounded-xl mb-4"><div class="flex justify-between mb-2"><span>المبلغ:</span><span class="font-bold">${amount}</span></div><div class="flex justify-between"><span>الحالة:</span><span class="badge badge-warning">قيد الانتظار</span></div></div>
+                        <p class="text-xs text-gray-400 text-center">سيتم إشعارك عند قبول الطلب</p>
                     `;
 
                     this.ui.modal.classList.add('open');
-                    
-                    document.getElementById('closeModalBtn').addEventListener('click', () => {
-                        this.ui.modal.classList.remove('open');
-                    });
+                    document.getElementById('closeModalBtn').addEventListener('click', () => this.ui.modal.classList.remove('open'));
                 }
 
                 createWithdrawal(amount, address) {
-                    if (amount < 10) {
-                        this.toast.error('الحد الأدنى للسحب 10');
-                        return;
-                    }
+                    if (amount < 10) { this.toast.error('الحد الأدنى للسحب 10'); return; }
                     
-                    const balance = this.wallet.getBalance();
-                    if (amount > balance) {
-                        this.toast.error('الرصيد غير كافٍ');
-                        return;
-                    }
+                    const balance = this.userWallets.getBalance(this.user.id);
+                    if (amount > balance) { this.toast.error('الرصيد غير كافٍ'); return; }
                     
                     const request = this.withdrawalRequests.add({
                         userId: this.user.id,
@@ -3878,13 +3062,7 @@
                         status: 'pending'
                     });
                     
-                    this.notifications.add(
-                        CONFIG.ADMIN_ID,
-                        '💸 طلب سحب جديد',
-                        `مبلغ: ${amount} - العنوان: ${address}`,
-                        'info',
-                        { requestId: request.id }
-                    );
+                    this.notifications.add(CONFIG.ADMIN_ID, '💸 طلب سحب جديد', `مبلغ: ${amount} - العنوان: ${address}`, 'info', { requestId: request.id });
                     
                     this.toast.success('تم إرسال طلب السحب بنجاح');
                     this.telegram.hapticFeedback('notification', 'success');
@@ -3899,16 +3077,10 @@
                     
                     this.depositRequests.approve(requestId);
                     
-                    // إضافة الرصيد
-                    this.wallet.addBalance(request.amount, `شحن عبر ${request.method}`, { requestId });
+                    // إضافة الرصيد إلى محفظة المستخدم صاحب الطلب
+                    this.userWallets.addBalance(request.userId, request.amount, `شحن عبر ${request.method}`, { requestId });
                     
-                    // إشعار للمستخدم
-                    this.notifications.add(
-                        request.userId,
-                        '✅ تم قبول طلب الشحن',
-                        `تم إضافة ${request.amount} إلى رصيدك`,
-                        'success'
-                    );
+                    this.notifications.add(request.userId, '✅ تم قبول طلب الشحن', `تم إضافة ${request.amount} إلى رصيدك`, 'success');
                     
                     this.toast.success('تم قبول طلب الشحن');
                     this.ui.openAdminPanel();
@@ -3920,12 +3092,7 @@
                     
                     this.depositRequests.reject(requestId, 'تم رفض الطلب من قبل الإدارة');
                     
-                    this.notifications.add(
-                        request.userId,
-                        '❌ تم رفض طلب الشحن',
-                        'نأسف، تم رفض طلب الشحن الخاص بك',
-                        'error'
-                    );
+                    this.notifications.add(request.userId, '❌ تم رفض طلب الشحن', 'نأسف، تم رفض طلب الشحن الخاص بك', 'error');
                     
                     this.toast.success('تم رفض طلب الشحن');
                     this.ui.openAdminPanel();
@@ -3935,23 +3102,18 @@
                     const request = this.withdrawalRequests.get(requestId);
                     if (!request) return;
                     
-                    // التحقق من الرصيد
-                    if (this.wallet.getBalance() < request.amount) {
+                    // التحقق من رصيد المستخدم
+                    if (this.userWallets.getBalance(request.userId) < request.amount) {
                         this.toast.error('الرصيد غير كافٍ');
                         return;
                     }
                     
                     this.withdrawalRequests.approve(requestId);
                     
-                    // خصم الرصيد
-                    this.wallet.subtractBalance(request.amount, `سحب إلى ${request.address}`, { requestId });
+                    // خصم الرصيد من محفظة المستخدم
+                    this.userWallets.subtractBalance(request.userId, request.amount, `سحب إلى ${request.address}`, { requestId });
                     
-                    this.notifications.add(
-                        request.userId,
-                        '✅ تم قبول طلب السحب',
-                        `تم خصم ${request.amount} من رصيدك وسيتم تحويلها قريباً`,
-                        'success'
-                    );
+                    this.notifications.add(request.userId, '✅ تم قبول طلب السحب', `تم خصم ${request.amount} من رصيدك وسيتم تحويلها قريباً`, 'success');
                     
                     this.toast.success('تم قبول طلب السحب');
                     this.ui.openAdminPanel();
@@ -3963,12 +3125,7 @@
                     
                     this.withdrawalRequests.reject(requestId, 'تم رفض الطلب من قبل الإدارة');
                     
-                    this.notifications.add(
-                        request.userId,
-                        '❌ تم رفض طلب السحب',
-                        'نأسف، تم رفض طلب السحب الخاص بك',
-                        'error'
-                    );
+                    this.notifications.add(request.userId, '❌ تم رفض طلب السحب', 'نأسف، تم رفض طلب السحب الخاص بك', 'error');
                     
                     this.toast.success('تم رفض طلب السحب');
                     this.ui.openAdminPanel();
@@ -4003,28 +3160,65 @@
                     this.telegram.hapticFeedback('notification', 'success');
                 }
 
-                // ========== إجراءات عامة ==========
-                logout() {
-                    this.telegram.close();
+                // ========== إدارة المستخدمين (جديد) ==========
+                toggleUserStatus(userId, currentStatus) {
+                    const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
+                    if (this.users.setStatus(userId, newStatus)) {
+                        this.toast.success(`تم ${newStatus === 'active' ? 'تفعيل' : 'حظر'} المستخدم بنجاح`);
+                        this.ui.openUserManagement();
+                    } else {
+                        this.toast.error('فشل تحديث الحالة');
+                    }
                 }
 
-                resetApp() {
-                    // حذف جميع البيانات
-                    StorageService.clear();
+                adjustUserBalance(userId, amount, operation, note) {
+                    let success = false;
+                    let message = '';
                     
-                    // إعادة تهيئة الخدمات
-                    this.wallet = new WalletService();
+                    switch (operation) {
+                        case 'add':
+                            this.userWallets.addBalance(userId, amount, note || 'إضافة رصيد من المدير', { adminId: this.user.id });
+                            success = true;
+                            message = `تم إضافة ${amount} إلى رصيد المستخدم`;
+                            break;
+                        case 'subtract':
+                            success = this.userWallets.subtractBalance(userId, amount, note || 'خصم رصيد من المدير', { adminId: this.user.id });
+                            message = `تم خصم ${amount} من رصيد المستخدم`;
+                            if (!success) this.toast.error('الرصيد غير كافٍ للخصم');
+                            break;
+                        case 'set':
+                            const current = this.userWallets.getBalance(userId);
+                            if (amount > current) {
+                                this.userWallets.addBalance(userId, amount - current, note || 'تعيين رصيد من المدير (إضافة)', { adminId: this.user.id });
+                            } else if (amount < current) {
+                                this.userWallets.subtractBalance(userId, current - amount, note || 'تعيين رصيد من المدير (خصم)', { adminId: this.user.id });
+                            }
+                            success = true;
+                            message = `تم تعيين الرصيد إلى ${amount}`;
+                            break;
+                    }
+                    
+                    if (success) {
+                        this.toast.success(message);
+                        // إشعار للمستخدم
+                        this.notifications.add(userId, '💰 تعديل الرصيد', `تم تعديل رصيدك بمبلغ ${amount} (${operation === 'add' ? 'إضافة' : operation === 'subtract' ? 'خصم' : 'تعيين'})`, 'info');
+                        this.ui.modal.classList.remove('open');
+                        this.ui.openUserManagement(); // تحديث القائمة
+                    }
+                }
+
+                // ========== إجراءات عامة ==========
+                logout() { this.telegram.close(); }
+
+                resetApp() {
+                    StorageService.clear();
+                    this.userWallets = new UserWalletService();
                     this.paymentMethods = new PaymentMethodService(this.images);
                     this.depositRequests = new RequestService('deposit');
                     this.withdrawalRequests = new RequestService('withdrawal');
-                    
                     this.toast.success('تم إعادة تعيين التطبيق');
                     this.telegram.hapticFeedback('notification', 'success');
-                    
-                    // إعادة التحميل
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
+                    setTimeout(() => window.location.reload(), 1000);
                 }
             }
 
@@ -4053,7 +3247,6 @@
                 settingsPanel.classList.remove('open');
             });
 
-            // فتح الإعدادات عند النقر على زر السمة مع shift
             document.addEventListener('keydown', (e) => {
                 if (e.shiftKey && e.key === 'S') {
                     settingsOverlay.classList.add('open');
@@ -4061,7 +3254,6 @@
                 }
             });
 
-            // حفظ إعدادات الصوت والاهتزاز
             document.getElementById('soundToggle')?.addEventListener('change', (e) => {
                 app.settings.set('sound', e.target.checked);
                 app.toast.soundEnabled = e.target.checked;
