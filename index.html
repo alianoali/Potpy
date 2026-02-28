@@ -1045,6 +1045,13 @@
             justify-content: center;
             font-size: 24px;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .payment-method-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         /* ========== الفواتير ========== */
@@ -1883,9 +1890,10 @@
                 }
             }
 
-            // ======================== إدارة طرق الدفع ========================
+            // ======================== إدارة طرق الدفع مع دعم الصور ========================
             class PaymentMethodService {
-                constructor() {
+                constructor(imageService) {
+                    this.imageService = imageService;
                     this.STORAGE_KEY = CONFIG.STORAGE_KEYS.PAYMENT_METHODS;
                     this.methods = this.load();
                 }
@@ -1909,6 +1917,7 @@
                             fee: 0,
                             minAmount: 10,
                             maxAmount: 10000,
+                            imageId: null,
                             fields: [
                                 { name: 'transactionId', label: 'رقم العملية', type: 'text', required: true, placeholder: 'أدخل رقم العملية' }
                             ],
@@ -1928,6 +1937,7 @@
                             fee: 2.5,
                             minAmount: 5,
                             maxAmount: 5000,
+                            imageId: null,
                             fields: [
                                 { name: 'cardNumber', label: 'رقم البطاقة', type: 'text', required: true, placeholder: 'XXXX XXXX XXXX XXXX' },
                                 { name: 'expiry', label: 'تاريخ الانتهاء', type: 'text', required: true, placeholder: 'MM/YY' },
@@ -1945,6 +1955,7 @@
                             fee: 0,
                             minAmount: 20,
                             maxAmount: 50000,
+                            imageId: null,
                             fields: [
                                 { name: 'reference', label: 'رقم المرجع', type: 'text', required: true, placeholder: 'رقم الحوالة' },
                                 { name: 'accountName', label: 'اسم صاحب الحساب', type: 'text', required: true, placeholder: 'الاسم كاملاً' }
@@ -1966,6 +1977,7 @@
                             fee: 0,
                             minAmount: 1,
                             maxAmount: 10000,
+                            imageId: null,
                             fields: [],
                             instructions: 'سيتم خصم المبلغ من رصيد محفظتك'
                         }
@@ -1988,6 +2000,7 @@
                     const method = {
                         id: IdGenerator.generate('pm'),
                         enabled: true,
+                        imageId: methodData.imageId || null,
                         ...methodData
                     };
                     
@@ -2000,6 +2013,12 @@
                 update(id, data) {
                     const index = this.methods.findIndex(m => m.id === id);
                     if (index !== -1) {
+                        // حذف الصورة القديمة إذا تم تغييرها
+                        const oldMethod = this.methods[index];
+                        if (data.imageId && oldMethod.imageId && oldMethod.imageId !== data.imageId) {
+                            this.imageService.delete(oldMethod.imageId);
+                        }
+                        
                         this.methods[index] = { ...this.methods[index], ...data };
                         this.save();
                         return true;
@@ -2008,8 +2027,15 @@
                 }
 
                 delete(id) {
-                    this.methods = this.methods.filter(m => m.id !== id);
-                    this.save();
+                    const index = this.methods.findIndex(m => m.id === id);
+                    if (index !== -1) {
+                        // حذف الصورة المرتبطة
+                        if (this.methods[index].imageId) {
+                            this.imageService.delete(this.methods[index].imageId);
+                        }
+                        this.methods.splice(index, 1);
+                        this.save();
+                    }
                 }
 
                 toggle(id) {
@@ -3600,7 +3626,10 @@
                             ${methods.map(method => `
                                 <div class="payment-method-card" data-method-id="${method.id}">
                                     <div class="payment-method-icon">
-                                        <i class="${method.icon}"></i>
+                                        ${method.imageId ? 
+                                            `<img src="${this.app.images.getUrl(method.imageId)}" class="w-full h-full object-cover">` : 
+                                            `<i class="${method.icon}"></i>`
+                                        }
                                     </div>
                                     <div class="flex-1">
                                         <div class="font-bold">${method.name}</div>
@@ -3866,7 +3895,10 @@
                             ${methods.map(method => `
                                 <div class="payment-method-card" data-method-id="${method.id}">
                                     <div class="payment-method-icon">
-                                        <i class="${method.icon}"></i>
+                                        ${method.imageId ? 
+                                            `<img src="${this.app.images.getUrl(method.imageId)}" class="w-full h-full object-cover">` : 
+                                            `<i class="${method.icon}"></i>`
+                                        }
                                     </div>
                                     <div class="flex-1">
                                         <div class="font-bold">${method.name}</div>
@@ -4036,7 +4068,7 @@
                     `).join('');
                 }
 
-                // ========== إدارة طرق الدفع ==========
+                // ========== إدارة طرق الدفع مع الصور ==========
                 openPaymentMethodsManagement() {
                     const methods = this.app.paymentMethods.getAll();
                     
@@ -4048,12 +4080,15 @@
                             </button>
                         </div>
 
-                        <div class="space-y-2 mb-4">
+                        <div class="space-y-2 mb-4 max-h-96 overflow-y-auto custom-scroll">
                             ${methods.map(method => `
                                 <div class="admin-item">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
-                                            <i class="${method.icon}"></i>
+                                        <div class="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+                                            ${method.imageId ? 
+                                                `<img src="${this.app.images.getUrl(method.imageId)}" class="w-full h-full object-cover">` : 
+                                                `<i class="${method.icon}"></i>`
+                                            }
                                         </div>
                                         <div>
                                             <div class="font-bold">${method.name}</div>
@@ -4066,6 +4101,9 @@
                                         </button>
                                         <button class="edit-payment-method" data-id="${method.id}" title="تعديل">
                                             <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button class="delete-payment-method" data-id="${method.id}" title="حذف">
+                                            <i class="fa-solid fa-trash text-red-400"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -4098,6 +4136,15 @@
                         });
                     });
                     
+                    document.querySelectorAll('.delete-payment-method').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            if (confirm('هل أنت متأكد من حذف طريقة الدفع هذه؟')) {
+                                this.app.deletePaymentMethod(id);
+                            }
+                        });
+                    });
+                    
                     document.getElementById('addPaymentMethodBtn').addEventListener('click', () => {
                         this.openPaymentMethodModal();
                     });
@@ -4114,17 +4161,32 @@
                             </button>
                         </div>
 
-                        <form id="paymentMethodForm" class="space-y-4">
+                        <form id="paymentMethodForm" class="space-y-4 max-h-[70vh] overflow-y-auto custom-scroll p-2">
                             <input type="hidden" id="paymentMethodId" value="${method?.id || ''}">
                             
+                            <!-- صورة طريقة الدفع -->
+                            <div>
+                                <label class="input-label">صورة طريقة الدفع</label>
+                                <div class="upload-area" id="paymentMethodImageUpload">
+                                    <i class="fa-solid fa-cloud-upload-alt text-3xl text-blue-400 mb-2"></i>
+                                    <p class="text-sm">اضغط لرفع صورة</p>
+                                    <input type="file" id="paymentMethodImageFile" accept="image/*" class="hidden">
+                                </div>
+                                <div id="paymentMethodImagePreview" class="mt-3 ${method?.imageId ? '' : 'hidden'}">
+                                    <img src="${method?.imageId ? this.app.images.getUrl(method.imageId) : ''}" 
+                                         class="image-preview mx-auto" id="paymentMethodPreviewImg">
+                                </div>
+                            </div>
+
                             <div>
                                 <label class="input-label">اسم الطريقة</label>
                                 <input type="text" id="methodName" value="${method?.name || ''}" class="input-field" required>
                             </div>
 
                             <div>
-                                <label class="input-label">الأيقونة</label>
+                                <label class="input-label">الأيقونة (Font Awesome)</label>
                                 <input type="text" id="methodIcon" value="${method?.icon || 'fa-credit-card'}" class="input-field" required>
+                                <p class="text-xs text-gray-400 mt-1">مثال: fa-brands fa-tether, fa-regular fa-credit-card</p>
                             </div>
 
                             <div>
@@ -4132,8 +4194,8 @@
                                 <select id="methodType" class="input-field">
                                     <option value="crypto" ${method?.type === 'crypto' ? 'selected' : ''}>عملة رقمية</option>
                                     <option value="card" ${method?.type === 'card' ? 'selected' : ''}>بطاقة ائتمان</option>
-                                    <option value="bank" ${method?.type === 'bank' ? 'selected' : ''}}>تحويل بنكي</option>
-                                    <option value="wallet" ${method?.type === 'wallet' ? 'selected' : ''}}>محفظة</option>
+                                    <option value="bank" ${method?.type === 'bank' ? 'selected' : ''}>تحويل بنكي</option>
+                                    <option value="wallet" ${method?.type === 'wallet' ? 'selected' : ''}>محفظة</option>
                                 </select>
                             </div>
 
@@ -4166,6 +4228,7 @@
                             <div>
                                 <label class="input-label">التفاصيل (JSON)</label>
                                 <textarea id="methodDetails" class="input-field" rows="3">${JSON.stringify(method?.details || {}, null, 2)}</textarea>
+                                <p class="text-xs text-gray-400 mt-1">مثال: {"address": "العنوان", "network": "TRC20"}</p>
                             </div>
 
                             <div class="flex gap-3 pt-4">
@@ -4177,14 +4240,61 @@
 
                     this.modal.classList.add('open');
                     
+                    // متغير مؤقت لتخزين معرف الصورة المرفوعة
+                    window.tempPaymentMethodImage = null;
+                    
                     document.getElementById('closeModalBtn').addEventListener('click', () => {
+                        this.cleanupTempImage();
                         this.modal.classList.remove('open');
                     });
                     
                     document.getElementById('cancelBtn').addEventListener('click', () => {
+                        this.cleanupTempImage();
                         this.modal.classList.remove('open');
                     });
                     
+                    // رفع الصورة
+                    const uploadArea = document.getElementById('paymentMethodImageUpload');
+                    const fileInput = document.getElementById('paymentMethodImageFile');
+                    
+                    uploadArea.addEventListener('click', () => fileInput.click());
+                    
+                    fileInput.addEventListener('change', async (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            try {
+                                // التحقق من نوع الملف
+                                if (!CONFIG.SUPPORTED_IMAGE_TYPES.includes(file.type)) {
+                                    this.app.toast.error('نوع الملف غير مدعوم');
+                                    return;
+                                }
+                                
+                                // التحقق من الحجم
+                                if (file.size > CONFIG.MAX_IMAGE_SIZE) {
+                                    this.app.toast.error(`حجم الملف كبير جداً (الحد الأقصى ${CONFIG.MAX_IMAGE_SIZE / 1024 / 1024} ميجابايت)`);
+                                    return;
+                                }
+                                
+                                // رفع الصورة
+                                const imageId = await this.app.images.upload(file, {
+                                    metadata: { type: 'payment_method' }
+                                });
+                                
+                                // عرض الصورة
+                                document.getElementById('paymentMethodPreviewImg').src = this.app.images.getUrl(imageId);
+                                document.getElementById('paymentMethodImagePreview').classList.remove('hidden');
+                                
+                                // حفظ معرف الصورة
+                                window.tempPaymentMethodImage = imageId;
+                                
+                                this.app.toast.success('تم رفع الصورة بنجاح');
+                            } catch (error) {
+                                this.app.toast.error(error.message);
+                            }
+                        }
+                    });
+                    
+                    // حفظ النموذج
                     document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
                         e.preventDefault();
                         
@@ -4201,6 +4311,11 @@
                                 details: JSON.parse(document.getElementById('methodDetails').value || '{}')
                             };
                             
+                            // إضافة الصورة إذا تم رفعها
+                            if (window.tempPaymentMethodImage) {
+                                formData.imageId = window.tempPaymentMethodImage;
+                            }
+                            
                             const id = document.getElementById('paymentMethodId').value;
                             
                             if (id) {
@@ -4208,10 +4323,19 @@
                             } else {
                                 this.app.addPaymentMethod(formData);
                             }
+                            
+                            window.tempPaymentMethodImage = null;
                         } catch (error) {
                             this.app.toast.error('خطأ في صيغة JSON');
                         }
                     });
+                }
+
+                cleanupTempImage() {
+                    if (window.tempPaymentMethodImage) {
+                        this.app.images.delete(window.tempPaymentMethodImage);
+                        window.tempPaymentMethodImage = null;
+                    }
                 }
 
                 // ========== إدارة المتجر ==========
@@ -5097,7 +5221,7 @@
                     // تهيئة مديري البيانات
                     this.users = new UserService();
                     this.wallet = new WalletService();
-                    this.paymentMethods = new PaymentMethodService();
+                    this.paymentMethods = new PaymentMethodService(this.images);
                     this.depositRequests = new RequestService('deposit');
                     this.withdrawalRequests = new RequestService('withdrawal');
                     this.notifications = new NotificationService();
@@ -5404,6 +5528,12 @@
                                     `).join('')}
                                 </div>
                             ` : ''}
+                            
+                            ${method.imageId ? `
+                                <div class="mt-3 flex justify-center">
+                                    <img src="${this.images.getUrl(method.imageId)}" class="w-32 h-32 object-contain rounded-lg">
+                                </div>
+                            ` : ''}
                         </div>
 
                         <div class="glass-card p-4 rounded-xl mb-4">
@@ -5567,6 +5697,13 @@
                     this.telegram.hapticFeedback('notification', 'success');
                 }
 
+                deletePaymentMethod(id) {
+                    this.paymentMethods.delete(id);
+                    this.toast.success('تم حذف طريقة الدفع بنجاح');
+                    this.ui.openPaymentMethodsManagement();
+                    this.telegram.hapticFeedback('notification', 'success');
+                }
+
                 // ========== إدارة المتجر ==========
                 async addCategory(data) {
                     this.store.addCategory(data);
@@ -5642,7 +5779,7 @@
                     
                     // إعادة تهيئة الخدمات
                     this.wallet = new WalletService();
-                    this.paymentMethods = new PaymentMethodService();
+                    this.paymentMethods = new PaymentMethodService(this.images);
                     this.store = new StoreService(this.images);
                     this.cart = new CartService();
                     this.depositRequests = new RequestService('deposit');
