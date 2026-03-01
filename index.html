@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بوابة تيليجرام المتطورة - محفظة احترافية</title>
+    <title>بوابة تيليجرام المتطورة - محفظة احترافية مع رفع الصور</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -113,7 +113,7 @@
             font-weight: bold;
         }
 
-        /* Toast Notifications - متطور */
+        /* Toast Notifications */
         .toast-container {
             position: fixed;
             bottom: 20px;
@@ -169,9 +169,7 @@
         .toast.warning .toast-icon { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
         .toast.info .toast-icon { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
 
-        .toast-message {
-            flex: 1;
-        }
+        .toast-message { flex: 1; }
 
         @keyframes toastSlideUp {
             from { opacity: 0; transform: translateY(20px); }
@@ -220,9 +218,7 @@
             border-radius: 30px 30px 0 0;
         }
 
-        .settings-panel.open {
-            transform: translateY(0);
-        }
+        .settings-panel.open { transform: translateY(0); }
 
         .settings-overlay {
             position: fixed;
@@ -282,9 +278,7 @@
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
         }
 
-        .wallet-modal-overlay.open .wallet-modal {
-            transform: scale(1);
-        }
+        .wallet-modal-overlay.open .wallet-modal { transform: scale(1); }
 
         .wallet-tabs {
             display: flex;
@@ -315,10 +309,7 @@
             color: #3b82f6;
         }
 
-        .wallet-tab i {
-            margin-left: 6px;
-            font-size: 14px;
-        }
+        .wallet-tab i { margin-left: 6px; font-size: 14px; }
 
         .transaction-item {
             display: flex;
@@ -328,10 +319,7 @@
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .transaction-item:last-child {
-            border-bottom: none;
-        }
-
+        .transaction-item:last-child { border-bottom: none; }
         .transaction-amount.positive { color: #10b981; }
         .transaction-amount.negative { color: #ef4444; }
 
@@ -401,9 +389,7 @@
             margin-top: 12px;
         }
 
-        .balance-badge i {
-            color: #fbbf24;
-        }
+        .balance-badge i { color: #fbbf24; }
 
         /* شارة الإشعارات */
         .notification-badge {
@@ -465,6 +451,7 @@
             background: #334155;
             color: white;
             flex-shrink: 0;
+            overflow: hidden;
         }
         
         .payment-icon img {
@@ -485,9 +472,7 @@
             line-height: 1.6;
         }
 
-        .payment-details strong {
-            color: #3b82f6;
-        }
+        .payment-details strong { color: #3b82f6; }
 
         /* لوحة المشرف - إدارة المستخدمين */
         .user-item {
@@ -498,10 +483,7 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .user-item.blocked {
-            opacity: 0.5;
-            filter: grayscale(0.5);
-        }
+        .user-item.blocked { opacity: 0.5; filter: grayscale(0.5); }
 
         .badge-blocked {
             background: rgba(239, 68, 68, 0.2);
@@ -530,9 +512,7 @@
             cursor: pointer;
             transition: color 0.2s;
         }
-        .payment-method-admin .actions button:hover {
-            color: white;
-        }
+        .payment-method-admin .actions button:hover { color: white; }
         .payment-method-admin .actions button.delete:hover { color: #ef4444; }
         .payment-method-admin .actions button.edit:hover { color: #3b82f6; }
 
@@ -545,6 +525,46 @@
             padding: 24px;
             width: 100%;
             max-width: 350px;
+        }
+
+        /* رفع الصور */
+        .image-upload-area {
+            border: 2px dashed rgba(59, 130, 246, 0.5);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(0,0,0,0.2);
+        }
+        .image-upload-area:hover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .image-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 2px solid #3b82f6;
+            margin: 10px auto;
+        }
+        .delete-image-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .delete-image-btn:hover {
+            background: #ef4444;
+            color: white;
         }
     </style>
 </head>
@@ -605,10 +625,10 @@
         </div>
     </div>
 
-    <!-- Toast Container للتنبيهات المتطورة -->
+    <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Wallet Modal (يستخدم أيضاً للإشعارات) -->
+    <!-- Wallet Modal -->
     <div class="wallet-modal-overlay" id="walletModalOverlay">
         <div class="wallet-modal" id="walletModalContent"></div>
     </div>
@@ -618,7 +638,7 @@
         <div class="wallet-modal" id="adminPanelContent" style="max-width: 500px;"></div>
     </div>
 
-    <!-- Payment Method Modal -->
+    <!-- Payment Method Modal (مع رفع الصور) -->
     <div class="wallet-modal-overlay" id="paymentMethodModalOverlay">
         <div class="wallet-modal" id="paymentMethodModalContent" style="max-width: 450px;"></div>
     </div>
@@ -632,21 +652,24 @@
         (function() {
             // ======================== الإعدادات الثابتة ========================
             const CONFIG = {
-                ADMIN_ID: 7609492965, // غير هذا إلى معرف المشرف الخاص بك
+                ADMIN_ID: 7609492965, // غيّر هذا إلى معرف المشرف الخاص بك
                 DEFAULT_BALANCE: 1000,
                 MAX_TRANSACTIONS: 50,
                 STORAGE_KEYS: {
-                    USERS_DATA: 'users_data',              // بيانات جميع المستخدمين (كائن { userId: { balance, transactions, blocked, etc } })
+                    USERS_DATA: 'users_data',
                     DEPOSIT_REQUESTS: 'deposit_requests',
                     WITHDRAWAL_REQUESTS: 'withdrawal_requests',
                     PAYMENT_METHODS: 'payment_methods',
                     THEME: 'theme',
                     SETTINGS: 'settings',
-                    NOTIFICATIONS: 'notifications'
-                }
+                    NOTIFICATIONS: 'notifications',
+                    DAILY_OPS: 'daily_ops'
+                },
+                MAX_IMAGE_SIZE: 2 * 1024 * 1024, // 2MB
+                ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
             };
 
-            // ======================== خدمات مساعدة ========================
+            // ======================== الخدمات المساعدة ========================
             class StorageService {
                 static get(key, defaultValue = null) {
                     try {
@@ -699,7 +722,7 @@
                 }
             }
 
-            // ======================== نظام التنبيهات المتطور ========================
+            // ======================== نظام الإشعارات المتطور ========================
             class ToastManager {
                 constructor(containerId) {
                     this.container = document.getElementById(containerId);
@@ -733,12 +756,10 @@
                     this.container.appendChild(toast);
                     this.activeToasts.push(toast);
                     
-                    // تشغيل صوت إذا كان مفعلاً
                     if (this.soundEnabled && (type === 'success' || type === 'warning' || type === 'info')) {
                         this.playSound(type);
                     }
                     
-                    // اهتزاز إذا كان مفعلاً (للموبايل)
                     if (this.vibrateEnabled && navigator.vibrate) {
                         navigator.vibrate(200);
                     }
@@ -750,7 +771,6 @@
                 }
 
                 playSound(type) {
-                    // إنشاء صوت بسيط باستخدام Web Audio API
                     try {
                         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                         const oscillator = audioCtx.createOscillator();
@@ -828,38 +848,31 @@
                     this.STORAGE_KEY = CONFIG.STORAGE_KEYS.NOTIFICATIONS;
                 }
 
-                // تحميل الإشعارات من localStorage
                 loadNotifications() {
                     const saved = StorageService.get(this.STORAGE_KEY, []);
                     this.state.notifications = saved;
                 }
 
-                // حفظ الإشعارات
                 saveNotifications() {
                     StorageService.set(this.STORAGE_KEY, this.state.notifications);
                 }
 
-                // إضافة إشعار جديد
                 addNotification(userId, title, message, type = 'info') {
                     const notification = {
                         id: IdGenerator.generate('notif_'),
                         userId,
                         title,
                         message,
-                        type, // success, error, info, warning
+                        type,
                         read: false,
                         date: new Date().toISOString()
                     };
                     this.state.notifications.push(notification);
                     this.saveNotifications();
-                    
-                    // إرسال حدث للإشعار الجديد (لمن يرغب في الاستماع)
                     window.dispatchEvent(new CustomEvent('newNotification', { detail: notification }));
-                    
                     return notification;
                 }
 
-                // تحديد إشعار كمقروء
                 markAsRead(notificationId) {
                     const notif = this.state.notifications.find(n => n.id === notificationId);
                     if (notif) {
@@ -868,7 +881,6 @@
                     }
                 }
 
-                // تحديد كل إشعارات مستخدم معين كمقروءة
                 markAllAsRead(userId) {
                     this.state.notifications.forEach(n => {
                         if (n.userId === userId && !n.read) n.read = true;
@@ -876,67 +888,47 @@
                     this.saveNotifications();
                 }
 
-                // جلب إشعارات مستخدم معين (مرتبة من الأحدث)
                 getUserNotifications(userId) {
                     return this.state.notifications
                         .filter(n => n.userId === userId)
                         .sort((a, b) => new Date(b.date) - new Date(a.date));
                 }
 
-                // عدد الإشعارات غير المقروءة لمستخدم
                 getUnreadCount(userId) {
                     return this.state.notifications.filter(n => n.userId === userId && !n.read).length;
                 }
             }
 
             // ======================== إدارة الحالة المركزية (State) ========================
-            class AppState extends EventTarget {
+            class AppState {
                 constructor() {
-                    super();
-                    this.user = null;               // مستخدم تيليجرام الحالي
+                    this.user = null;
                     this.isAdmin = false;
                     this.loading = true;
                     this.accessDenied = false;
                     this.telegramMissing = false;
                     
-                    // بيانات المستخدمين (كل المستخدمين المسجلين)
-                    this.usersData = {};              // مفتاح = userId, قيمة = { balance, transactions, blocked, lastActive, etc }
-                    
-                    // بيانات المستخدم الحالي (مرجع سريع)
+                    this.usersData = {};
                     this.currentUserData = null;
-                    
-                    // إحصائيات عامة (للمشرف)
                     this.stats = { users: 0, bots: 0, dailyOps: 0 };
-                    
                     this.theme = 'dark';
                     this.settings = { language: 'ar', notifications: true, sound: true, vibrate: true };
-                    
-                    // الطلبات العامة (غير مرتبطة بمستخدم محدد)
                     this.depositRequests = [];
                     this.withdrawalRequests = [];
-                    
                     this.paymentMethods = [];
                     this.notifications = [];
-                    
-                    // عناوين المحافظ الافتراضية (يمكن تخصيصها لكل مستخدم لاحقاً)
                     this.defaultWalletAddress = 'T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ';
                 }
 
-                // تحديث حالة معينة وإرسال حدث
                 set(key, value) {
                     if (this[key] !== undefined) {
                         this[key] = value;
-                        this.dispatchEvent(new CustomEvent('stateChanged', { detail: { key, value } }));
+                        window.dispatchEvent(new CustomEvent('stateChanged', { detail: { key, value } }));
                     }
-                }
-
-                updateStats(stats) {
-                    this.stats = { ...this.stats, ...stats };
-                    this.dispatchEvent(new CustomEvent('statsUpdated', { detail: this.stats }));
                 }
             }
 
-            // ======================== إدارة البيانات (Data Layer) ========================
+            // ======================== إدارة البيانات (Data Layer) مع دعم الصور ========================
             class DataService {
                 constructor(state) {
                     this.state = state;
@@ -945,15 +937,15 @@
                 }
 
                 loadInitialData() {
-                    this.loadUsersData();            // تحميل بيانات جميع المستخدمين
-                    this.loadRequests();              // تحميل الطلبات
-                    this.loadPaymentMethods();        // تحميل طرق الدفع
-                    this.loadSettings();               // تحميل الإعدادات
-                    this.loadStats();                  // تحميل الإحصائيات
-                    this.notificationService.loadNotifications(); // تحميل الإشعارات
+                    this.loadUsersData();
+                    this.loadRequests();
+                    this.loadPaymentMethods();
+                    this.loadSettings();
+                    this.loadStats();
+                    this.notificationService.loadNotifications();
                 }
 
-                // ========== إدارة بيانات المستخدمين ==========
+                // ---------- بيانات المستخدمين ----------
                 loadUsersData() {
                     const saved = StorageService.get(CONFIG.STORAGE_KEYS.USERS_DATA, {});
                     this.state.usersData = saved;
@@ -963,17 +955,15 @@
                     StorageService.set(CONFIG.STORAGE_KEYS.USERS_DATA, this.state.usersData);
                 }
 
-                // الحصول على بيانات مستخدم معين (وإنشاء افتراضية إذا لم يكن موجوداً)
                 getUserData(userId) {
                     if (!this.state.usersData[userId]) {
-                        // إنشاء بيانات افتراضية لمستخدم جديد
                         this.state.usersData[userId] = {
                             balance: CONFIG.DEFAULT_BALANCE,
                             transactions: [],
                             blocked: false,
                             createdAt: new Date().toISOString(),
                             lastActive: new Date().toISOString(),
-                            walletAddress: this.state.defaultWalletAddress, // يمكن تخصيصها لكل مستخدم
+                            walletAddress: this.state.defaultWalletAddress,
                             name: this.state.user ? `${this.state.user.first_name} ${this.state.user.last_name || ''}`.trim() : `مستخدم ${userId}`
                         };
                         this.saveUsersData();
@@ -981,23 +971,18 @@
                     return this.state.usersData[userId];
                 }
 
-                // حفظ بيانات مستخدم معين
                 saveUserData(userId, data) {
                     this.state.usersData[userId] = { ...this.state.usersData[userId], ...data };
                     this.saveUsersData();
-                    // إذا كان هذا المستخدم هو المستخدم الحالي، قم بتحديث currentUserData
                     if (this.state.user && this.state.user.id == userId) {
                         this.state.currentUserData = this.state.usersData[userId];
-                        this.state.balance = this.state.currentUserData.balance; // لمزامنة الرصيد في الواجهة
                     }
                 }
 
-                // تحديث رصيد مستخدم مع إضافة معاملة
                 updateUserBalance(userId, delta, reason, type = 'adjust') {
                     const userData = this.getUserData(userId);
                     userData.balance += delta;
                     
-                    // إضافة معاملة
                     const transaction = {
                         id: IdGenerator.generate('tx_'),
                         type,
@@ -1014,15 +999,13 @@
                     userData.lastActive = new Date().toISOString();
                     this.saveUserData(userId, userData);
                     
-                    // إذا كان المستخدم الحالي، قم بتحديث الرصيد في الحالة العامة
                     if (this.state.user && this.state.user.id == userId) {
-                        this.state.balance = userData.balance;
+                        this.state.currentUserData = userData;
                     }
                     
                     return transaction;
                 }
 
-                // الحصول على جميع المستخدمين (كمصفوفة مع البيانات)
                 getAllUsers() {
                     const usersList = [];
                     for (const [id, data] of Object.entries(this.state.usersData)) {
@@ -1039,7 +1022,7 @@
                     return usersList;
                 }
 
-                // ========== الطلبات (إيداع / سحب) مع ربط المستخدم ==========
+                // ---------- الطلبات ----------
                 loadRequests() {
                     this.state.depositRequests = StorageService.get(CONFIG.STORAGE_KEYS.DEPOSIT_REQUESTS, []);
                     this.state.withdrawalRequests = StorageService.get(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, []);
@@ -1066,9 +1049,7 @@
                     this.state.depositRequests.push(request);
                     this.saveRequests();
                     this.incrementDailyOps();
-                    
                     window.dispatchEvent(new CustomEvent('newDepositRequest', { detail: request }));
-                    
                     return request;
                 }
 
@@ -1092,29 +1073,23 @@
                     this.state.withdrawalRequests.push(request);
                     this.saveRequests();
                     this.incrementDailyOps();
-                    
                     window.dispatchEvent(new CustomEvent('newWithdrawalRequest', { detail: request }));
-                    
                     return { success: true, id: request.id, request };
                 }
 
-                // قبول طلب (إيداع أو سحب) – يتم تحديث رصيد المستخدم
                 acceptRequest(request, type) {
                     if (type === 'deposit') {
                         const req = this.state.depositRequests.find(r => r.id === request.id);
                         if (req && req.status === 'pending') {
                             req.status = 'approved';
-                            // إضافة المبلغ إلى رصيد المستخدم
                             this.updateUserBalance(req.userId, req.amount, `شحن عبر ${req.method} (رقم العملية: ${req.transactionId || 'غير محدد'})`, 'deposit');
                             this.saveRequests();
-                            
                             this.notificationService.addNotification(
                                 req.userId,
                                 '✅ تم قبول طلب الشحن',
                                 `تم قبول طلب الشحن بمبلغ ${req.amount} عبر ${req.method}. رقم العملية: ${req.transactionId || 'غير محدد'}`,
                                 'success'
                             );
-                            
                             return true;
                         }
                     } else if (type === 'withdrawal') {
@@ -1123,20 +1098,16 @@
                             const userData = this.getUserData(req.userId);
                             if (userData.balance >= req.amount) {
                                 req.status = 'approved';
-                                // خصم المبلغ من رصيد المستخدم
                                 this.updateUserBalance(req.userId, -req.amount, `سحب عبر ${req.method} إلى ${req.details || 'محفظة'}`, 'withdraw');
                                 this.saveRequests();
-                                
                                 this.notificationService.addNotification(
                                     req.userId,
                                     '✅ تم قبول طلب السحب',
                                     `تم قبول طلب السحب بمبلغ ${req.amount} عبر ${req.method}. التفاصيل: ${req.details}`,
                                     'success'
                                 );
-                                
                                 return true;
                             } else {
-                                // رصيد غير كافٍ (قد يحدث إذا تغير الرصيد بعد تقديم الطلب)
                                 return false;
                             }
                         }
@@ -1150,14 +1121,12 @@
                         if (req) {
                             req.status = 'rejected';
                             this.saveRequests();
-                            
                             this.notificationService.addNotification(
                                 req.userId,
                                 '❌ تم رفض طلب الشحن',
                                 `تم رفض طلب الشحن بمبلغ ${req.amount} عبر ${req.method}.`,
                                 'error'
                             );
-                            
                             return true;
                         }
                     } else if (type === 'withdrawal') {
@@ -1165,14 +1134,12 @@
                         if (req) {
                             req.status = 'rejected';
                             this.saveRequests();
-                            
                             this.notificationService.addNotification(
                                 req.userId,
                                 '❌ تم رفض طلب السحب',
                                 `تم رفض طلب السحب بمبلغ ${req.amount} عبر ${req.method}.`,
                                 'error'
                             );
-                            
                             return true;
                         }
                     }
@@ -1191,18 +1158,18 @@
                     return this.getPendingDeposits().length + this.getPendingWithdrawals().length;
                 }
 
-                // ========== طرق الدفع (عامة) ==========
+                // ---------- طرق الدفع مع الصور ----------
                 loadPaymentMethods() {
                     const saved = StorageService.get(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, null);
                     if (saved && Array.isArray(saved) && saved.length > 0) {
                         this.state.paymentMethods = saved;
                     } else {
-                        // الطرق الافتراضية
+                        // الطرق الافتراضية بدون صور
                         this.state.paymentMethods = [
-                            { id: IdGenerator.generate('usdt_'), name: 'USDT (TRC20)', icon: 'fa-brands fa-tether', description: 'عملة رقمية مستقرة', depositDetails: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ\nشبكة: TRC20', withdrawDetails: 'أدخل عنوان USDT الخاص بك' },
-                            { id: IdGenerator.generate('visa_'), name: 'Visa / Mastercard', icon: 'fa-regular fa-credit-card', description: 'بطاقات ائتمانية', depositDetails: 'رقم البطاقة: **** **** **** 1234\nتاريخ الانتهاء: 12/25\nCVV: ***', withdrawDetails: 'أدخل بيانات بطاقتك' },
-                            { id: IdGenerator.generate('bank_'), name: 'تحويل بنكي', icon: 'fa-solid fa-building-columns', description: 'حوالة بنكية محلية', depositDetails: 'IBAN: SA0380000000608010167519\nاسم المستفيد: شركة المدفوعات\nالبنك: الأهلي السعودي', withdrawDetails: 'أدخل رقم IBAN الخاص بك' },
-                            { id: IdGenerator.generate('telegram_'), name: 'محفظة تيليجرام', icon: 'fa-brands fa-telegram', description: '@wallet_bot', depositDetails: '@wallet_bot\nأرسل المبلغ إلى بوت المحفظة', withdrawDetails: 'أدخل معرف تيليجرام للمحفظة' }
+                            { id: IdGenerator.generate('usdt_'), name: 'USDT (TRC20)', icon: 'fa-brands fa-tether', iconType: 'fa', description: 'عملة رقمية مستقرة', depositDetails: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ\nشبكة: TRC20', withdrawDetails: 'أدخل عنوان USDT الخاص بك' },
+                            { id: IdGenerator.generate('visa_'), name: 'Visa / Mastercard', icon: 'fa-regular fa-credit-card', iconType: 'fa', description: 'بطاقات ائتمانية', depositDetails: 'رقم البطاقة: **** **** **** 1234\nتاريخ الانتهاء: 12/25\nCVV: ***', withdrawDetails: 'أدخل بيانات بطاقتك' },
+                            { id: IdGenerator.generate('bank_'), name: 'تحويل بنكي', icon: 'fa-solid fa-building-columns', iconType: 'fa', description: 'حوالة بنكية محلية', depositDetails: 'IBAN: SA0380000000608010167519\nاسم المستفيد: شركة المدفوعات\nالبنك: الأهلي السعودي', withdrawDetails: 'أدخل رقم IBAN الخاص بك' },
+                            { id: IdGenerator.generate('telegram_'), name: 'محفظة تيليجرام', icon: 'fa-brands fa-telegram', iconType: 'fa', description: '@wallet_bot', depositDetails: '@wallet_bot\nأرسل المبلغ إلى بوت المحفظة', withdrawDetails: 'أدخل معرف تيليجرام للمحفظة' }
                         ];
                     }
                 }
@@ -1233,17 +1200,15 @@
                     this.savePaymentMethods();
                 }
 
-                // ========== الإحصائيات (عدد المستخدمين، البوتات، العمليات اليومية) ==========
+                // ---------- الإحصائيات ----------
                 loadStats() {
-                    // عدد المستخدمين هو عدد المفاتيح في usersData
                     const usersCount = Object.keys(this.state.usersData).length;
-                    const bots = []; // يمكن إضافتها لاحقاً
                     const dailyOpsData = StorageService.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
                     const today = DateUtils.getTodayDate();
                     
                     this.state.stats = {
                         users: usersCount,
-                        bots: bots.length,
+                        bots: 0,
                         dailyOps: dailyOpsData[today] || 0
                     };
                 }
@@ -1256,7 +1221,7 @@
                     this.loadStats();
                 }
 
-                // ========== الإعدادات ==========
+                // ---------- الإعدادات ----------
                 loadSettings() {
                     const settings = StorageService.get(CONFIG.STORAGE_KEYS.SETTINGS, null);
                     if (settings) {
@@ -1268,7 +1233,7 @@
                     StorageService.set(CONFIG.STORAGE_KEYS.SETTINGS, this.state.settings);
                 }
 
-                // ========== الثيم ==========
+                // ---------- الثيم ----------
                 loadTheme() {
                     const theme = StorageService.get(CONFIG.STORAGE_KEYS.THEME, 'dark');
                     this.state.theme = theme;
@@ -1281,7 +1246,7 @@
                 }
             }
 
-            // ======================== مدير واجهة المستخدم (UI Manager) ========================
+            // ======================== مدير واجهة المستخدم (UI Manager) مع دعم رفع الصور ========================
             class UIManager {
                 constructor(state, dataService, telegramService, toast) {
                     this.state = state;
@@ -1290,20 +1255,23 @@
                     this.toast = toast;
                     this.appContainer = document.getElementById('app');
                     this.currentModal = null;
-                    
-                    // ربط أحداث الحالة
-                    this.state.addEventListener('balanceUpdated', () => this.updateBalanceDisplay());
-                    this.state.addEventListener('statsUpdated', () => this.updateStatsDisplay());
-                    
-                    // الاستماع للأحداث الجديدة للطلبات
+
+                    window.addEventListener('stateChanged', (e) => this.handleStateChange(e));
                     window.addEventListener('newDepositRequest', (e) => this.handleNewRequest(e.detail, 'شحن'));
                     window.addEventListener('newWithdrawalRequest', (e) => this.handleNewRequest(e.detail, 'سحب'));
-                    
-                    // الاستماع للإشعارات الجديدة
                     window.addEventListener('newNotification', (e) => this.handleNewNotification(e.detail));
                 }
 
-                // معالج الطلبات الجديدة للمشرف
+                handleStateChange(e) {
+                    const { key, value } = e.detail;
+                    if (key === 'currentUserData' && value) {
+                        this.updateBalanceDisplay();
+                    }
+                    if (key === 'stats') {
+                        this.updateStatsDisplay();
+                    }
+                }
+
                 handleNewRequest(request, type) {
                     if (this.state.isAdmin) {
                         this.toast.success(`🔔 طلب ${type} جديد
@@ -1317,19 +1285,16 @@
                     }
                 }
 
-                // معالج الإشعارات الجديدة (للمستخدم العادي)
                 handleNewNotification(notification) {
                     if (this.state.user && this.state.user.id === notification.userId) {
-                        const type = notification.type;
-                        this.toast.show(notification.message, type);
+                        this.toast.show(notification.message, notification.type);
                         this.updateNotificationBadge();
                         if (!this.state.isAdmin) {
-                            this.render(); // إعادة رسم لتحديث العداد
+                            this.render();
                         }
                     }
                 }
 
-                // تحديث شارة الطلبات المعلقة (للمشرف)
                 updatePendingBadge() {
                     const walletIcon = document.getElementById('walletIconLarge');
                     if (!walletIcon) return;
@@ -1352,7 +1317,6 @@
                     document.title = count > 0 ? `(${count}) بوابة تيليجرام` : 'بوابة تيليجرام المتطورة';
                 }
 
-                // تحديث شارة الإشعارات (للمستخدم)
                 updateNotificationBadge() {
                     const bell = document.getElementById('notificationBell');
                     if (!bell) return;
@@ -1376,7 +1340,23 @@
                     }
                 }
 
-                // التصيير الرئيسي
+                updateBalanceDisplay() {
+                    const balanceSpan = document.querySelector('#balanceBadge span');
+                    if (balanceSpan) {
+                        balanceSpan.textContent = this.state.currentUserData?.balance.toLocaleString('ar-EG') || '0';
+                    }
+                }
+
+                updateStatsDisplay() {
+                    const stats = this.state.stats;
+                    const usersEl = document.getElementById('statsUsers');
+                    const botsEl = document.getElementById('statsBots');
+                    const dailyOpsEl = document.getElementById('statsDailyOps');
+                    if (usersEl) usersEl.textContent = stats.users.toLocaleString('ar-EG');
+                    if (botsEl) botsEl.textContent = stats.bots;
+                    if (dailyOpsEl) dailyOpsEl.textContent = stats.dailyOps;
+                }
+
                 render() {
                     if (this.state.telegramMissing) {
                         this.appContainer.innerHTML = this.renderTelegramMissing();
@@ -1395,7 +1375,6 @@
                     this.updateNotificationBadge();
                 }
 
-                // مكونات التصيير
                 renderLoading() {
                     return `
                         <div class="flex flex-col items-center justify-center text-center space-y-6 animate-enter">
@@ -1465,13 +1444,10 @@
                     const user = this.state.user;
                     const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
                     const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
-                    
-                    // بيانات المستخدم الحالي
                     const userData = this.state.currentUserData || { balance: 0, transactions: [] };
                     
                     return `
                         <div class="space-y-5 animate-enter pb-10">
-                            <!-- Header Profile Card -->
                             <div class="glass-card p-5 rounded-3xl relative overflow-hidden group">
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
                                 <div class="flex items-center gap-4 relative z-10">
@@ -1495,14 +1471,12 @@
                                 </div>
                             </div>
 
-                            <!-- أيقونة المحفظة -->
                             <div class="flex justify-center my-4">
                                 <div class="wallet-icon-large" id="walletIconLarge">
                                     <i class="fa-solid fa-wallet"></i>
                                 </div>
                             </div>
 
-                            <!-- بطاقة الرصيد -->
                             <div class="flex justify-center">
                                 <div class="balance-badge" id="balanceBadge">
                                     <i class="fa-solid fa-coins"></i>
@@ -1510,7 +1484,6 @@
                                 </div>
                             </div>
 
-                            <!-- Stats Grid -->
                             <div class="grid grid-cols-2 gap-4 mt-4">
                                 <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
                                     <div class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2">
@@ -1528,7 +1501,6 @@
                                 </div>
                             </div>
 
-                            <!-- Logout Button -->
                             <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
                                 <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
                                 تسجيل الخروج
@@ -1546,7 +1518,6 @@
 
                     return `
                         <div class="space-y-5 animate-enter pb-10">
-                            <!-- Header Profile Card -->
                             <div class="glass-card p-5 rounded-3xl relative overflow-hidden border-2 border-yellow-500/30">
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
                                 <div class="flex items-center gap-4 relative z-10">
@@ -1570,7 +1541,6 @@
                                 </div>
                             </div>
 
-                            <!-- أيقونة المحفظة مع عداد الطلبات -->
                             <div class="flex justify-center my-4">
                                 <div class="wallet-icon-large" id="walletIconLarge">
                                     <i class="fa-solid fa-wallet"></i>
@@ -1578,7 +1548,6 @@
                                 </div>
                             </div>
 
-                            <!-- بطاقة الرصيد (للمشرف يمكن عرض رصيده الشخصي) -->
                             <div class="flex justify-center">
                                 <div class="balance-badge" id="balanceBadge">
                                     <i class="fa-solid fa-coins"></i>
@@ -1586,7 +1555,6 @@
                                 </div>
                             </div>
 
-                            <!-- إحصائيات -->
                             <div class="grid grid-cols-3 gap-2 mt-4">
                                 <div class="glass-card p-3 rounded-2xl text-center hover:bg-white/5 transition-colors cursor-default">
                                     <div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-1">
@@ -1611,14 +1579,12 @@
                                 </div>
                             </div>
 
-                            <!-- زر لوحة الإدارة -->
                             <button id="openAdminPanelBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2 mt-2">
                                 <i class="fa-solid fa-gears"></i>
                                 لوحة الإدارة (الطلبات، المستخدمين، طرق الدفع)
                                 ${pendingCount > 0 ? `<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">${pendingCount}</span>` : ''}
                             </button>
 
-                            <!-- Logout Button -->
                             <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
                                 <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
                                 تسجيل الخروج
@@ -1627,26 +1593,6 @@
                     `;
                 }
 
-                // تحديث عرض الرصيد
-                updateBalanceDisplay() {
-                    const balanceSpan = document.querySelector('#balanceBadge span');
-                    if (balanceSpan) {
-                        balanceSpan.textContent = this.state.currentUserData?.balance.toLocaleString('ar-EG') || '0';
-                    }
-                }
-
-                // تحديث عرض الإحصائيات
-                updateStatsDisplay() {
-                    const stats = this.state.stats;
-                    const usersEl = document.getElementById('statsUsers');
-                    const botsEl = document.getElementById('statsBots');
-                    const dailyOpsEl = document.getElementById('statsDailyOps');
-                    if (usersEl) usersEl.textContent = stats.users.toLocaleString('ar-EG');
-                    if (botsEl) botsEl.textContent = stats.bots;
-                    if (dailyOpsEl) dailyOpsEl.textContent = stats.dailyOps;
-                }
-
-                // ربط الأحداث
                 bindEvents() {
                     const logoutBtn = document.getElementById('logoutBtn');
                     if (logoutBtn) {
@@ -1672,7 +1618,7 @@
                     }
                 }
 
-                // ========== نوافذ مودال ==========
+                // ---------- مودال المحفظة ----------
                 openWalletModal() {
                     const modalOverlay = document.getElementById('walletModalOverlay');
                     const modalContent = document.getElementById('walletModalContent');
@@ -1703,28 +1649,41 @@
                             `;
                         }).join('');
 
-                    const paymentMethodsHtml = paymentMethods.map(m => `
-                        <div class="payment-method" data-method-id="${m.id}">
-                            <div class="payment-icon">
-                                <i class="${m.icon}"></i>
+                    // عرض الأيقونة المناسبة (صورة أو FontAwesome)
+                    const paymentMethodsHtml = paymentMethods.map(m => {
+                        let iconHtml = '';
+                        if (m.iconType === 'image' && m.icon) {
+                            iconHtml = `<img src="${m.icon}" alt="${m.name}">`;
+                        } else {
+                            iconHtml = `<i class="${m.icon || 'fa-solid fa-credit-card'}"></i>`;
+                        }
+                        return `
+                            <div class="payment-method" data-method-id="${m.id}">
+                                <div class="payment-icon">${iconHtml}</div>
+                                <div class="flex-1">
+                                    <div class="font-bold">${m.name}</div>
+                                    <div class="text-xs text-gray-400">${(m.description || '').substring(0, 30)}...</div>
+                                </div>
                             </div>
-                            <div class="flex-1">
-                                <div class="font-bold">${m.name}</div>
-                                <div class="text-xs text-gray-400">${(m.description || '').substring(0, 30)}...</div>
-                            </div>
-                        </div>
-                    `).join('');
+                        `;
+                    }).join('');
 
-                    const withdrawMethodsHtml = paymentMethods.map(m => `
-                        <div class="payment-method" data-method-id="${m.id}">
-                            <div class="payment-icon">
-                                <i class="${m.icon}"></i>
+                    const withdrawMethodsHtml = paymentMethods.map(m => {
+                        let iconHtml = '';
+                        if (m.iconType === 'image' && m.icon) {
+                            iconHtml = `<img src="${m.icon}" alt="${m.name}">`;
+                        } else {
+                            iconHtml = `<i class="${m.icon || 'fa-solid fa-credit-card'}"></i>`;
+                        }
+                        return `
+                            <div class="payment-method" data-method-id="${m.id}">
+                                <div class="payment-icon">${iconHtml}</div>
+                                <div class="flex-1">
+                                    <div class="font-bold">${m.name}</div>
+                                </div>
                             </div>
-                            <div class="flex-1">
-                                <div class="font-bold">${m.name}</div>
-                            </div>
-                        </div>
-                    `).join('');
+                        `;
+                    }).join('');
 
                     return `
                         <div class="flex justify-between items-center mb-4">
@@ -1748,12 +1707,9 @@
                         </div>
 
                         <div id="walletTabContent">
-                            <!-- تبويب الشحن -->
                             <div class="tab-pane active" id="tab-deposit">
                                 <p class="text-sm text-gray-300 mb-3">اختر طريقة الدفع:</p>
-                                <div class="payment-methods-list mb-4">
-                                    ${paymentMethodsHtml}
-                                </div>
+                                <div class="payment-methods-list mb-4">${paymentMethodsHtml}</div>
                                 
                                 <div id="depositDetailsDisplay" class="payment-details hidden">
                                     <strong>تفاصيل الإيداع:</strong>
@@ -1772,12 +1728,9 @@
                                 <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلبك من قبل الإدارة.</p>
                             </div>
 
-                            <!-- تبويب السحب -->
                             <div class="tab-pane hidden" id="tab-withdraw">
                                 <p class="text-sm text-gray-300 mb-3">اختر طريقة السحب:</p>
-                                <div class="payment-methods-list mb-4" id="withdrawMethodsList">
-                                    ${withdrawMethodsHtml}
-                                </div>
+                                <div class="payment-methods-list mb-4" id="withdrawMethodsList">${withdrawMethodsHtml}</div>
                                 <div id="withdrawDetailsContainer" class="mb-3">
                                     <input type="text" id="withdrawDetails" placeholder="أدخل التفاصيل" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
                                 </div>
@@ -1788,7 +1741,6 @@
                                 <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلب السحب من قبل الإدارة.</p>
                             </div>
 
-                            <!-- تبويب التحويل -->
                             <div class="tab-pane hidden" id="tab-transfer">
                                 <p class="text-sm text-gray-300 mb-2">تحويل إلى مستخدم آخر:</p>
                                 <input type="text" id="transferUserId" placeholder="معرف المستخدم" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
@@ -1798,11 +1750,8 @@
                                 </div>
                             </div>
 
-                            <!-- تبويب السجل -->
                             <div class="tab-pane hidden" id="tab-history">
-                                <div class="max-h-64 overflow-y-auto">
-                                    ${transactionsHtml}
-                                </div>
+                                <div class="max-h-64 overflow-y-auto">${transactionsHtml}</div>
                             </div>
                         </div>
                     `;
@@ -1817,7 +1766,6 @@
                         if (e.target === modalOverlay) modalOverlay.classList.remove('open');
                     });
 
-                    // تبديل التبويبات
                     const tabs = document.querySelectorAll('.wallet-tab');
                     tabs.forEach(tab => {
                         tab.addEventListener('click', () => {
@@ -1851,7 +1799,6 @@
                         });
                     });
 
-                    // طلب شحن
                     document.getElementById('depositBtn')?.addEventListener('click', () => {
                         const amount = parseFloat(document.getElementById('depositAmount').value);
                         const transactionId = document.getElementById('depositTransactionId').value.trim();
@@ -1905,7 +1852,6 @@
                         });
                     });
 
-                    // طلب سحب
                     document.getElementById('withdrawBtn')?.addEventListener('click', () => {
                         const amount = parseFloat(document.getElementById('withdrawAmount').value);
                         const details = document.getElementById('withdrawDetails').value.trim();
@@ -1943,7 +1889,6 @@
                         }
                     });
 
-                    // تحويل (بين المستخدمين)
                     document.getElementById('transferBtn')?.addEventListener('click', () => {
                         const amount = parseFloat(document.getElementById('transferAmount').value);
                         const targetId = document.getElementById('transferUserId').value.trim();
@@ -1955,7 +1900,6 @@
                             this.toast.error('أدخل معرف المستخدم');
                             return;
                         }
-                        // التحقق من أن المستخدم الهدف موجود في قاعدة البيانات
                         const targetUserData = this.data.getUserData(parseInt(targetId));
                         if (!targetUserData) {
                             this.toast.error('المستخدم غير موجود');
@@ -1966,21 +1910,18 @@
                             return;
                         }
                         
-                        // خصم من المرسل
                         this.data.updateUserBalance(this.state.user.id, -amount, `تحويل إلى المستخدم ${targetId}`, 'transfer');
-                        // إضافة إلى المستلم
                         this.data.updateUserBalance(parseInt(targetId), amount, `تحويل من المستخدم ${this.state.user.id}`, 'transfer');
                         
                         this.toast.success('تم التحويل بنجاح');
                         document.getElementById('transferAmount').value = '';
                         document.getElementById('transferUserId').value = '';
                         this.updateBalanceDisplay();
-                        // تحديث محتوى المودال
                         this.openWalletModal();
                     });
                 }
 
-                // لوحة المشرف (مع إضافة تبويب المستخدمين)
+                // ---------- لوحة المشرف ----------
                 openAdminPanel() {
                     const modalOverlay = document.getElementById('adminPanelOverlay');
                     const modalContent = document.getElementById('adminPanelContent');
@@ -1994,66 +1935,69 @@
                     const pendingWithdrawals = this.data.getPendingWithdrawals();
                     const allUsers = this.data.getAllUsers();
 
-                    // طلبات الإيداع
                     const depositsHtml = pendingDeposits.length === 0 
                         ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات شحن معلقة</p>'
                         : pendingDeposits.map(req => `
-                            <div class="request-item" data-id="${req.id}" data-type="deposit">
-                                <div class="request-header">
+                            <div class="request-item glass-card p-3 mb-2" data-id="${req.id}" data-type="deposit">
+                                <div class="request-header flex justify-between items-center">
                                     <span class="font-bold">${req.userName}</span>
-                                    <span class="badge-pending">قيد الانتظار</span>
+                                    <span class="badge-pending text-yellow-400 text-xs">قيد الانتظار</span>
                                 </div>
                                 <div class="text-sm">المبلغ: <span class="text-blue-400">${req.amount.toLocaleString('ar-EG')}</span></div>
                                 <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
                                 <div class="text-xs text-gray-400">رقم العملية: <span class="text-yellow-400">${req.transactionId || 'غير محدد'}</span></div>
                                 <div class="text-xs text-gray-400">التاريخ: ${DateUtils.formatDateTime(req.date)}</div>
-                                <div class="request-actions">
-                                    <button class="btn-accept accept-request" data-id="${req.id}" data-type="deposit">قبول</button>
-                                    <button class="btn-reject reject-request" data-id="${req.id}" data-type="deposit">رفض</button>
+                                <div class="request-actions flex gap-2 mt-2">
+                                    <button class="btn-accept accept-request bg-green-600 px-3 py-1 rounded-lg text-sm" data-id="${req.id}" data-type="deposit">قبول</button>
+                                    <button class="btn-reject reject-request bg-red-600 px-3 py-1 rounded-lg text-sm" data-id="${req.id}" data-type="deposit">رفض</button>
                                 </div>
                             </div>
                         `).join('');
 
-                    // طلبات السحب
                     const withdrawalsHtml = pendingWithdrawals.length === 0 
                         ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات سحب معلقة</p>'
                         : pendingWithdrawals.map(req => `
-                            <div class="request-item" data-id="${req.id}" data-type="withdrawal">
-                                <div class="request-header">
+                            <div class="request-item glass-card p-3 mb-2" data-id="${req.id}" data-type="withdrawal">
+                                <div class="request-header flex justify-between items-center">
                                     <span class="font-bold">${req.userName}</span>
-                                    <span class="badge-pending">قيد الانتظار</span>
+                                    <span class="badge-pending text-yellow-400 text-xs">قيد الانتظار</span>
                                 </div>
                                 <div class="text-sm">المبلغ: <span class="text-red-400">${req.amount.toLocaleString('ar-EG')}</span></div>
                                 <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
                                 <div class="text-xs text-gray-400">التفاصيل: ${req.details || 'غير محدد'}</div>
                                 <div class="text-xs text-gray-400">التاريخ: ${DateUtils.formatDateTime(req.date)}</div>
-                                <div class="request-actions">
-                                    <button class="btn-accept accept-request" data-id="${req.id}" data-type="withdrawal">قبول</button>
-                                    <button class="btn-reject reject-request" data-id="${req.id}" data-type="withdrawal">رفض</button>
+                                <div class="request-actions flex gap-2 mt-2">
+                                    <button class="btn-accept accept-request bg-green-600 px-3 py-1 rounded-lg text-sm" data-id="${req.id}" data-type="withdrawal">قبول</button>
+                                    <button class="btn-reject reject-request bg-red-600 px-3 py-1 rounded-lg text-sm" data-id="${req.id}" data-type="withdrawal">رفض</button>
                                 </div>
                             </div>
                         `).join('');
 
-                    // طرق الدفع
-                    const paymentMethodsHtml = this.state.paymentMethods.map(m => `
-                        <div class="payment-method-admin">
-                            <div class="flex items-center gap-3">
-                                <div class="payment-icon">
-                                    <i class="${m.icon}"></i>
+                    // عرض طرق الدفع مع الصور
+                    const paymentMethodsHtml = this.state.paymentMethods.map(m => {
+                        let iconHtml = '';
+                        if (m.iconType === 'image' && m.icon) {
+                            iconHtml = `<img src="${m.icon}" alt="${m.name}" class="w-full h-full object-cover">`;
+                        } else {
+                            iconHtml = `<i class="${m.icon || 'fa-solid fa-credit-card'}"></i>`;
+                        }
+                        return `
+                            <div class="payment-method-admin">
+                                <div class="flex items-center gap-3">
+                                    <div class="payment-icon">${iconHtml}</div>
+                                    <div>
+                                        <div class="font-bold">${m.name}</div>
+                                        <div class="text-xs text-gray-400">${m.description || ''}</div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div class="font-bold">${m.name}</div>
-                                    <div class="text-xs text-gray-400">${m.description || ''}</div>
+                                <div class="actions">
+                                    <button class="edit-payment-method" data-id="${m.id}" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button class="delete-payment-method" data-id="${m.id}" title="حذف"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
-                            <div class="actions">
-                                <button class="edit-payment-method" data-id="${m.id}" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button class="delete-payment-method" data-id="${m.id}" title="حذف"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </div>
-                    `).join('');
+                        `;
+                    }).join('');
 
-                    // قائمة المستخدمين
                     const usersHtml = allUsers.map(u => `
                         <div class="user-item ${u.blocked ? 'blocked' : ''}">
                             <div class="flex justify-between items-center">
@@ -2090,7 +2034,6 @@
                             <button class="wallet-tab" data-admin-tab="payment-methods">طرق الدفع</button>
                         </div>
 
-                        <!-- تبويب الطلبات -->
                         <div id="adminRequestsTab" class="admin-tab-content">
                             <div class="space-y-6">
                                 <div>
@@ -2112,23 +2055,17 @@
                             </div>
                         </div>
 
-                        <!-- تبويب المستخدمين -->
                         <div id="adminUsersTab" class="admin-tab-content hidden">
                             <h3 class="text-lg font-bold mb-2">قائمة المستخدمين (${allUsers.length})</h3>
-                            <div class="space-y-2 max-h-96 overflow-y-auto">
-                                ${usersHtml}
-                            </div>
+                            <div class="space-y-2 max-h-96 overflow-y-auto">${usersHtml}</div>
                         </div>
 
-                        <!-- تبويب طرق الدفع -->
                         <div id="adminPaymentMethodsTab" class="admin-tab-content hidden">
                             <div class="flex justify-between items-center mb-3">
                                 <h3 class="text-lg font-bold">طرق الدفع المتاحة</h3>
                                 <button id="addPaymentMethodBtn" class="bg-blue-600 px-3 py-1 rounded-lg text-sm"><i class="fa-solid fa-plus"></i> إضافة</button>
                             </div>
-                            <div class="space-y-2 max-h-96 overflow-y-auto">
-                                ${paymentMethodsHtml}
-                            </div>
+                            <div class="space-y-2 max-h-96 overflow-y-auto">${paymentMethodsHtml}</div>
                         </div>
                     `;
                 }
@@ -2142,7 +2079,6 @@
                         if (e.target === modalOverlay) modalOverlay.classList.remove('open');
                     });
 
-                    // تبديل التبويبات
                     const adminTabs = document.querySelectorAll('[data-admin-tab]');
                     adminTabs.forEach(tab => {
                         tab.addEventListener('click', () => {
@@ -2163,7 +2099,6 @@
                         });
                     });
 
-                    // قبول الطلبات
                     document.querySelectorAll('.accept-request').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const id = btn.dataset.id;
@@ -2182,7 +2117,7 @@
                                         • رقم الطلب: ${request.id}
                                         • تاريخ الطلب: ${DateUtils.formatDateTime(request.date)}
                                         تم تحديث الرصيد تلقائياً.`);
-                                    this.openAdminPanel(); // إعادة فتح اللوحة
+                                    this.openAdminPanel();
                                 } else {
                                     this.toast.error('❌ حدث خطأ (قد يكون الرصيد غير كافٍ)');
                                 }
@@ -2190,7 +2125,6 @@
                         });
                     });
 
-                    // رفض الطلبات
                     document.querySelectorAll('.reject-request').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const id = btn.dataset.id;
@@ -2212,7 +2146,6 @@
                         });
                     });
 
-                    // تعديل رصيد المستخدم
                     document.querySelectorAll('.edit-user-balance').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const userId = btn.dataset.id;
@@ -2220,7 +2153,6 @@
                         });
                     });
 
-                    // حظر/رفع حظر مستخدم
                     document.querySelectorAll('.toggle-user-block').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const userId = btn.dataset.id;
@@ -2228,16 +2160,14 @@
                             userData.blocked = !userData.blocked;
                             this.data.saveUserData(parseInt(userId), userData);
                             this.toast.success(userData.blocked ? 'تم حظر المستخدم' : 'تم رفع الحظر عن المستخدم');
-                            this.openAdminPanel(); // إعادة تحميل اللوحة
+                            this.openAdminPanel();
                         });
                     });
 
-                    // إضافة طريقة دفع
                     document.getElementById('addPaymentMethodBtn')?.addEventListener('click', () => {
                         this.openPaymentMethodModal();
                     });
 
-                    // تعديل وحذف طرق الدفع
                     document.querySelectorAll('.edit-payment-method').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const id = btn.dataset.id;
@@ -2257,7 +2187,7 @@
                     });
                 }
 
-                // مودال تعديل رصيد مستخدم (للمشرف)
+                // ---------- تعديل رصيد المستخدم ----------
                 openEditBalanceModal(userId) {
                     const modalOverlay = document.getElementById('editBalanceModalOverlay');
                     const modalContent = document.getElementById('editBalanceModalContent');
@@ -2324,11 +2254,11 @@
                         this.data.updateUserBalance(parseInt(userId), delta, reason, 'admin_adjust');
                         this.toast.success('تم تعديل الرصيد بنجاح');
                         modalOverlay.classList.remove('open');
-                        this.openAdminPanel(); // تحديث لوحة المشرف
+                        this.openAdminPanel();
                     });
                 }
 
-                // مودال إضافة/تعديل طريقة دفع
+                // ---------- مودال إضافة/تعديل طريقة دفع مع رفع الصور ----------
                 openPaymentMethodModal(editingId = null) {
                     const modalOverlay = document.getElementById('paymentMethodModalOverlay');
                     const modalContent = document.getElementById('paymentMethodModalContent');
@@ -2343,13 +2273,32 @@
                         </div>
                         <form id="paymentMethodForm" class="space-y-3">
                             <input type="hidden" id="methodId" value="${method?.id || ''}">
+                            
+                            <!-- حقل رفع الصورة -->
+                            <div>
+                                <label class="text-sm text-gray-400">صورة الطريقة (اختياري)</label>
+                                <div class="image-upload-area" id="imageUploadArea">
+                                    <input type="file" id="imageInput" accept="image/*" class="hidden">
+                                    <div id="imagePreviewContainer" class="flex flex-col items-center">
+                                        ${method && method.iconType === 'image' && method.icon ? 
+                                            `<img src="${method.icon}" class="image-preview" id="imagePreview">` : 
+                                            `<i class="fa-solid fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                             <p class="text-sm text-gray-400">انقر أو اسحب صورة هنا</p>`
+                                        }
+                                    </div>
+                                </div>
+                                ${method && method.iconType === 'image' && method.icon ? 
+                                    `<button type="button" id="deleteImageBtn" class="delete-image-btn mt-2"><i class="fa-solid fa-trash"></i> حذف الصورة</button>` : ''
+                                }
+                            </div>
+
                             <div>
                                 <label class="text-sm text-gray-400">اسم الطريقة</label>
                                 <input type="text" id="methodName" required value="${method?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
                             </div>
                             <div>
-                                <label class="text-sm text-gray-400">الأيقونة (class FontAwesome)</label>
-                                <input type="text" id="methodIcon" value="${method?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                <label class="text-sm text-gray-400">الأيقونة (class FontAwesome) - إذا لم ترفع صورة</label>
+                                <input type="text" id="methodIcon" value="${method?.iconType !== 'image' ? (method?.icon || '') : ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
                             </div>
                             <div>
                                 <label class="text-sm text-gray-400">وصف مختصر</label>
@@ -2372,6 +2321,86 @@
                     
                     modalOverlay.classList.add('open');
                     
+                    // ربط أحداث رفع الصورة
+                    const imageInput = document.getElementById('imageInput');
+                    const imageUploadArea = document.getElementById('imageUploadArea');
+                    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+                    
+                    imageUploadArea.addEventListener('click', () => imageInput.click());
+                    imageUploadArea.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        imageUploadArea.style.borderColor = '#3b82f6';
+                    });
+                    imageUploadArea.addEventListener('dragleave', () => {
+                        imageUploadArea.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+                    });
+                    imageUploadArea.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        imageUploadArea.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+                        const file = e.dataTransfer.files[0];
+                        if (file) handleImageFile(file);
+                    });
+                    
+                    imageInput.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) handleImageFile(file);
+                    });
+
+                    const handleImageFile = (file) => {
+                        // التحقق من النوع والحجم
+                        if (!CONFIG.ALLOWED_IMAGE_TYPES.includes(file.type)) {
+                            this.toast.error('نوع الملف غير مسموح. اختر صورة PNG, JPEG, GIF, WEBP');
+                            return;
+                        }
+                        if (file.size > CONFIG.MAX_IMAGE_SIZE) {
+                            this.toast.error('حجم الصورة كبير جداً. الحد الأقصى 2 ميجابايت');
+                            return;
+                        }
+
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const imageData = e.target.result;
+                            // عرض المعاينة
+                            imagePreviewContainer.innerHTML = `<img src="${imageData}" class="image-preview" id="imagePreview">`;
+                            // تخزين الصورة في حقل مخفي أو data attribute
+                            imageUploadArea.dataset.imageBase64 = imageData;
+                            
+                            // إضافة زر حذف إذا لم يكن موجوداً
+                            if (!document.getElementById('deleteImageBtn')) {
+                                const deleteBtn = document.createElement('button');
+                                deleteBtn.type = 'button';
+                                deleteBtn.id = 'deleteImageBtn';
+                                deleteBtn.className = 'delete-image-btn mt-2';
+                                deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i> حذف الصورة';
+                                deleteBtn.addEventListener('click', () => {
+                                    delete imageUploadArea.dataset.imageBase64;
+                                    imageInput.value = '';
+                                    imagePreviewContainer.innerHTML = `
+                                        <i class="fa-solid fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                        <p class="text-sm text-gray-400">انقر أو اسحب صورة هنا</p>
+                                    `;
+                                    deleteBtn.remove();
+                                });
+                                imageUploadArea.parentNode.appendChild(deleteBtn);
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    };
+
+                    // حذف الصورة الموجودة مسبقاً
+                    const deleteImageBtn = document.getElementById('deleteImageBtn');
+                    if (deleteImageBtn) {
+                        deleteImageBtn.addEventListener('click', () => {
+                            delete imageUploadArea.dataset.imageBase64;
+                            imageInput.value = '';
+                            imagePreviewContainer.innerHTML = `
+                                <i class="fa-solid fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-sm text-gray-400">انقر أو اسحب صورة هنا</p>
+                            `;
+                            deleteImageBtn.remove();
+                        });
+                    }
+
                     document.getElementById('closePaymentMethodModal').addEventListener('click', () => {
                         modalOverlay.classList.remove('open');
                     });
@@ -2384,13 +2413,20 @@
 
                     document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
                         e.preventDefault();
+                        
+                        const imageBase64 = imageUploadArea.dataset.imageBase64;
+                        const iconType = imageBase64 ? 'image' : 'fa';
+                        const icon = imageBase64 ? imageBase64 : document.getElementById('methodIcon').value;
+                        
                         const formData = {
                             name: document.getElementById('methodName').value,
-                            icon: document.getElementById('methodIcon').value,
+                            icon: icon,
+                            iconType: iconType,
                             description: document.getElementById('methodDescription').value,
                             depositDetails: document.getElementById('methodDepositDetails').value,
                             withdrawDetails: document.getElementById('methodWithdrawDetails').value
                         };
+                        
                         const id = document.getElementById('methodId').value;
                         
                         if (id) {
@@ -2402,11 +2438,11 @@
                         }
                         
                         modalOverlay.classList.remove('open');
-                        this.openAdminPanel(); // إعادة فتح لوحة المشرف
+                        this.openAdminPanel();
                     });
                 }
 
-                // مودال الإشعارات
+                // ---------- مودال الإشعارات ----------
                 openNotificationsModal() {
                     const modalOverlay = document.getElementById('walletModalOverlay');
                     const modalContent = document.getElementById('walletModalContent');
@@ -2451,9 +2487,7 @@
                                 <i class="fa-regular fa-bell-slash ml-1"></i> تحديد الكل كمقروء
                             </button>
                         </div>
-                        <div class="max-h-96 overflow-y-auto space-y-2">
-                            ${notificationsHtml}
-                        </div>
+                        <div class="max-h-96 overflow-y-auto space-y-2">${notificationsHtml}</div>
                     `;
                 }
 
@@ -2466,7 +2500,7 @@
                     document.getElementById('markAllRead')?.addEventListener('click', () => {
                         this.data.notificationService.markAllAsRead(this.state.user.id);
                         this.toast.success('تم تحديد الكل كمقروء');
-                        this.openNotificationsModal(); // إعادة فتح المودال
+                        this.openNotificationsModal();
                         this.updateNotificationBadge();
                     });
                     
@@ -2499,7 +2533,6 @@
                 }
 
                 async init() {
-                    // التحقق من بيئة تيليجرام
                     if (!this.telegram.isAvailable) {
                         this.state.telegramMissing = true;
                         this.state.loading = false;
@@ -2509,7 +2542,6 @@
 
                     this.telegram.init();
 
-                    // التحقق من صحة البيانات
                     if (!this.telegram.isValid() || !this.telegram.getUser()) {
                         this.state.accessDenied = true;
                         this.state.loading = false;
@@ -2521,26 +2553,18 @@
                     this.state.user = user;
                     this.state.isAdmin = (user.id === CONFIG.ADMIN_ID);
 
-                    // تحميل بيانات المستخدم الحالي
                     const userData = this.data.getUserData(user.id);
                     this.state.currentUserData = userData;
-                    this.state.balance = userData.balance; // للتوافق مع الأحداث
 
-                    // تسجيل المستخدم (تم في getUserData بالفعل)
-                    // لكن نضمن تحديث اسم المستخدم في data إذا كان جديداً
                     if (!userData.name) {
                         userData.name = `${user.first_name} ${user.last_name || ''}`.trim();
                         this.data.saveUserData(user.id, userData);
                     }
 
-                    // تحميل الثيم
                     const savedTheme = this.data.loadTheme();
                     this.applyTheme(savedTheme);
-
-                    // تحميل الإعدادات وتطبيقها على الـ Toast
                     this.loadSettings();
 
-                    // محاكاة تحميل البيانات
                     this.state.loading = true;
                     this.ui.render();
 
@@ -2550,7 +2574,6 @@
                         this.state.loading = false;
                         this.ui.render();
 
-                        // إعداد زر MainButton
                         this.telegram.setMainButton(
                             this.state.isAdmin ? "لوحة التحكم" : "تحديث البيانات",
                             '#3b82f6',
@@ -2581,8 +2604,10 @@
                     this.toast.soundEnabled = settings.sound;
                     this.toast.vibrateEnabled = settings.vibrate;
                     
-                    document.getElementById('soundToggle').checked = settings.sound;
-                    document.getElementById('vibrateToggle').checked = settings.vibrate;
+                    const soundToggle = document.getElementById('soundToggle');
+                    const vibrateToggle = document.getElementById('vibrateToggle');
+                    if (soundToggle) soundToggle.checked = settings.sound;
+                    if (vibrateToggle) vibrateToggle.checked = settings.vibrate;
                 }
 
                 applyTheme(theme) {
@@ -2594,21 +2619,21 @@
                         root.style.setProperty('--tg-theme-text-color', '#0f172a');
                         root.style.setProperty('--tg-theme-button-color', '#3b82f6');
                         root.style.setProperty('--tg-theme-button-text-color', '#ffffff');
-                        themeIcon.className = 'fa-solid fa-sun';
+                        if (themeIcon) themeIcon.className = 'fa-solid fa-sun';
                     } else {
                         root.style.setProperty('--tg-theme-bg-color', '#0f172a');
                         root.style.setProperty('--tg-theme-text-color', '#ffffff');
                         root.style.setProperty('--tg-theme-button-color', '#3b82f6');
                         root.style.setProperty('--tg-theme-button-text-color', '#ffffff');
-                        themeIcon.className = 'fa-solid fa-moon';
+                        if (themeIcon) themeIcon.className = 'fa-solid fa-moon';
                     }
                 }
             }
 
-            // ======================== بدء التطبيق ========================
+            // بدء التطبيق
             const app = new App();
 
-            // أحداث عامة (السمة والإعدادات)
+            // أحداث عامة
             document.getElementById('themeToggle').addEventListener('click', () => {
                 const newTheme = app.state.theme === 'dark' ? 'light' : 'dark';
                 app.state.theme = newTheme;
