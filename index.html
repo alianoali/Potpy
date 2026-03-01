@@ -21,12 +21,7 @@
     <link href="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.14.0/dist/emoji-picker-element.min.css" rel="stylesheet">
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* ========== المتغيرات العامة ========== */
         :root {
             --primary: #3b82f6;
             --primary-dark: #2563eb;
@@ -40,6 +35,14 @@
             --light-text: #0f172a;
             --glass-bg: rgba(30, 41, 59, 0.7);
             --glass-border: rgba(255, 255, 255, 0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ========== الأنماط الأساسية ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
@@ -54,7 +57,7 @@
             transition: background-color 0.3s ease;
         }
 
-        /* الخلفية المتحركة */
+        /* ========== الخلفية المتحركة ========== */
         .ambient-bg {
             position: fixed;
             inset: 0;
@@ -79,14 +82,16 @@
             50% { transform: translate(20px, 40px); }
         }
 
-        /* Glassmorphism المحسن */
+        /* ========== مكونات الواجهة ========== */
+        
+        /* بطاقات Glassmorphism */
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: var(--transition);
         }
 
         .glass-card:hover {
@@ -95,17 +100,7 @@
             transform: translateY(-2px);
         }
 
-        /* Animations */
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-slide-up {
-            animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        /* Loader المحسن */
+        /* مؤشر التحميل */
         .spinner {
             width: 48px;
             height: 48px;
@@ -117,7 +112,7 @@
         
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Avatar */
+        /* الصورة الرمزية */
         .avatar {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             display: flex;
@@ -128,7 +123,7 @@
             font-weight: bold;
         }
 
-        /* Toast Notifications المحسنة */
+        /* ========== شريط الإشعارات ========== */
         .toast-container {
             position: fixed;
             bottom: 20px;
@@ -193,7 +188,7 @@
             to { opacity: 0; transform: translateY(-10px); }
         }
 
-        /* Theme Toggle المحسن */
+        /* ========== مبدل السمة ========== */
         .theme-toggle {
             position: fixed;
             top: 16px;
@@ -208,7 +203,7 @@
             align-items: center;
             gap: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
 
         .theme-toggle:hover {
@@ -216,7 +211,7 @@
             transform: scale(1.05);
         }
 
-        /* أيقونة المحفظة المتطورة */
+        /* ========== أيقونة المحفظة المتطورة ========== */
         .wallet-icon {
             width: 80px;
             height: 80px;
@@ -227,7 +222,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: var(--transition);
             animation: floatWallet 3s infinite ease-in-out;
             position: relative;
             overflow: hidden;
@@ -266,7 +261,7 @@
             100% { transform: scale(1); }
         }
 
-        /* Badge الرصيد */
+        /* ========== شارة الرصيد ========== */
         .balance-badge {
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(4px);
@@ -278,12 +273,12 @@
             gap: 8px;
             font-size: 16px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
 
         .balance-badge i { color: var(--warning); }
 
-        /* Notification Badge */
+        /* ========== شارة الإشعارات ========== */
         .notification-badge {
             position: absolute;
             top: -5px;
@@ -309,7 +304,190 @@
             100% { transform: scale(1); }
         }
 
-        /* Chat Styles */
+        /* ========== شريط تقدم الرصيد ========== */
+        .balance-progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .balance-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            transition: width 0.5s ease;
+        }
+
+        /* ========== معاملات المحفظة ========== */
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .transaction-item:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .transaction-amount.positive { color: var(--success); }
+        .transaction-amount.negative { color: var(--danger); }
+
+        /* ========== علامات تبويب المحفظة ========== */
+        .wallet-tabs {
+            display: flex;
+            gap: 8px;
+            margin: 16px 0;
+            padding: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 40px;
+        }
+
+        .wallet-tab {
+            flex: 1;
+            padding: 8px;
+            border-radius: 30px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .wallet-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .wallet-tab i { font-size: 12px; }
+
+        /* ========== طرق الدفع ========== */
+        .payment-methods-list {
+            max-height: 200px;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .payment-methods-list::-webkit-scrollbar { display: none; }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .payment-method:hover { background: rgba(59, 130, 246, 0.1); }
+        .payment-method.selected {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .payment-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .payment-details {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 12px;
+            margin: 12px 0;
+            font-size: 13px;
+            line-height: 1.6;
+            border: 1px solid var(--glass-border);
+        }
+
+        /* ========== قائمة المستخدمين ========== */
+        .user-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 12px;
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .user-item:hover { background: rgba(59, 130, 246, 0.1); }
+        .user-item.blocked { opacity: 0.6; background: rgba(239, 68, 68, 0.1); }
+
+        .badge-blocked {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        /* ========== أزرار ========== */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-primary:hover { background: var(--primary-dark); transform: scale(1.02); }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-success:hover { background: #0ca678; transform: scale(1.02); }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-danger:hover { background: #dc2626; transform: scale(1.02); }
+
+        /* ========== أنماط الدردشة ========== */
         .chat-container {
             display: flex;
             flex-direction: column;
@@ -395,26 +573,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Emoji Picker */
-        .emoji-picker-container {
-            position: absolute;
-            bottom: 70px;
-            left: 10px;
-            z-index: 1000;
-            display: none;
-        }
-
-        .emoji-picker-container.open { display: block; }
-
-        emoji-picker {
-            width: 300px;
-            height: 400px;
-            --background: rgba(20, 30, 40, 0.95);
-            --border-color: var(--glass-border);
-            --category-emoji-size: 1.2rem;
-        }
-
-        /* Quick Replies */
+        /* ========== ردود سريعة ========== */
         .quick-replies {
             display: flex;
             gap: 8px;
@@ -430,7 +589,7 @@
             padding: 6px 12px;
             font-size: 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition);
             white-space: nowrap;
         }
 
@@ -439,7 +598,7 @@
             transform: scale(1.05);
         }
 
-        /* Ticket System */
+        /* ========== نظام التذاكر ========== */
         .ticket-item {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 16px;
@@ -447,7 +606,7 @@
             margin-bottom: 10px;
             border: 1px solid var(--glass-border);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition);
         }
 
         .ticket-item:hover {
@@ -468,7 +627,7 @@
         .ticket-status.closed { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
         .ticket-status.pending { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
 
-        /* FAQ Section */
+        /* ========== الأسئلة الشائعة ========== */
         .faq-item {
             border-bottom: 1px solid var(--glass-border);
             padding: 12px 0;
@@ -493,94 +652,150 @@
 
         .faq-item.open .faq-answer { max-height: 200px; margin-top: 8px; }
 
-        /* Dollar Symbol */
-        .currency-symbol {
-            font-size: 0.8em;
-            margin-left: 2px;
-            color: var(--warning);
-        }
-
-        /* Progress Steps */
-        .progress-steps {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            position: relative;
-        }
-
-        .progress-step {
-            flex: 1;
-            text-align: center;
-            position: relative;
-        }
-
-        .progress-step::before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            right: -50%;
-            width: 100%;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.1);
-            z-index: 1;
-        }
-
-        .progress-step:last-child::before { display: none; }
-
-        .progress-step.active .step-number {
-            background: var(--primary);
-            color: white;
-        }
-
-        .progress-step.completed .step-number {
-            background: var(--success);
-            color: white;
-        }
-
-        .step-number {
-            width: 30px;
-            height: 30px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
+        /* ========== النوافذ المنبثقة ========== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 5px;
-            position: relative;
-            z-index: 2;
+            padding: 16px;
         }
 
-        /* Hide scrollbar but keep functionality */
+        .modal-overlay.open { display: flex; }
+
+        .modal-content {
+            background: rgba(20, 30, 40, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-content::-webkit-scrollbar { display: none; }
+
+        /* ========== مؤشر التحديث التلقائي ========== */
+        .auto-update-indicator {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            background: var(--primary);
+            color: white;
+            border-radius: 30px;
+            padding: 8px 16px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .auto-update-indicator i { animation: spin 1s linear infinite; }
+        .auto-update-indicator.hidden { display: none; }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ========== رفع الصور ========== */
+        .image-upload-area {
+            border: 2px dashed rgba(59, 130, 246, 0.5);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .image-upload-area:hover { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); }
+
+        .image-preview {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 12px;
+            margin: 10px auto;
+        }
+
+        .delete-image-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .delete-image-btn:hover { background: #dc2626; }
+
+        /* ========== فائدة ========== */
         .hide-scrollbar {
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
         
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+
+        .balance-update {
+            animation: balancePulse 0.5s ease;
+        }
+
+        @keyframes balancePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); color: var(--success); }
+            100% { transform: scale(1); }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .currency-symbol {
+            font-size: 0.8em;
+            margin-left: 2px;
+            color: var(--warning);
         }
     </style>
 </head>
 <body>
-    <!-- Background Elements -->
+    <!-- ========== العناصر الخلفية ========== -->
     <div class="ambient-bg">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
     </div>
 
-    <!-- Theme Toggle -->
+    <!-- ========== مبدل السمة ========== -->
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
         <i class="fa-solid fa-moon" id="themeIcon"></i>
         <span class="text-sm">السمة</span>
     </button>
 
-    <!-- Main Container -->
+    <!-- ========== الحاوية الرئيسية ========== -->
     <div id="app" class="w-full max-w-md p-5 relative"></div>
 
-    <!-- Toast Container -->
+    <!-- ========== حاوية الإشعارات ========== -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Modals Container -->
+    <!-- ========== النوافذ المنبثقة ========== -->
     <div class="modal-overlay" id="walletModalOverlay">
         <div class="modal-content" id="walletModalContent"></div>
     </div>
@@ -605,12 +820,16 @@
         <div class="modal-content" id="ticketModalContent" style="max-width: 400px;"></div>
     </div>
 
-    <!-- Emoji Picker Container -->
+    <div class="modal-overlay" id="settingsOverlay">
+        <div class="modal-content" id="settingsPanel" style="max-width: 350px;"></div>
+    </div>
+
+    <!-- ========== منتقي الإيموجي ========== -->
     <div class="emoji-picker-container" id="emojiPickerContainer">
         <emoji-picker class="light"></emoji-picker>
     </div>
 
-    <!-- Auto Update Indicator -->
+    <!-- ========== مؤشر التحديث التلقائي ========== -->
     <div id="autoUpdateIndicator" class="auto-update-indicator hidden">
         <i class="fa-solid fa-rotate"></i>
         <span>جاري تحديث الرصيد...</span>
@@ -620,12 +839,12 @@
         (function() {
             'use strict';
 
-            // ==================== Configuration ====================
+            // ==================== الإعدادات العامة ====================
             const CONFIG = {
                 ADMIN_ID: 7609492965,
-                DEFAULT_BALANCE: 100, // بدأ بـ 100 دولار
+                DEFAULT_BALANCE: 100,
                 MAX_TRANSACTIONS: 50,
-                MAX_IMAGE_SIZE: 2 * 1024 * 1024, // 2MB
+                MAX_IMAGE_SIZE: 2 * 1024 * 1024,
                 ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
                 AUTO_REFRESH_INTERVAL: 3000,
                 STORAGE_KEYS: {
@@ -689,45 +908,49 @@
                 ]
             };
 
-            // ==================== Utilities ====================
-            const Utils = {
-                generateId: (prefix = '') => prefix + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+            // ==================== فئة الأدوات المساعدة ====================
+            class Utils {
+                static generateId(prefix = '') {
+                    return prefix + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                }
                 
-                getTodayDate: () => new Date().toISOString().split('T')[0],
+                static getTodayDate() {
+                    return new Date().toISOString().split('T')[0];
+                }
                 
-                formatDateTime: (isoString) => {
+                static formatDateTime(isoString) {
                     try {
                         return new Date(isoString).toLocaleString('ar-EG');
                     } catch {
                         return isoString;
                     }
-                },
+                }
                 
-                formatDate: (isoString) => {
+                static formatDate(isoString) {
                     try {
                         return new Date(isoString).toLocaleDateString('ar-EG');
                     } catch {
                         return isoString;
                     }
-                },
+                }
                 
-                formatTime: (isoString) => {
+                static formatTime(isoString) {
                     try {
                         return new Date(isoString).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
                     } catch {
                         return isoString;
                     }
-                },
+                }
                 
-                formatNumber: (num) => {
+                static formatNumber(num) {
                     return num?.toLocaleString('ar-EG') || '0';
-                },
+                }
                 
-                formatUSD: (num) => {
+                static formatUSD(num) {
                     return `$${Utils.formatNumber(num)}`;
-                },
+                }
                 
-                validateImage: (file) => {
+                static validateImage(file) {
                     if (!CONFIG.ALLOWED_IMAGE_TYPES.includes(file.type)) {
                         return { valid: false, error: 'نوع الملف غير مسموح' };
                     }
@@ -735,25 +958,25 @@
                         return { valid: false, error: 'حجم الصورة كبير جداً (الحد الأقصى 2 ميجابايت)' };
                     }
                     return { valid: true };
-                },
+                }
                 
-                calculateBalanceLevel: (balance) => {
+                static calculateBalanceLevel(balance) {
                     const level = CONFIG.BALANCE_LEVELS
                         .slice()
                         .reverse()
                         .find(l => balance >= l.threshold);
                     return level || CONFIG.BALANCE_LEVELS[0];
-                },
+                }
                 
-                safeJSONParse: (str, fallback = null) => {
+                static safeJSONParse(str, fallback = null) {
                     try {
                         return JSON.parse(str);
                     } catch {
                         return fallback;
                     }
-                },
+                }
                 
-                debounce: (func, wait) => {
+                static debounce(func, wait) {
                     let timeout;
                     return function executedFunction(...args) {
                         const later = () => {
@@ -763,20 +986,20 @@
                         clearTimeout(timeout);
                         timeout = setTimeout(later, wait);
                     };
-                },
+                }
                 
-                truncate: (str, length = 50) => {
+                static truncate(str, length = 50) {
                     return str.length > length ? str.substring(0, length) + '...' : str;
-                },
+                }
                 
-                escapeHtml: (text) => {
+                static escapeHtml(text) {
                     const div = document.createElement('div');
                     div.textContent = text;
                     return div.innerHTML;
                 }
-            };
+            }
 
-            // ==================== Storage Service ====================
+            // ==================== فئة التخزين المحلي ====================
             class StorageService {
                 static get(key, defaultValue = null) {
                     try {
@@ -809,7 +1032,7 @@
                 }
             }
 
-            // ==================== Toast Manager ====================
+            // ==================== فئة إدارة الإشعارات ====================
             class ToastManager {
                 constructor() {
                     this.container = document.getElementById('toastContainer');
@@ -875,7 +1098,7 @@
                 info(message) { this.show(message, 'info'); }
             }
 
-            // ==================== Telegram Service ====================
+            // ==================== فئة خدمة تيليجرام ====================
             class TelegramService {
                 constructor() {
                     this.tg = window.Telegram?.WebApp || null;
@@ -923,7 +1146,7 @@
                 }
             }
 
-            // ==================== Data Service ====================
+            // ==================== فئة إدارة البيانات ====================
             class DataService {
                 constructor(state) {
                     this.state = state;
@@ -942,7 +1165,7 @@
                     this.loadFAQItems();
                 }
 
-                // Users
+                // المستخدمين
                 loadUsers() {
                     this.state.users = StorageService.get(CONFIG.STORAGE_KEYS.USERS_DATA, {});
                 }
@@ -1032,7 +1255,7 @@
                     }));
                 }
 
-                // Requests
+                // الطلبات
                 loadRequests() {
                     this.state.depositRequests = StorageService.get(CONFIG.STORAGE_KEYS.DEPOSIT_REQUESTS, []);
                     this.state.withdrawalRequests = StorageService.get(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, []);
@@ -1180,7 +1403,7 @@
                            this.state.withdrawalRequests.filter(r => r.status === 'pending').length;
                 }
 
-                // Payment Methods
+                // طرق الدفع
                 loadPaymentMethods() {
                     const saved = StorageService.get(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, null);
                     if (saved && saved.length) {
@@ -1244,7 +1467,7 @@
                     this.savePaymentMethods();
                 }
 
-                // Notifications
+                // الإشعارات
                 loadNotifications() {
                     this.state.notifications = StorageService.get(CONFIG.STORAGE_KEYS.NOTIFICATIONS, []);
                 }
@@ -1266,7 +1489,6 @@
                     this.state.notifications.push(notification);
                     this.saveNotifications();
                     
-                    // تحديث شارة الإشعارات في الواجهة
                     if (this.state.user && this.state.user.id == userId) {
                         this.state.set('unreadNotifications', this.getUnreadCount(userId));
                     }
@@ -1305,7 +1527,7 @@
                     return this.state.notifications.filter(n => n.userId === userId && !n.read).length;
                 }
 
-                // Chat Messages
+                // رسائل الدردشة
                 loadChatMessages() {
                     this.state.chatMessages = StorageService.get(CONFIG.STORAGE_KEYS.CHAT_MESSAGES, []);
                 }
@@ -1331,7 +1553,6 @@
                     this.state.chatMessages.push(msg);
                     this.saveChatMessages();
                     
-                    // إشعار للمسؤولين عند رسالة مستخدم
                     if (!isSupport && this.state.user && !this.state.isAdmin) {
                         this.addNotification(
                             CONFIG.ADMIN_ID,
@@ -1348,7 +1569,6 @@
                     let messages = this.state.chatMessages;
                     
                     if (userId) {
-                        // رسائل خاصة بمستخدم معين
                         messages = messages.filter(m => m.userId === userId || m.isSupport);
                     }
                     
@@ -1371,7 +1591,7 @@
                     return this.state.chatMessages.filter(m => !m.read).length;
                 }
 
-                // Support Tickets
+                // تذاكر الدعم
                 loadSupportTickets() {
                     this.state.supportTickets = StorageService.get(CONFIG.STORAGE_KEYS.SUPPORT_TICKETS, []);
                 }
@@ -1391,7 +1611,7 @@
                         userName: `${this.state.user.first_name} ${this.state.user.last_name || ''}`.trim(),
                         title: title,
                         description: description,
-                        priority: priority, // low, medium, high
+                        priority: priority,
                         status: 'open',
                         createdAt: new Date().toISOString(),
                         updatedAt: new Date().toISOString(),
@@ -1407,13 +1627,11 @@
                     
                     this.state.supportTickets.push(ticket);
                     
-                    // تحديث عدد تذاكر المستخدم
                     user.supportTickets = (user.supportTickets || 0) + 1;
                     this.updateUser(this.state.user.id, user);
                     
                     this.saveSupportTickets();
                     
-                    // إشعار للمسؤول
                     this.addNotification(
                         CONFIG.ADMIN_ID,
                         '🎫 تذكرة دعم جديدة',
@@ -1443,7 +1661,6 @@
                         
                         this.saveSupportTickets();
                         
-                        // إشعار للمسؤول إذا كان المستخدم هو المرسل
                         if (sender === 'user') {
                             this.addNotification(
                                 CONFIG.ADMIN_ID,
@@ -1465,7 +1682,6 @@
                         ticket.updatedAt = new Date().toISOString();
                         this.saveSupportTickets();
                         
-                        // إشعار للمستخدم
                         this.addNotification(
                             ticket.userId,
                             status === 'closed' ? '🔒 تم إغلاق التذكرة' : '📬 تحديث على التذكرة',
@@ -1489,7 +1705,7 @@
                         .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
                 }
 
-                // FAQ Items
+                // الأسئلة الشائعة
                 loadFAQItems() {
                     const saved = StorageService.get(CONFIG.STORAGE_KEYS.FAQ_ITEMS, null);
                     if (saved && saved.length) {
@@ -1531,11 +1747,11 @@
                     this.saveFAQItems();
                 }
 
-                // Settings
+                // الإعدادات
                 loadSettings() {
                     const settings = StorageService.get(CONFIG.STORAGE_KEYS.SETTINGS, null);
                     if (settings) {
-                        this.state.settings = settings;
+                        this.state.settings = { ...this.state.settings, ...settings };
                     }
                 }
 
@@ -1548,7 +1764,7 @@
                     }
                 }
 
-                // Theme
+                // السمة
                 loadTheme() {
                     const theme = StorageService.get(CONFIG.STORAGE_KEYS.THEME, 'dark');
                     this.state.theme = theme;
@@ -1560,7 +1776,7 @@
                     this.state.theme = theme;
                 }
 
-                // Daily Ops
+                // العمليات اليومية
                 incrementDailyOps() {
                     const today = Utils.getTodayDate();
                     const ops = StorageService.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
@@ -1569,7 +1785,7 @@
                     this.state.stats.dailyOps = ops[today] || 0;
                 }
 
-                // Auto Refresh
+                // التحديث التلقائي
                 startAutoRefresh(callback) {
                     this.stopAutoRefresh();
                     if (this.state.settings.autoRefresh) {
@@ -1587,7 +1803,7 @@
                 }
             }
 
-            // ==================== UI Manager ====================
+            // ==================== فئة إدارة الواجهة ====================
             class UIManager {
                 constructor(state, data, telegram, toast) {
                     this.state = state;
@@ -1706,7 +1922,7 @@
                     
                     this.app.innerHTML = `
                         <div class="space-y-5 animate-slide-up pb-10">
-                            <!-- User Card -->
+                            <!-- بطاقة المستخدم -->
                             <div class="glass-card p-5 rounded-3xl relative overflow-hidden">
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
                                 <div class="flex items-center gap-4 relative z-10">
@@ -1743,14 +1959,14 @@
                                 </div>
                             </div>
 
-                            <!-- Wallet Icon -->
+                            <!-- أيقونة المحفظة -->
                             <div class="flex justify-center my-4">
                                 <div class="wallet-icon" id="walletIcon">
                                     <i class="fa-solid fa-wallet"></i>
                                 </div>
                             </div>
 
-                            <!-- Balance Badge -->
+                            <!-- شارة الرصيد -->
                             <div class="flex justify-center">
                                 <div class="balance-badge">
                                     <i class="fa-solid fa-dollar-sign"></i>
@@ -1758,7 +1974,7 @@
                                 </div>
                             </div>
 
-                            <!-- Balance Progress -->
+                            <!-- شريط تقدم الرصيد -->
                             <div class="px-4">
                                 <div class="flex justify-between text-xs text-gray-400 mb-1">
                                     <span>مستوى الرصيد</span>
@@ -1769,7 +1985,7 @@
                                 </div>
                             </div>
 
-                            <!-- Quick Actions -->
+                            <!-- الإجراءات السريعة -->
                             <div class="grid grid-cols-3 gap-2 mt-4">
                                 <button class="glass-card p-3 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-blue-500/10 transition-all quick-action" data-action="wallet">
                                     <div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-1">
@@ -1794,7 +2010,7 @@
                                 </button>
                             </div>
 
-                            <!-- FAQ Section -->
+                            <!-- الأسئلة الشائعة -->
                             <div class="glass-card p-4 rounded-2xl">
                                 <h3 class="text-md font-bold mb-3 flex items-center gap-2">
                                     <i class="fa-regular fa-circle-question text-blue-400"></i>
@@ -1816,7 +2032,7 @@
                                 </div>
                             </div>
 
-                            <!-- Logout Button -->
+                            <!-- زر تسجيل الخروج -->
                             <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
                                 <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
                                 تسجيل الخروج
@@ -1824,7 +2040,7 @@
                         </div>
                     `;
 
-                    // FAQ toggle
+                    // تفعيل القوائم المنسدلة للأسئلة الشائعة
                     document.querySelectorAll('.faq-item').forEach(item => {
                         item.addEventListener('click', () => {
                             item.classList.toggle('open');
@@ -1851,7 +2067,7 @@
                     
                     this.app.innerHTML = `
                         <div class="space-y-5 animate-slide-up pb-10">
-                            <!-- Admin Card -->
+                            <!-- بطاقة المدير -->
                             <div class="glass-card p-5 rounded-3xl relative overflow-hidden border-2 border-yellow-500/30">
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
                                 <div class="flex items-center gap-4 relative z-10">
@@ -1888,7 +2104,7 @@
                                 </div>
                             </div>
 
-                            <!-- Wallet Icon with Badge -->
+                            <!-- أيقونة المحفظة مع شارة -->
                             <div class="flex justify-center my-4">
                                 <div class="wallet-icon" id="walletIcon">
                                     <i class="fa-solid fa-wallet"></i>
@@ -1898,7 +2114,7 @@
                                 </div>
                             </div>
 
-                            <!-- Balance Badge -->
+                            <!-- شارة الرصيد -->
                             <div class="flex justify-center">
                                 <div class="balance-badge">
                                     <i class="fa-solid fa-dollar-sign"></i>
@@ -1906,7 +2122,7 @@
                                 </div>
                             </div>
 
-                            <!-- Balance Progress -->
+                            <!-- شريط تقدم الرصيد -->
                             <div class="px-4">
                                 <div class="flex justify-between text-xs text-gray-400 mb-1">
                                     <span>مستوى الرصيد</span>
@@ -1917,7 +2133,7 @@
                                 </div>
                             </div>
 
-                            <!-- Stats -->
+                            <!-- إحصائيات سريعة -->
                             <div class="grid grid-cols-4 gap-1 mt-4">
                                 <div class="glass-card p-2 rounded-2xl text-center">
                                     <div class="w-6 h-6 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-1">
@@ -1949,7 +2165,7 @@
                                 </div>
                             </div>
 
-                            <!-- Admin Actions -->
+                            <!-- إجراءات المدير -->
                             <div class="grid grid-cols-2 gap-2 mt-2">
                                 <button id="openAdminPanelBtn" class="glass-card p-3 rounded-2xl flex items-center gap-3 hover:bg-yellow-500/10 transition-all">
                                     <div class="w-10 h-10 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center">
@@ -1998,7 +2214,7 @@
                                 </button>
                             </div>
 
-                            <!-- Logout Button -->
+                            <!-- زر تسجيل الخروج -->
                             <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
                                 <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
                                 تسجيل الخروج
@@ -2051,7 +2267,7 @@
                         notificationBell.addEventListener('click', () => this.openNotificationsModal());
                     }
 
-                    // Quick actions
+                    // الإجراءات السريعة
                     document.querySelectorAll('.quick-action').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             const action = btn.dataset.action;
@@ -2065,7 +2281,7 @@
                         });
                     });
 
-                    // Show all FAQ
+                    // عرض كل الأسئلة الشائعة
                     const showAllFAQ = document.getElementById('showAllFAQ');
                     if (showAllFAQ) {
                         showAllFAQ.addEventListener('click', () => {
@@ -2074,19 +2290,17 @@
                     }
                 }
 
-                // Chat System Methods
+                // ========== نظام الدردشة ==========
                 openSupportChat() {
                     const modal = document.getElementById('supportChatModalOverlay');
                     const content = document.getElementById('supportChatModalContent');
                     content.innerHTML = this.renderSupportChat();
                     modal.classList.add('open');
                     
-                    // تحميل مكتبة الإيموجي
                     this.loadEmojiPicker();
                     
                     this.bindChatEvents();
                     
-                    // تحديد الرسائل كمقروءة
                     if (this.state.user) {
                         this.data.markChatAsRead(this.state.user.id);
                     }
@@ -2134,20 +2348,17 @@
                                 ${messagesHtml || '<p class="text-center text-gray-400 py-4">لا توجد رسائل بعد... ابدأ المحادثة الآن</p>'}
                             </div>
 
-                            <!-- Typing Indicator (hidden by default) -->
                             <div id="typingIndicator" class="typing-indicator hidden">
                                 <span></span><span></span><span></span>
                                 <span class="text-xs text-gray-400 mr-2">يكتب...</span>
                             </div>
 
-                            <!-- Quick Replies -->
                             <div class="quick-replies hide-scrollbar" id="quickReplies">
                                 ${quickReplies.map(reply => `
                                     <button class="quick-reply-btn">${reply}</button>
                                 `).join('')}
                             </div>
 
-                            <!-- Message Input -->
                             <div class="flex gap-2 mt-2 relative">
                                 <button id="emojiPickerBtn" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors flex-shrink-0">
                                     <i class="fa-regular fa-face-smile"></i>
@@ -2176,7 +2387,6 @@
                     const emojiBtn = document.getElementById('emojiPickerBtn');
                     const emojiContainer = document.getElementById('emojiPickerContainer');
                     
-                    // Close modal
                     document.getElementById('closeSupportChat').addEventListener('click', () => {
                         modal.classList.remove('open');
                     });
@@ -2185,14 +2395,12 @@
                         if (e.target === modal) modal.classList.remove('open');
                     });
 
-                    // Send message
                     const sendMessage = () => {
                         const message = input.value.trim();
                         if (!message) return;
 
                         this.data.addChatMessage(message, this.state.user?.id, this.state.isAdmin);
                         
-                        // إضافة الرسالة للواجهة
                         const msgDiv = document.createElement('div');
                         msgDiv.className = 'chat-message outgoing';
                         msgDiv.innerHTML = `
@@ -2209,7 +2417,6 @@
                         
                         input.value = '';
                         
-                        // محاكاة رد تلقائي بعد ثانيتين (للمستخدم العادي)
                         if (!this.state.isAdmin) {
                             setTimeout(() => {
                                 this.simulateSupportReply(message);
@@ -2223,14 +2430,12 @@
                         if (e.key === 'Enter') sendMessage();
                     });
 
-                    // Emoji picker
                     if (emojiBtn) {
                         emojiBtn.addEventListener('click', () => {
                             emojiContainer.classList.toggle('open');
                         });
                     }
 
-                    // Quick replies
                     document.querySelectorAll('.quick-reply-btn').forEach(btn => {
                         btn.addEventListener('click', () => {
                             input.value = btn.textContent;
@@ -2238,7 +2443,6 @@
                         });
                     });
 
-                    // Scroll to bottom
                     messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 }
 
@@ -2246,14 +2450,12 @@
                     const messagesContainer = document.getElementById('chatMessages');
                     const typingIndicator = document.getElementById('typingIndicator');
                     
-                    // Show typing indicator
                     typingIndicator.classList.remove('hidden');
                     messagesContainer.scrollTop = messagesContainer.scrollHeight;
                     
                     setTimeout(() => {
                         typingIndicator.classList.add('hidden');
                         
-                        // Generate reply based on keywords
                         let reply = 'شكراً لتواصلك معنا. سيتم الرد عليك في أقرب وقت ممكن.';
                         
                         if (userMessage.includes('شحن') || userMessage.includes('إيداع')) {
@@ -2283,7 +2485,6 @@
                 }
 
                 loadEmojiPicker() {
-                    // Dynamic import of emoji picker
                     import('https://cdn.jsdelivr.net/npm/emoji-picker-element@1.14.0/dist/emoji-picker-element.min.js')
                         .then(() => {
                             const picker = document.querySelector('emoji-picker');
@@ -2300,7 +2501,7 @@
                         .catch(err => console.log('Emoji picker not loaded', err));
                 }
 
-                // Ticket System Methods
+                // ========== نظام التذاكر ==========
                 openUserTickets() {
                     const modal = document.getElementById('ticketModalOverlay');
                     const content = document.getElementById('ticketModalContent');
@@ -2350,7 +2551,6 @@
                             `).join('') || '<p class="text-center text-gray-400 py-4">لا توجد تذاكر بعد</p>'}
                         </div>
 
-                        <!-- Create Ticket Form (hidden initially) -->
                         <div id="createTicketForm" class="hidden mt-4">
                             <h3 class="font-bold mb-3">إنشاء تذكرة جديدة</h3>
                             <input type="text" id="ticketTitle" placeholder="عنوان التذكرة" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
@@ -2411,11 +2611,10 @@
                             form.classList.add('hidden');
                             list.classList.remove('hidden');
                             createBtn.classList.remove('hidden');
-                            this.openUserTickets(); // Refresh
+                            this.openUserTickets();
                         }
                     });
 
-                    // View ticket details
                     document.querySelectorAll('.ticket-item').forEach(item => {
                         item.addEventListener('click', () => {
                             const ticketId = item.dataset.id;
@@ -2513,14 +2712,13 @@
                         });
                     }
 
-                    // Scroll to bottom
                     const messagesContainer = document.getElementById('ticketMessages');
                     if (messagesContainer) {
                         messagesContainer.scrollTop = messagesContainer.scrollHeight;
                     }
                 }
 
-                // Admin Methods
+                // ========== طرق المدير ==========
                 openTicketManagement() {
                     const modal = document.getElementById('ticketModalOverlay');
                     const content = document.getElementById('ticketModalContent');
@@ -2618,7 +2816,6 @@
                             `).join('')}
                         </div>
 
-                        <!-- Add/Edit Form -->
                         <div id="faqForm" class="hidden mt-4">
                             <h3 class="font-bold mb-3" id="faqFormTitle">إضافة سؤال جديد</h3>
                             <input type="hidden" id="faqId">
@@ -2756,7 +2953,7 @@
                     });
                 }
 
-                // Existing modal methods (wallet, admin panel, etc.)
+                // ========== نوافذ المحفظة ==========
                 openWalletModal() {
                     const modal = document.getElementById('walletModalOverlay');
                     const content = document.getElementById('walletModalContent');
@@ -2819,7 +3016,6 @@
                         </div>
 
                         <div id="walletTabContent">
-                            <!-- Deposit Tab -->
                             <div class="tab-pane" id="tab-deposit">
                                 <p class="text-sm text-gray-300 mb-3">اختر طريقة الدفع:</p>
                                 <div class="payment-methods-list mb-4">${paymentMethodsHtml}</div>
@@ -2841,7 +3037,6 @@
                                 <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلبك من قبل الإدارة</p>
                             </div>
 
-                            <!-- Withdraw Tab -->
                             <div class="tab-pane hidden" id="tab-withdraw">
                                 <p class="text-sm text-gray-300 mb-3">اختر طريقة السحب:</p>
                                 <div class="payment-methods-list mb-4">${paymentMethodsHtml}</div>
@@ -2857,7 +3052,6 @@
                                 <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلبك من قبل الإدارة</p>
                             </div>
 
-                            <!-- Transfer Tab -->
                             <div class="tab-pane hidden" id="tab-transfer">
                                 <p class="text-sm text-gray-300 mb-2">تحويل إلى مستخدم آخر:</p>
                                 <input type="text" id="transferUserId" placeholder="معرف المستخدم" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
@@ -2867,7 +3061,6 @@
                                 </div>
                             </div>
 
-                            <!-- History Tab -->
                             <div class="tab-pane hidden" id="tab-history">
                                 <div class="max-h-64 overflow-y-auto hide-scrollbar">${transactionsHtml}</div>
                             </div>
@@ -2886,7 +3079,6 @@
                         if (e.target === overlay) overlay.classList.remove('open');
                     });
 
-                    // Tab switching
                     const tabs = document.querySelectorAll('.wallet-tab');
                     tabs.forEach(tab => {
                         tab.addEventListener('click', () => {
@@ -2898,10 +3090,8 @@
                         });
                     });
 
-                    // Show deposit tab by default
                     document.getElementById('tab-deposit').classList.remove('hidden');
 
-                    // Payment method selection
                     let selectedMethod = null;
                     const methods = document.querySelectorAll('.payment-methods-list .payment-method');
                     const detailsDiv = document.getElementById('depositDetails');
@@ -2923,7 +3113,6 @@
                         });
                     });
 
-                    // Deposit
                     document.getElementById('depositBtn')?.addEventListener('click', () => {
                         const amount = parseFloat(document.getElementById('depositAmount').value);
                         const txId = document.getElementById('depositTransactionId').value.trim();
@@ -2952,7 +3141,6 @@
                         }
                     });
 
-                    // Withdraw
                     let selectedWithdrawMethod = null;
                     document.querySelectorAll('#tab-withdraw .payment-method').forEach(method => {
                         method.addEventListener('click', () => {
@@ -2997,7 +3185,6 @@
                         }
                     });
 
-                    // Transfer
                     document.getElementById('transferBtn')?.addEventListener('click', () => {
                         const amount = parseFloat(document.getElementById('transferAmount').value);
                         const targetId = parseInt(document.getElementById('transferUserId').value);
@@ -3071,7 +3258,6 @@
                             <button class="wallet-tab" data-admin-tab="payment">طرق الدفع</button>
                         </div>
 
-                        <!-- Requests Tab -->
                         <div id="adminRequestsTab" class="admin-tab">
                             <div class="space-y-6">
                                 <div>
@@ -3121,7 +3307,6 @@
                             </div>
                         </div>
 
-                        <!-- Users Tab -->
                         <div id="adminUsersTab" class="admin-tab hidden">
                             <h3 class="text-lg font-bold mb-2">المستخدمين (${users.length})</h3>
                             <div class="space-y-2 max-h-96 overflow-y-auto hide-scrollbar">
@@ -3148,7 +3333,6 @@
                             </div>
                         </div>
 
-                        <!-- Payment Methods Tab -->
                         <div id="adminPaymentTab" class="admin-tab hidden">
                             <div class="flex justify-between items-center mb-3">
                                 <h3 class="text-lg font-bold">طرق الدفع</h3>
@@ -3199,7 +3383,6 @@
                         if (e.target === overlay) overlay.classList.remove('open');
                     });
 
-                    // Tab switching
                     const tabs = document.querySelectorAll('[data-admin-tab]');
                     tabs.forEach(tab => {
                         tab.addEventListener('click', () => {
@@ -3220,7 +3403,6 @@
                         });
                     });
 
-                    // Accept/Reject requests
                     document.querySelectorAll('.accept-request').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             const item = e.target.closest('[data-id]');
@@ -3249,7 +3431,6 @@
                         });
                     });
 
-                    // User actions
                     document.querySelectorAll('.edit-user-balance').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const userId = btn.dataset.id;
@@ -3268,7 +3449,6 @@
                         });
                     });
 
-                    // Payment methods
                     document.getElementById('addPaymentMethodBtn')?.addEventListener('click', () => {
                         this.openPaymentMethodModal();
                     });
@@ -3412,7 +3592,6 @@
                     
                     overlay.classList.add('open');
                     
-                    // Image upload handling
                     const imageInput = document.getElementById('imageInput');
                     const imageUploadArea = document.getElementById('imageUploadArea');
                     const imagePreviewContainer = document.getElementById('imagePreviewContainer');
@@ -3606,7 +3785,7 @@
                 }
             }
 
-            // ==================== App Class ====================
+            // ==================== فئة التطبيق الرئيسية ====================
             class App {
                 constructor() {
                     this.state = {
@@ -3714,7 +3893,6 @@
 
                         this.toast.success(`مرحباً ${user.first_name}، أهلاً بك في المحفظة المتطورة`);
                         
-                        // Auto refresh
                         this.data.startAutoRefresh(() => this.refreshData());
                     } catch (error) {
                         console.error('Initialization error:', error);
@@ -3732,7 +3910,6 @@
                             this.showAutoUpdateIndicator('تم تحديث الرصيد تلقائياً');
                         }
                         
-                        // تحديث الإشعارات غير المقروءة
                         const unreadCount = this.data.getUnreadCount(this.state.user.id);
                         if (unreadCount !== this.state.unreadNotifications) {
                             this.state.set('unreadNotifications', unreadCount);
@@ -3782,10 +3959,10 @@
                 }
             }
 
-            // ==================== Initialize App ====================
+            // ==================== تشغيل التطبيق ====================
             const app = new App();
 
-            // ==================== Global Event Listeners ====================
+            // ==================== مستمعو الأحداث العامة ====================
             document.getElementById('themeToggle').addEventListener('click', () => {
                 const newTheme = app.state.theme === 'dark' ? 'light' : 'dark';
                 app.state.theme = newTheme;
@@ -3794,60 +3971,7 @@
                 app.toast.info(`تم تغيير السمة إلى ${newTheme === 'dark' ? 'الداكنة' : 'الفاتحة'}`);
             });
 
-            // Settings panel
-            const settingsOverlay = document.getElementById('settingsOverlay');
-            const settingsPanel = document.getElementById('settingsPanel');
-            
-            document.getElementById('closeSettings').addEventListener('click', () => {
-                settingsOverlay.classList.remove('open');
-                settingsPanel.classList.remove('open');
-            });
-
-            settingsOverlay.addEventListener('click', () => {
-                settingsOverlay.classList.remove('open');
-                settingsPanel.classList.remove('open');
-            });
-
-            // Settings controls
-            document.getElementById('languageSelect').addEventListener('change', (e) => {
-                app.state.settings.language = e.target.value;
-                app.data.saveSettings();
-                app.toast.success(`تم تغيير اللغة إلى ${e.target.value === 'ar' ? 'العربية' : 'الإنجليزية'}`);
-            });
-
-            document.getElementById('notificationsToggle').addEventListener('change', (e) => {
-                app.state.settings.notifications = e.target.checked;
-                app.data.saveSettings();
-                app.toast.success(e.target.checked ? 'تم تفعيل الإشعارات' : 'تم إيقاف الإشعارات');
-            });
-
-            document.getElementById('soundToggle').addEventListener('change', (e) => {
-                app.state.settings.sound = e.target.checked;
-                app.data.saveSettings();
-                app.toast.soundEnabled = e.target.checked;
-                app.toast.success(e.target.checked ? 'تم تفعيل التنبيه الصوتي' : 'تم إيقاف التنبيه الصوتي');
-            });
-
-            document.getElementById('vibrateToggle').addEventListener('change', (e) => {
-                app.state.settings.vibrate = e.target.checked;
-                app.data.saveSettings();
-                app.toast.vibrateEnabled = e.target.checked;
-                app.toast.success(e.target.checked ? 'تم تفعيل الاهتزاز' : 'تم إيقاف الاهتزاز');
-            });
-
-            document.getElementById('autoRefreshToggle').addEventListener('change', (e) => {
-                app.state.settings.autoRefresh = e.target.checked;
-                app.data.saveSettings();
-                if (e.target.checked) {
-                    app.data.startAutoRefresh(() => app.refreshData());
-                    app.toast.success('تم تفعيل التحديث التلقائي');
-                } else {
-                    app.data.stopAutoRefresh();
-                    app.toast.info('تم إيقاف التحديث التلقائي');
-                }
-            });
-
-            console.log('✅ App initialized successfully with USD currency and chat support');
+            console.log('✅ تم تشغيل التطبيق بنجاح');
         })();
     </script>
 </body>
