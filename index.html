@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بوابة تيليجرام المتطورة - كازينو حقيقي</title>
+    <title>بوابة تيليجرام المتطورة - محفظة احترافية مع رفع الصور</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -566,107 +566,6 @@
             background: #ef4444;
             color: white;
         }
-
-        /* أنماط الكازينو */
-        .casino-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .casino-grid .glass-card {
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-        }
-        .casino-grid .glass-card i {
-            font-size: 24px;
-            margin-bottom: 8px;
-            display: block;
-            color: #fbbf24;
-        }
-        .casino-wheel-container {
-            position: relative;
-            width: 250px;
-            height: 250px;
-            margin: 20px auto;
-        }
-        .wheel-canvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: #2d3748;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: transform 3s cubic-bezier(0.25, 0.1, 0.15, 1);
-        }
-        .wheel-pointer {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 30px solid #f59e0b;
-            filter: drop-shadow(0 4px 2px rgba(0,0,0,0.3));
-            z-index: 5;
-        }
-        .wheel-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            background: #1e293b;
-            border-radius: 50%;
-            border: 3px solid #f59e0b;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            z-index: 6;
-        }
-        .bet-input {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid #f59e0b;
-            color: white;
-            padding: 10px;
-            border-radius: 30px;
-            width: 120px;
-            text-align: center;
-            font-size: 16px;
-            margin: 0 10px;
-        }
-        .spin-btn {
-            background: linear-gradient(145deg, #f59e0b, #d97706);
-            border: none;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 18px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
-            transition: all 0.2s;
-        }
-        .spin-btn:hover { transform: scale(1.05); }
-        .spin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .casino-history {
-            max-height: 150px;
-            overflow-y: auto;
-            background: rgba(0,0,0,0.2);
-            border-radius: 16px;
-            padding: 10px;
-            margin-top: 15px;
-        }
-        .casino-history-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 12px;
-        }
-        .win-text { color: #10b981; }
-        .lose-text { color: #ef4444; }
     </style>
 </head>
 <body>
@@ -749,11 +648,6 @@
         <div class="edit-balance-modal" id="editBalanceModalContent"></div>
     </div>
 
-    <!-- Casino Modal -->
-    <div class="wallet-modal-overlay" id="casinoModalOverlay">
-        <div class="wallet-modal" id="casinoModalContent" style="max-width: 500px;"></div>
-    </div>
-
     <script>
         (function() {
             // ======================== الإعدادات الثابتة ========================
@@ -769,24 +663,10 @@
                     THEME: 'theme',
                     SETTINGS: 'settings',
                     NOTIFICATIONS: 'notifications',
-                    DAILY_OPS: 'daily_ops',
-                    CASINO_SETTINGS: 'casino_settings',
-                    CASINO_HISTORY: 'casino_history'
+                    DAILY_OPS: 'daily_ops'
                 },
                 MAX_IMAGE_SIZE: 2 * 1024 * 1024, // 2MB
-                ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-                DEFAULT_CASINO_SETTINGS: {
-                    wheelSegments: [
-                        { label: 'خسارة', multiplier: 0, color: '#ef4444', weight: 30 },
-                        { label: 'استرداد', multiplier: 1, color: '#3b82f6', weight: 20 },
-                        { label: 'x1.5', multiplier: 1.5, color: '#f59e0b', weight: 15 },
-                        { label: 'x2', multiplier: 2, color: '#10b981', weight: 12 },
-                        { label: 'x3', multiplier: 3, color: '#8b5cf6', weight: 10 },
-                        { label: 'x5', multiplier: 5, color: '#ec4899', weight: 7 },
-                        { label: 'x10', multiplier: 10, color: '#06b6d4', weight: 4 },
-                        { label: 'x20', multiplier: 20, color: '#f97316', weight: 2 }
-                    ]
-                }
+                ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
             };
 
             // ======================== الخدمات المساعدة ========================
@@ -1038,10 +918,6 @@
                     this.paymentMethods = [];
                     this.notifications = [];
                     this.defaultWalletAddress = 'T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ';
-                    
-                    // إضافات الكازينو
-                    this.casinoSettings = null;
-                    this.casinoHistory = []; // سجل عام للكازينو (آخر 50 عملية)
                 }
 
                 set(key, value) {
@@ -1052,7 +928,7 @@
                 }
             }
 
-            // ======================== إدارة البيانات (Data Layer) مع دعم الصور والكازينو ========================
+            // ======================== إدارة البيانات (Data Layer) مع دعم الصور ========================
             class DataService {
                 constructor(state) {
                     this.state = state;
@@ -1067,8 +943,6 @@
                     this.loadSettings();
                     this.loadStats();
                     this.notificationService.loadNotifications();
-                    this.loadCasinoSettings();
-                    this.loadCasinoHistory();
                 }
 
                 // ---------- بيانات المستخدمين ----------
@@ -1090,8 +964,7 @@
                             createdAt: new Date().toISOString(),
                             lastActive: new Date().toISOString(),
                             walletAddress: this.state.defaultWalletAddress,
-                            name: this.state.user ? `${this.state.user.first_name} ${this.state.user.last_name || ''}`.trim() : `مستخدم ${userId}`,
-                            casinoStats: { totalBets: 0, totalWins: 0, totalLoss: 0, netProfit: 0 } // إحصائيات الكازينو
+                            name: this.state.user ? `${this.state.user.first_name} ${this.state.user.last_name || ''}`.trim() : `مستخدم ${userId}`
                         };
                         this.saveUsersData();
                     }
@@ -1143,8 +1016,7 @@
                             blocked: data.blocked || false,
                             transactionsCount: data.transactions.length,
                             lastActive: data.lastActive,
-                            createdAt: data.createdAt,
-                            casinoStats: data.casinoStats || { totalBets: 0, totalWins: 0, totalLoss: 0, netProfit: 0 }
+                            createdAt: data.createdAt
                         });
                     }
                     return usersList;
@@ -1372,116 +1244,9 @@
                     StorageService.set(CONFIG.STORAGE_KEYS.THEME, theme);
                     this.state.theme = theme;
                 }
-
-                // ---------- إعدادات الكازينو ----------
-                loadCasinoSettings() {
-                    const saved = StorageService.get(CONFIG.STORAGE_KEYS.CASINO_SETTINGS, null);
-                    if (saved) {
-                        this.state.casinoSettings = saved;
-                    } else {
-                        this.state.casinoSettings = CONFIG.DEFAULT_CASINO_SETTINGS;
-                        StorageService.set(CONFIG.STORAGE_KEYS.CASINO_SETTINGS, this.state.casinoSettings);
-                    }
-                }
-
-                saveCasinoSettings() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.CASINO_SETTINGS, this.state.casinoSettings);
-                }
-
-                // سجل الكازينو العام
-                loadCasinoHistory() {
-                    const saved = StorageService.get(CONFIG.STORAGE_KEYS.CASINO_HISTORY, []);
-                    this.state.casinoHistory = saved;
-                }
-
-                saveCasinoHistory() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.CASINO_HISTORY, this.state.casinoHistory.slice(0, 100)); // احتفظ بآخر 100
-                }
-
-                // إضافة جولة كازينو إلى السجل العام
-                addCasinoGameRecord(userId, userName, bet, multiplier, result, winAmount) {
-                    const record = {
-                        id: IdGenerator.generate('casino_'),
-                        userId,
-                        userName,
-                        bet,
-                        multiplier,
-                        result: winAmount > 0 ? 'win' : 'lose',
-                        winAmount,
-                        date: new Date().toISOString()
-                    };
-                    this.state.casinoHistory.unshift(record);
-                    if (this.state.casinoHistory.length > 50) {
-                        this.state.casinoHistory.pop();
-                    }
-                    this.saveCasinoHistory();
-                    
-                    // تحديث إحصائيات المستخدم
-                    const userData = this.getUserData(userId);
-                    if (!userData.casinoStats) userData.casinoStats = { totalBets: 0, totalWins: 0, totalLoss: 0, netProfit: 0 };
-                    userData.casinoStats.totalBets += 1;
-                    if (winAmount > 0) {
-                        userData.casinoStats.totalWins += 1;
-                        userData.casinoStats.netProfit += winAmount - bet;
-                    } else {
-                        userData.casinoStats.totalLoss += 1;
-                        userData.casinoStats.netProfit -= bet;
-                    }
-                    this.saveUserData(userId, userData);
-                }
-
-                // جلب سجل كازينو مستخدم معين
-                getUserCasinoHistory(userId) {
-                    return this.state.casinoHistory.filter(r => r.userId === userId).slice(0, 20);
-                }
-
-                // معالجة رهان الكازينو (Spin Wheel)
-                processWheelBet(userId, betAmount) {
-                    const userData = this.getUserData(userId);
-                    if (userData.blocked) {
-                        return { success: false, message: 'حسابك محظور' };
-                    }
-                    if (userData.balance < betAmount) {
-                        return { success: false, message: 'الرصيد غير كافٍ' };
-                    }
-
-                    const settings = this.state.casinoSettings;
-                    const segments = settings.wheelSegments;
-                    
-                    // حساب الوزن التراكمي
-                    let totalWeight = segments.reduce((sum, s) => sum + s.weight, 0);
-                    let rand = Math.random() * totalWeight;
-                    let cumulative = 0;
-                    let selectedSegment = segments[0];
-                    for (let seg of segments) {
-                        cumulative += seg.weight;
-                        if (rand < cumulative) {
-                            selectedSegment = seg;
-                            break;
-                        }
-                    }
-
-                    const multiplier = selectedSegment.multiplier;
-                    const winAmount = multiplier === 0 ? 0 : Math.round(betAmount * multiplier);
-                    const delta = winAmount - betAmount; // صافي التغير في الرصيد
-
-                    // خصم الرهان أولاً ثم إضافة الربح
-                    this.updateUserBalance(userId, delta, `لعبة سبين: ${selectedSegment.label} (رهان ${betAmount})`, 'casino');
-
-                    // تسجيل السجل
-                    this.addCasinoGameRecord(userId, userData.name || `مستخدم ${userId}`, betAmount, multiplier, selectedSegment.label, winAmount);
-
-                    return {
-                        success: true,
-                        segment: selectedSegment,
-                        bet: betAmount,
-                        winAmount,
-                        newBalance: userData.balance + delta
-                    };
-                }
             }
 
-            // ======================== مدير واجهة المستخدم (UI Manager) مع دعم رفع الصور والكازينو ========================
+            // ======================== مدير واجهة المستخدم (UI Manager) مع دعم رفع الصور ========================
             class UIManager {
                 constructor(state, dataService, telegramService, toast) {
                     this.state = state;
@@ -1719,22 +1484,6 @@
                                 </div>
                             </div>
 
-                            <!-- إضافة أيقونة الكازينو -->
-                            <div class="casino-grid">
-                                <div class="glass-card" id="casinoSpinBtn">
-                                    <i class="fa-solid fa-dice"></i>
-                                    <span class="block text-sm font-bold">عجلة الحظ</span>
-                                </div>
-                                <div class="glass-card opacity-50 cursor-not-allowed">
-                                    <i class="fa-solid fa-dragon"></i>
-                                    <span class="block text-sm font-bold">قريباً</span>
-                                </div>
-                                <div class="glass-card opacity-50 cursor-not-allowed">
-                                    <i class="fa-solid fa-ghost"></i>
-                                    <span class="block text-sm font-bold">قريباً</span>
-                                </div>
-                            </div>
-
                             <div class="grid grid-cols-2 gap-4 mt-4">
                                 <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
                                     <div class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2">
@@ -1832,7 +1581,7 @@
 
                             <button id="openAdminPanelBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2 mt-2">
                                 <i class="fa-solid fa-gears"></i>
-                                لوحة الإدارة (الطلبات، المستخدمين، طرق الدفع، الكازينو)
+                                لوحة الإدارة (الطلبات، المستخدمين، طرق الدفع)
                                 ${pendingCount > 0 ? `<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">${pendingCount}</span>` : ''}
                             </button>
 
@@ -1866,11 +1615,6 @@
                     const notificationBell = document.getElementById('notificationBell');
                     if (notificationBell) {
                         notificationBell.addEventListener('click', () => this.openNotificationsModal());
-                    }
-
-                    const casinoSpinBtn = document.getElementById('casinoSpinBtn');
-                    if (casinoSpinBtn) {
-                        casinoSpinBtn.addEventListener('click', () => this.openCasinoWheel());
                     }
                 }
 
@@ -2262,9 +2006,6 @@
                                     <div class="text-xs text-gray-400">ID: ${u.id}</div>
                                     <div class="text-sm">الرصيد: ${u.balance.toLocaleString('ar-EG')}</div>
                                     <div class="text-xs text-gray-400">آخر نشاط: ${u.lastActive ? DateUtils.formatDateTime(u.lastActive) : 'غير معروف'}</div>
-                                    ${u.casinoStats ? `
-                                        <div class="text-xs text-gray-400">رهانات الكازينو: ${u.casinoStats.totalBets} | فوز: ${u.casinoStats.totalWins} | خسارة: ${u.casinoStats.totalLoss} | صافي: ${u.casinoStats.netProfit}</div>
-                                    ` : ''}
                                 </div>
                                 <div class="flex gap-2">
                                     <button class="edit-user-balance" data-id="${u.id}" title="تعديل الرصيد">
@@ -2279,17 +2020,6 @@
                         </div>
                     `).join('');
 
-                    // إعدادات الكازينو (عرض وتعديل)
-                    const casinoSettings = this.state.casinoSettings;
-                    const segmentsHtml = casinoSettings.wheelSegments.map((seg, index) => `
-                        <tr>
-                            <td><input type="text" class="w-full bg-slate-800 border border-white/10 rounded p-1 text-white" value="${seg.label}" data-index="${index}" data-field="label"></td>
-                            <td><input type="number" step="0.1" class="w-full bg-slate-800 border border-white/10 rounded p-1 text-white" value="${seg.multiplier}" data-index="${index}" data-field="multiplier"></td>
-                            <td><input type="color" class="w-full bg-slate-800 border border-white/10 rounded p-1" value="${seg.color}" data-index="${index}" data-field="color"></td>
-                            <td><input type="number" class="w-full bg-slate-800 border border-white/10 rounded p-1 text-white" value="${seg.weight}" data-index="${index}" data-field="weight" min="0" step="1"></td>
-                        </tr>
-                    `).join('');
-
                     return `
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-bold">لوحة الإدارة</h2>
@@ -2302,7 +2032,6 @@
                             <button class="wallet-tab active" data-admin-tab="requests">الطلبات</button>
                             <button class="wallet-tab" data-admin-tab="users">المستخدمين</button>
                             <button class="wallet-tab" data-admin-tab="payment-methods">طرق الدفع</button>
-                            <button class="wallet-tab" data-admin-tab="casino">الكازينو</button>
                         </div>
 
                         <div id="adminRequestsTab" class="admin-tab-content">
@@ -2338,30 +2067,6 @@
                             </div>
                             <div class="space-y-2 max-h-96 overflow-y-auto">${paymentMethodsHtml}</div>
                         </div>
-
-                        <div id="adminCasinoTab" class="admin-tab-content hidden">
-                            <h3 class="text-lg font-bold mb-3">إعدادات عجلة الحظ</h3>
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr><th>القطاع</th><th>المضاعف</th><th>اللون</th><th>الوزن</th></tr>
-                                </thead>
-                                <tbody>
-                                    ${segmentsHtml}
-                                </tbody>
-                            </table>
-                            <button id="saveCasinoSettings" class="mt-3 bg-green-600 px-4 py-2 rounded-lg w-full">حفظ الإعدادات</button>
-
-                            <h3 class="text-lg font-bold mt-4 mb-2">سجل الكازينو العام</h3>
-                            <div class="casino-history max-h-40 overflow-y-auto">
-                                ${this.state.casinoHistory.slice(0, 20).map(r => `
-                                    <div class="casino-history-item">
-                                        <span>${r.userName}</span>
-                                        <span>رهان ${r.bet}</span>
-                                        <span class="${r.result === 'win' ? 'win-text' : 'lose-text'}">${r.result === 'win' ? '+' + r.winAmount : 'خسارة'}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
                     `;
                 }
 
@@ -2383,7 +2088,6 @@
                             document.getElementById('adminRequestsTab').classList.add('hidden');
                             document.getElementById('adminUsersTab').classList.add('hidden');
                             document.getElementById('adminPaymentMethodsTab').classList.add('hidden');
-                            document.getElementById('adminCasinoTab').classList.add('hidden');
                             
                             if (tabName === 'requests') {
                                 document.getElementById('adminRequestsTab').classList.remove('hidden');
@@ -2391,8 +2095,6 @@
                                 document.getElementById('adminUsersTab').classList.remove('hidden');
                             } else if (tabName === 'payment-methods') {
                                 document.getElementById('adminPaymentMethodsTab').classList.remove('hidden');
-                            } else if (tabName === 'casino') {
-                                document.getElementById('adminCasinoTab').classList.remove('hidden');
                             }
                         });
                     });
@@ -2483,27 +2185,6 @@
                             }
                         });
                     });
-
-                    // حفظ إعدادات الكازينو
-                    const saveBtn = document.getElementById('saveCasinoSettings');
-                    if (saveBtn) {
-                        saveBtn.addEventListener('click', () => {
-                            const newSegments = [];
-                            const rows = document.querySelectorAll('#adminCasinoTab tbody tr');
-                            rows.forEach(row => {
-                                const inputs = row.querySelectorAll('input');
-                                newSegments.push({
-                                    label: inputs[0].value,
-                                    multiplier: parseFloat(inputs[1].value) || 0,
-                                    color: inputs[2].value,
-                                    weight: parseInt(inputs[3].value) || 1
-                                });
-                            });
-                            this.state.casinoSettings.wheelSegments = newSegments;
-                            this.data.saveCasinoSettings();
-                            this.toast.success('تم حفظ إعدادات الكازينو');
-                        });
-                    }
                 }
 
                 // ---------- تعديل رصيد المستخدم ----------
@@ -2835,192 +2516,6 @@
                     
                     modalOverlay.addEventListener('click', (e) => {
                         if (e.target === modalOverlay) modalOverlay.classList.remove('open');
-                    });
-                }
-
-                // ---------- لعبة الكازينو: عجلة الحظ ----------
-                openCasinoWheel() {
-                    const modalOverlay = document.getElementById('casinoModalOverlay');
-                    const modalContent = document.getElementById('casinoModalContent');
-                    modalContent.innerHTML = this.renderCasinoWheel();
-                    modalOverlay.classList.add('open');
-                    this.bindCasinoWheelEvents();
-                }
-
-                renderCasinoWheel() {
-                    const balance = this.state.currentUserData?.balance || 0;
-                    const settings = this.state.casinoSettings;
-                    const segments = settings.wheelSegments;
-
-                    // إنشاء Canvas للعجلة (سيتم الرسم لاحقاً)
-                    return `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">🎰 عجلة الحظ</h2>
-                            <button id="closeCasinoModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="text-center mb-3">
-                            <span class="text-gray-400">رصيدك:</span>
-                            <span class="text-xl font-bold text-white" id="casinoBalance">${balance.toLocaleString('ar-EG')}</span>
-                        </div>
-
-                        <div class="casino-wheel-container">
-                            <canvas id="wheelCanvas" class="wheel-canvas" width="250" height="250"></canvas>
-                            <div class="wheel-pointer"></div>
-                            <div class="wheel-center"></div>
-                        </div>
-
-                        <div class="flex justify-center items-center gap-3 my-4">
-                            <input type="number" id="betAmount" class="bet-input" placeholder="الرهان" min="1" max="${balance}" value="10">
-                            <button id="spinWheelBtn" class="spin-btn">🔄 دير العجلة</button>
-                        </div>
-
-                        <div id="spinResult" class="text-center text-lg font-bold mb-2"></div>
-
-                        <div class="casino-history" id="casinoHistoryList">
-                            ${this.renderCasinoHistory()}
-                        </div>
-                    `;
-                }
-
-                renderCasinoHistory() {
-                    const userId = this.state.user.id;
-                    const history = this.data.getUserCasinoHistory(userId);
-                    if (history.length === 0) return '<p class="text-center text-gray-400">لا يوجد سجل بعد</p>';
-                    return history.map(r => `
-                        <div class="casino-history-item">
-                            <span>${DateUtils.formatDateTime(r.date).split(' ')[0]}</span>
-                            <span>رهان ${r.bet}</span>
-                            <span class="${r.result === 'win' ? 'win-text' : 'lose-text'}">${r.result === 'win' ? '+' + r.winAmount : '- ' + r.bet}</span>
-                        </div>
-                    `).join('');
-                }
-
-                bindCasinoWheelEvents() {
-                    const modalOverlay = document.getElementById('casinoModalOverlay');
-                    document.getElementById('closeCasinoModal').addEventListener('click', () => {
-                        modalOverlay.classList.remove('open');
-                    });
-                    modalOverlay.addEventListener('click', (e) => {
-                        if (e.target === modalOverlay) modalOverlay.classList.remove('open');
-                    });
-
-                    const canvas = document.getElementById('wheelCanvas');
-                    const ctx = canvas.getContext('2d');
-                    const segments = this.state.casinoSettings.wheelSegments;
-                    const totalSegments = segments.length;
-                    const anglePerSegment = (2 * Math.PI) / totalSegments;
-
-                    // رسم العجلة
-                    const drawWheel = (rotation = 0) => {
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        for (let i = 0; i < totalSegments; i++) {
-                            const startAngle = i * anglePerSegment + rotation;
-                            const endAngle = startAngle + anglePerSegment;
-                            ctx.beginPath();
-                            ctx.moveTo(125, 125);
-                            ctx.arc(125, 125, 120, startAngle, endAngle);
-                            ctx.closePath();
-                            ctx.fillStyle = segments[i].color;
-                            ctx.fill();
-                            ctx.strokeStyle = '#fff';
-                            ctx.lineWidth = 2;
-                            ctx.stroke();
-
-                            // رسم النص
-                            ctx.save();
-                            ctx.translate(125, 125);
-                            ctx.rotate(startAngle + anglePerSegment / 2);
-                            ctx.textAlign = 'center';
-                            ctx.fillStyle = '#fff';
-                            ctx.font = 'bold 12px Cairo';
-                            ctx.shadowColor = '#000';
-                            ctx.shadowBlur = 4;
-                            ctx.fillText(segments[i].multiplier + 'x', 70, 0);
-                            ctx.restore();
-                        }
-                    };
-                    drawWheel();
-
-                    const spinBtn = document.getElementById('spinWheelBtn');
-                    const betInput = document.getElementById('betAmount');
-                    const resultDiv = document.getElementById('spinResult');
-                    const balanceSpan = document.getElementById('casinoBalance');
-
-                    let isSpinning = false;
-
-                    spinBtn.addEventListener('click', () => {
-                        if (isSpinning) return;
-                        const bet = parseInt(betInput.value);
-                        if (isNaN(bet) || bet <= 0) {
-                            this.toast.error('أدخل رهان صحيح');
-                            return;
-                        }
-                        const currentBalance = this.state.currentUserData?.balance || 0;
-                        if (bet > currentBalance) {
-                            this.toast.error('الرصيد غير كافٍ');
-                            return;
-                        }
-
-                        isSpinning = true;
-                        spinBtn.disabled = true;
-
-                        // طلب معالجة الرهان من DataService
-                        const result = this.data.processWheelBet(this.state.user.id, bet);
-                        if (!result.success) {
-                            this.toast.error(result.message);
-                            isSpinning = false;
-                            spinBtn.disabled = false;
-                            return;
-                        }
-
-                        // تحديث الرصيد في الواجهة
-                        balanceSpan.innerText = result.newBalance.toLocaleString('ar-EG');
-                        this.updateBalanceDisplay();
-
-                        // دوران العجلة بشكل عشوائي
-                        const spins = 5 + Math.floor(Math.random() * 5); // عدد الدورات الكاملة
-                        const targetAngle = Math.random() * 2 * Math.PI; // زاوية عشوائية
-                        const finalRotation = spins * 2 * Math.PI + targetAngle;
-
-                        // محاكاة الدوران
-                        let startTime = null;
-                        const duration = 3000; // 3 ثوانٍ
-
-                        const animate = (timestamp) => {
-                            if (!startTime) startTime = timestamp;
-                            const elapsed = timestamp - startTime;
-                            const progress = Math.min(elapsed / duration, 1);
-                            // easeOutCubic
-                            const easeProgress = 1 - Math.pow(1 - progress, 3);
-                            const currentRotation = easeProgress * finalRotation;
-                            drawWheel(currentRotation);
-
-                            if (progress < 1) {
-                                requestAnimationFrame(animate);
-                            } else {
-                                // انتهى الدوران، حدد القطاع الفائز
-                                // نعكس الاتجاه لأن canvas rotate عكس عقارب الساعة، والعجلة تدور مع عقارب الساعة
-                                const normalized = (2 * Math.PI - (targetAngle % (2 * Math.PI))) % (2 * Math.PI);
-                                const segmentIndex = Math.floor(normalized / anglePerSegment) % totalSegments;
-                                const winningSegment = segments[segmentIndex];
-                                
-                                // لكن النتيجة الفعلية يجب أن تكون من result.segment
-                                // للتوافق، نعرض النتيجة المخزنة
-                                const winAmount = result.winAmount;
-                                const winText = winAmount > 0 ? `ربحت ${winAmount} 🎉` : 'خسرت الرهان 😢';
-                                resultDiv.innerHTML = `${winText} (${result.segment.label})`;
-
-                                // تحديث سجل المستخدم
-                                document.getElementById('casinoHistoryList').innerHTML = this.renderCasinoHistory();
-
-                                isSpinning = false;
-                                spinBtn.disabled = false;
-                            }
-                        };
-
-                        requestAnimationFrame(animate);
                     });
                 }
             }
