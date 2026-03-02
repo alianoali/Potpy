@@ -668,11 +668,12 @@
         .modal-overlay.open { display: flex; }
 
         .modal-content {
+            position: relative;
             background: rgba(20, 30, 40, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
             border-radius: 32px;
-            padding: 20px;
+            padding: 24px 20px 20px;
             max-width: 500px;
             width: 100%;
             max-height: 90vh;
@@ -683,6 +684,30 @@
         }
 
         .modal-content::-webkit-scrollbar { display: none; }
+
+        /* زر إغلاق موحد للنوافذ */
+        .modal-close-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .modal-close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
 
         /* ========== مؤشر التحديث التلقائي ========== */
         .auto-update-indicator {
@@ -825,7 +850,7 @@
     </div>
 
     <!-- ========== منتقي الإيموجي ========== -->
-    <div class="emoji-picker-container" id="emojiPickerContainer">
+    <div class="emoji-picker-container hidden" id="emojiPickerContainer">
         <emoji-picker class="light"></emoji-picker>
     </div>
 
@@ -1845,6 +1870,84 @@
                     }
                 }
 
+                // دالة موحدة لإغلاق جميع النوافذ
+                closeAllModals() {
+                    const overlays = [
+                        'walletModalOverlay',
+                        'adminPanelOverlay',
+                        'paymentMethodModalOverlay',
+                        'editBalanceModalOverlay',
+                        'supportChatModalOverlay',
+                        'ticketModalOverlay',
+                        'settingsOverlay'
+                    ];
+                    overlays.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.classList.remove('open');
+                    });
+                }
+
+                // دالة موحدة لفتح نافذة مع إضافة سلوك الإغلاق
+                openModal(overlayId, contentHtml, onCloseCallback = null) {
+                    // إغلاق أي نافذة مفتوحة حالياً
+                    this.closeAllModals();
+                    
+                    const overlay = document.getElementById(overlayId);
+                    const content = overlay.querySelector('.modal-content');
+                    content.innerHTML = contentHtml;
+                    
+                    // إضافة زر إغلاق إذا لم يكن موجوداً في المحتوى
+                    if (!content.querySelector('.modal-close-btn')) {
+                        const closeBtn = document.createElement('button');
+                        closeBtn.className = 'modal-close-btn';
+                        closeBtn.innerHTML = '<i class="fa-solid fa-times"></i>';
+                        closeBtn.setAttribute('aria-label', 'إغلاق');
+                        content.prepend(closeBtn);
+                    }
+                    
+                    overlay.classList.add('open');
+                    
+                    // إغلاق عند النقر على الخلفية
+                    const closeHandler = (e) => {
+                        if (e.target === overlay) {
+                            overlay.classList.remove('open');
+                            if (onCloseCallback) onCloseCallback();
+                        }
+                    };
+                    overlay.addEventListener('click', closeHandler);
+                    
+                    // إغلاق عند الضغط على ESC
+                    const escHandler = (e) => {
+                        if (e.key === 'Escape' && overlay.classList.contains('open')) {
+                            overlay.classList.remove('open');
+                            if (onCloseCallback) onCloseCallback();
+                            document.removeEventListener('keydown', escHandler);
+                        }
+                    };
+                    document.addEventListener('keydown', escHandler);
+                    
+                    // إغلاق عند النقر على زر الإغلاق داخل المحتوى
+                    const closeBtnInContent = content.querySelector('.modal-close-btn, [id^="close"]');
+                    if (closeBtnInContent) {
+                        closeBtnInContent.addEventListener('click', () => {
+                            overlay.classList.remove('open');
+                            if (onCloseCallback) onCloseCallback();
+                        });
+                    }
+                    
+                    // تنظيف المستمعين عند الإغلاق
+                    const cleanup = () => {
+                        overlay.removeEventListener('click', closeHandler);
+                        document.removeEventListener('keydown', escHandler);
+                    };
+                    overlay.addEventListener('transitionend', function onTransitionEnd(e) {
+                        if (!overlay.classList.contains('open')) {
+                            cleanup();
+                            overlay.removeEventListener('transitionend', onTransitionEnd);
+                        }
+                    });
+                }
+
                 render() {
                     if (this.state.telegramMissing) {
                         this.renderTelegramMissing();
@@ -2292,18 +2395,12 @@
 
                 // ========== نظام الدردشة ==========
                 openSupportChat() {
-                    const modal = document.getElementById('supportChatModalOverlay');
-                    const content = document.getElementById('supportChatModalContent');
-                    content.innerHTML = this.renderSupportChat();
-                    modal.classList.add('open');
+                    const contentHtml = this.renderSupportChat();
+                    this.openModal('supportChatModalOverlay', contentHtml, () => {
+                        this.data.markChatAsRead(this.state.user.id);
+                    });
                     
                     this.loadEmojiPicker();
-                    
-                    this.bindChatEvents();
-                    
-                    if (this.state.user) {
-                        this.data.markChatAsRead(this.state.user.id);
-                    }
                 }
 
                 renderSupportChat() {
@@ -2333,15 +2430,10 @@
                     const quickReplies = isAdmin ? CONFIG.QUICK_REPLIES.admin : CONFIG.QUICK_REPLIES.user;
 
                     return `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">
-                                <i class="fa-solid fa-headset ml-2 text-green-400"></i>
-                                ${isAdmin ? 'دردشة الدعم - جميع المستخدمين' : 'التواصل مع فريق الدعم'}
-                            </h2>
-                            <button id="closeSupportChat" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
+                        <h2 class="text-xl font-bold mb-4 text-center">
+                            <i class="fa-solid fa-headset ml-2 text-green-400"></i>
+                            ${isAdmin ? 'دردشة الدعم - جميع المستخدمين' : 'التواصل مع فريق الدعم'}
+                        </h2>
 
                         <div class="chat-container glass-card p-3 rounded-2xl">
                             <div class="chat-messages hide-scrollbar" id="chatMessages">
@@ -2387,14 +2479,6 @@
                     const emojiBtn = document.getElementById('emojiPickerBtn');
                     const emojiContainer = document.getElementById('emojiPickerContainer');
                     
-                    document.getElementById('closeSupportChat').addEventListener('click', () => {
-                        modal.classList.remove('open');
-                    });
-
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) modal.classList.remove('open');
-                    });
-
                     const sendMessage = () => {
                         const message = input.value.trim();
                         if (!message) return;
@@ -2432,7 +2516,7 @@
 
                     if (emojiBtn) {
                         emojiBtn.addEventListener('click', () => {
-                            emojiContainer.classList.toggle('open');
+                            emojiContainer.classList.toggle('hidden');
                         });
                     }
 
@@ -2463,7 +2547,7 @@
                         } else if (userMessage.includes('سحب')) {
                             reply = 'لطلب السحب، تأكد من توفر الرصيد الكافي واختر طريقة السحب المناسبة. سيتم مراجعة طلبك خلال 24 ساعة.';
                         } else if (userMessage.includes('تحويل')) {
-                            reply = 'التحويل بين المستخدمين سهل!只需 أدخل معرف المستخدم المستهدف والمبلغ من قسم التحويل في المحفظة.';
+                            reply = 'التحويل بين المستخدمين سهل! أدخل معرف المستخدم المستهدف والمبلغ من قسم التحويل في المحفظة.';
                         }
                         
                         this.data.addChatMessage(reply, null, true);
@@ -2493,7 +2577,7 @@
                                     const input = document.getElementById('chatMessageInput');
                                     if (input) {
                                         input.value += event.detail.unicode;
-                                        document.getElementById('emojiPickerContainer').classList.remove('open');
+                                        document.getElementById('emojiPickerContainer').classList.add('hidden');
                                     }
                                 });
                             }
@@ -2503,26 +2587,18 @@
 
                 // ========== نظام التذاكر ==========
                 openUserTickets() {
-                    const modal = document.getElementById('ticketModalOverlay');
-                    const content = document.getElementById('ticketModalContent');
-                    content.innerHTML = this.renderUserTickets();
-                    modal.classList.add('open');
-                    this.bindTicketEvents();
+                    const contentHtml = this.renderUserTickets();
+                    this.openModal('ticketModalOverlay', contentHtml);
                 }
 
                 renderUserTickets() {
                     const tickets = this.data.getUserTickets(this.state.user.id);
                     
                     return `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">
-                                <i class="fa-solid fa-ticket ml-2 text-purple-400"></i>
-                                تذاكري
-                            </h2>
-                            <button id="closeTicketModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
+                        <h2 class="text-xl font-bold mb-4 text-center">
+                            <i class="fa-solid fa-ticket ml-2 text-purple-400"></i>
+                            تذاكري
+                        </h2>
 
                         <button id="createNewTicket" class="w-full btn-primary py-3 mb-4 flex items-center justify-center gap-2">
                             <i class="fa-solid fa-plus"></i>
@@ -2571,14 +2647,6 @@
                 bindTicketEvents() {
                     const modal = document.getElementById('ticketModalOverlay');
                     
-                    document.getElementById('closeTicketModal').addEventListener('click', () => {
-                        modal.classList.remove('open');
-                    });
-
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) modal.classList.remove('open');
-                    });
-
                     const createBtn = document.getElementById('createNewTicket');
                     const form = document.getElementById('createTicketForm');
                     const list = document.getElementById('ticketList');
@@ -2608,10 +2676,7 @@
                         const ticket = this.data.createSupportTicket(title, description, priority);
                         if (ticket) {
                             this.toast.success('✅ تم إنشاء التذكرة بنجاح');
-                            form.classList.add('hidden');
-                            list.classList.remove('hidden');
-                            createBtn.classList.remove('hidden');
-                            this.openUserTickets();
+                            this.openUserTickets(); // إعادة فتح النافذة لتحديث القائمة
                         }
                     });
 
@@ -2624,10 +2689,7 @@
                 }
 
                 openTicketDetails(ticketId) {
-                    const modal = document.getElementById('ticketModalOverlay');
-                    const content = document.getElementById('ticketModalContent');
                     const ticket = this.state.supportTickets.find(t => t.id === ticketId);
-                    
                     if (!ticket) return;
 
                     const messagesHtml = ticket.messages.map(msg => `
@@ -2642,13 +2704,8 @@
                         </div>
                     `).join('');
 
-                    content.innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">تفاصيل التذكرة</h2>
-                            <button id="closeTicketDetails" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
+                    const contentHtml = `
+                        <h2 class="text-xl font-bold mb-4 text-center">تفاصيل التذكرة</h2>
 
                         <div class="glass-card p-4 rounded-2xl mb-4">
                             <div class="font-bold">${ticket.title}</div>
@@ -2684,12 +2741,9 @@
                         ` : ''}
                     `;
 
-                    modal.classList.add('open');
+                    this.openModal('ticketModalOverlay', contentHtml);
 
-                    document.getElementById('closeTicketDetails').addEventListener('click', () => {
-                        modal.classList.remove('open');
-                    });
-
+                    // ربط الأحداث الخاصة بالتذكرة
                     const sendReply = document.getElementById('sendTicketReply');
                     if (sendReply) {
                         sendReply.addEventListener('click', () => {
@@ -2697,7 +2751,7 @@
                             if (!reply) return;
 
                             this.data.addTicketMessage(ticketId, reply, this.state.isAdmin ? 'support' : 'user');
-                            this.openTicketDetails(ticketId);
+                            this.openTicketDetails(ticketId); // إعادة فتح النافذة لتحديث الرسائل
                         });
                     }
 
@@ -2707,7 +2761,7 @@
                             if (confirm('هل أنت متأكد من إغلاق هذه التذكرة؟')) {
                                 this.data.updateTicketStatus(ticketId, 'closed');
                                 this.toast.info('تم إغلاق التذكرة');
-                                modal.classList.remove('open');
+                                this.closeAllModals();
                             }
                         });
                     }
@@ -2720,20 +2774,13 @@
 
                 // ========== طرق المدير ==========
                 openTicketManagement() {
-                    const modal = document.getElementById('ticketModalOverlay');
-                    const content = document.getElementById('ticketModalContent');
                     const tickets = this.data.getAllTickets();
 
-                    content.innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">
-                                <i class="fa-solid fa-ticket ml-2 text-purple-400"></i>
-                                إدارة تذاكر الدعم
-                            </h2>
-                            <button id="closeTicketModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
+                    const contentHtml = `
+                        <h2 class="text-xl font-bold mb-4 text-center">
+                            <i class="fa-solid fa-ticket ml-2 text-purple-400"></i>
+                            إدارة تذاكر الدعم
+                        </h2>
 
                         <div class="space-y-2 max-h-96 overflow-y-auto hide-scrollbar">
                             ${tickets.map(ticket => `
@@ -2758,15 +2805,7 @@
                         </div>
                     `;
 
-                    modal.classList.add('open');
-
-                    document.getElementById('closeTicketModal').addEventListener('click', () => {
-                        modal.classList.remove('open');
-                    });
-
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) modal.classList.remove('open');
-                    });
+                    this.openModal('ticketModalOverlay', contentHtml);
 
                     document.querySelectorAll('.ticket-item').forEach(item => {
                         item.addEventListener('click', () => {
@@ -2776,19 +2815,11 @@
                 }
 
                 openFAQManagement() {
-                    const modal = document.getElementById('walletModalOverlay');
-                    const content = document.getElementById('walletModalContent');
-
-                    content.innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">
-                                <i class="fa-solid fa-circle-question ml-2 text-blue-400"></i>
-                                إدارة الأسئلة الشائعة
-                            </h2>
-                            <button id="closeFAQModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
+                    const contentHtml = `
+                        <h2 class="text-xl font-bold mb-4 text-center">
+                            <i class="fa-solid fa-circle-question ml-2 text-blue-400"></i>
+                            إدارة الأسئلة الشائعة
+                        </h2>
 
                         <button id="addFAQBtn" class="w-full btn-primary py-2 mb-4 flex items-center justify-center gap-2">
                             <i class="fa-solid fa-plus"></i>
@@ -2828,15 +2859,7 @@
                         </div>
                     `;
 
-                    modal.classList.add('open');
-
-                    document.getElementById('closeFAQModal').addEventListener('click', () => {
-                        modal.classList.remove('open');
-                    });
-
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) modal.classList.remove('open');
-                    });
+                    this.openModal('walletModalOverlay', contentHtml);
 
                     document.getElementById('addFAQBtn').addEventListener('click', () => {
                         document.getElementById('faqList').classList.add('hidden');
@@ -2872,7 +2895,7 @@
                             this.toast.success('✅ تم إضافة السؤال');
                         }
 
-                        this.openFAQManagement();
+                        this.openFAQManagement(); // إعادة فتح النافذة لتحديث القائمة
                     });
 
                     document.querySelectorAll('.edit-faq').forEach(btn => {
@@ -2905,19 +2928,11 @@
                 }
 
                 openFAQModal() {
-                    const modal = document.getElementById('walletModalOverlay');
-                    const content = document.getElementById('walletModalContent');
-
-                    content.innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">
-                                <i class="fa-regular fa-circle-question ml-2 text-blue-400"></i>
-                                الأسئلة الشائعة
-                            </h2>
-                            <button id="closeFAQModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
+                    const contentHtml = `
+                        <h2 class="text-xl font-bold mb-4 text-center">
+                            <i class="fa-regular fa-circle-question ml-2 text-blue-400"></i>
+                            الأسئلة الشائعة
+                        </h2>
 
                         <div class="space-y-3 max-h-96 overflow-y-auto hide-scrollbar">
                             ${this.state.faqItems.map(faq => `
@@ -2932,15 +2947,7 @@
                         </div>
                     `;
 
-                    modal.classList.add('open');
-
-                    document.getElementById('closeFAQModal').addEventListener('click', () => {
-                        modal.classList.remove('open');
-                    });
-
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) modal.classList.remove('open');
-                    });
+                    this.openModal('walletModalOverlay', contentHtml);
 
                     document.querySelectorAll('.faq-item').forEach(item => {
                         item.addEventListener('click', () => {
@@ -2955,11 +2962,8 @@
 
                 // ========== نوافذ المحفظة ==========
                 openWalletModal() {
-                    const modal = document.getElementById('walletModalOverlay');
-                    const content = document.getElementById('walletModalContent');
-                    content.innerHTML = this.renderWalletModal();
-                    modal.classList.add('open');
-                    this.bindWalletModalEvents();
+                    const contentHtml = this.renderWalletModal();
+                    this.openModal('walletModalOverlay', contentHtml);
                 }
 
                 renderWalletModal() {
@@ -2996,12 +3000,7 @@
                     `).join('');
 
                     return `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">محفظتي</h2>
-                            <button id="closeWalletModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
+                        <h2 class="text-xl font-bold mb-4 text-center">محفظتي</h2>
 
                         <div class="glass-card p-6 rounded-2xl text-center mb-4">
                             <div class="text-gray-400 text-sm mb-1">الرصيد الحالي</div>
@@ -3070,14 +3069,6 @@
 
                 bindWalletModalEvents() {
                     const overlay = document.getElementById('walletModalOverlay');
-                    
-                    document.getElementById('closeWalletModal').addEventListener('click', () => {
-                        overlay.classList.remove('open');
-                    });
-                    
-                    overlay.addEventListener('click', (e) => {
-                        if (e.target === overlay) overlay.classList.remove('open');
-                    });
 
                     const tabs = document.querySelectorAll('.wallet-tab');
                     tabs.forEach(tab => {
@@ -3232,11 +3223,8 @@
                 }
 
                 openAdminPanel() {
-                    const modal = document.getElementById('adminPanelOverlay');
-                    const content = document.getElementById('adminPanelContent');
-                    content.innerHTML = this.renderAdminPanel();
-                    modal.classList.add('open');
-                    this.bindAdminPanelEvents();
+                    const contentHtml = this.renderAdminPanel();
+                    this.openModal('adminPanelOverlay', contentHtml);
                 }
 
                 renderAdminPanel() {
@@ -3245,12 +3233,7 @@
                     const users = this.data.getAllUsers();
 
                     return `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">لوحة الإدارة</h2>
-                            <button id="closeAdminPanel" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
+                        <h2 class="text-xl font-bold mb-4 text-center">لوحة الإدارة</h2>
 
                         <div class="wallet-tabs mb-3">
                             <button class="wallet-tab active" data-admin-tab="requests">الطلبات</button>
@@ -3373,16 +3356,6 @@
                 }
 
                 bindAdminPanelEvents() {
-                    const overlay = document.getElementById('adminPanelOverlay');
-                    
-                    document.getElementById('closeAdminPanel').addEventListener('click', () => {
-                        overlay.classList.remove('open');
-                    });
-                    
-                    overlay.addEventListener('click', (e) => {
-                        if (e.target === overlay) overlay.classList.remove('open');
-                    });
-
                     const tabs = document.querySelectorAll('[data-admin-tab]');
                     tabs.forEach(tab => {
                         tab.addEventListener('click', () => {
@@ -3411,7 +3384,7 @@
                             
                             if (this.data.acceptRequest(id, type)) {
                                 this.toast.success('تم قبول الطلب');
-                                this.openAdminPanel();
+                                this.openAdminPanel(); // إعادة فتح النافذة لتحديث القائمة
                             } else {
                                 this.toast.error('حدث خطأ');
                             }
@@ -3473,17 +3446,10 @@
                 }
 
                 openEditBalanceModal(userId) {
-                    const overlay = document.getElementById('editBalanceModalOverlay');
-                    const content = document.getElementById('editBalanceModalContent');
                     const user = this.data.getUserData(parseInt(userId));
                     
-                    content.innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">تعديل رصيد المستخدم ${userId}</h2>
-                            <button id="closeEditBalanceModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
+                    const contentHtml = `
+                        <h2 class="text-xl font-bold mb-4 text-center">تعديل رصيد المستخدم ${userId}</h2>
                         <div class="space-y-3">
                             <div class="text-center">
                                 <span class="text-gray-400">الرصيد الحالي:</span>
@@ -3506,11 +3472,7 @@
                         </div>
                     `;
                     
-                    overlay.classList.add('open');
-                    
-                    document.getElementById('closeEditBalanceModal').addEventListener('click', () => {
-                        overlay.classList.remove('open');
-                    });
+                    this.openModal('editBalanceModalOverlay', contentHtml);
                     
                     document.getElementById('applyBalanceChange').addEventListener('click', () => {
                         const operation = document.getElementById('balanceOperation').value;
@@ -3530,24 +3492,17 @@
                         const result = this.data.updateBalance(parseInt(userId), delta, reason, 'admin');
                         if (result.success) {
                             this.toast.success(`✅ تم تعديل الرصيد بنجاح`);
-                            overlay.classList.remove('open');
-                            this.openAdminPanel();
+                            this.closeAllModals();
+                            this.openAdminPanel(); // إعادة فتح لوحة الإدارة
                         }
                     });
                 }
 
                 openPaymentMethodModal(editingId = null) {
-                    const overlay = document.getElementById('paymentMethodModalOverlay');
-                    const content = document.getElementById('paymentMethodModalContent');
                     const method = editingId ? this.state.paymentMethods.find(m => m.id === editingId) : null;
                     
-                    content.innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">${method ? 'تعديل طريقة دفع' : 'إضافة طريقة دفع'}</h2>
-                            <button id="closePaymentMethodModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
+                    const contentHtml = `
+                        <h2 class="text-xl font-bold mb-4 text-center">${method ? 'تعديل طريقة دفع' : 'إضافة طريقة دفع'}</h2>
                         <form id="paymentMethodForm" class="space-y-3">
                             <input type="hidden" id="methodId" value="${method?.id || ''}">
                             
@@ -3590,7 +3545,7 @@
                         </form>
                     `;
                     
-                    overlay.classList.add('open');
+                    this.openModal('paymentMethodModalOverlay', contentHtml);
                     
                     const imageInput = document.getElementById('imageInput');
                     const imageUploadArea = document.getElementById('imageUploadArea');
@@ -3666,16 +3621,8 @@
                         });
                     }
 
-                    document.getElementById('closePaymentMethodModal').addEventListener('click', () => {
-                        overlay.classList.remove('open');
-                    });
-                    
                     document.getElementById('cancelPaymentMethod').addEventListener('click', () => {
-                        overlay.classList.remove('open');
-                    });
-                    
-                    overlay.addEventListener('click', (e) => {
-                        if (e.target === overlay) overlay.classList.remove('open');
+                        this.closeAllModals();
                     });
 
                     document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
@@ -3704,20 +3651,12 @@
                             this.toast.success('تمت الإضافة بنجاح');
                         }
                         
-                        overlay.classList.remove('open');
-                        this.openAdminPanel();
+                        this.closeAllModals();
+                        this.openAdminPanel(); // إعادة فتح لوحة الإدارة
                     });
                 }
 
                 openNotificationsModal() {
-                    const modal = document.getElementById('walletModalOverlay');
-                    const content = document.getElementById('walletModalContent');
-                    content.innerHTML = this.renderNotificationsModal();
-                    modal.classList.add('open');
-                    this.bindNotificationsModalEvents();
-                }
-
-                renderNotificationsModal() {
                     const userId = this.state.user.id;
                     const notifications = this.data.getUserNotifications(userId);
                     
@@ -3741,13 +3680,8 @@
                         `).join('') :
                         '<p class="text-center text-gray-400 py-8">لا توجد إشعارات</p>';
                     
-                    return `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">الإشعارات</h2>
-                            <button id="closeNotificationsModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
+                    const contentHtml = `
+                        <h2 class="text-xl font-bold mb-4 text-center">الإشعارات</h2>
                         <div class="flex justify-end mb-3">
                             <button id="markAllRead" class="btn-primary px-3 py-1 text-sm">
                                 <i class="fa-regular fa-bell-slash ml-1"></i> تحديد الكل كمقروء
@@ -3755,19 +3689,13 @@
                         </div>
                         <div class="max-h-96 overflow-y-auto hide-scrollbar space-y-2">${notificationsHtml}</div>
                     `;
-                }
-
-                bindNotificationsModalEvents() {
-                    const overlay = document.getElementById('walletModalOverlay');
                     
-                    document.getElementById('closeNotificationsModal').addEventListener('click', () => {
-                        overlay.classList.remove('open');
-                    });
+                    this.openModal('walletModalOverlay', contentHtml);
                     
                     document.getElementById('markAllRead')?.addEventListener('click', () => {
                         this.data.markAllAsRead(this.state.user.id);
                         this.toast.success('تم تحديد الكل كمقروء');
-                        this.openNotificationsModal();
+                        this.openNotificationsModal(); // إعادة فتح النافذة لتحديث القائمة
                     });
                     
                     document.querySelectorAll('.mark-read').forEach(btn => {
@@ -3777,10 +3705,6 @@
                             this.data.markNotificationAsRead(id);
                             this.openNotificationsModal();
                         });
-                    });
-                    
-                    overlay.addEventListener('click', (e) => {
-                        if (e.target === overlay) overlay.classList.remove('open');
                     });
                 }
             }
