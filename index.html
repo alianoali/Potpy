@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>نيكست ليفل | المنصة الرقمية المتكاملة</title>
+    <title>نيكست ليفل | المنصة السحابية المتكاملة</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,6 +24,50 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
+    <!-- Firebase SDKs (Modular) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+
+        // ==========================================
+        // ⚠️ استبدل البيانات التالية ببيانات مشروعك من Firebase Console
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-YOUR-API-KEY-HERE",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef"
+        };
+        // ==========================================
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // Export to window for global access in script
+        window.db = db;
+        window.storage = storage;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.deleteDoc = deleteDoc;
+        window.doc = doc;
+        window.onSnapshot = onSnapshot;
+        window.query = query;
+        window.orderBy = orderBy;
+        window.ref = ref;
+        window.uploadBytes = uploadBytes;
+        window.getDownloadURL = getDownloadURL;
+        
+        // Trigger App Start after Firebase Load
+        window.firebaseReady = true;
+        checkInit();
+    </script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -33,7 +77,7 @@
                         tg_bg: 'var(--tg-theme-bg-color, #030712)',
                         tg_text: 'var(--tg-theme-text-color, #ffffff)',
                         tg_button: 'var(--tg-theme-button-color, #2481cc)',
-                        gaming: '#00f3ff', software: '#bc13fe', crypto: '#fbbf24', social: '#ec4899'
+                        gaming: '#00f3ff', software: '#bc13fe', crypto: '#fbbf24', social: '#ec4899', admin: '#ef4444'
                     }
                 }
             }
@@ -58,26 +102,31 @@
         @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
+        @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
         #loader { position: fixed; inset: 0; z-index: 10000; background: var(--tg-theme-bg-color); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
         .spinner { width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--tg-theme-button-color); border-radius: 50%; animation: spin 1s linear infinite; }
         
-        /* Notifications */
-        #notification-container { position: fixed; top: 20px; left: 20px; z-index: 10001; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { background: rgba(17, 24, 39, 0.9); backdrop-filter: blur(10px); border-right: 4px solid var(--tg-theme-button-color); color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; min-width: 300px; animation: slideUp 0.3s ease-out; pointer-events: auto; transform: translateX(-100%); }
-        .toast.show { transform: translateX(0); }
-        .toast.success { border-color: #10b981; }
-        .toast.error { border-color: #ef4444; }
+        /* Toast Notifications */
+        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; display: flex; flex-direction: column; gap: 10px; width: 90%; max-w-md; pointer-events: none; }
+        .toast { background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; pointer-events: auto; }
+        .toast.success { border-right: 4px solid #10b981; }
+        .toast.error { border-right: 4px solid #ef4444; }
+        .toast.info { border-right: 4px solid #3b82f6; }
+        .toast.loading { border-right: 4px solid #fbbf24; }
 
-        /* Admin Panel */
-        #admin-panel { position: fixed; inset: 0; z-index: 9500; background: var(--tg-theme-bg-color); transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; }
-        #admin-panel.open { transform: translateX(0); }
-        
         /* Product Detail Modal */
         #product-modal { position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
         #product-modal.active { display: flex; opacity: 1; }
-        .modal-content { background: var(--tg-theme-bg-color); width: 90%; max-width: 600px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); transform: scale(0.9); transition: transform 0.3s; }
+        .modal-content { background: var(--tg-theme-bg-color); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); position: relative; transform: scale(0.9); transition: transform 0.3s; }
         #product-modal.active .modal-content { transform: scale(1); }
+
+        /* Admin Panel */
+        #admin-panel { position: fixed; inset: 0; z-index: 8000; background: var(--tg-theme-bg-color); transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1); overflow-y: auto; border-right: 1px solid rgba(255,255,255,0.1); }
+        #admin-panel.active { transform: translateX(0); }
+        
+        .loading-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(2px); z-index: 50; display: none; align-items: center; justify-content: center; flex-direction: column; }
+        .loading-overlay.active { display: flex; }
     </style>
 </head>
 <body class="antialiased selection:bg-gaming selection:text-deep">
@@ -85,11 +134,102 @@
     <!-- Loading Screen -->
     <div id="loader">
         <div class="spinner mb-4"></div>
-        <p class="text-sm font-mono opacity-70 animate-pulse">جاري تحميل النظام...</p>
+        <p class="text-sm font-mono opacity-70 animate-pulse" id="loader-text">جاري الاتصال بالخادم...</p>
     </div>
 
-    <!-- Notifications Container -->
-    <div id="notification-container"></div>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Product Detail Modal -->
+    <div id="product-modal">
+        <div class="modal-content glass-ultra p-0 overflow-hidden">
+            <button onclick="closeProductModal()" class="absolute top-4 left-4 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors z-10"><i class="fa-solid fa-times text-white"></i></button>
+            <div class="h-64 w-full relative">
+                <img id="modal-img" src="" class="w-full h-full object-cover">
+                <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[var(--tg-theme-bg-color)] to-transparent"></div>
+            </div>
+            <div class="p-6 pt-0">
+                <span id="modal-category" class="text-xs font-mono text-gaming uppercase tracking-wider mb-2 block">category</span>
+                <h2 id="modal-title" class="text-3xl font-bold mb-2">Product Title</h2>
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="flex text-yellow-400 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                    </div>
+                    <span class="text-gray-400 text-sm">(4.8 تقييم)</span>
+                </div>
+                <p id="modal-desc" class="text-gray-300 leading-relaxed mb-6">وصف المنتج التفصيلي يظهر هنا...</p>
+                
+                <div class="flex items-center justify-between mb-6 p-4 bg-white/5 rounded-xl border border-white/5">
+                    <span class="text-gray-400">السعر النهائي</span>
+                    <span id="modal-price" class="text-3xl font-bold text-gaming">0.00 ر.س</span>
+                </div>
+
+                <button id="modal-add-btn" class="w-full py-4 bg-gaming text-deep rounded-xl font-bold text-lg hover:brightness-110 transition-all shadow-lg shadow-gaming/20">
+                    <i class="fa-solid fa-cart-plus ml-2"></i> إضافة للسلة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel (Slide Over) -->
+    <div id="admin-panel" class="glass-ultra border-r border-white/10">
+        <div class="p-6 border-b border-white/10 flex justify-between items-center sticky top-0 bg-[var(--tg-theme-bg-color)]/90 backdrop-blur-md z-20">
+            <div>
+                <h2 class="text-2xl font-bold text-admin"><i class="fa-solid fa-shield-halved ml-2"></i>لوحة المشرف</h2>
+                <p class="text-xs text-gray-400">تحكم كامل بالنظام السحابي</p>
+            </div>
+            <button onclick="toggleAdminPanel()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-red-500/20 hover:text-red-500 transition-colors"><i class="fa-solid fa-arrow-left"></i></button>
+        </div>
+        
+        <div class="p-6 space-y-8 relative">
+            <!-- Loading Overlay for Admin Actions -->
+            <div id="admin-loading" class="loading-overlay">
+                <div class="spinner mb-2"></div>
+                <span class="text-sm">جاري المعالجة...</span>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white/5 p-4 rounded-xl border border-white/5">
+                    <p class="text-gray-400 text-xs mb-1">إجمالي المنتجات</p>
+                    <p id="stat-products" class="text-2xl font-bold text-gaming">0</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-xl border border-white/5">
+                    <p class="text-gray-400 text-xs mb-1">الأقسام النشطة</p>
+                    <p id="stat-categories" class="text-2xl font-bold text-purple-400">0</p>
+                </div>
+            </div>
+
+            <!-- Add Product -->
+            <div class="space-y-4">
+                <h3 class="font-bold text-lg border-b border-white/10 pb-2">إضافة منتج جديد</h3>
+                <form id="add-product-form" class="space-y-3">
+                    <input type="text" id="new-prod-title" placeholder="اسم المنتج" required class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2 focus:border-gaming outline-none text-sm">
+                    <select id="new-prod-cat" class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2 focus:border-gaming outline-none text-sm">
+                        <!-- Options injected by JS -->
+                    </select>
+                    <input type="text" id="new-prod-price" placeholder="السعر (مثال: 50 ر.س)" required class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2 focus:border-gaming outline-none text-sm">
+                    
+                    <!-- Image Upload -->
+                    <div class="relative">
+                        <label class="block text-xs text-gray-400 mb-1">صورة المنتج</label>
+                        <input type="file" id="new-prod-img-file" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gaming/10 file:text-gaming hover:file:bg-gaming/20"/>
+                    </div>
+                    
+                    <textarea id="new-prod-desc" placeholder="وصف المنتج..." rows="3" class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2 focus:border-gaming outline-none text-sm"></textarea>
+                    <button type="submit" class="w-full py-3 bg-admin hover:bg-red-600 text-white rounded-lg font-bold transition-colors shadow-lg shadow-red-500/20">نشر المنتج سحابياً</button>
+                </form>
+            </div>
+
+            <!-- Product List Management -->
+            <div class="space-y-4">
+                <h3 class="font-bold text-lg border-b border-white/10 pb-2">إدارة المنتجات الحية</h3>
+                <div id="admin-product-list" class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                    <!-- List injected by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- 3D Background -->
     <div id="canvas-container"></div>
@@ -105,20 +245,21 @@
         <!-- Navigation -->
         <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
             <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-                <a href="#" onclick="showPage('home')" class="text-xl md:text-2xl font-black tracking-tighter flex items-center gap-3 group magnetic-wrap">
+                <a href="#" class="text-xl md:text-2xl font-black tracking-tighter flex items-center gap-3 group magnetic-wrap">
                     <div class="w-10 h-10 bg-gradient-to-br from-gaming to-software rounded-lg flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(0,243,255,0.5)]">
                         <i class="fa-solid fa-cube text-white text-xl"></i>
                     </div>
                     <span class="hidden md:inline">نيكست<span class="text-gaming"> ليفل</span></span>
+                    <span class="md:hidden text-gaming">NL</span>
                 </a>
                 
                 <div class="flex items-center gap-4">
-                    <!-- Admin Button (Hidden by default) -->
-                    <button id="admin-trigger" onclick="toggleAdminPanel()" class="hidden magnetic-wrap text-red-500 hover:text-red-400 transition-colors">
-                        <i class="fa-solid fa-shield-halved text-xl"></i>
+                    <!-- Admin Button -->
+                    <button id="admin-btn" onclick="toggleAdminPanel()" class="hidden w-10 h-10 rounded-full bg-admin/20 text-admin border border-admin/50 hover:bg-admin hover:text-white transition-all magnetic-wrap" title="لوحة المشرف">
+                        <i class="fa-solid fa-user-gear"></i>
                     </button>
 
-                    <button class="relative magnetic-wrap group" onclick="showPage('cart')">
+                    <button class="relative magnetic-wrap group" onclick="toggleCart()">
                         <i class="fa-solid fa-cart-shopping text-xl group-hover:text-gaming transition-colors"></i>
                         <span id="cart-count" class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full text-xs flex items-center justify-center font-bold transform scale-0 transition-transform duration-300">0</span>
                     </button>
@@ -133,500 +274,431 @@
             </div>
         </nav>
 
-        <!-- Pages Container -->
-        <div id="pages-container">
-            
-            <!-- HOME PAGE -->
-            <div id="page-home" class="page-section">
-                <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-                    <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
-                        <div class="hero-content text-right order-2 md:order-1">
-                            <div class="inline-flex items-center gap-2 px-4 py-2 mb-6 border border-gaming/30 rounded-full bg-gaming/5 text-gaming text-sm font-mono animate-pulse">
-                                <span class="w-2 h-2 bg-gaming rounded-full"></span>
-                                مرحباً بك يا <span id="hero-username" class="font-bold mr-1">...</span>
-                            </div>
-                            <h1 class="text-4xl md:text-7xl lg:text-8xl font-black leading-tight mb-6">
-                                المستقبل الرقمي <br>
-                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-gaming via-software to-crypto">بين يديك</span>
-                            </h1>
-                            <p class="text-gray-400 text-lg md:text-xl mb-8 max-w-lg leading-relaxed font-light">
-                                المنصة الأكثر تطوراً لشحن الألعاب، العملات الرقمية، والاشتراكات العالمية.
-                            </p>
-                            <div class="flex flex-wrap gap-6">
-                                <button onclick="showPage('store')" class="group relative px-8 py-4 bg-gaming text-deep rounded-full font-bold overflow-hidden magnetic-wrap shadow-lg shadow-gaming/20">
-                                    <span class="relative z-10 flex items-center gap-2">تصفح المتجر <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i></span>
-                                    <div class="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="hero-visual relative order-1 md:order-2 flex justify-center items-center">
-                            <div class="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px]">
-                                <div class="absolute inset-0 bg-gradient-to-r from-gaming to-software rounded-full opacity-20 blur-[100px] animate-pulse"></div>
-                                <!-- Floating Cards Mockup -->
-                                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-80 glass-ultra rounded-2xl border border-white/10 p-6 flex flex-col justify-between rotate-y-12 rotate-z-6 hover:rotate-0 transition-all duration-700 cursor-pointer group shadow-2xl">
-                                    <div class="flex justify-between items-start"><div class="w-12 h-12 bg-gaming/20 rounded-lg flex items-center justify-center text-gaming"><i class="fa-brands fa-playstation text-2xl"></i></div></div>
-                                    <div><h3 class="text-xl font-bold mb-2">بطاقة شحن 50$</h3><p class="text-sm text-gray-400">تسليم فوري وآمن</p></div>
-                                    <div class="flex justify-between items-center mt-4"><span class="text-gaming font-bold text-lg">185 ر.س</span><button class="w-8 h-8 rounded-full bg-gaming text-deep flex items-center justify-center hover:scale-110 transition-transform"><i class="fa-solid fa-plus"></i></button></div>
-                                </div>
-                            </div>
+        <!-- Hero Section -->
+        <section id="home" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+            <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
+                <div class="hero-content text-right order-2 md:order-1">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 mb-6 border border-gaming/30 rounded-full bg-gaming/5 text-gaming text-sm font-mono animate-pulse">
+                        <span class="w-2 h-2 bg-gaming rounded-full"></span>
+                        مرحباً بك يا <span id="hero-username" class="font-bold mr-1">...</span>
+                    </div>
+                    <h1 class="text-4xl md:text-7xl lg:text-8xl font-black leading-tight mb-6">
+                        المستقبل الرقمي <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-gaming via-software to-crypto">بين يديك</span>
+                    </h1>
+                    <p class="text-gray-400 text-lg md:text-xl mb-8 max-w-lg leading-relaxed font-light">
+                        المنصة السحابية الأكثر تطوراً لشحن الألعاب والعملات الرقمية. تحديثات لحظية وأمان تام.
+                    </p>
+                    <div class="flex flex-wrap gap-6">
+                        <a href="#store" class="group relative px-8 py-4 bg-gaming text-deep rounded-full font-bold overflow-hidden magnetic-wrap shadow-lg shadow-gaming/20">
+                            <span class="relative z-10 flex items-center gap-2">تصفح المتجر <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i></span>
+                            <div class="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-visual relative order-1 md:order-2 flex justify-center items-center">
+                    <div class="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px]">
+                        <div class="absolute inset-0 bg-gradient-to-r from-gaming to-software rounded-full opacity-20 blur-[100px] animate-pulse"></div>
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-80 glass-ultra rounded-2xl border border-white/10 p-6 flex flex-col justify-between rotate-y-12 rotate-z-6 hover:rotate-0 transition-all duration-700 cursor-pointer group shadow-2xl">
+                            <div class="flex justify-between items-start"><div class="w-12 h-12 bg-gaming/20 rounded-lg flex items-center justify-center text-gaming"><i class="fa-brands fa-playstation text-2xl"></i></div></div>
+                            <div><h3 class="text-xl font-bold mb-2">بطاقة شحن 50$</h3><p class="text-sm text-gray-400">تسليم فوري وآمن</p></div>
+                            <div class="flex justify-between items-center mt-4"><span class="text-gaming font-bold text-lg">185 ر.س</span><button class="w-8 h-8 rounded-full bg-gaming text-deep flex items-center justify-center hover:scale-110 transition-transform"><i class="fa-solid fa-plus"></i></button></div>
                         </div>
                     </div>
-                </section>
-            </div>
-
-            <!-- STORE PAGE -->
-            <div id="page-store" class="page-section hidden pt-24 pb-12">
-                <div class="container mx-auto px-6">
-                    <div class="text-center mb-12">
-                        <h2 class="text-4xl md:text-6xl font-black mb-6">المتجر الرقمي</h2>
-                    </div>
-                    <!-- Category Tabs -->
-                    <div class="flex flex-wrap justify-center gap-4 mb-12" id="category-tabs">
-                        <!-- Injected by JS -->
-                    </div>
-                    <!-- Products Grid -->
-                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6" id="products-grid"></div>
                 </div>
             </div>
+        </section>
 
-            <!-- CART PAGE -->
-            <div id="page-cart" class="page-section hidden pt-24 pb-12">
-                <div class="container mx-auto px-6 max-w-4xl">
-                    <h2 class="text-3xl font-bold mb-8">سلة المشتريات</h2>
-                    <div id="cart-items" class="space-y-4"></div>
-                    <div class="mt-8 glass-ultra p-6 rounded-2xl">
-                        <div class="flex justify-between items-center mb-4 text-xl font-bold">
-                            <span>الإجمالي:</span>
-                            <span id="cart-total" class="text-gaming">0 ر.س</span>
-                        </div>
-                        <button onclick="checkout()" class="w-full py-4 bg-gaming text-deep rounded-xl font-bold hover:bg-white transition-colors">إتمام الشراء</button>
+        <!-- Store Section -->
+        <section id="store" class="py-24 relative">
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="text-center mb-12 section-header">
+                    <h2 class="text-4xl md:text-6xl font-black mb-6">اختر <span class="text-white/50">فئتك</span></h2>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4 mb-12" id="category-tabs">
+                    <!-- Tabs injected by JS -->
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6" id="products-grid">
+                    <!-- Products injected by JS -->
+                    <div class="col-span-full text-center py-20">
+                        <div class="spinner inline-block mb-4"></div>
+                        <p class="text-gray-400">جاري تحميل المنتجات من السحابة...</p>
                     </div>
                 </div>
             </div>
+        </section>
 
-        </div>
-    </div>
-
-    <!-- PRODUCT DETAIL MODAL -->
-    <div id="product-modal">
-        <div class="modal-content relative">
-            <button onclick="closeProductModal()" class="absolute top-4 left-4 z-10 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors"><i class="fa-solid fa-times"></i></button>
-            <div class="grid md:grid-cols-2">
-                <div class="h-64 md:h-full bg-gray-800 relative">
-                    <img id="modal-img" src="" class="w-full h-full object-cover">
-                </div>
-                <div class="p-6 flex flex-col justify-between">
-                    <div>
-                        <span id="modal-category" class="text-xs font-mono text-gaming mb-2 block">فئة</span>
-                        <h2 id="modal-title" class="text-2xl font-bold mb-2">عنوان المنتج</h2>
-                        <p id="modal-desc" class="text-gray-400 text-sm mb-4">وصف المنتج التفصيلي يظهر هنا...</p>
-                    </div>
-                    <div>
-                        <div class="text-3xl font-bold text-white mb-6" id="modal-price">0 ر.س</div>
-                        <button id="modal-add-btn" class="w-full py-3 bg-gaming text-deep rounded-xl font-bold hover:shadow-lg hover:shadow-gaming/30 transition-all">إضافة للسلة</button>
-                    </div>
-                </div>
+        <!-- Footer -->
+        <footer class="bg-black/50 py-12 border-t border-white/10 mt-12">
+            <div class="container mx-auto px-6 text-center">
+                <p class="text-gray-500 text-sm">جميع الحقوق محفوظة © 2024 - نيكست ليفل | Powered by Firebase</p>
             </div>
-        </div>
-    </div>
-
-    <!-- ADMIN PANEL -->
-    <div id="admin-panel" class="glass-ultra border-r border-white/10">
-        <div class="p-6 border-b border-white/10 flex justify-between items-center sticky top-0 bg-[#030712]/90 backdrop-blur-md z-10">
-            <h2 class="text-2xl font-bold text-red-500"><i class="fa-solid fa-user-shield ml-2"></i>لوحة المشرف</h2>
-            <button onclick="toggleAdminPanel()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-red-500 hover:text-white transition-colors"><i class="fa-solid fa-arrow-right"></i></button>
-        </div>
-        <div class="p-6 space-y-8">
-            <!-- Stats -->
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white/5 p-4 rounded-xl">
-                    <p class="text-gray-400 text-xs">إجمالي المبيعات</p>
-                    <p class="text-2xl font-bold text-gaming" id="admin-sales">0 ر.س</p>
-                </div>
-                <div class="bg-white/5 p-4 rounded-xl">
-                    <p class="text-gray-400 text-xs">عدد الطلبات</p>
-                    <p class="text-2xl font-bold text-purple-500" id="admin-orders">0</p>
-                </div>
-            </div>
-
-            <!-- Add Product Form -->
-            <div class="space-y-4">
-                <h3 class="font-bold text-lg border-b border-white/10 pb-2">إضافة منتج جديد</h3>
-                <input type="text" id="new-prod-title" placeholder="اسم المنتج" class="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-sm focus:border-gaming outline-none">
-                <select id="new-prod-cat" class="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-sm focus:border-gaming outline-none">
-                    <option value="games">ألعاب</option>
-                    <option value="software">برامج</option>
-                    <option value="crypto">عملات</option>
-                </select>
-                <input type="text" id="new-prod-price" placeholder="السعر (مثال: 50 ر.س)" class="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-sm focus:border-gaming outline-none">
-                <input type="text" id="new-prod-img" placeholder="رابط الصورة" class="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-sm focus:border-gaming outline-none">
-                <button onclick="adminAddProduct()" class="w-full py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold transition-colors">نشر المنتج</button>
-            </div>
-
-            <!-- Manage Categories -->
-            <div class="space-y-4">
-                <h3 class="font-bold text-lg border-b border-white/10 pb-2">إدارة الأقسام</h3>
-                <div class="flex gap-2">
-                    <input type="text" id="new-cat-name" placeholder="اسم القسم الجديد" class="flex-1 bg-black/30 border border-white/10 rounded-lg p-3 text-sm focus:border-gaming outline-none">
-                    <button onclick="adminAddCategory()" class="px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg"><i class="fa-solid fa-plus"></i></button>
-                </div>
-                <div id="admin-cat-list" class="flex flex-wrap gap-2"></div>
-            </div>
-        </div>
+        </footer>
     </div>
 
     <!-- Scripts -->
-    <script>
-        // --- CONFIGURATION & STATE ---
-        const ADMIN_ID = 7609492965; // Your Telegram ID
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        
+        // Wait for Firebase Module to expose globals
+        const checkInit = () => {
+            if (window.firebaseReady) {
+                initSystem();
+            } else {
+                setTimeout(checkInit, 100);
+            }
+        };
+        window.checkInit = checkInit;
+
+        const ADMIN_ID = 7609492965; 
         const tg = window.Telegram.WebApp;
         
-        // Default Data Structure
-        const defaultData = {
-            categories: [
-                { id: 'all', name: 'الكل', icon: 'fa-layer-group' },
-                { id: 'games', name: 'ألعاب', icon: 'fa-gamepad', color: 'gaming' },
-                { id: 'software', name: 'برامج', icon: 'fa-windows', color: 'software' },
-                { id: 'crypto', name: 'عملات', icon: 'fa-coins', color: 'crypto' },
-                { id: 'social', name: 'تواصل', icon: 'fa-whatsapp', color: 'social' }
-            ],
-            products: [
-                { id: 1, category: 'games', title: 'شحن شدات ببجي', price: '50 ر.س', priceVal: 50, img: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80', desc: 'شحن فوري وآمن لحسابك في ببجي موبايل.' },
-                { id: 2, category: 'games', title: 'بطاقة بلايستيشن 50$', price: '185 ر.س', priceVal: 185, img: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=400&q=80', desc: 'رصيد محفظة بلايستيشن ستور أمريكي.' },
-                { id: 3, category: 'software', title: 'أوفيس 365 اشتراك', price: '40 ر.س', priceVal: 40, img: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=80', desc: 'اشتراك سنة كاملة لجميع أجهزة مايكروسوفت.' },
-                { id: 4, category: 'crypto', title: 'شراء USDT', price: 'سعر السوق', priceVal: 0, img: 'https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&w=400&q=80', desc: 'شراء وبيع عملات رقمية بأفضل سعر.' }
-            ],
-            cart: [],
-            orders: [],
-            sales: 0
-        };
-
-        // Load Data from LocalStorage or Use Default
-        let appData = JSON.parse(localStorage.getItem('nl_store_data')) || defaultData;
         let currentUser = null;
         let isAdmin = false;
+        let allProducts = [];
+        let allCategories = [
+            { id: 'all', name: 'الكل', icon: 'fa-layer-group', color: '#ffffff' },
+            { id: 'games', name: 'ألعاب', icon: 'fa-gamepad', color: '#00f3ff' },
+            { id: 'software', name: 'برامج', icon: 'fa-windows', color: '#bc13fe' },
+            { id: 'crypto', name: 'عملات', icon: 'fa-coins', color: '#fbbf24' },
+            { id: 'social', name: 'تواصل', icon: 'fa-whatsapp', color: '#ec4899' }
+        ];
 
-        function saveData() {
-            localStorage.setItem('nl_store_data', JSON.stringify(appData));
-            updateAdminStats();
-        }
-
-        // --- NOTIFICATION SYSTEM ---
-        function showNotification(message, type = 'success') {
-            const container = document.getElementById('notification-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `
-                <i class="fa-solid ${type === 'success' ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-red-500'} text-xl"></i>
-                <span class="text-sm font-bold">${message}</span>
-            `;
-            container.appendChild(toast);
-            
-            // Trigger animation
-            requestAnimationFrame(() => toast.classList.add('show'));
-            
-            // Remove after 3s
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        // --- INITIALIZATION ---
         function initSystem() {
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 tg.expand();
+                tg.setHeaderColor(getComputedStyle(document.documentElement).getPropertyValue('--tg-theme-bg-color').trim());
                 currentUser = tg.initDataUnsafe.user;
-                if (currentUser.id === ADMIN_ID) isAdmin = true;
             } else {
-                // Mock User for Web Testing
-                currentUser = { first_name: "زائر", username: "web_user", photo_url: "" };
-                // For testing admin panel on web, uncomment next line:
-                // isAdmin = true; 
+                currentUser = { first_name: "زائر", username: "guest", photo_url: "https://ui-avatars.com/api/?name=Guest" };
+            }
+
+            if (currentUser.id === ADMIN_ID) {
+                isAdmin = true;
+                document.getElementById('admin-btn').classList.remove('hidden');
+                showToast('تم تسجيل دخول المشرف', 'success');
             }
 
             setupUI();
+            initThreeJS();
+            initCursor();
             
-            if (isAdmin) {
-                document.getElementById('admin-trigger').classList.remove('hidden');
-                showNotification("تم تسجيل الدخول كمسؤول", "success");
-            }
+            // Load Data from Firebase
+            loadCategories();
+            listenToProducts();
 
-            loader.style.opacity = '0';
+            document.getElementById('loader').style.opacity = '0';
             setTimeout(() => {
-                loader.style.display = 'none';
-                mainApp.classList.remove('opacity-0');
-                initMainAppLogic();
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('main-app').classList.remove('opacity-0');
             }, 500);
         }
 
         function setupUI() {
             const fullName = `${currentUser.first_name} ${currentUser.last_name || ''}`.trim();
-            document.getElementById('user-name-display').innerText = fullName;
-            document.getElementById('hero-username').innerText = fullName;
-            document.getElementById('user-avatar').src = currentUser.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=00f3ff&color=fff`;
-            updateCartUI();
+            const username = currentUser.username || fullName;
+            const avatar = currentUser.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`;
+            
+            document.getElementById('user-name-display').innerText = username;
+            document.getElementById('hero-username').innerText = username;
+            document.getElementById('user-avatar').src = avatar;
         }
 
-        // --- NAVIGATION & PAGES ---
-        window.showPage = function(pageId) {
-            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`page-${pageId}`).classList.remove('hidden');
-            window.scrollTo(0, 0);
-            
-            if (pageId === 'store') renderStore('all');
-            if (pageId === 'cart') renderCart();
-        };
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            let icon = 'fa-info-circle';
+            if (type === 'success') icon = 'fa-check-circle';
+            if (type === 'error') icon = 'fa-exclamation-circle';
+            if (type === 'loading') icon = 'fa-spinner fa-spin';
 
-        // --- STORE LOGIC ---
-        function renderStore(categoryId) {
+            toast.innerHTML = `<i class="fa-solid ${icon} text-${type === 'success' ? 'green' : type === 'error' ? 'red' : type === 'loading' ? 'yellow' : 'blue'}-400 text-xl"></i><span class="text-sm font-bold">${message}</span>`;
+            container.appendChild(toast);
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred(type);
+            setTimeout(() => {
+                toast.style.animation = 'slideUp 0.4s forwards';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        // --- FIREBASE DATA LOGIC ---
+        function loadCategories() {
+            renderCategories();
+            document.getElementById('stat-categories').innerText = allCategories.length - 1; // Exclude 'All'
+        }
+
+        function listenToProducts() {
+            const { db, collection, query, orderBy, onSnapshot } = window;
+            const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+            
+            onSnapshot(q, (snapshot) => {
+                allProducts = [];
+                snapshot.forEach((doc) => {
+                    allProducts.push({ id: doc.id, ...doc.data() });
+                });
+                renderProducts('all');
+                renderAdminLists();
+                document.getElementById('stat-products').innerText = allProducts.length;
+            }, (error) => {
+                console.error("Error listening to products:", error);
+                showToast('فشل الاتصال بقاعدة البيانات', 'error');
+            });
+        }
+
+        async function handleAddProduct(e) {
+            e.preventDefault();
+            const { db, collection, addDoc, storage, ref, uploadBytes, getDownloadURL } = window;
+            
+            const title = document.getElementById('new-prod-title').value;
+            const category = document.getElementById('new-prod-cat').value;
+            const price = document.getElementById('new-prod-price').value;
+            const desc = document.getElementById('new-prod-desc').value;
+            const fileInput = document.getElementById('new-prod-img-file');
+            
+            if (!title || !price) {
+                showToast('يرجى ملء الحقول الأساسية', 'error');
+                return;
+            }
+
+            document.getElementById('admin-loading').classList.add('active');
+            showToast('جاري رفع المنتج...', 'loading');
+
+            try {
+                let imageUrl = 'https://via.placeholder.com/400';
+                
+                if (fileInput.files[0]) {
+                    const storageRef = ref(storage, `products/${Date.now()}_${fileInput.files[0].name}`);
+                    await uploadBytes(storageRef, fileInput.files[0]);
+                    imageUrl = await getDownloadURL(storageRef);
+                }
+
+                await addDoc(collection(db, "products"), {
+                    title,
+                    category,
+                    price,
+                    priceVal: parseFloat(price) || 0,
+                    img: imageUrl,
+                    desc,
+                    createdAt: new Date().toISOString()
+                });
+
+                showToast('تم نشر المنتج بنجاح', 'success');
+                document.getElementById('add-product-form').reset();
+                toggleAdminPanel(); // Close panel
+            } catch (error) {
+                console.error(error);
+                showToast('حدث خطأ أثناء النشر', 'error');
+            } finally {
+                document.getElementById('admin-loading').classList.remove('active');
+            }
+        }
+
+        async function handleDeleteProduct(id) {
+            if(!confirm('هل أنت متأكد من الحذف نهائياً؟')) return;
+            const { db, doc, deleteDoc } = window;
+            try {
+                await deleteDoc(doc(db, "products", id));
+                showToast('تم حذف المنتج', 'info');
+            } catch (error) {
+                showToast('فشل الحذف', 'error');
+            }
+        }
+
+        // --- UI RENDERING ---
+        function renderCategories() {
+            const container = document.getElementById('category-tabs');
+            const select = document.getElementById('new-prod-cat');
+            container.innerHTML = '';
+            select.innerHTML = '';
+
+            allCategories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.onclick = () => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
+                    btn.classList.add('tab-active');
+                    renderProducts(cat.id);
+                    updateThreeJSColor(new THREE.Color(cat.color));
+                };
+                btn.className = `tab-btn px-6 py-3 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all magnetic-wrap text-gray-300 ${cat.id === 'all' ? 'tab-active' : ''}`;
+                btn.innerHTML = `<i class="fa-solid ${cat.icon} ml-2" style="color:${cat.color}"></i> ${cat.name}`;
+                container.appendChild(btn);
+
+                if (cat.id !== 'all') {
+                    const opt = document.createElement('option');
+                    opt.value = cat.id;
+                    opt.innerText = cat.name;
+                    select.appendChild(opt);
+                }
+            });
+        }
+
+        function renderProducts(filter = 'all') {
             const grid = document.getElementById('products-grid');
-            const tabsContainer = document.getElementById('category-tabs');
+            grid.innerHTML = '';
             
-            // Render Tabs
-            tabsContainer.innerHTML = appData.categories.map(cat => `
-                <button onclick="renderStore('${cat.id}')" class="tab-btn ${categoryId === cat.id ? 'tab-active' : ''} px-6 py-3 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all magnetic-wrap text-gray-300">
-                    <i class="fa-solid ${cat.icon} ml-2"></i> ${cat.name}
-                </button>
-            `).join('');
+            const filtered = filter === 'all' ? allProducts : allProducts.filter(p => p.category === filter);
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-10">لا توجد منتجات في هذا القسم حالياً</div>';
+                return;
+            }
 
-            // Render Products
-            const filtered = categoryId === 'all' ? appData.products : appData.products.filter(p => p.category === categoryId);
-            grid.innerHTML = filtered.map(product => `
-                <div class="product-card glass-ultra rounded-2xl overflow-hidden group hover:border-${product.color || 'gaming'}/50 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer" onclick="openProductModal(${product.id})">
+            filtered.forEach((product, index) => {
+                const card = document.createElement('div');
+                card.className = 'product-card glass-ultra rounded-2xl overflow-hidden group hover:border-white/20 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer';
+                card.style.opacity = '0';
+                card.style.animation = `fadeIn 0.5s ease forwards ${index * 0.1}s`;
+                card.onclick = () => openProductModal(product);
+                
+                card.innerHTML = `
                     <div class="h-48 overflow-hidden relative">
                         <img src="${product.img}" class="product-img w-full h-full object-cover">
                     </div>
                     <div class="p-5">
                         <h3 class="font-bold text-lg mb-2 truncate">${product.title}</h3>
                         <div class="flex justify-between items-center mt-4">
-                            <span class="text-${product.color || 'gaming'} font-bold text-xl">${product.price}</span>
-                            <button onclick="event.stopPropagation(); addToCart(${product.id})" class="w-10 h-10 rounded-full bg-white/10 hover:bg-${product.color || 'gaming'} hover:text-deep flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                            <span class="text-gaming font-bold text-xl">${product.price}</span>
+                            <button onclick="event.stopPropagation(); addToCart('${product.id}')" class="w-10 h-10 rounded-full bg-white/10 hover:bg-gaming hover:text-deep flex items-center justify-center transition-all duration-300 group-hover:scale-110">
                                 <i class="fa-solid fa-cart-plus"></i>
                             </button>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+                grid.appendChild(card);
+            });
         }
 
-        // --- PRODUCT DETAILS MODAL ---
-        window.openProductModal = function(id) {
-            const product = appData.products.find(p => p.id === id);
-            if (!product) return;
-            
+        function renderAdminLists() {
+            const list = document.getElementById('admin-product-list');
+            list.innerHTML = '';
+            allProducts.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center bg-white/5 p-3 rounded-lg border border-white/5';
+                item.innerHTML = `
+                    <span class="text-sm truncate w-2/3">${p.title}</span>
+                    <button onclick="window.handleDelete('${p.id}')" class="text-red-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // Expose delete function to window
+        window.handleDelete = handleDeleteProduct;
+
+        // --- MODAL & CART ---
+        window.openProductModal = function(product) {
             document.getElementById('modal-img').src = product.img;
+            document.getElementById('modal-category').innerText = product.category;
             document.getElementById('modal-title').innerText = product.title;
+            document.getElementById('modal-desc').innerText = product.desc || 'لا يوجد وصف متاح.';
             document.getElementById('modal-price').innerText = product.price;
-            document.getElementById('modal-category').innerText = appData.categories.find(c => c.id === product.category)?.name || '';
-            document.getElementById('modal-desc').innerText = product.desc || "وصف افتراضي للمنتج الرقمي.";
             
             const btn = document.getElementById('modal-add-btn');
-            btn.onclick = () => { addToCart(product.id); closeProductModal(); };
-            
+            btn.onclick = () => {
+                addToCart(product.id);
+                closeProductModal();
+            };
+
             document.getElementById('product-modal').classList.add('active');
-        };
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+        }
 
         window.closeProductModal = function() {
             document.getElementById('product-modal').classList.remove('active');
-        };
+        }
 
-        // --- CART LOGIC ---
+        let cartCount = 0;
         window.addToCart = function(id) {
-            const product = appData.products.find(p => p.id === id);
-            appData.cart.push(product);
-            saveData();
-            updateCartUI();
-            showNotification(`تم إضافة "${product.title}" للسلة`);
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        };
+            cartCount++;
+            const badge = document.getElementById('cart-count');
+            badge.innerText = cartCount;
+            badge.classList.remove('scale-0');
+            badge.classList.add('scale-110');
+            setTimeout(() => badge.classList.remove('scale-110'), 200);
+            
+            const product = allProducts.find(p => p.id === id);
+            showToast(`تم إضافة "${product.title}" للسلة`, 'success');
 
-        function updateCartUI() {
-            document.getElementById('cart-count').innerText = appData.cart.length;
-            if (appData.cart.length > 0) {
-                document.getElementById('cart-count').classList.remove('scale-0');
-                document.getElementById('cart-count').classList.add('scale-110');
-                setTimeout(() => document.getElementById('cart-count').classList.remove('scale-110'), 200);
-            }
-        }
-
-        function renderCart() {
-            const container = document.getElementById('cart-items');
-            if (appData.cart.length === 0) {
-                container.innerHTML = '<div class="text-center py-10 text-gray-500">السلة فارغة</div>';
-                document.getElementById('cart-total').innerText = '0 ر.س';
-                return;
-            }
-            
-            let total = 0;
-            container.innerHTML = appData.cart.map((item, index) => {
-                if (item.priceVal) total += item.priceVal;
-                return `
-                <div class="glass-ultra p-4 rounded-xl flex justify-between items-center">
-                    <div class="flex items-center gap-4">
-                        <img src="${item.img}" class="w-16 h-16 rounded-lg object-cover">
-                        <div>
-                            <h4 class="font-bold">${item.title}</h4>
-                            <p class="text-gaming text-sm">${item.price}</p>
-                        </div>
-                    </div>
-                    <button onclick="removeFromCart(${index})" class="text-red-500 hover:bg-red-500/10 p-2 rounded-full"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `}).join('');
-            
-            document.getElementById('cart-total').innerText = total + ' ر.س';
-        }
-
-        window.removeFromCart = function(index) {
-            appData.cart.splice(index, 1);
-            saveData();
-            renderCart();
-            updateCartUI();
-        };
-
-        window.checkout = function() {
-            if (appData.cart.length === 0) return;
-            
-            const total = document.getElementById('cart-total').innerText;
-            const order = {
-                id: Date.now(),
-                user: currentUser,
-                items: [...appData.cart],
-                total: total,
-                date: new Date().toLocaleString()
-            };
-            
-            appData.orders.push(order);
-            appData.sales += parseFloat(total) || 0;
-            appData.cart = [];
-            saveData();
-            
-            showNotification("تم إرسال الطلب بنجاح!", "success");
-            updateCartUI();
-            showPage('home');
-            
             if (tg.MainButton) {
-                tg.MainButton.hide();
-                tg.sendData(JSON.stringify({ action: 'order', data: order }));
+                tg.MainButton.setText(`إتمام الطلب (${cartCount})`);
+                tg.MainButton.show();
+                tg.MainButton.onClick(() => {
+                    tg.sendData(JSON.stringify({ action: 'checkout', cart_count: cartCount }));
+                    showToast('جاري تحويلك للبوت لإتمام الدفع...', 'info');
+                });
             }
-        };
+        }
 
-        // --- ADMIN PANEL LOGIC ---
         window.toggleAdminPanel = function() {
             if (!isAdmin) {
-                showNotification("غير مصرح لك بالدخول", "error");
+                showToast('غير مصرح لك بالدخول', 'error');
                 return;
             }
-            document.getElementById('admin-panel').classList.toggle('open');
-            updateAdminStats();
-            renderAdminCategories();
-        };
-
-        function updateAdminStats() {
-            document.getElementById('admin-sales').innerText = appData.sales + ' ر.س';
-            document.getElementById('admin-orders').innerText = appData.orders.length;
+            document.getElementById('admin-panel').classList.toggle('active');
         }
 
-        window.adminAddProduct = function() {
-            const title = document.getElementById('new-prod-title').value;
-            const cat = document.getElementById('new-prod-cat').value;
-            const price = document.getElementById('new-prod-price').value;
-            const img = document.getElementById('new-prod-img').value || 'https://via.placeholder.com/400';
-            
-            if (!title || !price) {
-                showNotification("يرجى ملء البيانات", "error");
-                return;
-            }
-            
-            const newProduct = {
-                id: Date.now(),
-                title, category: cat, price, priceVal: parseFloat(price) || 0, img,
-                desc: "منتج جديد تمت إضافته بواسطة المشرف."
-            };
-            
-            appData.products.push(newProduct);
-            saveData();
-            showNotification("تم إضافة المنتج بنجاح");
-            
-            // Clear inputs
-            document.getElementById('new-prod-title').value = '';
-            document.getElementById('new-prod-price').value = '';
-        };
+        // Setup Forms
+        document.getElementById('add-product-form').addEventListener('submit', handleAddProduct);
 
-        window.adminAddCategory = function() {
-            const name = document.getElementById('new-cat-name').value;
-            if (!name) return;
-            
-            const newCat = {
-                id: name.toLowerCase(),
-                name,
-                icon: 'fa-tag',
-                color: 'gaming'
-            };
-            
-            appData.categories.push(newCat);
-            saveData();
-            renderAdminCategories();
-            showNotification("تم إضافة القسم");
-            document.getElementById('new-cat-name').value = '';
-        };
-
-        function renderAdminCategories() {
-            const list = document.getElementById('admin-cat-list');
-            list.innerHTML = appData.categories.slice(1).map((cat, idx) => `
-                <span class="bg-white/10 px-3 py-1 rounded-full text-xs flex items-center gap-2">
-                    ${cat.name}
-                    <button onclick="deleteCategory(${idx + 1})" class="text-red-500 hover:text-white"><i class="fa-solid fa-times"></i></button>
-                </span>
-            `).join('');
-        }
-
-        window.deleteCategory = function(index) {
-            appData.categories.splice(index, 1);
-            saveData();
-            renderAdminCategories();
-        };
-
-        // --- CORE INIT ---
-        function initMainAppLogic() {
-            // Three.js Background (Simplified for performance)
+        // Three.js & Cursor (Same as before)
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            document.getElementById('canvas-container').appendChild(renderer.domElement);
+            container.appendChild(renderer.domElement);
 
-            const geometry = new THREE.BufferGeometry();
-            const count = 1000;
-            const positions = new Float32Array(count * 3);
-            for(let i=0; i<count*3; i++) positions[i] = (Math.random() - 0.5) * 15;
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 1000;
+            const posArray = new Float32Array(particlesCount * 3);
+            for(let i = 0; i < particlesCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 15;
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
             const material = new THREE.PointsMaterial({ size: 0.03, color: 0x00f3ff, transparent: true, opacity: 0.8 });
-            const particles = new THREE.Points(geometry, material);
-            scene.add(particles);
+            const particlesMesh = new THREE.Points(particlesGeometry, material);
+            scene.add(particlesMesh);
             camera.position.z = 4;
 
-            function animate() {
-                requestAnimationFrame(animate);
-                particles.rotation.y += 0.001;
-                particles.rotation.x += 0.0005;
-                renderer.render(scene, camera);
-            }
-            animate();
+            let targetColor = new THREE.Color(0x00f3ff);
+            let currentColor = new THREE.Color(0x00f3ff);
 
+            window.updateThreeJSColor = (color) => { targetColor = color; };
+
+            const animate = () => {
+                currentColor.lerp(targetColor, 0.05);
+                material.color.set(currentColor);
+                particlesMesh.rotation.y += 0.002;
+                renderer.render(scene, camera);
+                requestAnimationFrame(animate);
+            };
+            animate();
+            
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
             });
-
-            // Initial Render
-            renderStore('all');
         }
 
-        // Start
-        window.addEventListener('load', initSystem);
-
+        function initCursor() {
+            if (!tg.isMobile && window.matchMedia("(pointer: fine)").matches) {
+                const dot = document.getElementById('cursor-dot');
+                const outline = document.getElementById('cursor-outline');
+                window.addEventListener('mousemove', (e) => {
+                    dot.style.left = `${e.clientX}px`; dot.style.top = `${e.clientY}px`;
+                    outline.animate({ left: `${e.clientX}px`, top: `${e.clientY}px` }, { duration: 500, fill: "forwards" });
+                });
+                document.querySelectorAll('a, button, input').forEach(el => {
+                    el.addEventListener('mouseenter', () => { outline.classList.add('cursor-hover'); dot.style.backgroundColor = '#fff'; });
+                    el.addEventListener('mouseleave', () => { outline.classList.remove('cursor-hover'); dot.style.backgroundColor = 'var(--tg-theme-button-color)'; });
+                });
+            } else {
+                document.getElementById('cursor-dot').style.display = 'none';
+                document.getElementById('cursor-outline').style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>
