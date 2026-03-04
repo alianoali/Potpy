@@ -102,7 +102,7 @@
         @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes pulse-ring { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
-        #loader { position: fixed; inset: 0; z-index: 10000; background: #050505; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #loader { position: fixed; inset: 0; z-index: 10000; background: #050505; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s; }
         .spinner { width: 70px; height: 70px; border: 3px solid rgba(255,255,255,0.03); border-top-color: #ffd700; border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); }
         
         /* Notifications */
@@ -132,7 +132,8 @@
         #admin-panel.active { transform: translateX(0); }
         
         .db-status { position: fixed; bottom: 15px; right: 15px; font-size: 10px; background: rgba(0,0,0,0.9); padding: 8px 16px; border-radius: 30px; border: 1px solid #333; z-index: 9999; color: #666; backdrop-filter: blur(10px); box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
-        .db-status.connected { border-color: #ffd700; color: #ffd700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+        .db-status.connected { border-color: #10b981; color: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+        .db-status.emergency { border-color: #f59e0b; color: #f59e0b; box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
         
         input, select, textarea { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.05); color: white; transition: all 0.4s; }
         input:focus, select:focus, textarea:focus { background: rgba(0, 0, 0, 0.7); border-color: #ffd700; outline: none; box-shadow: 0 0 20px rgba(255, 215, 0, 0.15); transform: translateY(-2px); }
@@ -164,7 +165,8 @@
     <!-- Loading Screen -->
     <div id="loader">
         <div class="spinner mb-8"></div>
-        <p class="text-sm font-mono opacity-70 animate-pulse text-gold tracking-[0.3em]">جاري تهيئة النظام...</p>
+        <p class="text-sm font-mono opacity-70 animate-pulse text-gold tracking-[0.3em]" id="loader-text">جاري تهيئة النظام...</p>
+        <p class="text-xs text-gray-500 mt-4 font-mono" id="loader-subtext">جاري الاتصال بالخادم المحلي</p>
     </div>
 
     <!-- DB Status -->
@@ -476,37 +478,103 @@
     </div>
 
     <script>
-        // --- INDEXEDDB WRAPPER ---
+        // --- HYBRID DATA SYSTEM (Local Storage Fallback) ---
+        // This system ensures the app works even if IndexedDB fails
         const DB_NAME = 'NextLevelWalletDB_Platinum';
         const DB_VERSION = 1;
-        let db;
+        let db = null;
         let financeChart = null;
+        let isEmergencyMode = false;
+        let localData = {
+            users: {},
+            gateways: [],
+            transactions: [],
+            logs: [],
+            notifications: []
+        };
 
         const initDB = () => {
             return new Promise((resolve, reject) => {
-                const request = indexedDB.open(DB_NAME, DB_VERSION);
-                request.onupgradeneeded = (event) => {
-                    db = event.target.result;
-                    if (!db.objectStoreNames.contains('users')) db.createObjectStore('users', { keyPath: 'id' });
-                    if (!db.objectStoreNames.contains('gateways')) db.createObjectStore('gateways', { keyPath: 'id', autoIncrement: true });
-                    if (!db.objectStoreNames.contains('transactions')) db.createObjectStore('transactions', { keyPath: 'id', autoIncrement: true });
-                    if (!db.objectStoreNames.contains('logs')) db.createObjectStore('logs', { keyPath: 'id', autoIncrement: true });
-                    if (!db.objectStoreNames.contains('notifications')) db.createObjectStore('notifications', { keyPath: 'id', autoIncrement: true });
-                };
-                request.onsuccess = (event) => {
-                    db = event.target.result;
-                    document.getElementById('db-indicator').innerHTML = '<i class="fa-solid fa-check-circle ml-2"></i> متصل آمن';
-                    document.getElementById('db-indicator').classList.add('connected');
-                    resolve(db);
-                };
-                request.onerror = (event) => reject(event.target.errorCode);
+                try {
+                    const request = indexedDB.open(DB_NAME, DB_VERSION);
+                    
+                    request.onupgradeneeded = (event) => {
+                        db = event.target.result;
+                        if (!db.objectStoreNames.contains('users')) db.createObjectStore('users', { keyPath: 'id' });
+                        if (!db.objectStoreNames.contains('gateways')) db.createObjectStore('gateways', { keyPath: 'id', autoIncrement: true });
+                        if (!db.objectStoreNames.contains('transactions')) db.createObjectStore('transactions', { keyPath: 'id', autoIncrement: true });
+                        if (!db.objectStoreNames.contains('logs')) db.createObjectStore('logs', { keyPath: 'id', autoIncrement: true });
+                        if (!db.objectStoreNames.contains('notifications')) db.createObjectStore('notifications', { keyPath: 'id', autoIncrement: true });
+                    };
+
+                    request.onsuccess = (event) => {
+                        db = event.target.result;
+                        document.getElementById('db-indicator').innerHTML = '<i class="fa-solid fa-check-circle ml-2"></i> متصل آمن';
+                        document.getElementById('db-indicator').classList.add('connected');
+                        document.getElementById('loader-subtext').innerText = "تم الاتصال بقاعدة البيانات";
+                        resolve(db);
+                    };
+
+                    request.onerror = (event) => {
+                        console.warn("IndexedDB failed, switching to Emergency Mode");
+                        enableEmergencyMode();
+                        resolve(null); // Resolve anyway to continue
+                    };
+
+                    // Timeout fallback
+                    setTimeout(() => {
+                        if (!db && !isEmergencyMode) {
+                            enableEmergencyMode();
+                            resolve(null);
+                        }
+                    }, 3000);
+
+                } catch (e) {
+                    console.error("Critical DB Error", e);
+                    enableEmergencyMode();
+                    resolve(null);
+                }
             });
         };
 
+        function enableEmergencyMode() {
+            isEmergencyMode = true;
+            document.getElementById('db-indicator').innerHTML = '<i class="fa-solid fa-triangle-exclamation ml-2"></i> وضع الطوارئ';
+            document.getElementById('db-indicator').classList.add('emergency');
+            document.getElementById('loader-subtext').innerText = "تشغيل في وضع الذاكرة المؤقتة";
+            
+            // Load from LocalStorage if available
+            const saved = localStorage.getItem('nl_emergency_data');
+            if (saved) {
+                localData = JSON.parse(saved);
+            }
+        }
+
+        function saveEmergencyData() {
+            if (isEmergencyMode) {
+                localStorage.setItem('nl_emergency_data', JSON.stringify(localData));
+            }
+        }
+
         const dbOperation = (storeName, mode, callback) => {
-            const transaction = db.transaction([storeName], mode);
-            const store = transaction.objectStore(storeName);
-            return callback(store);
+            if (isEmergencyMode || !db) {
+                // Emergency Mode Logic
+                if (mode === 'readonly') {
+                    const result = localData[storeName] || [];
+                    return { onsuccess: (cb) => cb({ target: { result: result } }) };
+                } else {
+                    // Write operation
+                    return { onsuccess: (cb) => {
+                        cb(); 
+                        saveEmergencyData();
+                    }};
+                }
+            } else {
+                // Normal IndexedDB Logic
+                const transaction = db.transaction([storeName], mode);
+                const store = transaction.objectStore(storeName);
+                return callback(store);
+            }
         };
 
         // --- APP LOGIC ---
@@ -520,7 +588,6 @@
         let notifications = [];
         let selectedAvatar = null;
 
-        // Predefined Avatars
         const avatars = [
             'https://ui-avatars.com/api/?name=User&background=ffd700&color=000',
             'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
@@ -533,10 +600,19 @@
         ];
 
         async function initSystem() {
-            try { await initDB(); loadData(); } catch (e) { showToast('فشل النظام', 'error'); }
+            try { 
+                await initDB(); 
+                loadData(); 
+            } catch (e) { 
+                console.error(e);
+                showToast('حدث خطأ في التهيئة، جاري التشغيل...', 'error'); 
+                loadData(); // Force load anyway
+            }
 
+            // User Initialization
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                tg.expand(); tg.setHeaderColor('#050505');
+                tg.expand(); 
+                tg.setHeaderColor('#050505');
                 currentUser = {
                     id: tg.initDataUnsafe.user.id,
                     first_name: tg.initDataUnsafe.user.first_name,
@@ -561,11 +637,14 @@
             loadNotifications();
             renderAvatarGallery();
 
-            document.getElementById('loader').style.opacity = '0';
+            // Force Hide Loader after 4 seconds max
             setTimeout(() => {
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('main-app').classList.remove('opacity-0');
-            }, 500);
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('main-app').classList.remove('opacity-0');
+                }, 500);
+            }, 4000);
         }
 
         function loadUserProfile() {
@@ -573,7 +652,15 @@
                 const request = store.get(currentUser.id.toString());
                 request.onsuccess = () => {
                     if (request.result) currentUser = { ...currentUser, ...request.result };
-                    else dbOperation('users', 'readwrite', s => s.put(currentUser));
+                    else {
+                        // Create user if not exists
+                        if(!isEmergencyMode) {
+                             dbOperation('users', 'readwrite', s => s.put(currentUser));
+                        } else {
+                            localData.users[currentUser.id.toString()] = currentUser;
+                            saveEmergencyData();
+                        }
+                    }
                     updateUI();
                 };
             });
@@ -622,15 +709,35 @@
                 photo_url: selectedAvatar,
                 privacyMode: document.getElementById('privacy-mode').checked
             };
-            dbOperation('users', 'readwrite', store => { store.put(updated); }).onsuccess = () => {
-                currentUser = updated; updateUI(); toggleProfile(); showToast('تم تحديث الملف بنجاح', 'success');
+            
+            if(isEmergencyMode) {
+                localData.users[currentUser.id.toString()] = updated;
+                currentUser = updated;
+                saveEmergencyData();
+                updateUI(); 
+                toggleProfile(); 
+                showToast('تم تحديث الملف بنجاح (وضع الطوارئ)', 'success');
                 addLog('user', `قام ${currentUser.first_name} بتحديث ملفه الشخصي`);
-            };
+            } else {
+                dbOperation('users', 'readwrite', store => { 
+                    store.put(updated); 
+                }).onsuccess = () => {
+                    currentUser = updated; 
+                    updateUI(); 
+                    toggleProfile(); 
+                    showToast('تم تحديث الملف بنجاح', 'success');
+                    addLog('user', `قام ${currentUser.first_name} بتحديث ملفه الشخصي`);
+                };
+            }
         };
 
         function loadData() {
             dbOperation('gateways', 'readonly', store => {
-                store.getAll().onsuccess = (e) => { gateways = e.target.result; renderGatewaysSelect(); renderAdminGateways(); };
+                store.getAll().onsuccess = (e) => { 
+                    gateways = e.target.result; 
+                    renderGatewaysSelect(); 
+                    renderAdminGateways(); 
+                };
             });
             dbOperation('transactions', 'readonly', store => {
                 store.getAll().onsuccess = (e) => { 
@@ -665,11 +772,11 @@
             
             financeChart = new Chart(ctx, {
                 type: 'line',
-                 {
+                data: {
                     labels: labels.length ? labels : ['لا بيانات'],
                     datasets: [{
                         label: 'حركة الرصيد',
-                         data.length ? data : [0],
+                        data: data.length ? data : [0],
                         borderColor: '#ffd700',
                         backgroundColor: 'rgba(255, 215, 0, 0.1)',
                         borderWidth: 3,
@@ -705,14 +812,24 @@
 
         function sendNotification(message, type = 'info') {
             const notif = { message, type, date: new Date().toISOString(), read: false };
-            dbOperation('notifications', 'readwrite', store => {
-                store.add(notif);
-            }).onsuccess = () => {
+            
+            if(isEmergencyMode) {
+                localData.notifications.push(notif);
                 notifications.unshift(notif);
                 updateNotifBadge();
                 showInAppNotification(message, type);
+                saveEmergencyData();
                 if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred(type === 'alert' ? 'error' : 'success');
-            };
+            } else {
+                dbOperation('notifications', 'readwrite', store => {
+                    store.add(notif);
+                }).onsuccess = () => {
+                    notifications.unshift(notif);
+                    updateNotifBadge();
+                    showInAppNotification(message, type);
+                    if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred(type === 'alert' ? 'error' : 'success');
+                };
+            }
         }
 
         function showInAppNotification(message, type) {
@@ -751,9 +868,13 @@
             const container = document.getElementById('notification-container');
             if(container.children.length > 0) {
                 notifications.forEach(n => n.read = true);
-                dbOperation('notifications', 'readwrite', store => {
-                    notifications.forEach(n => store.put(n));
-                });
+                if(isEmergencyMode) {
+                    saveEmergencyData();
+                } else {
+                    dbOperation('notifications', 'readwrite', store => {
+                        notifications.forEach(n => store.put(n));
+                    });
+                }
                 updateNotifBadge();
                 showToast('تم عرض جميع الإشعارات', 'info');
             } else {
@@ -762,9 +883,15 @@
         };
 
         function addLog(actor, action) {
-            dbOperation('logs', 'readwrite', store => {
-                store.add({ actor, action, date: new Date().toISOString() });
-            });
+            const log = { actor, action, date: new Date().toISOString() };
+            if(isEmergencyMode) {
+                localData.logs.push(log);
+                saveEmergencyData();
+            } else {
+                dbOperation('logs', 'readwrite', store => {
+                    store.add(log);
+                });
+            }
         }
 
         // --- PROFILE SPECIFIC FUNCTIONS ---
@@ -780,7 +907,6 @@
                 reader.onload = function(e) {
                     document.getElementById('modal-avatar-preview').src = e.target.result;
                     selectedAvatar = e.target.result;
-                    // Deselect gallery options
                     document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
                 }
                 reader.readAsDataURL(input.files[0]);
@@ -860,13 +986,25 @@
                 fields: fields
             };
             
-            dbOperation('gateways', 'readwrite', store => { store.add(gw); }).onsuccess = () => {
-                showToast('تمت إضافة البوابة', 'success');
+            if(isEmergencyMode) {
+                localData.gateways.push(gw);
+                saveEmergencyData();
+                gateways = localData.gateways;
+                showToast('تمت إضافة البوابة (وضع الطوارئ)', 'success');
                 document.getElementById('add-gateway-form').reset();
                 document.getElementById('fields-builder').innerHTML = '';
                 addLog('admin', `أضاف بوابة دفع جديدة: ${gw.name}`);
-                loadData();
-            };
+                renderGatewaysSelect();
+                renderAdminGateways();
+            } else {
+                dbOperation('gateways', 'readwrite', store => { store.add(gw); }).onsuccess = () => {
+                    showToast('تمت إضافة البوابة', 'success');
+                    document.getElementById('add-gateway-form').reset();
+                    document.getElementById('fields-builder').innerHTML = '';
+                    addLog('admin', `أضاف بوابة دفع جديدة: ${gw.name}`);
+                    loadData();
+                };
+            }
         });
 
         function renderGatewaysSelect() {
@@ -883,20 +1021,28 @@
         function renderAdminGateways() {
             const list = document.getElementById('admin-gateway-list');
             list.innerHTML = '';
-            gateways.forEach(gw => {
+            gateways.forEach((gw, index) => {
                 const item = document.createElement('div');
                 item.className = 'flex justify-between items-center bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-gold/30 transition-all';
-                item.innerHTML = `<div class="flex items-center gap-5"><i class="fa-solid ${gw.icon} text-gold text-2xl"></i><span class="text-base text-white font-bold">${gw.name} <span class="text-xs text-gray-500 font-normal">(${gw.fields.length} حقول)</span></span></div><button onclick="deleteGateway(${gw.id})" class="text-danger text-xs hover:text-white font-bold">حذف</button>`;
+                item.innerHTML = `<div class="flex items-center gap-5"><i class="fa-solid ${gw.icon} text-gold text-2xl"></i><span class="text-base text-white font-bold">${gw.name} <span class="text-xs text-gray-500 font-normal">(${gw.fields.length} حقول)</span></span></div><button onclick="deleteGateway(${isEmergencyMode ? index : gw.id})" class="text-danger text-xs hover:text-white font-bold">حذف</button>`;
                 list.appendChild(item);
             });
         }
 
-        window.deleteGateway = function(id) {
+        window.deleteGateway = function(idOrIndex) {
             if(confirm('حذف؟')) { 
-                dbOperation('gateways', 'readwrite', store => { store.delete(id); }).onsuccess = () => {
-                    addLog('admin', 'حذف بوابة دفع');
-                    loadData(); 
-                }; 
+                if(isEmergencyMode) {
+                    localData.gateways.splice(idOrIndex, 1);
+                    gateways = localData.gateways;
+                    saveEmergencyData();
+                    renderGatewaysSelect();
+                    renderAdminGateways();
+                } else {
+                    dbOperation('gateways', 'readwrite', store => { store.delete(idOrIndex); }).onsuccess = () => {
+                        addLog('admin', 'حذف بوابة دفع');
+                        loadData(); 
+                    }; 
+                }
             }
         };
 
@@ -1014,15 +1160,25 @@
                     date: new Date().toISOString()
                 };
 
-                dbOperation('transactions', 'readwrite', store => {
-                    store.add(tx);
-                }).onsuccess = () => {
-                    showToast('تم إرسال الطلب للمراجعة', 'success');
+                if(isEmergencyMode) {
+                    localData.transactions.push(tx);
+                    saveEmergencyData();
+                    showToast('تم إرسال الطلب للمراجعة (وضع الطوارئ)', 'success');
                     addLog('user', `قدم طلب ${currentTxType === 'deposit' ? 'إيداع' : 'سحب'} بمبلغ ${amount}$`);
                     if(isAdmin) sendNotification('وصل طلب مالي جديد للمراجعة', 'alert');
                     toggleTransactionModal();
                     loadData();
-                };
+                } else {
+                    dbOperation('transactions', 'readwrite', store => {
+                        store.add(tx);
+                    }).onsuccess = () => {
+                        showToast('تم إرسال الطلب للمراجعة', 'success');
+                        addLog('user', `قدم طلب ${currentTxType === 'deposit' ? 'إيداع' : 'سحب'} بمبلغ ${amount}$`);
+                        if(isAdmin) sendNotification('وصل طلب مالي جديد للمراجعة', 'alert');
+                        toggleTransactionModal();
+                        loadData();
+                    };
+                }
             };
 
             if (fileInput.files[0]) {
@@ -1042,7 +1198,7 @@
             depositList.innerHTML = '';
             withdrawList.innerHTML = '';
 
-            pending.forEach(tx => {
+            pending.forEach((tx, index) => {
                 const item = document.createElement('div');
                 item.className = 'bg-white/5 p-8 rounded-3xl border border-white/5 hover:border-gold/30 transition-all space-y-6';
                 
@@ -1055,6 +1211,9 @@
                     detailsHtml += '</div>';
                 }
 
+                // Use index for emergency mode ID
+                const txId = isEmergencyMode ? localData.transactions.indexOf(tx) : tx.id;
+
                 item.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
@@ -1066,8 +1225,8 @@
                     ${detailsHtml}
                     ${tx.proofImage ? `<img src="${tx.proofImage}" class="w-full h-48 object-cover rounded-2xl border border-white/10 cursor-pointer hover:opacity-80 transition-opacity" onclick="window.open(this.src)">` : ''}
                     <div class="flex gap-4 pt-4">
-                        <button onclick="processTx(${tx.id}, 'approved')" class="flex-1 bg-gold/10 text-gold border border-gold/20 py-4 rounded-2xl text-sm font-bold hover:bg-gold hover:text-black transition-all">موافقة</button>
-                        <button onclick="processTx(${tx.id}, 'rejected')" class="flex-1 bg-danger/10 text-danger border border-danger/20 py-4 rounded-2xl text-sm font-bold hover:bg-danger hover:text-white transition-all">رفض</button>
+                        <button onclick="processTx(${txId}, 'approved')" class="flex-1 bg-gold/10 text-gold border border-gold/20 py-4 rounded-2xl text-sm font-bold hover:bg-gold hover:text-black transition-all">موافقة</button>
+                        <button onclick="processTx(${txId}, 'rejected')" class="flex-1 bg-danger/10 text-danger border border-danger/20 py-4 rounded-2xl text-sm font-bold hover:bg-danger hover:text-white transition-all">رفض</button>
                     </div>
                 `;
 
@@ -1079,36 +1238,67 @@
             if(withdrawList.children.length === 0) withdrawList.innerHTML = '<p class="text-gray-500 text-center text-sm py-12">لا توجد طلبات سحب معلقة</p>';
         }
 
-        window.processTx = function(id, status) {
-            dbOperation('transactions', 'readwrite', store => {
-                const req = store.get(id);
+        window.processTx = function(idOrIndex, status) {
+            let tx;
+            if(isEmergencyMode) {
+                tx = localData.transactions[idOrIndex];
+            } else {
+                const req = dbOperation('transactions', 'readwrite', store => store.get(idOrIndex));
                 req.onsuccess = () => {
-                    const tx = req.result;
-                    tx.status = status;
-                    store.put(tx);
-
-                    if (status === 'approved') {
-                        dbOperation('users', 'readwrite', uStore => {
-                            const uReq = uStore.get(tx.userId);
-                            uReq.onsuccess = () => {
-                                const user = uReq.result;
-                                if (user) {
-                                    if (tx.type === 'deposit') user.balance += tx.amount;
-                                    else if (tx.type === 'withdraw' && user.balance >= tx.amount) user.balance -= tx.amount;
-                                    uStore.put(user);
-                                }
-                            };
-                        });
-                        addLog('admin', `وافق على عملية ${tx.type} للمستخدم ${tx.userName}`);
-                        showToast(`تم ${tx.type==='deposit'?'إيداع':'سحب'} ${tx.amount}$ بنجاح`, 'success');
-                    } else {
-                        addLog('admin', `رفض عملية ${tx.type} للمستخدم ${tx.userName}`);
-                        showToast('تم رفض الطلب', 'info');
-                    }
-                    loadData();
+                    const transaction = req.result; // Renamed to avoid conflict
+                    transaction.status = status;
+                    dbOperation('transactions', 'readwrite', store => store.put(transaction));
+                    finalizeTransaction(transaction, status);
                 };
-            });
+                return;
+            }
+            
+            if(tx) {
+                tx.status = status;
+                if(isEmergencyMode) {
+                    localData.transactions[idOrIndex] = tx;
+                    saveEmergencyData();
+                }
+                finalizeTransaction(tx, status);
+            }
         };
+
+        function finalizeTransaction(tx, status) {
+            if (status === 'approved') {
+                if(isEmergencyMode) {
+                    const user = localData.users[tx.userId];
+                    if (user) {
+                        if (tx.type === 'deposit') user.balance += tx.amount;
+                        else if (tx.type === 'withdraw' && user.balance >= tx.amount) user.balance -= tx.amount;
+                        saveEmergencyData();
+                        currentUser = user; // Update current if it's me
+                        updateUI();
+                    }
+                    addLog('admin', `وافق على عملية ${tx.type} للمستخدم ${tx.userName}`);
+                    showToast(`تم ${tx.type==='deposit'?'إيداع':'سحب'} ${tx.amount}$ بنجاح`, 'success');
+                    loadData();
+                } else {
+                    dbOperation('users', 'readwrite', uStore => {
+                        const uReq = uStore.get(tx.userId);
+                        uReq.onsuccess = () => {
+                            const user = uReq.result;
+                            if (user) {
+                                if (tx.type === 'deposit') user.balance += tx.amount;
+                                else if (tx.type === 'withdraw' && user.balance >= tx.amount) user.balance -= tx.amount;
+                                uStore.put(user);
+                            }
+                        };
+                    });
+                    addLog('admin', `وافق على عملية ${tx.type} للمستخدم ${tx.userName}`);
+                    showToast(`تم ${tx.type==='deposit'?'إيداع':'سحب'} ${tx.amount}$ بنجاح`, 'success');
+                    loadData();
+                }
+            } else {
+                addLog('admin', `رفض عملية ${tx.type} للمستخدم ${tx.userName}`);
+                showToast('تم رفض الطلب', 'info');
+                if(isEmergencyMode) loadData();
+            }
+        }
 
         function renderUserTransactions(transactions) {
             const myTx = transactions.filter(t => t.userId === currentUser.id.toString());
@@ -1139,19 +1329,32 @@
         }
 
         function renderAdminLogs() {
-            dbOperation('logs', 'readonly', store => {
-                store.getAll().onsuccess = (e) => {
-                    const logs = e.target.result.reverse().slice(0, 50);
-                    const list = document.getElementById('admin-logs-list');
-                    list.innerHTML = '';
-                    logs.forEach(log => {
-                        const div = document.createElement('div');
-                        div.className = 'border-b border-white/5 py-4 flex justify-between items-center hover:bg-white/5 px-4 rounded-xl transition-all';
-                        div.innerHTML = `<span class="text-gold font-bold">[${log.actor}]</span> <span class="text-gray-300">${log.action}</span> <span class="text-gray-600 text-[10px] font-mono">${new Date(log.date).toLocaleTimeString()}</span>`;
-                        list.appendChild(div);
-                    });
-                };
-            });
+            const source = isEmergencyMode ? localData.logs : db;
+            if(isEmergencyMode) {
+                const logs = source.slice().reverse().slice(0, 50);
+                const list = document.getElementById('admin-logs-list');
+                list.innerHTML = '';
+                logs.forEach(log => {
+                    const div = document.createElement('div');
+                    div.className = 'border-b border-white/5 py-4 flex justify-between items-center hover:bg-white/5 px-4 rounded-xl transition-all';
+                    div.innerHTML = `<span class="text-gold font-bold">[${log.actor}]</span> <span class="text-gray-300">${log.action}</span> <span class="text-gray-600 text-[10px] font-mono">${new Date(log.date).toLocaleTimeString()}</span>`;
+                    list.appendChild(div);
+                });
+            } else {
+                dbOperation('logs', 'readonly', store => {
+                    store.getAll().onsuccess = (e) => {
+                        const logs = e.target.result.reverse().slice(0, 50);
+                        const list = document.getElementById('admin-logs-list');
+                        list.innerHTML = '';
+                        logs.forEach(log => {
+                            const div = document.createElement('div');
+                            div.className = 'border-b border-white/5 py-4 flex justify-between items-center hover:bg-white/5 px-4 rounded-xl transition-all';
+                            div.innerHTML = `<span class="text-gold font-bold">[${log.actor}]</span> <span class="text-gray-300">${log.action}</span> <span class="text-gray-600 text-[10px] font-mono">${new Date(log.date).toLocaleTimeString()}</span>`;
+                            list.appendChild(div);
+                        });
+                    };
+                });
+            }
         }
 
         window.showToast = (msg, type) => {
