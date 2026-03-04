@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>نيكست ليفل | المنصة المستقبلية</title>
+    <title>نيكست ليفل | النسخة المحلية</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,67 +24,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
-
-        // ==========================================
-        // ⚠️ استبدل البيانات التالية ببيانات مشروعك
-        // ==========================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyD-YOUR-API-KEY-HERE",
-            authDomain: "your-project.firebaseapp.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef"
-        };
-        // ==========================================
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-
-        window.db = db;
-        window.storage = storage;
-        window.collection = collection;
-        window.addDoc = addDoc;
-        window.getDocs = getDocs;
-        window.deleteDoc = deleteDoc;
-        window.doc = doc;
-        window.onSnapshot = onSnapshot;
-        window.query = query;
-        window.orderBy = orderBy;
-        window.where = where;
-        window.serverTimestamp = serverTimestamp;
-        window.ref = ref;
-        window.uploadBytes = uploadBytes;
-        window.getDownloadURL = getDownloadURL;
-        
-        window.firebaseReady = true;
-        if(window.checkInit) window.checkInit();
-    </script>
-
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['Cairo', 'sans-serif'], mono: ['Tajawal', 'monospace'] },
                     colors: {
-                        bg_dark: '#020617',
-                        surface: '#0f172a',
-                        primary: '#0ea5e9',   // Sky Blue
-                        secondary: '#8b5cf6', // Violet
-                        accent: '#06b6d4',    // Cyan
-                        danger: '#ef4444',
-                        success: '#10b981',
-                        warning: '#f59e0b'
-                    },
-                    backgroundImage: {
-                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-                        'hero-glow': 'conic-gradient(from 90deg at 50% 50%, #020617 0%, #0f172a 50%, #020617 100%)',
+                        bg_dark: '#020617', surface: '#0f172a', primary: '#0ea5e9', secondary: '#8b5cf6', accent: '#06b6d4', danger: '#ef4444', success: '#10b981', warning: '#f59e0b'
                     }
                 }
             }
@@ -92,28 +38,14 @@
     </script>
 
     <style>
-        :root {
-            --tg-bg: var(--tg-theme-bg-color, #020617);
-            --tg-text: var(--tg-theme-text-color, #ffffff);
-            --tg-btn: var(--tg-theme-button-color, #0ea5e9);
-        }
+        :root { --tg-bg: var(--tg-theme-bg-color, #020617); --tg-text: var(--tg-theme-text-color, #ffffff); --tg-btn: var(--tg-theme-button-color, #0ea5e9); }
         body { background-color: var(--tg-bg); color: var(--tg-text); overflow-x: hidden; cursor: none; font-family: 'Cairo', sans-serif; }
         ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--tg-btn); border-radius: 3px; }
         
         #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; opacity: 0.4; pointer-events: none; }
         
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        }
-        .glass-nav {
-            background: rgba(2, 6, 23, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
+        .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
+        .glass-nav { background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 
         .cursor-dot { width: 8px; height: 8px; background-color: var(--tg-btn); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); mix-blend-mode: difference; transition: width 0.3s, height 0.3s; }
         .cursor-outline { width: 40px; height: 40px; border: 1px solid var(--tg-btn); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: all 0.15s ease-out; }
@@ -130,29 +62,22 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 10px rgba(14, 165, 233, 0.2); } 50% { box-shadow: 0 0 20px rgba(14, 165, 233, 0.5); } }
 
         #loader { position: fixed; inset: 0; z-index: 10000; background: var(--tg-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
         .spinner { width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.05); border-top-color: var(--tg-btn); border-radius: 50%; animation: spin 1s linear infinite; }
         
-        /* Toast */
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; display: flex; flex-direction: column; gap: 10px; width: 90%; max-w-md; pointer-events: none; }
         .toast { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 14px 20px; border-radius: 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; pointer-events: auto; border-right: 4px solid transparent; }
-        .toast.success { border-right-color: #10b981; }
-        .toast.error { border-right-color: #ef4444; }
-        .toast.info { border-right-color: #3b82f6; }
+        .toast.success { border-right-color: #10b981; } .toast.error { border-right-color: #ef4444; } .toast.info { border-right-color: #3b82f6; }
 
-        /* Modal */
         #product-modal { position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
         #product-modal.active { display: flex; opacity: 1; }
         .modal-content { background: #0f172a; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); position: relative; transform: scale(0.95); transition: transform 0.3s; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         #product-modal.active .modal-content { transform: scale(1); }
 
-        /* Admin Panel */
         #admin-panel { position: fixed; inset: 0; z-index: 8000; background: #020617; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1); overflow-y: auto; border-right: 1px solid rgba(255,255,255,0.1); }
         #admin-panel.active { transform: translateX(0); }
 
-        /* Orders Page */
         #orders-page { position: fixed; inset: 0; z-index: 7000; background: var(--tg-bg); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1); overflow-y: auto; }
         #orders-page.active { transform: translateY(0); }
         
@@ -163,6 +88,9 @@
         .status-pending { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
         .status-completed { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
         .status-cancelled { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        
+        .db-status { position: fixed; bottom: 10px; right: 10px; font-size: 10px; background: rgba(0,0,0,0.8); padding: 5px 10px; border-radius: 20px; border: 1px solid #333; z-index: 9999; }
+        .db-status.connected { border-color: #10b981; color: #10b981; }
     </style>
 </head>
 <body class="antialiased selection:bg-primary selection:text-white">
@@ -170,8 +98,11 @@
     <!-- Loading Screen -->
     <div id="loader">
         <div class="spinner mb-4"></div>
-        <p class="text-sm font-mono opacity-70 animate-pulse text-primary">جاري الاتصال بالنظام السحابي...</p>
+        <p class="text-sm font-mono opacity-70 animate-pulse text-primary">جاري تهيئة قاعدة البيانات المحلية...</p>
     </div>
+
+    <!-- DB Status Indicator -->
+    <div id="db-indicator" class="db-status">قاعدة البيانات: جاري الاتصال...</div>
 
     <!-- Toast Container -->
     <div id="toast-container"></div>
@@ -190,9 +121,7 @@
             <div class="p-6 pt-2">
                 <h2 id="modal-title" class="text-3xl font-bold mb-2 text-white">Product Title</h2>
                 <div class="flex items-center gap-2 mb-4">
-                    <div class="flex text-warning text-sm">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                    </div>
+                    <div class="flex text-warning text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
                     <span class="text-gray-400 text-sm">(4.8 تقييم)</span>
                 </div>
                 <p id="modal-desc" class="text-gray-300 leading-relaxed mb-6 text-sm line-clamp-4">وصف المنتج التفصيلي يظهر هنا...</p>
@@ -209,24 +138,21 @@
         </div>
     </div>
 
-    <!-- Orders Page (User Dashboard) -->
+    <!-- Orders Page -->
     <div id="orders-page" class="glass-panel">
         <div class="sticky top-0 z-20 glass-nav border-b border-white/10 px-6 py-4 flex justify-between items-center">
             <h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-box-open ml-2 text-primary"></i>طلباتي</h2>
             <button onclick="toggleOrdersPage()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 transition-colors"><i class="fa-solid fa-arrow-down"></i></button>
         </div>
-        <div class="p-6 space-y-4" id="orders-list">
-            <!-- Orders injected here -->
-            <div class="text-center text-gray-500 mt-20">جاري تحميل الطلبات...</div>
-        </div>
+        <div class="p-6 space-y-4" id="orders-list"></div>
     </div>
 
     <!-- Admin Panel -->
     <div id="admin-panel" class="border-r border-white/10">
         <div class="sticky top-0 z-20 glass-nav border-b border-white/10 px-6 py-4 flex justify-between items-center">
             <div>
-                <h2 class="text-2xl font-bold text-danger"><i class="fa-solid fa-shield-halved ml-2"></i>لوحة التحكم</h2>
-                <p class="text-xs text-gray-400">إدارة متكاملة للنظام</p>
+                <h2 class="text-2xl font-bold text-danger"><i class="fa-solid fa-database ml-2"></i>لوحة التحكم المحلية</h2>
+                <p class="text-xs text-gray-400">البيانات مخزنة على هذا الجهاز فقط</p>
             </div>
             <button onclick="toggleAdminPanel()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-danger/20 hover:text-danger transition-colors"><i class="fa-solid fa-arrow-left"></i></button>
         </div>
@@ -237,7 +163,10 @@
                 <span class="text-sm text-primary">جاري المعالجة...</span>
             </div>
 
-            <!-- Stats -->
+            <div class="bg-yellow-500/10 border border-yellow-500/30 p-4 rounded-xl">
+                <p class="text-yellow-500 text-xs"><i class="fa-solid fa-triangle-exclamation ml-1"></i> تنبيه: البيانات مخزنة محلياً في متصفح هذا الجهاز فقط.</p>
+            </div>
+
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-white/5 p-4 rounded-2xl border border-white/5 backdrop-blur-sm">
                     <p class="text-gray-400 text-xs mb-1">المنتجات</p>
@@ -249,64 +178,59 @@
                 </div>
             </div>
 
-            <!-- Tabs for Admin -->
             <div class="flex gap-2 border-b border-white/10 pb-2">
                 <button onclick="switchAdminTab('products')" class="flex-1 py-2 text-sm font-bold text-primary border-b-2 border-primary">المنتجات</button>
                 <button onclick="switchAdminTab('discounts')" class="flex-1 py-2 text-sm font-bold text-gray-400 hover:text-white">الخصومات</button>
                 <button onclick="switchAdminTab('orders')" class="flex-1 py-2 text-sm font-bold text-gray-400 hover:text-white">كل الطلبات</button>
             </div>
 
-            <!-- Add Product Section -->
             <div id="admin-tab-products" class="space-y-4">
                 <h3 class="font-bold text-lg text-white">إضافة منتج جديد</h3>
                 <form id="add-product-form" class="space-y-3">
-                    <input type="text" id="new-prod-title" placeholder="اسم المنتج" required class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:border-primary outline-none text-sm text-white transition-colors">
+                    <input type="text" id="new-prod-title" placeholder="اسم المنتج" required class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:border-primary outline-none text-sm text-white">
                     <select id="new-prod-cat" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:border-primary outline-none text-sm text-white"></select>
-                    <input type="text" id="new-prod-price" placeholder="السعر (مثال: 50 ر.س)" required class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:border-primary outline-none text-sm text-white">
+                    <input type="text" id="new-prod-price" placeholder="السعر" required class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:border-primary outline-none text-sm text-white">
                     <div class="relative">
-                        <label class="block text-xs text-gray-400 mb-1 mr-2">صورة المنتج</label>
+                        <label class="block text-xs text-gray-400 mb-1 mr-2">صورة المنتج (رابط أو ملف)</label>
                         <input type="file" id="new-prod-img-file" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"/>
+                        <input type="text" id="new-prod-img-url" placeholder="أو ضع رابط الصورة مباشرة" class="w-full mt-2 bg-black/30 border border-white/10 rounded-xl px-4 py-2 focus:border-primary outline-none text-xs text-white">
                     </div>
                     <textarea id="new-prod-desc" placeholder="وصف المنتج..." rows="3" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:border-primary outline-none text-sm text-white"></textarea>
-                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-bold transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40">نشر المنتج</button>
+                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-bold transition-all shadow-lg shadow-primary/20">حفظ في قاعدة البيانات المحلية</button>
                 </form>
             </div>
 
-            <!-- Add Discount Section -->
             <div id="admin-tab-discounts" class="space-y-4 hidden">
                 <h3 class="font-bold text-lg text-white">إنشاء كود خصم</h3>
                 <form id="add-discount-form" class="space-y-3">
-                    <input type="text" id="disc-code" placeholder="كود الخصم (مثال: SAVE20)" required class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:border-warning outline-none text-sm text-white uppercase">
+                    <input type="text" id="disc-code" placeholder="كود الخصم" required class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:border-warning outline-none text-sm text-white uppercase">
                     <div class="grid grid-cols-2 gap-3">
-                        <input type="number" id="disc-value" placeholder="القيمة (% أو مبلغ)" required class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:border-warning outline-none text-sm text-white">
+                        <input type="number" id="disc-value" placeholder="القيمة" required class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:border-warning outline-none text-sm text-white">
                         <select id="disc-type" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:border-warning outline-none text-sm text-white">
-                            <option value="percent">نسبة مئوية (%)</option>
+                            <option value="percent">نسبة (%)</option>
                             <option value="fixed">مبلغ ثابت</option>
                         </select>
                     </div>
-                    <input type="date" id="disc-expiry" required class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:border-warning outline-none text-sm text-white">
-                    <button type="submit" class="w-full py-3 bg-warning text-black rounded-xl font-bold transition-all shadow-lg shadow-warning/20">إنشاء الكود</button>
+                    <button type="submit" class="w-full py-3 bg-warning text-black rounded-xl font-bold">حفظ الكود</button>
                 </form>
                 <div id="admin-discount-list" class="space-y-2 mt-4"></div>
             </div>
 
-            <!-- All Orders Section -->
             <div id="admin-tab-orders" class="space-y-4 hidden">
                 <h3 class="font-bold text-lg text-white">سجل جميع الطلبات</h3>
                 <div id="admin-all-orders-list" class="space-y-2"></div>
             </div>
 
-            <!-- Product List Management -->
             <div class="space-y-4 pt-4 border-t border-white/10">
-                <h3 class="font-bold text-lg text-white">إدارة المنتجات الحية</h3>
-                <div id="admin-product-list" class="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scroll"></div>
+                <h3 class="font-bold text-lg text-white">إدارة المنتجات</h3>
+                <div id="admin-product-list" class="space-y-2 max-h-60 overflow-y-auto pr-2"></div>
             </div>
         </div>
     </div>
 
     <!-- 3D Background -->
     <div id="canvas-container"></div>
-    <div class="fixed inset-0 bg-hero-glow opacity-20 pointer-events-none z-[-1]"></div>
+    <div class="fixed inset-0 bg-gradient-radial from-primary/5 to-transparent opacity-20 pointer-events-none z-[-1]"></div>
 
     <!-- Custom Cursor -->
     <div id="cursor-dot" class="cursor-dot"></div>
@@ -314,8 +238,6 @@
 
     <!-- MAIN APP -->
     <div id="main-app" class="opacity-0 transition-opacity duration-700">
-        
-        <!-- Navigation -->
         <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
             <div class="container mx-auto px-6 py-4 flex justify-between items-center">
                 <a href="#" class="text-xl md:text-2xl font-black tracking-tighter flex items-center gap-3 group magnetic-wrap">
@@ -325,52 +247,26 @@
                     <span class="hidden md:inline text-white">نيكست<span class="text-primary"> ليفل</span></span>
                     <span class="md:hidden text-primary">NL</span>
                 </a>
-                
                 <div class="flex items-center gap-3 md:gap-4">
-                    <button id="admin-btn" onclick="toggleAdminPanel()" class="hidden w-10 h-10 rounded-full bg-danger/10 text-danger border border-danger/30 hover:bg-danger hover:text-white transition-all magnetic-wrap" title="لوحة المشرف">
-                        <i class="fa-solid fa-user-gear"></i>
-                    </button>
-
-                    <button onclick="toggleOrdersPage()" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all magnetic-wrap relative">
-                        <i class="fa-solid fa-clock-rotate-left text-gray-300"></i>
-                    </button>
-
-                    <button class="relative magnetic-wrap group" onclick="toggleCart()">
-                        <i class="fa-solid fa-cart-shopping text-xl text-gray-300 group-hover:text-primary transition-colors"></i>
-                        <span id="cart-count" class="absolute -top-2 -right-2 w-5 h-5 bg-gradient-to-r from-primary to-secondary rounded-full text-xs flex items-center justify-center font-bold transform scale-0 transition-transform duration-300 shadow-lg">0</span>
-                    </button>
-                    
-                    <div class="relative group">
-                        <button class="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-full transition-all border border-white/10 magnetic-wrap">
-                            <img id="user-avatar" src="" class="w-8 h-8 rounded-full border border-primary shadow-[0_0_10px_rgba(14,165,233,0.3)]" alt="User">
-                            <span id="user-name-display" class="text-sm font-bold hidden md:block text-white">...</span>
-                        </button>
-                    </div>
+                    <button id="admin-btn" onclick="toggleAdminPanel()" class="hidden w-10 h-10 rounded-full bg-danger/10 text-danger border border-danger/30 hover:bg-danger hover:text-white transition-all magnetic-wrap"><i class="fa-solid fa-user-gear"></i></button>
+                    <button onclick="toggleOrdersPage()" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all magnetic-wrap relative"><i class="fa-solid fa-clock-rotate-left text-gray-300"></i></button>
+                    <button class="relative magnetic-wrap group" onclick="toggleCart()"><i class="fa-solid fa-cart-shopping text-xl text-gray-300 group-hover:text-primary transition-colors"></i><span id="cart-count" class="absolute -top-2 -right-2 w-5 h-5 bg-gradient-to-r from-primary to-secondary rounded-full text-xs flex items-center justify-center font-bold transform scale-0 transition-transform duration-300 shadow-lg">0</span></button>
+                    <div class="relative group"><button class="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-full transition-all border border-white/10 magnetic-wrap"><img id="user-avatar" src="" class="w-8 h-8 rounded-full border border-primary shadow-[0_0_10px_rgba(14,165,233,0.3)]" alt="User"><span id="user-name-display" class="text-sm font-bold hidden md:block text-white">...</span></button></div>
                 </div>
             </div>
         </nav>
 
-        <!-- Hero Section -->
         <section id="home" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
             <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
                 <div class="hero-content text-right order-2 md:order-1">
                     <div class="inline-flex items-center gap-2 px-4 py-2 mb-6 border border-primary/30 rounded-full bg-primary/5 text-primary text-sm font-mono animate-pulse shadow-[0_0_15px_rgba(14,165,233,0.2)]">
-                        <span class="w-2 h-2 bg-primary rounded-full"></span>
-                        مرحباً بك يا <span id="hero-username" class="font-bold mr-1">...</span>
+                        <span class="w-2 h-2 bg-primary rounded-full"></span>مرحباً بك يا <span id="hero-username" class="font-bold mr-1">...</span>
                     </div>
                     <h1 class="text-4xl md:text-7xl lg:text-8xl font-black leading-tight mb-6 text-white">
-                        المستقبل الرقمي <br>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent drop-shadow-lg">بين يديك</span>
+                        المستقبل الرقمي <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent drop-shadow-lg">بين يديك</span>
                     </h1>
-                    <p class="text-gray-400 text-lg md:text-xl mb-8 max-w-lg leading-relaxed font-light">
-                        المنصة السحابية الأكثر تطوراً لشحن الألعاب والعملات الرقمية. تحديثات لحظية، خصومات حصرية، وأمان تام.
-                    </p>
-                    <div class="flex flex-wrap gap-6">
-                        <a href="#store" class="group relative px-8 py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-full font-bold overflow-hidden magnetic-wrap shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all">
-                            <span class="relative z-10 flex items-center gap-2">تصفح المتجر <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i></span>
-                            <div class="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
-                        </a>
-                    </div>
+                    <p class="text-gray-400 text-lg md:text-xl mb-8 max-w-lg leading-relaxed font-light">المنصة المحلية الأسرع والأكثر أماناً. لا تحتاج لإنترنت للتعامل مع البيانات المخزنة.</p>
+                    <div class="flex flex-wrap gap-6"><a href="#store" class="group relative px-8 py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-full font-bold overflow-hidden magnetic-wrap shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all"><span class="relative z-10 flex items-center gap-2">تصفح المتجر <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i></span><div class="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div></a></div>
                 </div>
                 <div class="hero-visual relative order-1 md:order-2 flex justify-center items-center">
                     <div class="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px]">
@@ -385,87 +281,71 @@
             </div>
         </section>
 
-        <!-- Store Section -->
         <section id="store" class="py-24 relative">
             <div class="container mx-auto px-6 relative z-10">
-                <div class="text-center mb-12 section-header">
-                    <h2 class="text-4xl md:text-6xl font-black mb-6 text-white">اختر <span class="text-gray-500">فئتك</span></h2>
-                </div>
-                <div class="flex flex-wrap justify-center gap-4 mb-12" id="category-tabs">
-                    <!-- Tabs injected by JS -->
-                </div>
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6" id="products-grid">
-                    <div class="col-span-full text-center py-20">
-                        <div class="spinner inline-block mb-4"></div>
-                        <p class="text-gray-400">جاري تحميل المنتجات من السحابة...</p>
-                    </div>
-                </div>
+                <div class="text-center mb-12 section-header"><h2 class="text-4xl md:text-6xl font-black mb-6 text-white">اختر <span class="text-gray-500">فئتك</span></h2></div>
+                <div class="flex flex-wrap justify-center gap-4 mb-12" id="category-tabs"></div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6" id="products-grid"><div class="col-span-full text-center py-20"><div class="spinner inline-block mb-4"></div><p class="text-gray-400">جاري تحميل المنتجات من الذاكرة...</p></div></div>
             </div>
         </section>
 
-        <!-- Footer -->
-        <footer class="bg-black/80 py-12 border-t border-white/5 mt-12 backdrop-blur-lg">
-            <div class="container mx-auto px-6 text-center">
-                <div class="flex justify-center items-center gap-3 mb-6">
-                    <i class="fa-solid fa-cube text-3xl text-primary"></i>
-                    <span class="text-2xl font-black text-white">نيكست ليفل</span>
-                </div>
-                <p class="text-gray-500 text-sm">جميع الحقوق محفوظة © 2024 | Powered by Firebase & Telegram</p>
-            </div>
-        </footer>
+        <footer class="bg-black/80 py-12 border-t border-white/5 mt-12 backdrop-blur-lg"><div class="container mx-auto px-6 text-center"><div class="flex justify-center items-center gap-3 mb-6"><i class="fa-solid fa-cube text-3xl text-primary"></i><span class="text-2xl font-black text-white">نيكست ليفل</span></div><p class="text-gray-500 text-sm">جميع الحقوق محفوظة © 2024 | Local Storage Engine</p></div></footer>
     </div>
 
-    <!-- Cart Modal (Simple Implementation for Discount Demo) -->
+    <!-- Cart Modal -->
     <div id="cart-modal" class="fixed inset-0 z-[6000] bg-black/80 backdrop-blur-sm hidden flex items-end md:items-center justify-center">
         <div class="bg-[#0f172a] w-full md:max-w-lg rounded-t-3xl md:rounded-3xl p-6 border border-white/10 shadow-2xl transform transition-transform duration-300 translate-y-full" id="cart-content">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-white">سلة المشتريات</h3>
-                <button onclick="toggleCart()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-times text-xl"></i></button>
-            </div>
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-white">سلة المشتريات</h3><button onclick="toggleCart()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-times text-xl"></i></button></div>
             <div id="cart-items" class="space-y-4 mb-6 max-h-60 overflow-y-auto"></div>
-            
-            <!-- Discount Code -->
-            <div class="flex gap-2 mb-6">
-                <input type="text" id="discount-input" placeholder="كود الخصم" class="flex-1 bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-warning outline-none">
-                <button onclick="applyDiscount()" class="px-6 py-3 bg-warning text-black font-bold rounded-xl hover:brightness-110">تطبيق</button>
-            </div>
+            <div class="flex gap-2 mb-6"><input type="text" id="discount-input" placeholder="كود الخصم" class="flex-1 bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-warning outline-none"><button onclick="applyDiscount()" class="px-6 py-3 bg-warning text-black font-bold rounded-xl hover:brightness-110">تطبيق</button></div>
             <div id="discount-msg" class="text-xs mb-4 hidden"></div>
-
-            <div class="border-t border-white/10 pt-4 space-y-2">
-                <div class="flex justify-between text-gray-400 text-sm">
-                    <span>المجموع الفرعي</span>
-                    <span id="cart-subtotal">0.00 ر.س</span>
-                </div>
-                <div class="flex justify-between text-warning text-sm hidden" id="discount-row">
-                    <span>الخصم</span>
-                    <span id="cart-discount">-0.00 ر.س</span>
-                </div>
-                <div class="flex justify-between text-white font-bold text-lg">
-                    <span>الإجمالي النهائي</span>
-                    <span id="cart-total">0.00 ر.س</span>
-                </div>
-            </div>
-
+            <div class="border-t border-white/10 pt-4 space-y-2"><div class="flex justify-between text-gray-400 text-sm"><span>المجموع الفرعي</span><span id="cart-subtotal">0.00 ر.س</span></div><div class="flex justify-between text-warning text-sm hidden" id="discount-row"><span>الخصم</span><span id="cart-discount">-0.00 ر.س</span></div><div class="flex justify-between text-white font-bold text-lg"><span>الإجمالي النهائي</span><span id="cart-total">0.00 ر.س</span></div></div>
             <button onclick="checkout()" class="w-full mt-6 py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-bold text-lg shadow-lg shadow-primary/30">إتمام الشراء</button>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        
-        const checkInit = () => {
-            if (window.firebaseReady) {
-                initSystem();
-            } else {
-                setTimeout(checkInit, 100);
-            }
-        };
-        window.checkInit = checkInit;
+    <script>
+        // --- INDEXEDDB WRAPPER ---
+        const DB_NAME = 'NextLevelStoreDB';
+        const DB_VERSION = 1;
+        let db;
 
+        const initDB = () => {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains('products')) db.createObjectStore('products', { keyPath: 'id', autoIncrement: true });
+                    if (!db.objectStoreNames.contains('orders')) db.createObjectStore('orders', { keyPath: 'id', autoIncrement: true });
+                    if (!db.objectStoreNames.contains('discounts')) db.createObjectStore('discounts', { keyPath: 'code' });
+                };
+
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    document.getElementById('db-indicator').innerText = 'قاعدة البيانات: متصل (محلي)';
+                    document.getElementById('db-indicator').classList.add('connected');
+                    resolve(db);
+                };
+
+                request.onerror = (event) => {
+                    console.error("DB Error:", event.target.errorCode);
+                    document.getElementById('db-indicator').innerText = 'قاعدة البيانات: فشل الاتصال';
+                    reject(event.target.errorCode);
+                };
+            });
+        };
+
+        const dbOperation = (storeName, mode, callback) => {
+            const transaction = db.transaction([storeName], mode);
+            const store = transaction.objectStore(storeName);
+            return callback(store);
+        };
+
+        // --- APP LOGIC ---
         const ADMIN_ID = 7609492965; 
         const tg = window.Telegram.WebApp;
-        
         let currentUser = null;
         let isAdmin = false;
         let allProducts = [];
@@ -482,7 +362,14 @@
             { id: 'social', name: 'تواصل', icon: 'fa-whatsapp', color: '#ec4899' }
         ];
 
-        function initSystem() {
+        async function initSystem() {
+            try {
+                await initDB();
+                loadData();
+            } catch (e) {
+                showToast('فشل تهيئة قاعدة البيانات', 'error');
+            }
+
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 tg.expand();
                 tg.setHeaderColor('#020617');
@@ -501,8 +388,6 @@
             setupUI();
             initThreeJS();
             initCursor();
-            
-            loadData();
 
             document.getElementById('loader').style.opacity = '0';
             setTimeout(() => {
@@ -515,7 +400,6 @@
             const fullName = `${currentUser.first_name} ${currentUser.last_name || ''}`.trim();
             const username = currentUser.username || fullName;
             const avatar = currentUser.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=0ea5e9&color=fff`;
-            
             document.getElementById('user-name-display').innerText = username;
             document.getElementById('hero-username').innerText = username;
             document.getElementById('user-avatar').src = avatar;
@@ -528,175 +412,148 @@
             let icon = 'fa-info-circle';
             if (type === 'success') icon = 'fa-check-circle';
             if (type === 'error') icon = 'fa-exclamation-circle';
-            if (type === 'loading') icon = 'fa-spinner fa-spin';
-
-            toast.innerHTML = `<i class="fa-solid ${icon} text-${type === 'success' ? 'success' : type === 'error' ? 'danger' : type === 'loading' ? 'warning' : 'primary'} text-xl"></i><span class="text-sm font-bold text-white">${message}</span>`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'primary'} text-xl"></i><span class="text-sm font-bold text-white">${message}</span>`;
             container.appendChild(toast);
             if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred(type);
-            setTimeout(() => {
-                toast.style.animation = 'slideUp 0.4s forwards';
-                setTimeout(() => toast.remove(), 400);
-            }, 3000);
+            setTimeout(() => { toast.style.animation = 'slideUp 0.4s forwards'; setTimeout(() => toast.remove(), 400); }, 3000);
         }
 
-        // --- FIREBASE DATA LOGIC ---
         function loadData() {
-            const { db, collection, query, orderBy, onSnapshot, where } = window;
-            
-            // Listen Products
-            const qProd = query(collection(db, "products"), orderBy("createdAt", "desc"));
-            onSnapshot(qProd, (snapshot) => {
-                allProducts = [];
-                snapshot.forEach((doc) => allProducts.push({ id: doc.id, ...doc.data() }));
-                renderProducts('all');
-                renderAdminLists();
-                document.getElementById('stat-products').innerText = allProducts.length;
+            // Load Products
+            dbOperation('products', 'readonly', store => {
+                const request = store.getAll();
+                request.onsuccess = () => {
+                    allProducts = request.result.reverse(); // Newest first
+                    renderProducts('all');
+                    renderAdminLists();
+                    document.getElementById('stat-products').innerText = allProducts.length;
+                };
             });
 
-            // Listen Discounts
-            const qDisc = query(collection(db, "discounts"), orderBy("expiry", "desc"));
-            onSnapshot(qDisc, (snapshot) => {
-                allDiscounts = [];
-                snapshot.forEach((doc) => allDiscounts.push({ id: doc.id, ...doc.data() }));
-                renderAdminDiscounts();
+            // Load Discounts
+            dbOperation('discounts', 'readonly', store => {
+                const request = store.getAll();
+                request.onsuccess = () => {
+                    allDiscounts = request.result;
+                    renderAdminDiscounts();
+                };
             });
 
-            // Listen Orders (User Specific)
-            if (currentUser.id) {
-                const qOrder = query(collection(db, "orders"), where("userId", "==", currentUser.id.toString()), orderBy("createdAt", "desc"));
-                onSnapshot(qOrder, (snapshot) => {
-                    userOrders = [];
-                    snapshot.forEach((doc) => userOrders.push({ id: doc.id, ...doc.data() }));
+            // Load Orders
+            dbOperation('orders', 'readonly', store => {
+                const request = store.getAll();
+                request.onsuccess = () => {
+                    const allOrders = request.result.reverse();
+                    userOrders = allOrders.filter(o => o.userId === currentUser.id.toString());
                     renderUserOrders();
-                    if(isAdmin) renderAdminAllOrders(); // Also update admin view
-                });
-            }
+                    if(isAdmin) {
+                        document.getElementById('stat-orders').innerText = allOrders.length;
+                        renderAdminAllOrders(allOrders);
+                    }
+                };
+            });
         }
 
-        async function handleAddProduct(e) {
+        function handleAddProduct(e) {
             e.preventDefault();
-            const { db, collection, addDoc, storage, ref, uploadBytes, getDownloadURL, serverTimestamp } = window;
-            
             const title = document.getElementById('new-prod-title').value;
             const category = document.getElementById('new-prod-cat').value;
             const price = document.getElementById('new-prod-price').value;
             const desc = document.getElementById('new-prod-desc').value;
             const fileInput = document.getElementById('new-prod-img-file');
-            
+            const urlInput = document.getElementById('new-prod-img-url').value;
+
             document.getElementById('admin-loading').classList.add('active');
-            showToast('جاري رفع المنتج...', 'loading');
 
-            try {
-                let imageUrl = 'https://via.placeholder.com/400/0f172a/ffffff?text=No+Image';
-                if (fileInput.files[0]) {
-                    const storageRef = ref(storage, `products/${Date.now()}_${fileInput.files[0].name}`);
-                    await uploadBytes(storageRef, fileInput.files[0]);
-                    imageUrl = await getDownloadURL(storageRef);
-                }
+            const processSave = (imgUrl) => {
+                const product = {
+                    title, category, price, priceVal: parseFloat(price) || 0, img: imgUrl, desc,
+                    createdAt: new Date().toISOString()
+                };
+                dbOperation('products', 'readwrite', store => {
+                    store.add(product);
+                }).onsuccess = () => {
+                    showToast('تم حفظ المنتج محلياً', 'success');
+                    document.getElementById('add-product-form').reset();
+                    toggleAdminPanel();
+                    loadData();
+                    document.getElementById('admin-loading').classList.remove('active');
+                };
+            };
 
-                await addDoc(collection(db, "products"), {
-                    title, category, price, priceVal: parseFloat(price) || 0, img: imageUrl, desc,
-                    createdAt: serverTimestamp()
-                });
-
-                showToast('تم نشر المنتج بنجاح', 'success');
-                document.getElementById('add-product-form').reset();
-                toggleAdminPanel();
-            } catch (error) {
-                console.error(error);
-                showToast('حدث خطأ أثناء النشر', 'error');
-            } finally {
-                document.getElementById('admin-loading').classList.remove('active');
+            if (fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (evt) => processSave(evt.target.result); // Save Base64
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                processSave(urlInput || 'https://via.placeholder.com/400');
             }
         }
 
-        async function handleAddDiscount(e) {
+        function handleAddDiscount(e) {
             e.preventDefault();
-            const { db, collection, addDoc } = window;
             const code = document.getElementById('disc-code').value.toUpperCase();
             const value = parseFloat(document.getElementById('disc-value').value);
             const type = document.getElementById('disc-type').value;
-            const expiry = document.getElementById('disc-expiry').value;
-
-            try {
-                await addDoc(collection(db, "discounts"), { code, value, type, expiry, active: true });
-                showToast('تم إنشاء كود الخصم', 'success');
-                document.getElementById('add-discount-form').reset();
-            } catch (error) {
-                showToast('فشل إنشاء الكود', 'error');
-            }
-        }
-
-        async function handleDeleteProduct(id) {
-            if(!confirm('حذف نهائي؟')) return;
-            const { db, doc, deleteDoc } = window;
-            await deleteDoc(doc(db, "products", id));
-            showToast('تم الحذف', 'info');
-        }
-
-        async function placeOrder() {
-            if (cart.length === 0) return;
-            const { db, collection, addDoc, serverTimestamp } = window;
             
+            const discount = { code, value, type, active: true };
+            dbOperation('discounts', 'readwrite', store => {
+                store.put(discount);
+            }).onsuccess = () => {
+                showToast('تم حفظ الكود', 'success');
+                document.getElementById('add-discount-form').reset();
+                loadData();
+            };
+        }
+
+        function handleDeleteProduct(id) {
+            if(!confirm('حذف نهائي؟')) return;
+            dbOperation('products', 'readwrite', store => {
+                store.delete(id);
+            }).onsuccess = () => {
+                showToast('تم الحذف', 'info');
+                loadData();
+            };
+        }
+
+        function placeOrder() {
+            if (cart.length === 0) return;
             const total = calculateTotal();
-            const orderData = {
+            const order = {
                 userId: currentUser.id.toString(),
                 userName: currentUser.first_name,
                 items: cart,
                 subtotal: cart.reduce((sum, item) => sum + (item.priceVal || 0), 0),
                 discount: appliedDiscount ? appliedDiscount.code : null,
-                discountAmount: appliedDiscount ? (cart.reduce((sum, item) => sum + (item.priceVal || 0), 0) - total) : 0,
                 total: total,
-                status: 'pending', // pending, completed, cancelled
-                createdAt: serverTimestamp()
+                status: 'pending',
+                createdAt: new Date().toISOString()
             };
 
-            try {
-                await addDoc(collection(db, "orders"), orderData);
+            dbOperation('orders', 'readwrite', store => {
+                store.add(order);
+            }).onsuccess = () => {
                 showToast('تم وضع الطلب بنجاح!', 'success');
                 cart = [];
                 appliedDiscount = null;
                 updateCartUI();
                 toggleCart();
+                loadData();
                 if(tg.MainButton) tg.MainButton.hide();
-            } catch (error) {
-                showToast('فشل إتمام الطلب', 'error');
-            }
+            };
         }
 
-        // --- UI RENDERING ---
         function renderProducts(filter = 'all') {
             const grid = document.getElementById('products-grid');
             grid.innerHTML = '';
             const filtered = filter === 'all' ? allProducts : allProducts.filter(p => p.category === filter);
-            
-            if (filtered.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-10">لا توجد منتجات</div>';
-                return;
-            }
-
+            if (filtered.length === 0) { grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-10">لا توجد منتجات</div>'; return; }
             filtered.forEach((product, index) => {
                 const card = document.createElement('div');
                 card.className = 'product-card glass-panel rounded-2xl overflow-hidden cursor-pointer border border-white/5 bg-white/5';
-                card.style.opacity = '0';
-                card.style.animation = `fadeIn 0.5s ease forwards ${index * 0.1}s`;
+                card.style.opacity = '0'; card.style.animation = `fadeIn 0.5s ease forwards ${index * 0.1}s`;
                 card.onclick = () => openProductModal(product);
-                
-                card.innerHTML = `
-                    <div class="h-48 overflow-hidden relative">
-                        <img src="${product.img}" class="product-img w-full h-full object-cover">
-                        <div class="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-xs font-bold text-white border border-white/10">${product.category}</div>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-bold text-lg mb-2 truncate text-white">${product.title}</h3>
-                        <div class="flex justify-between items-center mt-4">
-                            <span class="text-primary font-bold text-xl">${product.price}</span>
-                            <button onclick="event.stopPropagation(); addToCart('${product.id}')" class="w-10 h-10 rounded-full bg-white/10 hover:bg-primary hover:text-white flex items-center justify-center transition-all duration-300 group-hover:scale-110 border border-white/10">
-                                <i class="fa-solid fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
+                card.innerHTML = `<div class="h-48 overflow-hidden relative"><img src="${product.img}" class="product-img w-full h-full object-cover"><div class="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-xs font-bold text-white border border-white/10">${product.category}</div></div><div class="p-5"><h3 class="font-bold text-lg mb-2 truncate text-white">${product.title}</h3><div class="flex justify-between items-center mt-4"><span class="text-primary font-bold text-xl">${product.price}</span><button onclick="event.stopPropagation(); addToCart('${product.id}')" class="w-10 h-10 rounded-full bg-white/10 hover:bg-primary hover:text-white flex items-center justify-center transition-all duration-300 group-hover:scale-110 border border-white/10"><i class="fa-solid fa-cart-plus"></i></button></div></div>`;
                 grid.appendChild(card);
             });
         }
@@ -704,30 +561,14 @@
         function renderUserOrders() {
             const list = document.getElementById('orders-list');
             list.innerHTML = '';
-            if (userOrders.length === 0) {
-                list.innerHTML = '<div class="text-center text-gray-500 mt-10">لا توجد طلبات سابقة</div>';
-                return;
-            }
+            if (userOrders.length === 0) { list.innerHTML = '<div class="text-center text-gray-500 mt-10">لا توجد طلبات سابقة</div>'; return; }
             userOrders.forEach(order => {
-                const date = order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('ar-SA') : 'غير معروف';
+                const date = new Date(order.createdAt).toLocaleDateString('ar-SA');
                 const statusClass = `status-${order.status}`;
                 const statusText = order.status === 'pending' ? 'قيد المعالجة' : order.status === 'completed' ? 'مكتمل' : 'ملغى';
-                
                 const item = document.createElement('div');
                 item.className = 'bg-white/5 p-4 rounded-2xl border border-white/5 flex justify-between items-center';
-                item.innerHTML = `
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-white font-bold">#${order.id.slice(0,6)}</span>
-                            <span class="status-badge ${statusClass}">${statusText}</span>
-                        </div>
-                        <p class="text-xs text-gray-400">${date} | ${order.items.length} منتجات</p>
-                    </div>
-                    <div class="text-left">
-                        <p class="text-primary font-bold">${order.total.toFixed(2)} ر.س</p>
-                        <button onclick="reorder('${order.id}')" class="text-xs text-gray-400 hover:text-white underline mt-1">إعادة طلب</button>
-                    </div>
-                `;
+                item.innerHTML = `<div><div class="flex items-center gap-2 mb-1"><span class="text-white font-bold">#${order.id}</span><span class="status-badge ${statusClass}">${statusText}</span></div><p class="text-xs text-gray-400">${date} | ${order.items.length} منتجات</p></div><div class="text-left"><p class="text-primary font-bold">${order.total.toFixed(2)} ر.س</p></div>`;
                 list.appendChild(item);
             });
         }
@@ -738,7 +579,7 @@
             allProducts.forEach(p => {
                 const item = document.createElement('div');
                 item.className = 'flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5';
-                item.innerHTML = `<span class="text-sm truncate w-2/3 text-white">${p.title}</span><button onclick="window.handleDelete('${p.id}')" class="text-danger hover:text-white"><i class="fa-solid fa-trash"></i></button>`;
+                item.innerHTML = `<span class="text-sm truncate w-2/3 text-white">${p.title}</span><button onclick="handleDeleteProduct(${p.id})" class="text-danger hover:text-white"><i class="fa-solid fa-trash"></i></button>`;
                 list.appendChild(item);
             });
         }
@@ -749,28 +590,22 @@
             allDiscounts.forEach(d => {
                 const item = document.createElement('div');
                 item.className = 'flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5';
-                item.innerHTML = `
-                    <div><span class="text-warning font-bold">${d.code}</span> <span class="text-xs text-gray-400">(${d.value} ${d.type === 'percent' ? '%' : 'ر.س'})</span></div>
-                    <span class="text-xs text-gray-500">${d.expiry}</span>
-                `;
+                item.innerHTML = `<div><span class="text-warning font-bold">${d.code}</span> <span class="text-xs text-gray-400">(${d.value} ${d.type === 'percent' ? '%' : 'ر.س'})</span></div>`;
                 list.appendChild(item);
             });
         }
 
-        function renderAdminAllOrders() {
+        function renderAdminAllOrders(orders) {
             const list = document.getElementById('admin-all-orders-list');
             list.innerHTML = '';
-            // In a real app, you'd listen to all orders, here we use local cache for demo
-            // For full admin view, you need a separate query without userId filter
-            // Assuming userOrders contains some for demo or fetching all separately
-            // Simplified: Just showing count in stats for now or reusing logic if fetched all
-            document.getElementById('stat-orders').innerText = userOrders.length; 
+            orders.forEach(o => {
+                const item = document.createElement('div');
+                item.className = 'bg-white/5 p-3 rounded-xl border border-white/5 text-sm';
+                item.innerHTML = `<div class="flex justify-between"><span>#${o.id} - ${o.userName}</span><span class="text-primary">${o.total.toFixed(2)}</span></div>`;
+                list.appendChild(item);
+            });
         }
 
-        window.handleDelete = handleDeleteProduct;
-        window.reorder = (id) => showToast('جاري إضافة عناصر الطلب القديم للسلة...', 'info');
-
-        // --- MODAL & CART & DISCOUNT ---
         window.openProductModal = function(product) {
             document.getElementById('modal-img').src = product.img;
             document.getElementById('modal-category-badge').innerText = product.category;
@@ -779,12 +614,11 @@
             document.getElementById('modal-price').innerText = product.price;
             document.getElementById('modal-add-btn').onclick = () => { addToCart(product.id); closeProductModal(); };
             document.getElementById('product-modal').classList.add('active');
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         }
         window.closeProductModal = () => document.getElementById('product-modal').classList.remove('active');
 
         window.addToCart = function(id) {
-            const product = allProducts.find(p => p.id === id);
+            const product = allProducts.find(p => p.id == id);
             cart.push(product);
             updateCartUI();
             showToast(`تم إضافة "${product.title}"`, 'success');
@@ -795,62 +629,45 @@
             document.getElementById('cart-count').classList.remove('scale-0');
             setTimeout(() => document.getElementById('cart-count').classList.add('scale-110'), 100);
             setTimeout(() => document.getElementById('cart-count').classList.remove('scale-110'), 200);
-
             const itemsContainer = document.getElementById('cart-items');
-            itemsContainer.innerHTML = cart.map((item, idx) => `
-                <div class="flex justify-between items-center bg-white/5 p-3 rounded-xl">
-                    <span class="text-sm text-white">${item.title}</span>
-                    <span class="text-primary font-bold">${item.price}</span>
-                </div>
-            `).join('');
-
+            itemsContainer.innerHTML = cart.map((item) => `<div class="flex justify-between items-center bg-white/5 p-3 rounded-xl"><span class="text-sm text-white">${item.title}</span><span class="text-primary font-bold">${item.price}</span></div>`).join('');
             const totals = calculateTotal();
             const subtotal = cart.reduce((sum, item) => sum + (item.priceVal || 0), 0);
-            
             document.getElementById('cart-subtotal').innerText = subtotal.toFixed(2) + ' ر.س';
             if (appliedDiscount) {
                 document.getElementById('discount-row').classList.remove('hidden');
                 document.getElementById('cart-discount').innerText = '-' + (subtotal - totals).toFixed(2) + ' ر.س';
-            } else {
-                document.getElementById('discount-row').classList.add('hidden');
-            }
+            } else { document.getElementById('discount-row').classList.add('hidden'); }
             document.getElementById('cart-total').innerText = totals.toFixed(2) + ' ر.س';
-
             if (tg.MainButton && cart.length > 0) {
                 tg.MainButton.setText(`إتمام الطلب (${totals.toFixed(2)} ر.س)`);
                 tg.MainButton.show();
                 tg.MainButton.onClick(() => placeOrder());
-            } else if (tg.MainButton) {
-                tg.MainButton.hide();
-            }
+            } else if (tg.MainButton) { tg.MainButton.hide(); }
         }
 
         function calculateTotal() {
             let subtotal = cart.reduce((sum, item) => sum + (item.priceVal || 0), 0);
             if (appliedDiscount) {
-                if (appliedDiscount.type === 'percent') {
-                    subtotal = subtotal - (subtotal * (appliedDiscount.value / 100));
-                } else {
-                    subtotal = subtotal - appliedDiscount.value;
-                }
+                if (appliedDiscount.type === 'percent') subtotal = subtotal - (subtotal * (appliedDiscount.value / 100));
+                else subtotal = subtotal - appliedDiscount.value;
             }
             return Math.max(0, subtotal);
         }
 
         window.applyDiscount = function() {
             const code = document.getElementById('discount-input').value.toUpperCase();
-            const discount = allDiscounts.find(d => d.code === code && d.active && new Date(d.expiry) > new Date());
+            const discount = allDiscounts.find(d => d.code === code && d.active);
             const msg = document.getElementById('discount-msg');
-            
             if (discount) {
                 appliedDiscount = discount;
-                msg.innerText = `تم تطبيق خصم ${discount.value} ${discount.type === 'percent' ? '%' : 'ر.س'}!`;
+                msg.innerText = `تم تطبيق خصم!`;
                 msg.className = 'text-xs mb-4 text-success block';
                 updateCartUI();
-                showToast('تم تطبيق الكود بنجاح', 'success');
+                showToast('تم تطبيق الكود', 'success');
             } else {
                 appliedDiscount = null;
-                msg.innerText = 'كود غير صالح أو منتهي الصلاحية';
+                msg.innerText = 'كود غير صالح';
                 msg.className = 'text-xs mb-4 text-danger block';
                 updateCartUI();
                 showToast('كود غير صالح', 'error');
@@ -858,7 +675,6 @@
         }
 
         window.checkout = placeOrder;
-
         window.toggleCart = function() {
             const modal = document.getElementById('cart-modal');
             const content = document.getElementById('cart-content');
@@ -871,24 +687,13 @@
                 setTimeout(() => modal.classList.add('hidden'), 300);
             }
         }
-
-        window.toggleAdminPanel = function() {
-            if (!isAdmin) return showToast('غير مصرح', 'error');
-            document.getElementById('admin-panel').classList.toggle('active');
-        }
-
-        window.toggleOrdersPage = function() {
-            document.getElementById('orders-page').classList.toggle('active');
-        }
-
+        window.toggleAdminPanel = function() { if (!isAdmin) return showToast('غير مصرح', 'error'); document.getElementById('admin-panel').classList.toggle('active'); }
+        window.toggleOrdersPage = function() { document.getElementById('orders-page').classList.toggle('active'); }
         window.switchAdminTab = function(tab) {
-            ['products', 'discounts', 'orders'].forEach(t => {
-                document.getElementById(`admin-tab-${t}`).classList.add('hidden');
-            });
+            ['products', 'discounts', 'orders'].forEach(t => document.getElementById(`admin-tab-${t}`).classList.add('hidden'));
             document.getElementById(`admin-tab-${tab}`).classList.remove('hidden');
         }
 
-        // Setup Forms
         document.getElementById('add-product-form').addEventListener('submit', handleAddProduct);
         document.getElementById('add-discount-form').addEventListener('submit', handleAddDiscount);
 
@@ -906,17 +711,14 @@
                 updateThreeJSColor(new THREE.Color(cat.color));
             };
             catContainer.appendChild(btn);
-
             if (cat.id !== 'all') {
                 const opt = document.createElement('option');
-                opt.value = cat.id;
-                opt.innerText = cat.name;
-                opt.style.color = '#000';
+                opt.value = cat.id; opt.innerText = cat.name; opt.style.color = '#000';
                 catSelect.appendChild(opt);
             }
         });
 
-        // Three.js & Cursor
+        // Three.js & Cursor (Same as before)
         function initThreeJS() {
             const container = document.getElementById('canvas-container');
             const scene = new THREE.Scene();
@@ -924,33 +726,26 @@
             const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             container.appendChild(renderer.domElement);
-
             const particlesGeometry = new THREE.BufferGeometry();
             const particlesCount = 1200;
             const posArray = new Float32Array(particlesCount * 3);
             for(let i = 0; i < particlesCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 20;
             particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            
             const material = new THREE.PointsMaterial({ size: 0.03, color: 0x0ea5e9, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending });
             const particlesMesh = new THREE.Points(particlesGeometry, material);
             scene.add(particlesMesh);
             camera.position.z = 5;
-
             let targetColor = new THREE.Color(0x0ea5e9);
             let currentColor = new THREE.Color(0x0ea5e9);
-
             window.updateThreeJSColor = (color) => { targetColor = color; };
-
             const animate = () => {
                 currentColor.lerp(targetColor, 0.05);
                 material.color.set(currentColor);
                 particlesMesh.rotation.y += 0.001;
-                particlesMesh.rotation.x += 0.0005;
                 renderer.render(scene, camera);
                 requestAnimationFrame(animate);
             };
             animate();
-            
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
@@ -975,6 +770,9 @@
                 document.getElementById('cursor-outline').style.display = 'none';
             }
         }
+
+        // Start
+        initSystem();
     </script>
 </body>
 </html>
