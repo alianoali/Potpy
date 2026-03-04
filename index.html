@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>نيكست ليفل | الملف الشخصي</title>
+    <title>نيكست ليفل | المحفظة الرقمية</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,11 +18,13 @@
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for Wallet Stats -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Three.js & GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -31,17 +33,16 @@
                     fontFamily: { sans: ['Cairo', 'sans-serif'], mono: ['Tajawal', 'monospace'] },
                     colors: {
                         deep_space: '#02040a', surface_dark: '#0b0f19', surface_light: '#151b2b',
-                        primary: '#3b82f6', secondary: '#8b5cf6', accent: '#06b6d4',
-                        danger: '#f43f5e', success: '#10b981', warning: '#f59e0b',
+                        primary: '#10b981', // Emerald Green for Money
+                        primary_dark: '#059669',
+                        secondary: '#3b82f6', // Blue for Tech
+                        accent: '#f59e0b', // Gold for Premium
+                        danger: '#ef4444',
                         text_main: '#f8fafc', text_muted: '#94a3b8'
                     },
                     backgroundImage: {
-                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-                        'btn-gradient': 'linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%)',
-                    },
-                    boxShadow: {
-                        'neon': '0 0 20px rgba(59, 130, 246, 0.5)',
-                        'neon-sm': '0 0 10px rgba(59, 130, 246, 0.3)',
+                        'card-gradient': 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        'card-dark': 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
                     }
                 }
             }
@@ -49,71 +50,66 @@
     </script>
 
     <style>
-        :root { --tg-bg: var(--tg-theme-bg-color, #02040a); --tg-text: var(--tg-theme-text-color, #f8fafc); --tg-btn: var(--tg-theme-button-color, #3b82f6); }
-        body { background-color: var(--deep_space); color: var(--text_main); overflow-x: hidden; cursor: none; font-family: 'Cairo', sans-serif; background-image: radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%), radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%); }
-        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #3b82f6, #8b5cf6); border-radius: 10px; }
+        :root { --tg-bg: var(--tg-theme-bg-color, #02040a); --tg-text: var(--tg-theme-text-color, #f8fafc); }
+        body { background-color: var(--deep_space); color: var(--text_main); overflow-x: hidden; cursor: none; font-family: 'Cairo', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
         
-        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; opacity: 0.3; pointer-events: none; }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; opacity: 0.2; pointer-events: none; }
         
-        .glass-panel { background: rgba(11, 15, 25, 0.5); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.06); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); position: relative; overflow: hidden; }
-        .glass-panel::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent); transition: 0.5s; }
-        .glass-panel:hover::before { left: 100%; }
-        .glass-nav { background: rgba(2, 4, 10, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .glass-panel { background: rgba(11, 15, 25, 0.6); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); }
+        .glass-nav { background: rgba(2, 4, 10, 0.9); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 
-        .cursor-dot { width: 8px; height: 8px; background-color: #3b82f6; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); mix-blend-mode: difference; transition: width 0.3s, height 0.3s; box-shadow: 0 0 10px #3b82f6; }
-        .cursor-outline { width: 40px; height: 40px; border: 1px solid rgba(59, 130, 246, 0.5); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: all 0.15s ease-out; }
-        .cursor-hover { width: 60px; height: 60px; background-color: rgba(59, 130, 246, 0.1); border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+        .cursor-dot { width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); mix-blend-mode: difference; transition: width 0.3s; box-shadow: 0 0 10px #10b981; }
+        .cursor-outline { width: 40px; height: 40px; border: 1px solid rgba(16, 185, 129, 0.5); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: all 0.15s ease-out; }
+        .cursor-hover { width: 60px; height: 60px; background-color: rgba(16, 185, 129, 0.1); border-color: #10b981; }
 
-        .product-card { transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); background: linear-gradient(145deg, rgba(21,27,43,0.4) 0%, rgba(11,15,25,0.2) 100%); border: 1px solid rgba(255,255,255,0.04); }
-        .product-card:hover { transform: translateY(-10px) scale(1.02); border-color: rgba(59, 130, 246, 0.4); box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.2); }
-        .product-img { transition: transform 0.7s ease; filter: brightness(0.9); }
-        .product-card:hover .product-img { transform: scale(1.1); filter: brightness(1.1); }
+        /* Credit Card Style */
+        .wallet-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s;
+        }
+        .wallet-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2); }
+        .wallet-card::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            transform: rotate(45deg);
+        }
 
-        .tab-active { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white !important; border: none; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); transform: translateY(-2px); }
-        .btn-primary { background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%); position: relative; z-index: 1; overflow: hidden; transition: all 0.3s ease; }
-        .btn-primary::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, #8b5cf6 0%, #3b82f6 100%); z-index: -1; transition: opacity 0.3s ease; opacity: 0; }
-        .btn-primary:hover::before { opacity: 1; }
-        .btn-primary:hover { box-shadow: 0 0 30px rgba(139, 92, 246, 0.5); transform: translateY(-2px); }
+        .btn-primary { background: linear-gradient(90deg, #10b981 0%, #059669 100%); transition: all 0.3s; }
+        .btn-primary:hover { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); transform: translateY(-2px); }
 
         @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        #loader { position: fixed; inset: 0; z-index: 10000; background: #02040a; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
-        .spinner { width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.05); border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+        #loader { position: fixed; inset: 0; z-index: 10000; background: #02040a; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.05); border-top-color: #10b981; border-radius: 50%; animation: spin 1s linear infinite; }
         
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; display: flex; flex-direction: column; gap: 10px; width: 90%; max-w-md; pointer-events: none; }
-        .toast { background: rgba(11, 15, 25, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); padding: 16px 24px; border-radius: 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: slideDown 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; pointer-events: auto; border-right: 4px solid transparent; color: white; }
-        .toast.success { border-right-color: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
-        .toast.error { border-right-color: #f43f5e; box-shadow: 0 0 20px rgba(244, 63, 94, 0.2); }
-        .toast.info { border-right-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+        .toast { background: rgba(11, 15, 25, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); padding: 16px 24px; border-radius: 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: slideDown 0.5s forwards; pointer-events: auto; border-right: 4px solid transparent; color: white; }
+        .toast.success { border-right-color: #10b981; } .toast.error { border-right-color: #ef4444; }
 
-        /* Profile Modal Styles */
-        #profile-modal { position: fixed; inset: 0; z-index: 9500; background: rgba(2, 4, 10, 0.95); backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
-        #profile-modal.active { display: flex; opacity: 1; }
-        .profile-content { background: #0b0f19; width: 90%; max-width: 500px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.08); position: relative; transform: scale(0.9); transition: transform 0.3s; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); overflow: hidden; }
-        #profile-modal.active .profile-content { transform: scale(1); }
-        .profile-header { height: 150px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); position: relative; }
-        .profile-avatar-container { position: absolute; bottom: -50px; right: 30px; width: 100px; height: 100px; border-radius: 50%; border: 4px solid #0b0f19; overflow: hidden; background: #0b0f19; }
-        .profile-avatar-container img { width: 100%; height: 100%; object-fit: cover; }
-        .privacy-blur { filter: blur(8px); user-select: none; transition: filter 0.3s; }
-        
+        /* Modals */
+        .modal-overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(2, 4, 10, 0.95); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content { background: #0b0f19; width: 90%; max-width: 500px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.08); position: relative; transform: scale(0.95); transition: transform 0.3s; max-height: 90vh; overflow-y: auto; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
         #admin-panel { position: fixed; inset: 0; z-index: 8000; background: #02040a; transform: translateX(100%); transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1); overflow-y: auto; border-right: 1px solid rgba(255,255,255,0.05); }
         #admin-panel.active { transform: translateX(0); }
-        #orders-page { position: fixed; inset: 0; z-index: 7000; background: #02040a; transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1); overflow-y: auto; }
-        #orders-page.active { transform: translateY(0); }
         
-        .loading-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index: 50; display: none; align-items: center; justify-content: center; flex-direction: column; }
-        .loading-overlay.active { display: flex; }
-        .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; display: inline-block; backdrop-filter: blur(4px); }
-        .status-pending { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .status-completed { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .status-cancelled { background: rgba(244, 63, 94, 0.15); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); }
-        .db-status { position: fixed; bottom: 10px; right: 10px; font-size: 10px; background: rgba(0,0,0,0.8); padding: 6px 12px; border-radius: 20px; border: 1px solid #333; z-index: 9999; backdrop-filter: blur(4px); color: #94a3b8; }
-        .db-status.connected { border-color: #10b981; color: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+        .db-status { position: fixed; bottom: 10px; right: 10px; font-size: 10px; background: rgba(0,0,0,0.8); padding: 6px 12px; border-radius: 20px; border: 1px solid #333; z-index: 9999; color: #94a3b8; }
+        .db-status.connected { border-color: #10b981; color: #10b981; }
+        
         input, select, textarea { background: rgba(11, 15, 25, 0.5); border: 1px solid rgba(255,255,255,0.08); color: white; transition: all 0.3s; }
-        input:focus, select:focus, textarea:focus { background: rgba(11, 15, 25, 0.8); border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); outline: none; }
+        input:focus, select:focus, textarea:focus { background: rgba(11, 15, 25, 0.8); border-color: #10b981; outline: none; }
     </style>
 </head>
 <body class="antialiased selection:bg-primary selection:text-white">
@@ -121,7 +117,7 @@
     <!-- Loading Screen -->
     <div id="loader">
         <div class="spinner mb-6"></div>
-        <p class="text-sm font-mono opacity-70 animate-pulse text-primary tracking-widest">جاري تهيئة النظام...</p>
+        <p class="text-sm font-mono opacity-70 animate-pulse text-primary tracking-widest">جاري تحميل المحفظة...</p>
     </div>
 
     <!-- DB Status -->
@@ -131,245 +127,216 @@
     <div id="toast-container"></div>
 
     <!-- Profile Modal -->
-    <div id="profile-modal">
-        <div class="profile-content glass-panel">
-            <button onclick="toggleProfile()" class="absolute top-4 left-4 w-10 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-danger hover:text-white transition-all z-20 border border-white/10"><i class="fa-solid fa-times text-white"></i></button>
-            
-            <div class="profile-header">
-                <div class="absolute top-4 right-4 flex gap-2">
-                    <button onclick="togglePrivacy()" class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/30 transition-all" title="إخفاء/إظهار البيانات">
-                        <i class="fa-solid fa-eye-slash text-white"></i>
-                    </button>
+    <div id="profile-modal" class="modal-overlay">
+        <div class="modal-content glass-panel p-6">
+            <button onclick="toggleProfile()" class="absolute top-4 left-4 w-10 h-10 bg-black/40 rounded-full flex items-center justify-center hover:bg-danger transition-all"><i class="fa-solid fa-times text-white"></i></button>
+            <h2 class="text-2xl font-bold mb-6 text-center">الملف الشخصي</h2>
+            <form id="profile-form" onsubmit="saveProfile(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-text_muted mb-2">الاسم الكامل</label>
+                    <input type="text" id="profile-name" class="w-full rounded-xl px-4 py-3 text-sm" required>
                 </div>
-            </div>
-            
-            <div class="profile-avatar-container shadow-2xl">
-                <img id="profile-avatar-display" src="" alt="Profile" class="transform hover:scale-110 transition-transform duration-500">
-            </div>
-
-            <div class="pt-16 px-8 pb-8">
-                <div class="text-left mb-6">
-                    <button onclick="document.getElementById('avatar-upload').click()" class="text-xs text-primary hover:text-white transition-colors underline cursor-pointer">
-                        <i class="fa-solid fa-camera ml-1"></i> تغيير الصورة
-                    </button>
-                    <input type="file" id="avatar-upload" accept="image/*" class="hidden" onchange="updateAvatar(this)">
+                <div>
+                    <label class="block text-xs text-text_muted mb-2">اسم المستخدم</label>
+                    <input type="text" id="profile-username" class="w-full rounded-xl px-4 py-3 text-sm" required>
                 </div>
+                <button type="submit" class="btn-primary w-full py-3 rounded-xl font-bold text-white">حفظ التغييرات</button>
+            </form>
+        </div>
+    </div>
 
-                <form id="profile-form" onsubmit="saveProfile(event)" class="space-y-5">
-                    <div>
-                        <label class="block text-xs text-text_muted mb-2 font-medium">الاسم الكامل</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-user absolute right-4 top-1/2 -translate-y-1/2 text-text_muted"></i>
-                            <input type="text" id="profile-name" class="w-full rounded-xl pr-12 pl-4 py-3 text-sm focus:border-primary" required>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-text_muted mb-2 font-medium">اسم المستخدم</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-at absolute right-4 top-1/2 -translate-y-1/2 text-text_muted"></i>
-                            <input type="text" id="profile-username" class="w-full rounded-xl pr-12 pl-4 py-3 text-sm focus:border-primary" required>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-text_muted mb-2 font-medium">البريد الإلكتروني (اختياري)</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-envelope absolute right-4 top-1/2 -translate-y-1/2 text-text_muted"></i>
-                            <input type="email" id="profile-email" class="w-full rounded-xl pr-12 pl-4 py-3 text-sm focus:border-primary">
-                        </div>
-                    </div>
-                    
-                    <div class="pt-4">
-                        <button type="submit" class="btn-primary w-full py-4 rounded-xl font-bold text-white shadow-neon flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-save"></i> حفظ التغييرات
-                        </button>
-                    </div>
-                </form>
+    <!-- Top Up Modal -->
+    <div id="topup-modal" class="modal-overlay">
+        <div class="modal-content glass-panel p-0 overflow-hidden">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-white">شحن الرصيد</h2>
+                <button onclick="toggleTopUp()" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-danger"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="text-center">
+                    <p class="text-text_muted text-sm mb-2">الرصيد الحالي</p>
+                    <h3 class="text-4xl font-bold text-primary drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]" id="modal-balance-display">0.00 $</h3>
+                </div>
                 
-                <div class="mt-6 pt-6 border-t border-white/5 text-center">
-                    <p class="text-xs text-text_muted">رقم المعرف: <span id="profile-id-display" class="font-mono text-primary"></span></p>
+                <div>
+                    <label class="block text-xs text-text_muted mb-2">اختر طريقة الدفع</label>
+                    <select id="payment-method" class="w-full rounded-xl px-4 py-3 text-sm" onchange="renderPaymentInstructions()">
+                        <option value="">-- اختر الطريقة --</option>
+                        <!-- Options injected by JS -->
+                    </select>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Product Detail Modal -->
-    <div id="product-modal">
-        <div class="modal-content glass-panel p-0 overflow-hidden" style="background:#0b0f19; width:90%; max-width:600px; max-height:90vh; border-radius:24px; border:1px solid rgba(255,255,255,0.08); position:relative; transform:scale(0.95); transition:transform 0.3s; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
-            <button onclick="closeProductModal()" class="absolute top-4 left-4 w-10 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-danger hover:text-white transition-all z-10 border border-white/10"><i class="fa-solid fa-times text-white"></i></button>
-            <div class="h-80 w-full relative group">
-                <img id="modal-img" src="" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-[#0b0f19]/50 to-transparent"></div>
-                <div class="absolute bottom-6 right-6">
-                    <span id="modal-category-badge" class="px-4 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-full text-xs font-bold backdrop-blur-md shadow-lg shadow-primary/20">CATEGORY</span>
+                <div id="payment-instructions" class="hidden bg-white/5 p-4 rounded-xl border border-white/5 text-sm text-text_muted">
+                    <!-- Instructions injected by JS -->
                 </div>
-            </div>
-            <div class="p-8 pt-4">
-                <h2 id="modal-title" class="text-3xl font-bold mb-3 text-white tracking-tight">Product Title</h2>
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="flex text-warning text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
-                    <span class="text-text_muted text-sm">(4.8 تقييم)</span>
-                </div>
-                <p id="modal-desc" class="text-text_muted leading-relaxed mb-8 text-sm line-clamp-4">وصف المنتج التفصيلي يظهر هنا...</p>
-                <div class="flex items-center justify-between mb-8 p-5 bg-white/5 rounded-2xl border border-white/5 backdrop-blur-sm">
-                    <span class="text-text_muted text-sm font-medium">السعر النهائي</span>
-                    <span id="modal-price" class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent drop-shadow-sm">0.00 ر.س</span>
-                </div>
-                <button id="modal-add-btn" class="btn-primary w-full py-4 text-white rounded-xl font-bold text-lg shadow-neon"><i class="fa-solid fa-cart-plus ml-2"></i> إضافة للسلة</button>
-            </div>
-        </div>
-    </div>
 
-    <!-- Orders Page -->
-    <div id="orders-page" class="glass-panel">
-        <div class="sticky top-0 z-20 glass-nav border-b border-white/5 px-6 py-5 flex justify-between items-center backdrop-blur-xl">
-            <h2 class="text-2xl font-bold text-white tracking-tight"><i class="fa-solid fa-box-open ml-3 text-primary"></i>طلباتي</h2>
-            <button onclick="toggleOrdersPage()" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 transition-colors border border-white/5 flex items-center justify-center"><i class="fa-solid fa-arrow-down"></i></button>
+                <div id="upload-proof-section" class="hidden space-y-3">
+                    <input type="number" id="topup-amount" placeholder="المبلغ المراد شحنه" class="w-full rounded-xl px-4 py-3 text-sm">
+                    <label class="block text-xs text-text_muted">رفع إيصال الدفع</label>
+                    <input type="file" id="topup-proof" accept="image/*" class="w-full text-xs text-text_muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary">
+                </div>
+
+                <button onclick="submitTopUpRequest()" class="btn-primary w-full py-4 rounded-xl font-bold text-white shadow-lg shadow-primary/20">إرسال طلب الشحن</button>
+            </div>
         </div>
-        <div class="p-6 space-y-4" id="orders-list"></div>
     </div>
 
     <!-- Admin Panel -->
     <div id="admin-panel" class="border-r border-white/5">
-        <div class="sticky top-0 z-20 glass-nav border-b border-white/5 px-6 py-5 flex justify-between items-center backdrop-blur-xl">
-            <div><h2 class="text-2xl font-bold text-danger tracking-tight"><i class="fa-solid fa-shield-halved ml-3"></i>لوحة التحكم</h2><p class="text-xs text-text_muted mt-1">إدارة محلية آمنة</p></div>
-            <button onclick="toggleAdminPanel()" class="w-10 h-10 rounded-full bg-white/5 hover:bg-danger/20 hover:text-danger transition-colors border border-white/5 flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="sticky top-0 z-20 glass-nav border-b border-white/5 px-6 py-5 flex justify-between items-center">
+            <div><h2 class="text-2xl font-bold text-primary tracking-tight"><i class="fa-solid fa-shield-halved ml-3"></i>لوحة التحكم المالية</h2></div>
+            <button onclick="toggleAdminPanel()" class="w-10 h-10 rounded-full bg-white/5 hover:bg-danger/20 hover:text-danger transition-colors"><i class="fa-solid fa-arrow-left"></i></button>
         </div>
-        <div class="p-6 space-y-8 relative">
-            <div id="admin-loading" class="loading-overlay"><div class="spinner mb-4"></div><span class="text-sm text-primary font-mono">جاري المعالجة...</span></div>
-            <div class="bg-warning/10 border border-warning/20 p-5 rounded-2xl flex items-start gap-3"><i class="fa-solid fa-triangle-exclamation text-warning mt-1"></i><p class="text-warning text-xs leading-relaxed">تنبيه: البيانات مخزنة محلياً في متصفح هذا الجهاز فقط.</p></div>
+        <div class="p-6 space-y-8">
+            <!-- Stats -->
             <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white/5 p-5 rounded-2xl border border-white/5 backdrop-blur-sm hover:border-primary/30 transition-colors group"><p class="text-text_muted text-xs mb-2 font-medium">المنتجات النشطة</p><p id="stat-products" class="text-3xl font-bold text-primary group-hover:drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] transition-all">0</p></div>
-                <div class="bg-white/5 p-5 rounded-2xl border border-white/5 backdrop-blur-sm hover:border-success/30 transition-colors group"><p class="text-text_muted text-xs mb-2 font-medium">إجمالي الطلبات</p><p id="stat-orders" class="text-3xl font-bold text-success group-hover:drop-shadow-[0_0_10px_rgba(16,185,129,0.5)] transition-all">0</p></div>
+                <div class="bg-white/5 p-5 rounded-2xl border border-white/5"><p class="text-text_muted text-xs mb-2">إجمالي الأرصدة</p><p id="stat-total-balance" class="text-2xl font-bold text-primary">0.00 $</p></div>
+                <div class="bg-white/5 p-5 rounded-2xl border border-white/5"><p class="text-text_muted text-xs mb-2">طلبات الشحن</p><p id="stat-pending-topups" class="text-2xl font-bold text-warning">0</p></div>
             </div>
-            <div class="flex gap-2 border-b border-white/5 pb-2 overflow-x-auto">
-                <button onclick="switchAdminTab('products')" class="flex-none px-6 py-3 text-sm font-bold text-primary border-b-2 border-primary transition-all">المنتجات</button>
-                <button onclick="switchAdminTab('discounts')" class="flex-none px-6 py-3 text-sm font-bold text-text_muted hover:text-white transition-all">الخصومات</button>
-                <button onclick="switchAdminTab('orders')" class="flex-none px-6 py-3 text-sm font-bold text-text_muted hover:text-white transition-all">سجل الطلبات</button>
+
+            <!-- Tabs -->
+            <div class="flex gap-2 border-b border-white/5 pb-2">
+                <button onclick="switchAdminTab('gateways')" class="flex-1 py-2 text-sm font-bold text-primary border-b-2 border-primary">بوابات الدفع</button>
+                <button onclick="switchAdminTab('requests')" class="flex-1 py-2 text-sm font-bold text-text_muted hover:text-white">طلبات الشحن</button>
             </div>
-            <div id="admin-tab-products" class="space-y-6">
-                <h3 class="font-bold text-lg text-white border-r-4 border-primary pr-3">إضافة منتج جديد</h3>
-                <form id="add-product-form" class="space-y-4">
-                    <input type="text" id="new-prod-title" placeholder="اسم المنتج" required class="w-full rounded-xl px-5 py-4 text-sm placeholder-text_muted/50">
-                    <select id="new-prod-cat" class="w-full rounded-xl px-5 py-4 text-sm"></select>
-                    <input type="text" id="new-prod-price" placeholder="السعر" required class="w-full rounded-xl px-5 py-4 text-sm placeholder-text_muted/50">
-                    <div class="p-5 bg-white/5 rounded-xl border border-white/5 space-y-3">
-                        <label class="block text-xs text-text_muted font-medium">صورة المنتج</label>
-                        <input type="file" id="new-prod-img-file" accept="image/*" class="w-full text-xs text-text_muted file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-all"/>
-                        <input type="text" id="new-prod-img-url" placeholder="أو رابط الصورة" class="w-full rounded-xl px-5 py-3 text-xs placeholder-text_muted/50">
-                    </div>
-                    <textarea id="new-prod-desc" placeholder="وصف المنتج..." rows="4" class="w-full rounded-xl px-5 py-4 text-sm placeholder-text_muted/50 resize-none"></textarea>
-                    <button type="submit" class="btn-primary w-full py-4 rounded-xl font-bold text-white shadow-lg shadow-primary/20">حفظ في قاعدة البيانات</button>
+
+            <!-- Add Gateway -->
+            <div id="admin-tab-gateways" class="space-y-4">
+                <h3 class="font-bold text-lg text-white">إضافة طريقة دفع جديدة</h3>
+                <form id="add-gateway-form" class="space-y-3">
+                    <input type="text" id="gw-name" placeholder="اسم الطريقة (مثال: بنك الراجحي)" required class="w-full rounded-xl px-4 py-3 text-sm">
+                    <input type="text" id="gw-icon" placeholder="أيقونة (FontAwesome Class مثلاً: fa-university)" required class="w-full rounded-xl px-4 py-3 text-sm font-mono">
+                    <textarea id="gw-instructions" placeholder="تعليمات الدفع (رقم الحساب، اسم المستفيد...)" rows="3" required class="w-full rounded-xl px-4 py-3 text-sm"></textarea>
+                    <button type="submit" class="btn-primary w-full py-3 rounded-xl font-bold text-white">إضافة البوابة</button>
                 </form>
+                <div id="admin-gateway-list" class="space-y-3 mt-6"></div>
             </div>
-            <div id="admin-tab-discounts" class="space-y-6 hidden">
-                <h3 class="font-bold text-lg text-white border-r-4 border-warning pr-3">إنشاء كود خصم</h3>
-                <form id="add-discount-form" class="space-y-4">
-                    <input type="text" id="disc-code" placeholder="كود الخصم" required class="w-full rounded-xl px-5 py-4 text-sm placeholder-text_muted/50 uppercase tracking-wider">
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="disc-value" placeholder="القيمة" required class="w-full rounded-xl px-5 py-4 text-sm placeholder-text_muted/50">
-                        <select id="disc-type" class="w-full rounded-xl px-5 py-4 text-sm"><option value="percent">نسبة (%)</option><option value="fixed">مبلغ ثابت</option></select>
-                    </div>
-                    <button type="submit" class="w-full py-4 bg-warning text-black rounded-xl font-bold hover:brightness-110 transition-all shadow-lg shadow-warning/20">حفظ الكود</button>
-                </form>
-                <div id="admin-discount-list" class="space-y-3 mt-6"></div>
-            </div>
-            <div id="admin-tab-orders" class="space-y-6 hidden">
-                <h3 class="font-bold text-lg text-white border-r-4 border-success pr-3">سجل جميع الطلبات</h3>
-                <div id="admin-all-orders-list" class="space-y-3"></div>
-            </div>
-            <div class="space-y-4 pt-6 border-t border-white/5">
-                <h3 class="font-bold text-lg text-white">إدارة المنتجات الحالية</h3>
-                <div id="admin-product-list" class="space-y-3 max-h-80 overflow-y-auto pr-2 custom-scroll"></div>
+
+            <!-- TopUp Requests -->
+            <div id="admin-tab-requests" class="space-y-4 hidden">
+                <h3 class="font-bold text-lg text-white">طلبات الشحن المعلقة</h3>
+                <div id="admin-topup-list" class="space-y-3"></div>
             </div>
         </div>
     </div>
 
     <!-- 3D Background -->
     <div id="canvas-container"></div>
-    <div class="fixed inset-0 bg-gradient-radial from-primary/5 to-transparent opacity-20 pointer-events-none z-[-1]"></div>
 
     <!-- Custom Cursor -->
     <div id="cursor-dot" class="cursor-dot"></div>
     <div id="cursor-outline" class="cursor-outline"></div>
 
     <!-- MAIN APP -->
-    <div id="main-app" class="opacity-0 transition-opacity duration-700">
-        <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+    <div id="main-app" class="opacity-0 transition-opacity duration-700 pb-20">
+        
+        <!-- Header -->
+        <header class="fixed w-full z-50 glass-nav transition-all duration-300">
             <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-                <a href="#" class="text-xl md:text-2xl font-black tracking-tighter flex items-center gap-3 group magnetic-wrap">
-                    <div class="w-11 h-11 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-500 shadow-neon-sm">
-                        <i class="fa-solid fa-cube text-white text-xl"></i>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+                        <i class="fa-solid fa-wallet text-white text-lg"></i>
                     </div>
-                    <span class="hidden md:inline text-white tracking-wide">نيكست<span class="text-primary"> ليفل</span></span>
-                    <span class="md:hidden text-primary font-bold">NL</span>
-                </a>
-                <div class="flex items-center gap-3 md:gap-4">
-                    <button id="admin-btn" onclick="toggleAdminPanel()" class="hidden w-11 h-11 rounded-full bg-danger/10 text-danger border border-danger/20 hover:bg-danger hover:text-white transition-all magnetic-wrap shadow-lg shadow-danger/10"><i class="fa-solid fa-user-gear"></i></button>
-                    <button onclick="toggleOrdersPage()" class="w-11 h-11 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 flex items-center justify-center transition-all magnetic-wrap relative group"><i class="fa-solid fa-clock-rotate-left text-text_muted group-hover:text-white transition-colors"></i></button>
-                    <button class="relative magnetic-wrap group" onclick="toggleCart()"><i class="fa-solid fa-cart-shopping text-xl text-text_muted group-hover:text-primary transition-colors"></i><span id="cart-count" class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-primary to-secondary rounded-full text-xs flex items-center justify-center font-bold transform scale-0 transition-transform duration-300 shadow-neon-sm border border-white/20">0</span></button>
-                    
-                    <!-- Profile Button -->
-                    <button onclick="toggleProfile()" class="flex items-center gap-2.5 bg-white/5 hover:bg-white/10 px-3 py-2 rounded-full transition-all border border-white/5 magnetic-wrap backdrop-blur-sm group">
-                        <img id="nav-avatar" src="" class="w-9 h-9 rounded-full border-2 border-primary shadow-neon-sm group-hover:scale-110 transition-transform" alt="Profile">
-                        <span id="nav-username" class="text-sm font-bold hidden md:block text-white tracking-wide">...</span>
-                        <i class="fa-solid fa-chevron-down text-xs text-text_muted hidden md:block"></i>
-                    </button>
+                    <span class="text-xl font-black text-white tracking-wide hidden md:inline">نيكست<span class="text-primary"> ليفل</span></span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="admin-btn" onclick="toggleAdminPanel()" class="hidden w-10 h-10 rounded-full bg-danger/10 text-danger border border-danger/20 hover:bg-danger hover:text-white transition-all"><i class="fa-solid fa-user-gear"></i></button>
+                    <button onclick="toggleProfile()" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 flex items-center justify-center"><i class="fa-solid fa-user"></i></button>
                 </div>
             </div>
-        </nav>
+        </header>
 
-        <section id="home" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-            <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
-                <div class="hero-content text-right order-2 md:order-1">
-                    <div class="inline-flex items-center gap-2.5 px-5 py-2.5 mb-8 border border-primary/20 rounded-full bg-primary/5 text-primary text-xs font-mono animate-pulse shadow-[0_0_20px_rgba(59,165,246,0.15)]">
-                        <span class="w-2 h-2 bg-primary rounded-full shadow-neon-sm"></span>مرحباً بك يا <span id="hero-username" class="font-bold mr-1 text-white">...</span>
-                    </div>
-                    <h1 class="text-5xl md:text-8xl font-black leading-tight mb-8 text-white tracking-tight drop-shadow-2xl">المستقبل الرقمي <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent drop-shadow-[0_0_30px_rgba(59,130,246,0.5)]">بين يديك</span></h1>
-                    <p class="text-text_muted text-lg md:text-xl mb-10 max-w-lg leading-relaxed font-light">المنصة المحلية الأسرع والأكثر أماناً. تصميم عصري، أداء فائق، وتجربة مستخدم لا تُنسى.</p>
-                    <div class="flex flex-wrap gap-6"><a href="#store" class="group relative px-10 py-5 btn-primary rounded-full font-bold text-white shadow-neon overflow-hidden magnetic-wrap"><span class="relative z-10 flex items-center gap-3">تصفح المتجر <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i></span></a></div>
-                </div>
-                <div class="hero-visual relative order-1 md:order-2 flex justify-center items-center">
-                    <div class="relative w-[350px] h-[350px] md:w-[600px] md:h-[600px]">
-                        <div class="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-full opacity-20 blur-[120px] animate-pulse"></div>
-                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-96 glass-panel rounded-3xl border border-white/10 p-8 flex flex-col justify-between rotate-y-12 rotate-z-6 hover:rotate-0 transition-all duration-700 cursor-pointer group shadow-2xl shadow-primary/20" style="animation: float 6s ease-in-out infinite;">
-                            <div class="flex justify-between items-start"><div class="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center text-primary shadow-neon-sm"><i class="fa-brands fa-playstation text-3xl"></i></div></div>
-                            <div><h3 class="text-2xl font-bold mb-3 text-white">بطاقة شحن 50$</h3><p class="text-sm text-text_muted">تسليم فوري وآمن تماماً</p></div>
-                            <div class="flex justify-between items-center mt-6"><span class="text-primary font-bold text-2xl drop-shadow-sm">185 ر.س</span><button class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center hover:scale-110 transition-transform shadow-neon"><i class="fa-solid fa-plus"></i></button></div>
+        <!-- Hero / Wallet Section -->
+        <section class="relative pt-32 pb-12 px-6">
+            <div class="container mx-auto max-w-4xl">
+                <div class="flex flex-col md:flex-row gap-8 items-center">
+                    <!-- Wallet Card -->
+                    <div class="w-full md:w-2/3">
+                        <div class="wallet-card bg-card-gradient h-56 flex flex-col justify-between relative shadow-2xl shadow-primary/30">
+                            <div class="flex justify-between items-start z-10">
+                                <div>
+                                    <p class="text-white/80 text-sm font-medium">الرصيد الحالي</p>
+                                    <h1 class="text-4xl font-bold text-white mt-1 drop-shadow-md" id="hero-balance">0.00 $</h1>
+                                </div>
+                                <i class="fa-solid fa-wifi text-white/50 text-2xl rotate-90"></i>
+                            </div>
+                            <div class="z-10">
+                                <div class="flex gap-4 mb-4">
+                                    <span class="text-white/80 text-sm font-mono">**** **** **** 4291</span>
+                                </div>
+                                <div class="flex justify-between items-end">
+                                    <div>
+                                        <p class="text-white/60 text-xs mb-1">صاحب البطاقة</p>
+                                        <p class="text-white font-bold tracking-wider uppercase" id="card-holder-name">USER NAME</p>
+                                    </div>
+                                    <i class="fa-brands fa-cc-visa text-white text-3xl"></i>
+                                </div>
+                            </div>
+                            <!-- Decorative Circles -->
+                            <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+                            <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-black/20 rounded-full blur-2xl"></div>
                         </div>
                     </div>
+
+                    <!-- Actions -->
+                    <div class="w-full md:w-1/3 flex flex-col gap-4">
+                        <button onclick="toggleTopUp()" class="btn-primary w-full py-4 rounded-2xl font-bold text-white shadow-lg shadow-primary/20 flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-plus-circle text-xl"></i> شحن الرصيد
+                        </button>
+                        <button onclick="alert('قريباً: تحويل الأموال')" class="bg-white/5 hover:bg-white/10 border border-white/5 w-full py-4 rounded-2xl font-bold text-white transition-all flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-paper-plane text-xl text-text_muted"></i> تحويل
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="store" class="py-32 relative">
-            <div class="container mx-auto px-6 relative z-10">
-                <div class="text-center mb-16 section-header"><h2 class="text-5xl md:text-7xl font-black mb-6 text-white tracking-tight">اختر <span class="text-text_muted opacity-50">فئتك</span></h2><div class="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full"></div></div>
-                <div class="flex flex-wrap justify-center gap-4 mb-16" id="category-tabs"></div>
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8" id="products-grid"><div class="col-span-full text-center py-20"><div class="spinner inline-block mb-6"></div><p class="text-text_muted font-light">جاري تحميل المنتجات من الذاكرة...</p></div></div>
+        <!-- Packages Section (Templates) -->
+        <section class="py-12 px-6">
+            <div class="container mx-auto max-w-6xl">
+                <div class="flex justify-between items-end mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-white mb-2">باقات الشحن السريع</h2>
+                        <p class="text-text_muted text-sm">اختر مبلغاً محدداً للشحن الفوري</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6" id="packages-grid">
+                    <!-- Packages injected by JS -->
+                </div>
             </div>
         </section>
 
-        <footer class="bg-surface_dark/50 py-16 border-t border-white/5 mt-20 backdrop-blur-lg"><div class="container mx-auto px-6 text-center"><div class="flex justify-center items-center gap-4 mb-8"><div class="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center shadow-neon-sm"><i class="fa-solid fa-cube text-2xl text-white"></i></div><span class="text-3xl font-black text-white tracking-wide">نيكست ليفل</span></div><p class="text-text_muted text-sm font-light">جميع الحقوق محفوظة © 2024 | Local Storage Engine v2.0</p></div></footer>
-    </div>
-
-    <!-- Cart Modal -->
-    <div id="cart-modal" class="fixed inset-0 z-[6000] bg-black/90 backdrop-blur-md hidden flex items-end md:items-center justify-center">
-        <div class="bg-[#0b0f19] w-full md:max-w-lg rounded-t-3xl md:rounded-3xl p-8 border border-white/10 shadow-2xl transform transition-transform duration-500 translate-y-full" id="cart-content">
-            <div class="flex justify-between items-center mb-8"><h3 class="text-2xl font-bold text-white tracking-tight">سلة المشتريات</h3><button onclick="toggleCart()" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"><i class="fa-solid fa-times text-xl"></i></button></div>
-            <div id="cart-items" class="space-y-4 mb-8 max-h-72 overflow-y-auto pr-2 custom-scroll"></div>
-            <div class="bg-white/5 p-6 rounded-2xl border border-white/5 mb-8">
-                <div class="flex gap-3 mb-4"><input type="text" id="discount-input" placeholder="كود الخصم" class="flex-1 rounded-xl px-4 py-3 text-sm bg-black/20 border-white/10 focus:border-warning"><button onclick="applyDiscount()" class="px-6 py-3 bg-warning text-black font-bold rounded-xl hover:brightness-110 transition-all shadow-lg shadow-warning/20">تطبيق</button></div>
-                <div id="discount-msg" class="text-xs mb-2 hidden font-medium"></div>
-                <div class="border-t border-white/10 pt-4 space-y-3"><div class="flex justify-between text-text_muted text-sm"><span>المجموع الفرعي</span><span id="cart-subtotal">0.00 ر.س</span></div><div class="flex justify-between text-warning text-sm hidden" id="discount-row"><span>الخصم المطبق</span><span id="cart-discount">-0.00 ر.س</span></div><div class="flex justify-between text-white font-bold text-2xl tracking-tight pt-2"><span>الإجمالي النهائي</span><span id="cart-total" class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">0.00 ر.س</span></div></div>
+        <!-- Transactions History -->
+        <section class="py-12 px-6">
+            <div class="container mx-auto max-w-4xl">
+                <h2 class="text-2xl font-bold text-white mb-6">سجل العمليات</h2>
+                <div class="glass-panel rounded-2xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead class="bg-white/5 text-text_muted text-xs uppercase">
+                                <tr>
+                                    <th class="px-6 py-4">النوع</th>
+                                    <th class="px-6 py-4">التاريخ</th>
+                                    <th class="px-6 py-4">الحالة</th>
+                                    <th class="px-6 py-4 text-left">المبلغ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-list" class="divide-y divide-white/5 text-sm">
+                                <!-- Transactions injected by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="no-transactions" class="p-8 text-center text-text_muted hidden">لا توجد عمليات سابقة</div>
+                </div>
             </div>
-            <button onclick="checkout()" class="btn-primary w-full py-5 rounded-xl font-bold text-lg shadow-neon">إتمام الشراء الآن</button>
-        </div>
+        </section>
     </div>
 
     <!-- Scripts -->
     <script>
         // --- INDEXEDDB WRAPPER ---
-        const DB_NAME = 'NextLevelStoreDB_v3';
+        const DB_NAME = 'NextLevelWalletDB';
         const DB_VERSION = 1;
         let db;
 
@@ -378,14 +345,14 @@
                 const request = indexedDB.open(DB_NAME, DB_VERSION);
                 request.onupgradeneeded = (event) => {
                     db = event.target.result;
-                    if (!db.objectStoreNames.contains('products')) db.createObjectStore('products', { keyPath: 'id', autoIncrement: true });
-                    if (!db.objectStoreNames.contains('orders')) db.createObjectStore('orders', { keyPath: 'id', autoIncrement: true });
-                    if (!db.objectStoreNames.contains('discounts')) db.createObjectStore('discounts', { keyPath: 'code' });
                     if (!db.objectStoreNames.contains('users')) db.createObjectStore('users', { keyPath: 'id' });
+                    if (!db.objectStoreNames.contains('gateways')) db.createObjectStore('gateways', { keyPath: 'id', autoIncrement: true });
+                    if (!db.objectStoreNames.contains('topups')) db.createObjectStore('topups', { keyPath: 'id', autoIncrement: true });
+                    if (!db.objectStoreNames.contains('transactions')) db.createObjectStore('transactions', { keyPath: 'id', autoIncrement: true });
                 };
                 request.onsuccess = (event) => {
                     db = event.target.result;
-                    document.getElementById('db-indicator').innerHTML = '<i class="fa-solid fa-check-circle ml-1"></i> متصل (محلي)';
+                    document.getElementById('db-indicator').innerHTML = '<i class="fa-solid fa-check-circle ml-1"></i> متصل';
                     document.getElementById('db-indicator').classList.add('connected');
                     resolve(db);
                 };
@@ -404,44 +371,37 @@
         const tg = window.Telegram.WebApp;
         let currentUser = null;
         let isAdmin = false;
-        let allProducts = [];
-        let allDiscounts = [];
-        let userOrders = [];
-        let cart = [];
-        let appliedDiscount = null;
-        let isPrivacyMode = false;
+        let gateways = [];
+        let topupRequests = [];
 
-        const categories = [
-            { id: 'all', name: 'الكل', icon: 'fa-layer-group', color: '#ffffff' },
-            { id: 'games', name: 'ألعاب', icon: 'fa-gamepad', color: '#3b82f6' },
-            { id: 'software', name: 'برامج', icon: 'fa-windows', color: '#8b5cf6' },
-            { id: 'crypto', name: 'عملات', icon: 'fa-coins', color: '#f59e0b' },
-            { id: 'social', name: 'تواصل', icon: 'fa-whatsapp', color: '#ec4899' }
+        const packages = [
+            { amount: 10, label: '$10', bonus: '' },
+            { amount: 50, label: '$50', bonus: '+$5 Bonus' },
+            { amount: 100, label: '$100', bonus: '+$15 Bonus' },
+            { amount: 500, label: '$500', bonus: '+$100 Bonus' }
         ];
 
         async function initSystem() {
-            try { await initDB(); loadData(); } catch (e) { showToast('فشل تهيئة القاعدة', 'error'); }
+            try { await initDB(); loadData(); } catch (e) { showToast('فشل النظام', 'error'); }
 
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                tg.expand(); tg.setHeaderColor('#02040a'); tg.setBackgroundColor('#02040a');
+                tg.expand(); tg.setHeaderColor('#02040a');
                 currentUser = {
                     id: tg.initDataUnsafe.user.id,
                     first_name: tg.initDataUnsafe.user.first_name,
                     username: tg.initDataUnsafe.user.username || 'user',
-                    photo_url: tg.initDataUnsafe.user.photo_url,
-                    email: ''
+                    balance: 0,
+                    photo_url: tg.initDataUnsafe.user.photo_url
                 };
             } else {
-                currentUser = { id: 12345, first_name: "زائر", username: "guest", photo_url: "https://ui-avatars.com/api/?name=Guest&background=3b82f6&color=fff", email: '' };
+                currentUser = { id: 12345, first_name: "زائر", username: "guest", balance: 0 };
             }
 
-            // Load or Initialize User Profile
             loadUserProfile();
-
+            
             if (currentUser.id === ADMIN_ID) {
                 isAdmin = true;
                 document.getElementById('admin-btn').classList.remove('hidden');
-                showToast('تم تسجيل دخول المشرف', 'success');
             }
 
             initThreeJS();
@@ -461,453 +421,357 @@
                     if (request.result) {
                         currentUser = { ...currentUser, ...request.result };
                     } else {
-                        // Save initial user
                         dbOperation('users', 'readwrite', s => s.put(currentUser));
                     }
-                    updateUIWithProfile();
+                    updateUI();
                 };
             });
         }
 
-        function updateUIWithProfile() {
-            const avatar = currentUser.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.first_name)}&background=3b82f6&color=fff`;
-            document.getElementById('nav-avatar').src = avatar;
-            document.getElementById('nav-username').innerText = currentUser.username || currentUser.first_name;
-            document.getElementById('hero-username').innerText = currentUser.first_name;
+        function updateUI() {
+            document.getElementById('hero-balance').innerText = parseFloat(currentUser.balance).toFixed(2) + ' $';
+            document.getElementById('modal-balance-display').innerText = parseFloat(currentUser.balance).toFixed(2) + ' $';
+            document.getElementById('card-holder-name').innerText = currentUser.first_name.toUpperCase();
             
-            // Fill Profile Modal
+            // Profile Form
             document.getElementById('profile-name').value = currentUser.first_name;
-            document.getElementById('profile-username').value = currentUser.username || '';
-            document.getElementById('profile-email').value = currentUser.email || '';
-            document.getElementById('profile-avatar-display').src = avatar;
-            document.getElementById('profile-id-display').innerText = currentUser.id;
+            document.getElementById('profile-username').value = currentUser.username;
+
+            renderPackages();
+            renderTransactions();
         }
 
         window.saveProfile = function(e) {
             e.preventDefault();
-            const updatedData = {
+            const updated = {
                 id: currentUser.id,
                 first_name: document.getElementById('profile-name').value,
                 username: document.getElementById('profile-username').value,
-                email: document.getElementById('profile-email').value,
+                balance: currentUser.balance,
                 photo_url: currentUser.photo_url
             };
-            
-            dbOperation('users', 'readwrite', store => {
-                store.put(updatedData);
-            }).onsuccess = () => {
-                currentUser = { ...currentUser, ...updatedData };
-                updateUIWithProfile();
+            dbOperation('users', 'readwrite', store => { store.put(updated); }).onsuccess = () => {
+                currentUser = updated;
+                updateUI();
                 toggleProfile();
-                showToast('تم تحديث الملف الشخصي بنجاح', 'success');
+                showToast('تم تحديث الملف', 'success');
             };
         };
-
-        window.updateAvatar = function(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    currentUser.photo_url = e.target.result;
-                    document.getElementById('profile-avatar-display').src = e.target.result;
-                    document.getElementById('nav-avatar').src = e.target.result;
-                    // Save immediately
-                    dbOperation('users', 'readwrite', store => { store.put(currentUser); });
-                    showToast('تم تغيير الصورة', 'success');
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        };
-
-        window.togglePrivacy = function() {
-            isPrivacyMode = !isPrivacyMode;
-            const fields = ['profile-name', 'profile-username', 'profile-email', 'profile-id-display'];
-            const icon = document.querySelector('#profile-modal button[onclick="togglePrivacy()"] i');
-            
-            fields.forEach(id => {
-                const el = document.getElementById(id);
-                if (isPrivacyMode) {
-                    el.classList.add('privacy-blur');
-                    if(id === 'profile-id-display') el.dataset.original = el.innerText;
-                    else el.dataset.original = el.value;
-                    
-                    if(id === 'profile-id-display') el.innerText = '****';
-                    else el.value = '********';
-                } else {
-                    el.classList.remove('privacy-blur');
-                    if(id === 'profile-id-display') el.innerText = el.dataset.original;
-                    else el.value = el.dataset.original;
-                }
-            });
-            
-            icon.className = isPrivacyMode ? 'fa-solid fa-eye text-white' : 'fa-solid fa-eye-slash text-white';
-            showToast(isPrivacyMode ? 'تم إخفاء البيانات' : 'تم إظهار البيانات', 'info');
-        };
-
-        window.toggleProfile = function() {
-            const modal = document.getElementById('profile-modal');
-            if (modal.classList.contains('active')) {
-                modal.classList.remove('active');
-                // Reset privacy mode on close
-                if(isPrivacyMode) togglePrivacy();
-            } else {
-                updateUIWithProfile();
-                modal.classList.add('active');
-            }
-        };
-
-        function setupUI() {
-            // Handled by loadUserProfile now
-        }
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            let icon = 'fa-info-circle';
-            if (type === 'success') icon = 'fa-check-circle';
-            if (type === 'error') icon = 'fa-exclamation-circle';
-            toast.innerHTML = `<i class="fa-solid ${icon} text-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'primary'} text-xl"></i><span class="text-sm font-bold">${message}</span>`;
-            container.appendChild(toast);
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred(type);
-            setTimeout(() => { toast.style.animation = 'slideUp 0.5s forwards'; setTimeout(() => toast.remove(), 500); }, 4000);
-        }
 
         function loadData() {
-            dbOperation('products', 'readonly', store => {
-                const request = store.getAll();
-                request.onsuccess = () => {
-                    allProducts = request.result.reverse();
-                    renderProducts('all');
-                    renderAdminLists();
-                    document.getElementById('stat-products').innerText = allProducts.length;
-                };
+            dbOperation('gateways', 'readonly', store => {
+                store.getAll().onsuccess = (e) => { gateways = e.target.result; renderGateways(); };
             });
-            dbOperation('discounts', 'readonly', store => {
-                const request = store.getAll();
-                request.onsuccess = () => { allDiscounts = request.result; renderAdminDiscounts(); };
-            });
-            dbOperation('orders', 'readonly', store => {
-                const request = store.getAll();
-                request.onsuccess = () => {
-                    const allOrders = request.result.reverse();
-                    userOrders = allOrders.filter(o => o.userId === currentUser.id.toString());
-                    renderUserOrders();
-                    if(isAdmin) { document.getElementById('stat-orders').innerText = allOrders.length; renderAdminAllOrders(allOrders); }
+            dbOperation('topups', 'readonly', store => {
+                store.getAll().onsuccess = (e) => { 
+                    topupRequests = e.target.result.reverse(); 
+                    if(isAdmin) renderAdminTopUps();
                 };
             });
         }
 
-        function handleAddProduct(e) {
-            e.preventDefault();
-            const title = document.getElementById('new-prod-title').value;
-            const category = document.getElementById('new-prod-cat').value;
-            const price = document.getElementById('new-prod-price').value;
-            const desc = document.getElementById('new-prod-desc').value;
-            const fileInput = document.getElementById('new-prod-img-file');
-            const urlInput = document.getElementById('new-prod-img-url').value;
+        // --- TOP UP LOGIC ---
+        function renderGateways() {
+            const select = document.getElementById('payment-method');
+            select.innerHTML = '<option value="">-- اختر الطريقة --</option>';
+            gateways.forEach(gw => {
+                const opt = document.createElement('option');
+                opt.value = gw.id;
+                opt.innerText = gw.name;
+                select.appendChild(opt);
+            });
 
-            document.getElementById('admin-loading').classList.add('active');
+            const list = document.getElementById('admin-gateway-list');
+            list.innerHTML = '';
+            gateways.forEach(gw => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5';
+                item.innerHTML = `<div class="flex items-center gap-3"><i class="fa-solid ${gw.icon} text-primary"></i><span class="text-sm text-white">${gw.name}</span></div><button onclick="deleteGateway(${gw.id})" class="text-danger text-xs">حذف</button>`;
+                list.appendChild(item);
+            });
+        }
 
-            const processSave = (imgUrl) => {
-                const product = { title, category, price, priceVal: parseFloat(price) || 0, img: imgUrl, desc, createdAt: new Date().toISOString() };
-                dbOperation('products', 'readwrite', store => { store.add(product); }).onsuccess = () => {
-                    showToast('تم حفظ المنتج بنجاح', 'success');
-                    document.getElementById('add-product-form').reset();
-                    toggleAdminPanel();
+        window.renderPaymentInstructions = function() {
+            const gwId = document.getElementById('payment-method').value;
+            const instructionsDiv = document.getElementById('payment-instructions');
+            const uploadSection = document.getElementById('upload-proof-section');
+            
+            if (!gwId) {
+                instructionsDiv.classList.add('hidden');
+                uploadSection.classList.add('hidden');
+                return;
+            }
+
+            const gw = gateways.find(g => g.id == gwId);
+            instructionsDiv.innerHTML = `
+                <div class="flex items-start gap-3 mb-3">
+                    <i class="fa-solid ${gw.icon} text-primary text-xl mt-1"></i>
+                    <div>
+                        <h4 class="font-bold text-white mb-1">${gw.name}</h4>
+                        <p class="whitespace-pre-line text-text_muted">${gw.instructions}</p>
+                    </div>
+                </div>
+                <p class="text-warning text-xs"><i class="fa-solid fa-triangle-exclamation ml-1"></i> يرجى تحويل المبلغ ثم رفع الإيصال أدناه.</p>
+            `;
+            instructionsDiv.classList.remove('hidden');
+            uploadSection.classList.remove('hidden');
+        };
+
+        window.submitTopUpRequest = function() {
+            const gwId = document.getElementById('payment-method').value;
+            const amount = parseFloat(document.getElementById('topup-amount').value);
+            const fileInput = document.getElementById('topup-proof');
+
+            if (!gwId || !amount || !fileInput.files[0]) {
+                showToast('يرجى تعبئة جميع البيانات ورفع الإيصال', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const request = {
+                    userId: currentUser.id.toString(),
+                    userName: currentUser.first_name,
+                    gatewayId: gwId,
+                    amount: amount,
+                    proofImage: e.target.result,
+                    status: 'pending', // pending, approved, rejected
+                    date: new Date().toISOString()
+                };
+
+                dbOperation('topups', 'readwrite', store => {
+                    store.add(request);
+                }).onsuccess = () => {
+                    showToast('تم إرسال طلب الشحن للمراجعة', 'success');
+                    toggleTopUp();
                     loadData();
-                    document.getElementById('admin-loading').classList.remove('active');
                 };
             };
+            reader.readAsDataURL(fileInput.files[0]);
+        };
 
-            if (fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (evt) => processSave(evt.target.result);
-                reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                processSave(urlInput || 'https://via.placeholder.com/400/0b0f19/ffffff?text=No+Image');
-            }
-        }
-
-        function handleAddDiscount(e) {
+        // --- ADMIN LOGIC ---
+        document.getElementById('add-gateway-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const code = document.getElementById('disc-code').value.toUpperCase();
-            const value = parseFloat(document.getElementById('disc-value').value);
-            const type = document.getElementById('disc-type').value;
-            const discount = { code, value, type, active: true };
-            dbOperation('discounts', 'readwrite', store => { store.put(discount); }).onsuccess = () => {
-                showToast('تم حفظ الكود', 'success');
-                document.getElementById('add-discount-form').reset();
+            const gw = {
+                name: document.getElementById('gw-name').value,
+                icon: document.getElementById('gw-icon').value,
+                instructions: document.getElementById('gw-instructions').value
+            };
+            dbOperation('gateways', 'readwrite', store => { store.add(gw); }).onsuccess = () => {
+                showToast('تمت إضافة البوابة', 'success');
+                document.getElementById('add-gateway-form').reset();
                 loadData();
             };
-        }
+        });
 
-        function handleDeleteProduct(id) {
-            if(!confirm('حذف نهائي؟')) return;
-            dbOperation('products', 'readwrite', store => { store.delete(id); }).onsuccess = () => { showToast('تم الحذف', 'info'); loadData(); };
-        }
+        window.deleteGateway = function(id) {
+            if(confirm('حذف طريقة الدفع؟')) {
+                dbOperation('gateways', 'readwrite', store => { store.delete(id); }).onsuccess = () => {
+                    loadData();
+                    showToast('تم الحذف', 'info');
+                };
+            }
+        };
 
-        function placeOrder() {
-            if (cart.length === 0) return;
-            const total = calculateTotal();
-            const order = {
-                userId: currentUser.id.toString(), userName: currentUser.first_name, items: cart,
-                subtotal: cart.reduce((sum, item) => sum + (item.priceVal || 0), 0),
-                discount: appliedDiscount ? appliedDiscount.code : null, total: total, status: 'pending', createdAt: new Date().toISOString()
-            };
-            dbOperation('orders', 'readwrite', store => { store.add(order); }).onsuccess = () => {
-                showToast('تم وضع الطلب بنجاح!', 'success');
-                cart = []; appliedDiscount = null; updateCartUI(); toggleCart(); loadData();
-                if(tg.MainButton) tg.MainButton.hide();
-            };
-        }
+        function renderAdminTopUps() {
+            const list = document.getElementById('admin-topup-list');
+            list.innerHTML = '';
+            const pending = topupRequests.filter(r => r.status === 'pending');
+            document.getElementById('stat-pending-topups').innerText = pending.length;
 
-        function renderProducts(filter = 'all') {
-            const grid = document.getElementById('products-grid');
-            grid.innerHTML = '';
-            const filtered = filter === 'all' ? allProducts : allProducts.filter(p => p.category === filter);
-            if (filtered.length === 0) { grid.innerHTML = '<div class="col-span-full text-center text-text_muted py-20 font-light">لا توجد منتجات في هذا القسم حالياً</div>'; return; }
-            filtered.forEach((product, index) => {
-                const card = document.createElement('div');
-                card.className = 'product-card glass-panel rounded-3xl overflow-hidden cursor-pointer';
-                card.style.opacity = '0'; card.style.animation = `fadeIn 0.6s ease forwards ${index * 0.1}s`;
-                card.onclick = () => openProductModal(product);
-                card.innerHTML = `
-                    <div class="h-56 overflow-hidden relative">
-                        <img src="${product.img}" class="product-img w-full h-full object-cover">
-                        <div class="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold text-white border border-white/10 shadow-lg">${product.category}</div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="font-bold text-xl mb-3 truncate text-white tracking-tight">${product.title}</h3>
-                        <div class="flex justify-between items-center mt-5">
-                            <span class="text-primary font-bold text-2xl drop-shadow-sm">${product.price}</span>
-                            <button onclick="event.stopPropagation(); addToCart('${product.id}')" class="w-12 h-12 rounded-full bg-white/5 hover:bg-primary hover:text-white flex items-center justify-center transition-all duration-300 group-hover:scale-110 border border-white/10 shadow-lg">
-                                <i class="fa-solid fa-cart-plus"></i>
-                            </button>
+            if (pending.length === 0) {
+                list.innerHTML = '<p class="text-text_muted text-sm text-center">لا توجد طلبات معلقة</p>';
+                return;
+            }
+
+            pending.forEach(req => {
+                const item = document.createElement('div');
+                item.className = 'bg-white/5 p-4 rounded-xl border border-white/5 space-y-3';
+                item.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-white font-bold">${req.userName}</p>
+                            <p class="text-xs text-text_muted">${new Date(req.date).toLocaleString()}</p>
                         </div>
+                        <span class="text-primary font-bold text-lg">${req.amount.toFixed(2)} $</span>
                     </div>
+                    <img src="${req.proofImage}" class="w-full h-32 object-cover rounded-lg border border-white/10 cursor-pointer hover:opacity-80" onclick="window.open(this.src)">
+                    <div class="flex gap-2">
+                        <button onclick="processTopUp(${req.id}, 'approved')" class="flex-1 bg-primary/20 text-primary py-2 rounded-lg text-sm font-bold hover:bg-primary hover:text-white transition-colors">موافقة</button>
+                        <button onclick="processTopUp(${req.id}, 'rejected')" class="flex-1 bg-danger/20 text-danger py-2 rounded-lg text-sm font-bold hover:bg-danger hover:text-white transition-colors">رفض</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        window.processTopUp = function(id, status) {
+            const reqIndex = topupRequests.findIndex(r => r.id === id);
+            if (reqIndex === -1) return;
+            const req = topupRequests[reqIndex];
+
+            // Update Request Status
+            req.status = status;
+            dbOperation('topups', 'readwrite', store => { store.put(req); });
+
+            if (status === 'approved') {
+                // Add Balance to User
+                dbOperation('users', 'readwrite', store => {
+                    const userReq = store.get(req.userId);
+                    userReq.onsuccess = () => {
+                        const user = userReq.result;
+                        if (user) {
+                            user.balance = (parseFloat(user.balance) || 0) + req.amount;
+                            store.put(user);
+                            
+                            // Add Transaction Record
+                            dbOperation('transactions', 'readwrite', tStore => {
+                                tStore.add({
+                                    userId: req.userId,
+                                    type: 'deposit',
+                                    amount: req.amount,
+                                    date: new Date().toISOString(),
+                                    status: 'completed',
+                                    details: `شحن رصيد عبر ${gateways.find(g=>g.id==req.gatewayId)?.name || 'بوابة'}`
+                                });
+                            });
+                            showToast(`تم اعتماد الشحن وإضافة ${req.amount}$ للمستخدم`, 'success');
+                        }
+                    };
+                });
+            } else {
+                showToast('تم رفض طلب الشحن', 'info');
+            }
+            
+            loadData();
+        };
+
+        function renderTransactions() {
+            dbOperation('transactions', 'readonly', store => {
+                const req = store.index ? store.index('userId').getAll(currentUser.id.toString()) : store.getAll(); 
+                // Simplified for single store: filter manually
+                store.getAll().onsuccess = (e) => {
+                    const allTx = e.target.result.filter(t => t.userId === currentUser.id.toString()).reverse();
+                    const tbody = document.getElementById('transactions-list');
+                    tbody.innerHTML = '';
+                    
+                    if (allTx.length === 0) {
+                        document.getElementById('no-transactions').classList.remove('hidden');
+                        return;
+                    }
+                    document.getElementById('no-transactions').classList.add('hidden');
+
+                    allTx.forEach(tx => {
+                        const isDeposit = tx.type === 'deposit';
+                        const colorClass = isDeposit ? 'text-primary' : 'text-danger';
+                        const sign = isDeposit ? '+' : '-';
+                        const statusBadge = tx.status === 'completed' ? '<span class="text-green-500 text-xs">● مكتمل</span>' : '<span class="text-yellow-500 text-xs">● قيد المعالجة</span>';
+                        
+                        const row = document.createElement('tr');
+                        row.className = 'hover:bg-white/5 transition-colors';
+                        row.innerHTML = `
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full ${isDeposit ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'} flex items-center justify-center">
+                                        <i class="fa-solid ${isDeposit ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                                    </div>
+                                    <span class="text-white font-medium">${tx.details || (isDeposit ? 'شحن رصيد' : 'شراء')}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-text_muted">${new Date(tx.date).toLocaleDateString()}</td>
+                            <td class="px-6 py-4">${statusBadge}</td>
+                            <td class="px-6 py-4 text-left font-bold ${colorClass}">${sign}${tx.amount.toFixed(2)} $</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                };
+            });
+        }
+
+        function renderPackages() {
+            const grid = document.getElementById('packages-grid');
+            grid.innerHTML = '';
+            packages.forEach(pkg => {
+                const card = document.createElement('div');
+                card.className = 'glass-panel p-6 rounded-2xl text-center hover:border-primary/50 transition-all cursor-pointer group';
+                card.onclick = () => {
+                    document.getElementById('topup-amount').value = pkg.amount;
+                    toggleTopUp();
+                };
+                card.innerHTML = `
+                    <h3 class="text-3xl font-bold text-white mb-2 group-hover:text-primary transition-colors">${pkg.label}</h3>
+                    ${pkg.bonus ? `<p class="text-warning text-xs font-bold mb-4">${pkg.bonus}</p>` : '<div class="h-4 mb-4"></div>'}
+                    <button class="w-full py-2 rounded-lg bg-white/5 text-white text-sm font-bold group-hover:bg-primary group-hover:text-white transition-all">شحن سريع</button>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        function renderUserOrders() {
-            const list = document.getElementById('orders-list');
-            list.innerHTML = '';
-            if (userOrders.length === 0) { list.innerHTML = '<div class="text-center text-text_muted mt-20 font-light">لا توجد طلبات سابقة</div>'; return; }
-            userOrders.forEach(order => {
-                const date = new Date(order.createdAt).toLocaleDateString('ar-SA');
-                const statusClass = `status-${order.status}`;
-                const statusText = order.status === 'pending' ? 'قيد المعالجة' : order.status === 'completed' ? 'مكتمل' : 'ملغى';
-                const item = document.createElement('div');
-                item.className = 'bg-white/5 p-5 rounded-2xl border border-white/5 flex justify-between items-center hover:bg-white/10 transition-colors';
-                item.innerHTML = `
-                    <div>
-                        <div class="flex items-center gap-3 mb-2">
-                            <span class="text-white font-bold tracking-wider">#${order.id}</span>
-                            <span class="status-badge ${statusClass}">${statusText}</span>
-                        </div>
-                        <p class="text-xs text-text_muted font-light">${date} | ${order.items.length} منتجات</p>
-                    </div>
-                    <div class="text-left">
-                        <p class="text-primary font-bold text-lg drop-shadow-sm">${order.total.toFixed(2)} ر.س</p>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
-        }
-
-        function renderAdminLists() {
-            const list = document.getElementById('admin-product-list');
-            list.innerHTML = '';
-            allProducts.forEach(p => {
-                const item = document.createElement('div');
-                item.className = 'flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5 hover:border-danger/30 transition-colors';
-                item.innerHTML = `<span class="text-sm truncate w-2/3 text-white font-medium">${p.title}</span><button onclick="handleDeleteProduct(${p.id})" class="text-text_muted hover:text-danger transition-colors"><i class="fa-solid fa-trash"></i></button>`;
-                list.appendChild(item);
-            });
-        }
-
-        function renderAdminDiscounts() {
-            const list = document.getElementById('admin-discount-list');
-            list.innerHTML = '';
-            allDiscounts.forEach(d => {
-                const item = document.createElement('div');
-                item.className = 'flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5';
-                item.innerHTML = `<div><span class="text-warning font-bold tracking-wider">${d.code}</span> <span class="text-xs text-text_muted mr-2">(${d.value} ${d.type === 'percent' ? '%' : 'ر.س'})</span></div>`;
-                list.appendChild(item);
-            });
-        }
-
-        function renderAdminAllOrders(orders) {
-            const list = document.getElementById('admin-all-orders-list');
-            list.innerHTML = '';
-            orders.forEach(o => {
-                const item = document.createElement('div');
-                item.className = 'bg-white/5 p-4 rounded-xl border border-white/5 text-sm flex justify-between items-center';
-                item.innerHTML = `<div class="flex items-center gap-3"><span class="font-mono text-text_muted">#${o.id}</span><span class="text-white">${o.userName}</span></div><span class="text-primary font-bold">${o.total.toFixed(2)}</span>`;
-                list.appendChild(item);
-            });
-        }
-
-        window.openProductModal = function(product) {
-            document.getElementById('modal-img').src = product.img;
-            document.getElementById('modal-category-badge').innerText = product.category;
-            document.getElementById('modal-title').innerText = product.title;
-            document.getElementById('modal-desc').innerText = product.desc || 'لا يوجد وصف متاح لهذا المنتج.';
-            document.getElementById('modal-price').innerText = product.price;
-            document.getElementById('modal-add-btn').onclick = () => { addToCart(product.id); closeProductModal(); };
-            document.getElementById('product-modal').classList.add('active');
-        }
-        window.closeProductModal = () => document.getElementById('product-modal').classList.remove('active');
-
-        window.addToCart = function(id) {
-            const product = allProducts.find(p => p.id == id);
-            cart.push(product);
-            updateCartUI();
-            showToast(`تم إضافة "${product.title}"`, 'success');
-        }
-
-        function updateCartUI() {
-            document.getElementById('cart-count').innerText = cart.length;
-            document.getElementById('cart-count').classList.remove('scale-0');
-            setTimeout(() => document.getElementById('cart-count').classList.add('scale-110'), 100);
-            setTimeout(() => document.getElementById('cart-count').classList.remove('scale-110'), 200);
-            const itemsContainer = document.getElementById('cart-items');
-            itemsContainer.innerHTML = cart.map((item) => `<div class="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5"><span class="text-sm text-white font-medium">${item.title}</span><span class="text-primary font-bold">${item.price}</span></div>`).join('');
-            const totals = calculateTotal();
-            const subtotal = cart.reduce((sum, item) => sum + (item.priceVal || 0), 0);
-            document.getElementById('cart-subtotal').innerText = subtotal.toFixed(2) + ' ر.س';
-            if (appliedDiscount) {
-                document.getElementById('discount-row').classList.remove('hidden');
-                document.getElementById('cart-discount').innerText = '-' + (subtotal - totals).toFixed(2) + ' ر.س';
-            } else { document.getElementById('discount-row').classList.add('hidden'); }
-            document.getElementById('cart-total').innerText = totals.toFixed(2) + ' ر.س';
-            if (tg.MainButton && cart.length > 0) {
-                tg.MainButton.setText(`إتمام الطلب (${totals.toFixed(2)} ر.س)`);
-                tg.MainButton.show();
-                tg.MainButton.onClick(() => placeOrder());
-            } else if (tg.MainButton) { tg.MainButton.hide(); }
-        }
-
-        function calculateTotal() {
-            let subtotal = cart.reduce((sum, item) => sum + (item.priceVal || 0), 0);
-            if (appliedDiscount) {
-                if (appliedDiscount.type === 'percent') subtotal = subtotal - (subtotal * (appliedDiscount.value / 100));
-                else subtotal = subtotal - appliedDiscount.value;
-            }
-            return Math.max(0, subtotal);
-        }
-
-        window.applyDiscount = function() {
-            const code = document.getElementById('discount-input').value.toUpperCase();
-            const discount = allDiscounts.find(d => d.code === code && d.active);
-            const msg = document.getElementById('discount-msg');
-            if (discount) {
-                appliedDiscount = discount;
-                msg.innerText = `تم تطبيق خصم ${discount.value} ${discount.type === 'percent' ? '%' : 'ر.س'} بنجاح!`;
-                msg.className = 'text-xs mb-4 text-success block font-bold';
-                updateCartUI();
-                showToast('تم تطبيق الكود', 'success');
-            } else {
-                appliedDiscount = null;
-                msg.innerText = 'كود غير صالح أو منتهي الصلاحية';
-                msg.className = 'text-xs mb-4 text-danger block font-bold';
-                updateCartUI();
-                showToast('كود غير صالح', 'error');
-            }
-        }
-
-        window.checkout = placeOrder;
-        window.toggleCart = function() {
-            const modal = document.getElementById('cart-modal');
-            const content = document.getElementById('cart-content');
-            if (modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden');
-                setTimeout(() => content.classList.remove('translate-y-full'), 10);
-                updateCartUI();
-            } else {
-                content.classList.add('translate-y-full');
-                setTimeout(() => modal.classList.add('hidden'), 500);
-            }
-        }
-        window.toggleAdminPanel = function() { if (!isAdmin) return showToast('غير مصرح', 'error'); document.getElementById('admin-panel').classList.toggle('active'); }
-        window.toggleOrdersPage = function() { document.getElementById('orders-page').classList.toggle('active'); }
-        window.switchAdminTab = function(tab) {
-            ['products', 'discounts', 'orders'].forEach(t => document.getElementById(`admin-tab-${t}`).classList.add('hidden'));
+        // UI Toggles
+        window.toggleProfile = () => {
+            const modal = document.getElementById('profile-modal');
+            modal.classList.toggle('active');
+        };
+        window.toggleTopUp = () => {
+            const modal = document.getElementById('topup-modal');
+            modal.classList.toggle('active');
+        };
+        window.toggleAdminPanel = () => {
+            if (!isAdmin) return showToast('غير مصرح', 'error');
+            document.getElementById('admin-panel').classList.toggle('active');
+        };
+        window.switchAdminTab = (tab) => {
+            ['gateways', 'requests'].forEach(t => document.getElementById(`admin-tab-${t}`).classList.add('hidden'));
             document.getElementById(`admin-tab-${tab}`).classList.remove('hidden');
-        }
+        };
+        window.showToast = (msg, type) => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fa-solid ${type==='success'?'fa-check-circle':'fa-exclamation-circle'} text-${type==='success'?'success':'danger'}"></i><span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.animation = 'slideUp 0.5s forwards'; setTimeout(()=>toast.remove(), 500); }, 3000);
+        };
 
-        document.getElementById('add-product-form').addEventListener('submit', handleAddProduct);
-        document.getElementById('add-discount-form').addEventListener('submit', handleAddDiscount);
-
-        // Render Categories
-        const catContainer = document.getElementById('category-tabs');
-        const catSelect = document.getElementById('new-prod-cat');
-        categories.forEach(cat => {
-            const btn = document.createElement('button');
-            btn.className = `tab-btn px-8 py-3.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all magnetic-wrap text-text_muted hover:text-white font-medium ${cat.id === 'all' ? 'tab-active' : ''}`;
-            btn.innerHTML = `<i class="fa-solid ${cat.icon} ml-2" style="color:${cat.color}"></i> ${cat.name}`;
-            btn.onclick = () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
-                btn.classList.add('tab-active');
-                renderProducts(cat.id);
-                updateThreeJSColor(new THREE.Color(cat.color));
-            };
-            catContainer.appendChild(btn);
-            if (cat.id !== 'all') {
-                const opt = document.createElement('option');
-                opt.value = cat.id; opt.innerText = cat.name; opt.style.color = '#000';
-                catSelect.appendChild(opt);
-            }
-        });
-
-        // Three.js & Cursor
+        // Three.js Background (Simple Particles)
         function initThreeJS() {
             const container = document.getElementById('canvas-container');
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             container.appendChild(renderer.domElement);
-            const particlesGeometry = new THREE.BufferGeometry();
-            const particlesCount = 1500;
-            const posArray = new Float32Array(particlesCount * 3);
-            for(let i = 0; i < particlesCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 25;
-            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            const material = new THREE.PointsMaterial({ size: 0.025, color: 0x3b82f6, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending });
-            const particlesMesh = new THREE.Points(particlesGeometry, material);
-            scene.add(particlesMesh);
-            camera.position.z = 6;
-            let targetColor = new THREE.Color(0x3b82f6);
-            let currentColor = new THREE.Color(0x3b82f6);
-            window.updateThreeJSColor = (color) => { targetColor = color; };
+            
+            const geo = new THREE.BufferGeometry();
+            const count = 500;
+            const pos = new Float32Array(count*3);
+            for(let i=0; i<count*3; i++) pos[i] = (Math.random()-0.5)*20;
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({ size: 0.05, color: 0x10b981, transparent: true, opacity: 0.5 });
+            const mesh = new THREE.Points(geo, mat);
+            scene.add(mesh);
+            camera.position.z = 5;
+            
             const animate = () => {
-                currentColor.lerp(targetColor, 0.05);
-                material.color.set(currentColor);
-                particlesMesh.rotation.y += 0.0008;
-                particlesMesh.rotation.x += 0.0004;
+                mesh.rotation.y += 0.001;
                 renderer.render(scene, camera);
                 requestAnimationFrame(animate);
             };
             animate();
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
         }
 
         function initCursor() {
             if (!tg.isMobile && window.matchMedia("(pointer: fine)").matches) {
                 const dot = document.getElementById('cursor-dot');
                 const outline = document.getElementById('cursor-outline');
-                window.addEventListener('mousemove', (e) => {
-                    dot.style.left = `${e.clientX}px`; dot.style.top = `${e.clientY}px`;
-                    outline.animate({ left: `${e.clientX}px`, top: `${e.clientY}px` }, { duration: 500, fill: "forwards" });
+                window.addEventListener('mousemove', e => {
+                    dot.style.left = e.clientX+'px'; dot.style.top = e.clientY+'px';
+                    outline.animate({ left: e.clientX+'px', top: e.clientY+'px' }, { duration: 500, fill: "forwards" });
                 });
                 document.querySelectorAll('a, button, input').forEach(el => {
-                    el.addEventListener('mouseenter', () => { outline.classList.add('cursor-hover'); dot.style.backgroundColor = '#fff'; });
-                    el.addEventListener('mouseleave', () => { outline.classList.remove('cursor-hover'); dot.style.backgroundColor = '#3b82f6'; });
+                    el.addEventListener('mouseenter', () => { outline.style.width='60px'; outline.style.height='60px'; });
+                    el.addEventListener('mouseleave', () => { outline.style.width='40px'; outline.style.height='40px'; });
                 });
             } else {
                 document.getElementById('cursor-dot').style.display = 'none';
