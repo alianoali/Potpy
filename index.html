@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>نيكست ليفل | النسخه الذهبية</title>
+    <title>نيكست ليفل | المنصة البلاتينية</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,6 +18,9 @@
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- Three.js & GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -41,12 +44,11 @@
                         'gold-gradient': 'linear-gradient(135deg, #ffd700 0%, #b8860b 100%)',
                         'blue-gradient': 'linear-gradient(135deg, #00f3ff 0%, #0066ff 100%)',
                         'dark-gradient': 'linear-gradient(180deg, #050505 0%, #0a0a0f 100%)',
-                        'holographic': 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.01) 100%)'
                     },
                     boxShadow: {
-                        'gold-glow': '0 0 20px rgba(255, 215, 0, 0.3)',
-                        'blue-glow': '0 0 20px rgba(0, 243, 255, 0.3)',
-                        'inner-glow': 'inset 0 0 20px rgba(255, 215, 0, 0.1)'
+                        'gold-glow': '0 0 25px rgba(255, 215, 0, 0.25)',
+                        'blue-glow': '0 0 25px rgba(0, 243, 255, 0.25)',
+                        'neumorph': '5px 5px 10px #020203, -5px -5px 10px #12121b'
                     }
                 }
             }
@@ -58,30 +60,30 @@
         body { background-color: var(--obsidian); color: var(--platinum); overflow-x: hidden; cursor: none; font-family: 'Tajawal', sans-serif; }
         ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #ffd700; border-radius: 2px; }
         
-        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; opacity: 0.4; pointer-events: none; }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; opacity: 0.3; pointer-events: none; }
         
         /* Advanced Holographic Glass */
         .glass-panel { 
-            background: rgba(10, 10, 15, 0.4); 
-            backdrop-filter: blur(30px); 
-            -webkit-backdrop-filter: blur(30px); 
-            border: 1px solid rgba(255, 215, 0, 0.1); 
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); 
+            background: rgba(10, 10, 15, 0.5); 
+            backdrop-filter: blur(40px); 
+            -webkit-backdrop-filter: blur(40px); 
+            border: 1px solid rgba(255, 215, 0, 0.08); 
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6); 
             position: relative;
             overflow: hidden;
         }
         .glass-panel::before {
             content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.05), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.08), transparent);
             transition: 0.8s;
         }
         .glass-panel:hover::before { left: 100%; }
         
         .glass-nav { 
-            background: rgba(5, 5, 5, 0.85); 
-            backdrop-filter: blur(30px); 
+            background: rgba(5, 5, 5, 0.9); 
+            backdrop-filter: blur(40px); 
             border-bottom: 1px solid rgba(255, 215, 0, 0.05); 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
 
         .cursor-dot { width: 6px; height: 6px; background-color: #ffd700; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); mix-blend-mode: difference; transition: width 0.3s, height 0.3s; box-shadow: 0 0 15px #ffd700; }
@@ -90,120 +92,135 @@
 
         /* Luxury Card */
         .wallet-card {
-            background: linear-gradient(135deg, rgba(20,20,25,0.9), rgba(5,5,5,0.95));
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 24px;
-            padding: 25px;
+            background: linear-gradient(135deg, rgba(20,20,25,0.95), rgba(5,5,5,0.98));
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 30px;
+            padding: 30px;
             position: relative;
             overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7), inset 0 0 0 1px rgba(255,255,255,0.05);
         }
         .wallet-card::after {
             content: ''; position: absolute; top: -50%; right: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 60%);
+            background: radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 60%);
             transform: rotate(45deg);
-            transition: 0.5s;
+            transition: 0.6s;
         }
-        .wallet-card:hover { transform: translateY(-10px) scale(1.02); border-color: rgba(255, 215, 0, 0.5); box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 30px rgba(255, 215, 0, 0.1); }
+        .wallet-card:hover { transform: translateY(-12px) scale(1.03); border-color: rgba(255, 215, 0, 0.4); box-shadow: 0 40px 80px rgba(0,0,0,0.8), 0 0 40px rgba(255, 215, 0, 0.15); }
         .wallet-card:hover::after { top: -30%; right: -30%; }
 
         .btn-gold { 
             background: linear-gradient(90deg, #b8860b 0%, #ffd700 50%, #b8860b 100%); 
             background-size: 200% auto;
             color: #000; 
-            transition: all 0.4s; 
+            transition: all 0.5s; 
             font-weight: 800;
+            position: relative;
+            overflow: hidden;
         }
-        .btn-gold:hover { background-position: right center; box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); transform: translateY(-3px); }
+        .btn-gold::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+        }
+        .btn-gold:hover::before { left: 100%; }
+        .btn-gold:hover { background-position: right center; box-shadow: 0 0 40px rgba(255, 215, 0, 0.5); transform: translateY(-4px); }
         
         .btn-blue {
             background: linear-gradient(90deg, #0066ff 0%, #00f3ff 50%, #0066ff 100%);
             background-size: 200% auto;
             color: #000;
-            transition: all 0.4s;
+            transition: all 0.5s;
             font-weight: 800;
+            position: relative;
+            overflow: hidden;
         }
-        .btn-blue:hover { background-position: right center; box-shadow: 0 0 30px rgba(0, 243, 255, 0.4); transform: translateY(-3px); }
+        .btn-blue:hover { background-position: right center; box-shadow: 0 0 40px rgba(0, 243, 255, 0.5); transform: translateY(-4px); }
 
         @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes pulse-ring { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
         #loader { position: fixed; inset: 0; z-index: 10000; background: #050505; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .spinner { width: 60px; height: 60px; border: 2px solid rgba(255,255,255,0.05); border-top-color: #ffd700; border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+        .spinner { width: 70px; height: 70px; border: 3px solid rgba(255,255,255,0.03); border-top-color: #ffd700; border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); }
         
         /* Notifications */
-        #notification-container { position: fixed; top: 80px; left: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 320px; pointer-events: none; }
+        #notification-container { position: fixed; top: 90px; left: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 12px; width: 340px; pointer-events: none; }
         .notification-item { 
-            background: rgba(10, 10, 15, 0.95); 
-            backdrop-filter: blur(20px); 
-            border-right: 3px solid #ffd700; 
-            padding: 16px; 
-            border-radius: 16px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
-            animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+            background: rgba(10, 10, 15, 0.98); 
+            backdrop-filter: blur(25px); 
+            border-right: 4px solid #ffd700; 
+            padding: 18px; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 50px rgba(0,0,0,0.7); 
+            animation: slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
             pointer-events: auto;
             border: 1px solid rgba(255,255,255,0.05);
             display: flex;
             align-items: start;
-            gap: 15px;
+            gap: 16px;
+            transform: translateX(-20px);
+            opacity: 0;
         }
-        .notification-item.alert { border-right-color: #ef4444; animation: pulse-ring 2s infinite; }
+        .notification-item.alert { border-right-color: #ef4444; animation: pulse-ring 2s infinite, slideUp 0.6s forwards; }
         .notification-item.info { border-right-color: #00f3ff; }
+        .notification-item.show { transform: translateX(0); opacity: 1; }
 
-        .modal-overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s; }
+        .modal-overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(0, 0, 0, 0.98); backdrop-filter: blur(20px); display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.5s; }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content { background: #0a0a0f; width: 90%; max-width: 500px; border-radius: 30px; border: 1px solid rgba(255, 215, 0, 0.1); position: relative; transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); max-height: 90vh; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
-        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-content { background: #0a0a0f; width: 90%; max-width: 550px; border-radius: 35px; border: 1px solid rgba(255, 215, 0, 0.1); position: relative; transform: scale(0.85) translateY(20px); transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); max-height: 90vh; overflow-y: auto; box-shadow: 0 0 60px rgba(0,0,0,0.9); }
+        .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
 
-        #admin-panel { position: fixed; inset: 0; z-index: 8000; background: #050505; transform: translateX(100%); transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1); overflow-y: auto; border-right: 1px solid rgba(255, 215, 0, 0.1); }
+        #admin-panel { position: fixed; inset: 0; z-index: 8000; background: #050505; transform: translateX(100%); transition: transform 0.7s cubic-bezier(0.77, 0, 0.175, 1); overflow-y: auto; border-right: 1px solid rgba(255, 215, 0, 0.1); }
         #admin-panel.active { transform: translateX(0); }
         
-        .db-status { position: fixed; bottom: 10px; right: 10px; font-size: 10px; background: rgba(0,0,0,0.8); padding: 6px 12px; border-radius: 20px; border: 1px solid #333; z-index: 9999; color: #666; backdrop-filter: blur(4px); }
-        .db-status.connected { border-color: #ffd700; color: #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
+        .db-status { position: fixed; bottom: 15px; right: 15px; font-size: 10px; background: rgba(0,0,0,0.9); padding: 8px 16px; border-radius: 30px; border: 1px solid #333; z-index: 9999; color: #666; backdrop-filter: blur(10px); box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .db-status.connected { border-color: #ffd700; color: #ffd700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
         
-        input, select, textarea { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.05); color: white; transition: all 0.3s; }
-        input:focus, select:focus, textarea:focus { background: rgba(0, 0, 0, 0.6); border-color: #ffd700; outline: none; box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); }
+        input, select, textarea { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.05); color: white; transition: all 0.4s; }
+        input:focus, select:focus, textarea:focus { background: rgba(0, 0, 0, 0.7); border-color: #ffd700; outline: none; box-shadow: 0 0 20px rgba(255, 215, 0, 0.15); transform: translateY(-2px); }
         
-        .field-group { margin-bottom: 15px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.05); }
+        .field-group { margin-bottom: 15px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 20px; border: 1px dashed rgba(255,255,255,0.05); transition: all 0.3s; }
+        .field-group:hover { border-color: rgba(255, 215, 0, 0.2); background: rgba(0,0,0,0.4); }
         
-        .badge-count { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); animation: pulse-ring 2s infinite; }
+        .badge-count { position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; font-size: 10px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); animation: pulse-ring 2s infinite; border: 2px solid #050505; }
         
-        @keyframes pulse-ring { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        /* Chart Container */
+        .chart-container { position: relative; height: 250px; width: 100%; }
     </style>
 </head>
 <body class="antialiased selection:bg-gold selection:text-black">
 
     <!-- Loading Screen -->
     <div id="loader">
-        <div class="spinner mb-6"></div>
-        <p class="text-sm font-mono opacity-70 animate-pulse text-gold tracking-[0.2em]">جاري تهيئة النظام...</p>
+        <div class="spinner mb-8"></div>
+        <p class="text-sm font-mono opacity-70 animate-pulse text-gold tracking-[0.3em]">جاري تهيئة النظام...</p>
     </div>
 
     <!-- DB Status -->
-    <div id="db-indicator" class="db-status"><i class="fa-solid fa-database ml-1"></i> جاري الاتصال...</div>
+    <div id="db-indicator" class="db-status"><i class="fa-solid fa-database ml-2"></i> جاري الاتصال...</div>
     
     <!-- Notifications Container -->
     <div id="notification-container"></div>
 
     <!-- Profile Modal -->
     <div id="profile-modal" class="modal-overlay">
-        <div class="modal-content glass-panel p-8">
-            <button onclick="toggleProfile()" class="absolute top-6 left-6 w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-danger hover:text-white transition-all border border-white/5"><i class="fa-solid fa-times text-platinum"></i></button>
-            <h2 class="text-3xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-200">الملف الشخصي</h2>
-            <form id="profile-form" onsubmit="saveProfile(event)" class="space-y-6">
-                <div>
-                    <label class="block text-xs text-gray-400 mb-2 font-bold tracking-wider">الاسم الكامل</label>
-                    <input type="text" id="profile-name" class="w-full rounded-2xl px-5 py-4 text-sm bg-black/20 border-white/5 focus:border-gold" required>
+        <div class="modal-content glass-panel p-10">
+            <button onclick="toggleProfile()" class="absolute top-8 left-8 w-12 h-12 bg-white/5 rounded-full flex items-center justify-center hover:bg-danger hover:text-white transition-all border border-white/5 group"><i class="fa-solid fa-times text-platinum group-hover:rotate-90 transition-transform"></i></button>
+            <h2 class="text-4xl font-black mb-10 text-center text-transparent bg-clip-text bg-gradient-to-r from-gold via-yellow-200 to-gold animate-pulse">الملف الشخصي</h2>
+            <form id="profile-form" onsubmit="saveProfile(event)" class="space-y-8">
+                <div class="group">
+                    <label class="block text-xs text-gray-400 mb-3 font-bold tracking-widest group-focus-within:text-gold transition-colors">الاسم الكامل</label>
+                    <input type="text" id="profile-name" class="w-full rounded-2xl px-6 py-5 text-lg bg-black/20 border-white/5 focus:border-gold focus:shadow-gold-glow" required>
                 </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-2 font-bold tracking-wider">اسم المستخدم</label>
-                    <input type="text" id="profile-username" class="w-full rounded-2xl px-5 py-4 text-sm bg-black/20 border-white/5 focus:border-gold" required>
+                <div class="group">
+                    <label class="block text-xs text-gray-400 mb-3 font-bold tracking-widest group-focus-within:text-gold transition-colors">اسم المستخدم</label>
+                    <input type="text" id="profile-username" class="w-full rounded-2xl px-6 py-5 text-lg bg-black/20 border-white/5 focus:border-gold focus:shadow-gold-glow" required>
                 </div>
-                <button type="submit" class="btn-gold w-full py-4 rounded-2xl text-black shadow-gold-glow">حفظ التغييرات</button>
+                <button type="submit" class="btn-gold w-full py-6 rounded-2xl text-black shadow-gold-glow text-lg tracking-wide">حفظ التغييرات</button>
             </form>
         </div>
     </div>
@@ -211,126 +228,140 @@
     <!-- Transaction Modal -->
     <div id="transaction-modal" class="modal-overlay">
         <div class="modal-content glass-panel p-0 overflow-hidden">
-            <div class="p-8 border-b border-white/5 flex justify-between items-center bg-gradient-to-r from-white/5 to-transparent">
-                <h2 class="text-2xl font-bold text-white tracking-wide" id="modal-title">عملية مالية</h2>
-                <button onclick="toggleTransactionModal()" class="w-10 h-10 rounded-full bg-white/5 hover:bg-danger/20 hover:text-danger transition-all flex items-center justify-center border border-white/5"><i class="fa-solid fa-times"></i></button>
+            <div class="p-10 border-b border-white/5 bg-gradient-to-r from-white/5 to-transparent relative">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gold/5 blur-3xl rounded-full"></div>
+                <h2 class="text-3xl font-black text-white tracking-wide relative z-10" id="modal-title">عملية مالية</h2>
+                <button onclick="toggleTransactionModal()" class="absolute top-8 left-8 w-12 h-12 bg-white/5 hover:bg-danger/20 hover:text-danger transition-all flex items-center justify-center border border-white/5 rounded-full"><i class="fa-solid fa-times"></i></button>
             </div>
-            <div class="p-8 space-y-8">
-                <div class="text-center p-6 bg-gradient-to-b from-white/5 to-transparent rounded-3xl border border-white/5 relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gold/5 blur-3xl"></div>
-                    <p class="text-gray-400 text-xs mb-2 font-bold tracking-widest relative z-10">الرصيد المتاح</p>
-                    <h3 class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-200 relative z-10 drop-shadow-lg" id="modal-balance">0.00 $</h3>
+            <div class="p-10 space-y-10">
+                <div class="text-center p-8 bg-gradient-to-b from-white/5 to-transparent rounded-3xl border border-white/5 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gold/5 blur-3xl group-hover:bg-gold/10 transition-all duration-700"></div>
+                    <p class="text-gray-400 text-xs mb-3 font-bold tracking-[0.2em] relative z-10">الرصيد المتاح</p>
+                    <h3 class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-100 relative z-10 drop-shadow-2xl" id="modal-balance">0.00 $</h3>
                 </div>
                 
                 <div>
-                    <label class="block text-xs text-gray-400 mb-3 font-bold tracking-wider">نوع العملية</label>
-                    <div class="grid grid-cols-2 gap-4 p-1 bg-black/40 rounded-2xl border border-white/5">
-                        <button onclick="setTxType('deposit')" id="btn-deposit" class="py-4 rounded-xl bg-gold text-black font-bold text-sm shadow-gold-glow transition-all">إيداع (+)</button>
-                        <button onclick="setTxType('withdraw')" id="btn-withdraw" class="py-4 rounded-xl text-gray-400 font-bold text-sm hover:text-white transition-all">سحب (-)</button>
+                    <label class="block text-xs text-gray-400 mb-4 font-bold tracking-widest">نوع العملية</label>
+                    <div class="grid grid-cols-2 gap-4 p-2 bg-black/40 rounded-3xl border border-white/5">
+                        <button onclick="setTxType('deposit')" id="btn-deposit" class="py-5 rounded-2xl bg-gold text-black font-bold text-sm shadow-gold-glow transition-all transform hover:scale-105">إيداع (+)</button>
+                        <button onclick="setTxType('withdraw')" id="btn-withdraw" class="py-5 rounded-2xl text-gray-400 font-bold text-sm hover:text-white transition-all transform hover:scale-105">سحب (-)</button>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs text-gray-400 mb-3 font-bold tracking-wider">طريقة الدفع / السحب</label>
-                    <select id="payment-method" class="w-full rounded-2xl px-5 py-4 text-sm bg-black/20 border-white/5 focus:border-gold appearance-none" onchange="renderDynamicFields()">
+                    <label class="block text-xs text-gray-400 mb-4 font-bold tracking-widest">طريقة الدفع / السحب</label>
+                    <select id="payment-method" class="w-full rounded-2xl px-6 py-5 text-lg bg-black/20 border-white/5 focus:border-gold appearance-none cursor-pointer" onchange="renderDynamicFields()">
                         <option value="">-- اختر الطريقة --</option>
                     </select>
                 </div>
 
                 <!-- Dynamic Fields Container -->
-                <div id="dynamic-fields-container" class="space-y-4 hidden"></div>
+                <div id="dynamic-fields-container" class="space-y-6 hidden"></div>
 
-                <div id="upload-section" class="hidden space-y-4">
-                    <input type="number" id="tx-amount" placeholder="المبلغ" class="w-full rounded-2xl px-5 py-4 text-sm bg-black/20 border-white/5 focus:border-gold">
+                <div id="upload-section" class="hidden space-y-6">
+                    <div class="group">
+                        <label class="block text-xs text-gray-400 mb-3 font-bold tracking-widest">المبلغ</label>
+                        <input type="number" id="tx-amount" placeholder="0.00" class="w-full rounded-2xl px-6 py-5 text-lg bg-black/20 border-white/5 focus:border-gold focus:shadow-gold-glow">
+                    </div>
                     <div>
-                        <label class="block text-xs text-gray-400 mb-2 font-bold tracking-wider">إثبات العملية</label>
-                        <input type="file" id="tx-proof" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-gold/10 file:text-gold hover:file:bg-gold/20 transition-all">
+                        <label class="block text-xs text-gray-400 mb-3 font-bold tracking-widest">إثبات العملية</label>
+                        <div class="relative">
+                            <input type="file" id="tx-proof" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-4 file:px-8 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-gold/10 file:text-gold hover:file:bg-gold/20 transition-all cursor-pointer">
+                        </div>
                     </div>
                 </div>
 
-                <button onclick="submitTransaction()" class="btn-gold w-full py-5 rounded-2xl text-black font-bold shadow-gold-glow text-lg">إرسال الطلب</button>
+                <button onclick="submitTransaction()" class="btn-gold w-full py-6 rounded-2xl text-black font-black shadow-gold-glow text-xl tracking-wide hover:shadow-2xl hover:shadow-gold/50">إرسال الطلب</button>
             </div>
         </div>
     </div>
 
     <!-- Admin Panel -->
     <div id="admin-panel" class="border-r border-white/5">
-        <div class="sticky top-0 z-20 glass-nav border-b border-white/5 px-8 py-6 flex justify-between items-center">
-            <div><h2 class="text-2xl font-bold text-gold tracking-wide"><i class="fa-solid fa-shield-halved ml-3"></i>لوحة التحكم</h2></div>
-            <button onclick="toggleAdminPanel()" class="w-12 h-12 rounded-full bg-white/5 hover:bg-danger/20 hover:text-danger transition-all border border-white/5 flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="sticky top-0 z-20 glass-nav border-b border-white/5 px-10 py-8 flex justify-between items-center">
+            <div><h2 class="text-3xl font-black text-gold tracking-wide"><i class="fa-solid fa-shield-halved ml-4"></i>لوحة التحكم</h2></div>
+            <button onclick="toggleAdminPanel()" class="w-14 h-14 rounded-full bg-white/5 hover:bg-danger/20 hover:text-danger transition-all border border-white/5 flex items-center justify-center"><i class="fa-solid fa-arrow-left text-xl"></i></button>
         </div>
-        <div class="p-8 space-y-10">
+        <div class="p-10 space-y-12">
             <!-- Stats -->
-            <div class="grid grid-cols-2 gap-6">
-                <div class="bg-white/5 p-6 rounded-3xl border border-white/5 relative overflow-hidden group hover:border-gold/30 transition-all">
-                    <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-gold/10 rounded-full blur-2xl group-hover:bg-gold/20 transition-all"></div>
-                    <p class="text-gray-400 text-xs mb-2 font-bold tracking-widest">إجمالي الأرصدة</p>
-                    <p id="stat-total-balance" class="text-3xl font-black text-gold drop-shadow-lg">0.00 $</p>
+            <div class="grid grid-cols-2 gap-8">
+                <div class="bg-white/5 p-8 rounded-3xl border border-white/5 relative overflow-hidden group hover:border-gold/30 transition-all duration-500">
+                    <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-gold/10 rounded-full blur-3xl group-hover:bg-gold/20 transition-all duration-700"></div>
+                    <p class="text-gray-400 text-xs mb-3 font-bold tracking-[0.2em]">إجمالي الأرصدة</p>
+                    <p id="stat-total-balance" class="text-4xl font-black text-gold drop-shadow-lg">0.00 $</p>
                 </div>
-                <div class="bg-white/5 p-6 rounded-3xl border border-white/5 relative overflow-hidden group hover:border-blue-400/30 transition-all">
-                    <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
-                    <p class="text-gray-400 text-xs mb-2 font-bold tracking-widest">طلبات معلقة</p>
-                    <p id="stat-pending" class="text-3xl font-black text-blue-400 drop-shadow-lg">0</p>
+                <div class="bg-white/5 p-8 rounded-3xl border border-white/5 relative overflow-hidden group hover:border-blue-400/30 transition-all duration-500">
+                    <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all duration-700"></div>
+                    <p class="text-gray-400 text-xs mb-3 font-bold tracking-[0.2em]">طلبات معلقة</p>
+                    <p id="stat-pending" class="text-4xl font-black text-blue-400 drop-shadow-lg">0</p>
+                </div>
+            </div>
+
+            <!-- Analytics Chart -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/5">
+                <h3 class="text-xl font-bold text-white mb-6">تحليل الحركة المالية</h3>
+                <div class="chart-container">
+                    <canvas id="financeChart"></canvas>
                 </div>
             </div>
 
             <!-- Tabs -->
-            <div class="flex gap-2 border-b border-white/5 pb-2 overflow-x-auto">
-                <button onclick="switchAdminTab('gateways')" class="flex-none px-6 py-3 text-sm font-bold text-gold border-b-2 border-gold transition-all">بوابات الدفع</button>
-                <button onclick="switchAdminTab('deposits')" class="flex-none px-6 py-3 text-sm font-bold text-gray-400 hover:text-white transition-all">الإيداعات</button>
-                <button onclick="switchAdminTab('withdrawals')" class="flex-none px-6 py-3 text-sm font-bold text-gray-400 hover:text-white transition-all">السحوبات</button>
-                <button onclick="switchAdminTab('logs')" class="flex-none px-6 py-3 text-sm font-bold text-gray-400 hover:text-white transition-all">سجل التدقيق</button>
+            <div class="flex gap-4 border-b border-white/5 pb-2 overflow-x-auto">
+                <button onclick="switchAdminTab('gateways')" class="flex-none px-8 py-4 text-sm font-bold text-gold border-b-2 border-gold transition-all rounded-t-xl hover:bg-white/5">بوابات الدفع</button>
+                <button onclick="switchAdminTab('deposits')" class="flex-none px-8 py-4 text-sm font-bold text-gray-400 hover:text-white transition-all rounded-t-xl hover:bg-white/5">الإيداعات</button>
+                <button onclick="switchAdminTab('withdrawals')" class="flex-none px-8 py-4 text-sm font-bold text-gray-400 hover:text-white transition-all rounded-t-xl hover:bg-white/5">السحوبات</button>
+                <button onclick="switchAdminTab('logs')" class="flex-none px-8 py-4 text-sm font-bold text-gray-400 hover:text-white transition-all rounded-t-xl hover:bg-white/5">سجل التدقيق</button>
             </div>
 
             <!-- Add Gateway (Advanced) -->
-            <div id="admin-tab-gateways" class="space-y-8">
-                <div class="bg-blue-500/5 border border-blue-500/10 p-6 rounded-3xl">
-                    <h3 class="font-bold text-blue-400 mb-2 text-lg"><i class="fa-solid fa-microchip ml-2"></i>منشئ البوابات الذكي</h3>
+            <div id="admin-tab-gateways" class="space-y-10">
+                <div class="bg-blue-500/5 border border-blue-500/10 p-8 rounded-3xl">
+                    <h3 class="font-black text-blue-400 mb-3 text-xl"><i class="fa-solid fa-microchip ml-3"></i>منشئ البوابات الذكي</h3>
                     <p class="text-xs text-blue-300/70 leading-relaxed">قم بإنشاء أي طريقة دفع وحدد الحقول المطلوبة بدقة متناهية.</p>
                 </div>
                 
-                <form id="add-gateway-form" class="space-y-6">
-                    <div class="grid grid-cols-2 gap-6">
+                <form id="add-gateway-form" class="space-y-8">
+                    <div class="grid grid-cols-2 gap-8">
                         <div>
-                            <label class="block text-xs text-gray-400 mb-2">اسم الطريقة</label>
-                            <input type="text" id="gw-name" placeholder="مثال: Binance" required class="w-full rounded-2xl px-5 py-4 text-sm bg-black/20 border-white/5 focus:border-gold">
+                            <label class="block text-xs text-gray-400 mb-3 font-bold tracking-widest">اسم الطريقة</label>
+                            <input type="text" id="gw-name" placeholder="مثال: Binance" required class="w-full rounded-2xl px-6 py-5 text-lg bg-black/20 border-white/5 focus:border-gold">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-400 mb-2">الأيقونة</label>
-                            <input type="text" id="gw-icon" placeholder="fa-bitcoin" required class="w-full rounded-2xl px-5 py-4 text-sm bg-black/20 border-white/5 focus:border-gold font-mono">
+                            <label class="block text-xs text-gray-400 mb-3 font-bold tracking-widest">الأيقونة</label>
+                            <input type="text" id="gw-icon" placeholder="fa-bitcoin" required class="w-full rounded-2xl px-6 py-5 text-lg bg-black/20 border-white/5 focus:border-gold font-mono">
                         </div>
                     </div>
                     
                     <div class="field-group bg-black/20 border-white/5">
-                        <label class="block text-xs text-gray-400 mb-4 font-bold tracking-wider">حقول البيانات المطلوبة</label>
-                        <div id="fields-builder" class="space-y-4">
+                        <label class="block text-xs text-gray-400 mb-6 font-bold tracking-widest">حقول البيانات المطلوبة</label>
+                        <div id="fields-builder" class="space-y-6">
                             <!-- Dynamic Field Builders -->
                         </div>
-                        <button type="button" onclick="addFieldBuilder()" class="mt-4 text-xs text-gold hover:text-white underline flex items-center gap-2"><i class="fa-solid fa-plus"></i> إضافة حقل جديد</button>
+                        <button type="button" onclick="addFieldBuilder()" class="mt-6 text-xs text-gold hover:text-white underline flex items-center gap-3 font-bold tracking-widest"><i class="fa-solid fa-plus"></i> إضافة حقل جديد</button>
                     </div>
 
                     <div>
-                        <label class="block text-xs text-gray-400 mb-2">تعليمات عامة</label>
-                        <textarea id="gw-instructions" placeholder="تعليمات تظهر للمستخدم..." rows="3" class="w-full rounded-2xl px-5 py-4 text-sm bg-black/20 border-white/5 focus:border-gold resize-none"></textarea>
+                        <label class="block text-xs text-gray-400 mb-3 font-bold tracking-widest">تعليمات عامة</label>
+                        <textarea id="gw-instructions" placeholder="تعليمات تظهر للمستخدم..." rows="4" class="w-full rounded-2xl px-6 py-5 text-lg bg-black/20 border-white/5 focus:border-gold resize-none"></textarea>
                     </div>
                     
-                    <button type="submit" class="btn-gold w-full py-4 rounded-2xl text-black font-bold shadow-gold-glow">حفظ البوابة</button>
+                    <button type="submit" class="btn-gold w-full py-6 rounded-2xl text-black font-black shadow-gold-glow text-lg">حفظ البوابة</button>
                 </form>
-                <div id="admin-gateway-list" class="space-y-4 mt-8"></div>
+                <div id="admin-gateway-list" class="space-y-6 mt-10"></div>
             </div>
 
             <!-- Requests Lists -->
-            <div id="admin-tab-deposits" class="space-y-6 hidden">
-                <h3 class="font-bold text-xl text-white">طلبات الإيداع</h3>
-                <div id="admin-deposit-list" class="space-y-4"></div>
+            <div id="admin-tab-deposits" class="space-y-8 hidden">
+                <h3 class="font-black text-2xl text-white">طلبات الإيداع</h3>
+                <div id="admin-deposit-list" class="space-y-6"></div>
             </div>
-            <div id="admin-tab-withdrawals" class="space-y-6 hidden">
-                <h3 class="font-bold text-xl text-white">طلبات السحب</h3>
-                <div id="admin-withdraw-list" class="space-y-4"></div>
+            <div id="admin-tab-withdrawals" class="space-y-8 hidden">
+                <h3 class="font-black text-2xl text-white">طلبات السحب</h3>
+                <div id="admin-withdraw-list" class="space-y-6"></div>
             </div>
-            <div id="admin-tab-logs" class="space-y-6 hidden">
-                <h3 class="font-bold text-xl text-white">سجل التدقيق</h3>
-                <div id="admin-logs-list" class="space-y-3 text-xs font-mono text-gray-400"></div>
+            <div id="admin-tab-logs" class="space-y-8 hidden">
+                <h3 class="font-black text-2xl text-white">سجل التدقيق</h3>
+                <div id="admin-logs-list" class="space-y-4 text-xs font-mono text-gray-400"></div>
             </div>
         </div>
     </div>
@@ -343,93 +374,96 @@
     <!-- MAIN APP -->
     <div id="main-app" class="opacity-0 transition-opacity duration-1000 pb-20">
         <header class="fixed w-full z-50 glass-nav transition-all duration-300">
-            <div class="container mx-auto px-8 py-5 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-gradient-to-br from-gold to-yellow-600 rounded-2xl flex items-center justify-center shadow-gold-glow transform rotate-3 hover:rotate-6 transition-transform">
-                        <i class="fa-solid fa-wallet text-black text-xl"></i>
+            <div class="container mx-auto px-10 py-6 flex justify-between items-center">
+                <div class="flex items-center gap-6">
+                    <div class="w-14 h-14 bg-gradient-to-br from-gold to-yellow-700 rounded-2xl flex items-center justify-center shadow-gold-glow transform rotate-3 hover:rotate-6 transition-transform duration-500">
+                        <i class="fa-solid fa-wallet text-black text-2xl"></i>
                     </div>
-                    <span class="text-2xl font-black text-white tracking-wide hidden md:inline">نيكست<span class="text-gold"> ليفل</span></span>
+                    <span class="text-3xl font-black text-white tracking-wide hidden md:inline">نيكست<span class="text-gold"> ليفل</span></span>
                 </div>
-                <div class="flex items-center gap-4">
-                    <button id="admin-btn" onclick="toggleAdminPanel()" class="hidden relative w-12 h-12 rounded-2xl bg-white/5 text-gold border border-white/5 hover:bg-gold/10 hover:border-gold/30 transition-all">
-                        <i class="fa-solid fa-user-gear"></i>
+                <div class="flex items-center gap-6">
+                    <button id="admin-btn" onclick="toggleAdminPanel()" class="hidden relative w-14 h-14 rounded-2xl bg-white/5 text-gold border border-white/5 hover:bg-gold/10 hover:border-gold/30 transition-all">
+                        <i class="fa-solid fa-user-gear text-xl"></i>
                         <span id="admin-badge" class="badge-count hidden">0</span>
                     </button>
-                    <button onclick="toggleNotifications()" class="relative w-12 h-12 rounded-2xl bg-white/5 text-gray-400 border border-white/5 hover:text-gold hover:border-gold/30 transition-all">
-                        <i class="fa-solid fa-bell"></i>
+                    <button onclick="toggleNotifications()" class="relative w-14 h-14 rounded-2xl bg-white/5 text-gray-400 border border-white/5 hover:text-gold hover:border-gold/30 transition-all">
+                        <i class="fa-solid fa-bell text-xl"></i>
                         <span id="notif-badge" class="badge-count hidden">0</span>
                     </button>
-                    <button onclick="toggleProfile()" class="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 overflow-hidden hover:border-gold/30 transition-all">
+                    <button onclick="toggleProfile()" class="w-14 h-14 rounded-2xl bg-white/5 border border-white/5 overflow-hidden hover:border-gold/30 transition-all ring-2 ring-transparent hover:ring-gold/50">
                         <img id="nav-avatar" src="" class="w-full h-full object-cover">
                     </button>
                 </div>
             </div>
         </header>
 
-        <section class="relative pt-40 pb-20 px-6">
-            <div class="container mx-auto max-w-5xl">
-                <div class="flex flex-col lg:flex-row gap-10 items-center">
+        <section class="relative pt-48 pb-24 px-6">
+            <div class="container mx-auto max-w-6xl">
+                <div class="flex flex-col lg:flex-row gap-12 items-center">
                     <!-- Wallet Card -->
                     <div class="w-full lg:w-3/5">
-                        <div class="wallet-card h-64 flex flex-col justify-between relative group">
+                        <div class="wallet-card h-72 flex flex-col justify-between relative group">
                             <div class="flex justify-between items-start z-10">
                                 <div>
-                                    <p class="text-gray-400 text-sm font-bold tracking-widest mb-1">الرصيد الحالي</p>
-                                    <h1 class="text-5xl font-black text-white drop-shadow-lg" id="hero-balance">0.00 $</h1>
+                                    <p class="text-gray-400 text-sm font-bold tracking-[0.2em] mb-2">الرصيد الحالي</p>
+                                    <h1 class="text-6xl font-black text-white drop-shadow-2xl" id="hero-balance">0.00 $</h1>
                                 </div>
-                                <i class="fa-solid fa-wifi text-gray-500 text-2xl rotate-90 group-hover:text-gold transition-colors"></i>
+                                <i class="fa-solid fa-wifi text-gray-600 text-3xl rotate-90 group-hover:text-gold transition-colors duration-500"></i>
                             </div>
                             <div class="z-10">
-                                <div class="flex gap-6 mb-6">
-                                    <span class="text-gray-400 text-sm font-mono tracking-widest">**** **** **** 4291</span>
+                                <div class="flex gap-8 mb-8">
+                                    <span class="text-gray-500 text-lg font-mono tracking-widest">**** **** **** 4291</span>
                                 </div>
                                 <div class="flex justify-between items-end">
                                     <div>
-                                        <p class="text-gray-500 text-[10px] mb-1 font-bold tracking-widest">صاحب البطاقة</p>
-                                        <p class="text-white font-bold tracking-wider uppercase text-lg" id="card-holder-name">USER NAME</p>
+                                        <p class="text-gray-600 text-[10px] mb-2 font-bold tracking-[0.2em]">صاحب البطاقة</p>
+                                        <p class="text-white font-black tracking-wider uppercase text-2xl" id="card-holder-name">USER NAME</p>
                                     </div>
-                                    <i class="fa-brands fa-cc-visa text-white text-4xl opacity-80"></i>
+                                    <i class="fa-brands fa-cc-visa text-white text-5xl opacity-80"></i>
                                 </div>
                             </div>
                             <!-- Decorative Elements -->
-                            <div class="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                            <div class="absolute top-0 right-0 w-80 h-80 bg-gold/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                         </div>
                     </div>
 
                     <!-- Actions -->
-                    <div class="w-full lg:w-2/5 flex flex-col gap-6">
-                        <button onclick="openTransactionModal('deposit')" class="btn-gold w-full py-6 rounded-3xl text-black shadow-gold-glow flex items-center justify-center gap-4 text-lg group">
-                            <i class="fa-solid fa-plus-circle text-2xl group-hover:scale-110 transition-transform"></i> إيداع رصيد
+                    <div class="w-full lg:w-2/5 flex flex-col gap-8">
+                        <button onclick="openTransactionModal('deposit')" class="btn-gold w-full py-8 rounded-3xl text-black shadow-gold-glow flex items-center justify-center gap-6 text-2xl group">
+                            <i class="fa-solid fa-plus-circle text-3xl group-hover:scale-125 transition-transform duration-500"></i> إيداع رصيد
                         </button>
-                        <button onclick="openTransactionModal('withdraw')" class="btn-blue w-full py-6 rounded-3xl text-black shadow-blue-glow flex items-center justify-center gap-4 text-lg group">
-                            <i class="fa-solid fa-money-bill-transfer text-2xl group-hover:scale-110 transition-transform"></i> سحب رصيد
+                        <button onclick="openTransactionModal('withdraw')" class="btn-blue w-full py-8 rounded-3xl text-black shadow-blue-glow flex items-center justify-center gap-6 text-2xl group">
+                            <i class="fa-solid fa-money-bill-transfer text-3xl group-hover:scale-125 transition-transform duration-500"></i> سحب رصيد
                         </button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="py-20 px-6">
-            <div class="container mx-auto max-w-5xl">
-                <div class="flex justify-between items-end mb-10">
-                    <h2 class="text-3xl font-black text-white">سجل العمليات</h2>
-                    <div class="h-1 w-20 bg-gradient-to-r from-gold to-transparent rounded-full"></div>
+        <section class="py-24 px-6">
+            <div class="container mx-auto max-w-6xl">
+                <div class="flex justify-between items-end mb-12">
+                    <div>
+                        <h2 class="text-4xl font-black text-white mb-4">سجل العمليات</h2>
+                        <p class="text-gray-500">تابع جميع حركاتك المالية بدقة</p>
+                    </div>
+                    <div class="h-1 w-32 bg-gradient-to-r from-gold to-transparent rounded-full"></div>
                 </div>
                 <div class="glass-panel rounded-3xl overflow-hidden border border-white/5">
                     <div class="overflow-x-auto">
                         <table class="w-full text-right">
                             <thead class="bg-white/5 text-gray-400 text-xs uppercase tracking-widest">
                                 <tr>
-                                    <th class="px-8 py-6 font-bold">النوع</th>
-                                    <th class="px-8 py-6 font-bold">التاريخ</th>
-                                    <th class="px-8 py-6 font-bold">الحالة</th>
-                                    <th class="px-8 py-6 font-bold text-left">المبلغ</th>
+                                    <th class="px-10 py-8 font-bold">النوع</th>
+                                    <th class="px-10 py-8 font-bold">التاريخ</th>
+                                    <th class="px-10 py-8 font-bold">الحالة</th>
+                                    <th class="px-10 py-8 font-bold text-left">المبلغ</th>
                                 </tr>
                             </thead>
                             <tbody id="transactions-list" class="divide-y divide-white/5 text-sm"></tbody>
                         </table>
                     </div>
-                    <div id="no-transactions" class="p-12 text-center text-gray-500 hidden">لا توجد عمليات سابقة</div>
+                    <div id="no-transactions" class="p-16 text-center text-gray-500 hidden">لا توجد عمليات سابقة</div>
                 </div>
             </div>
         </section>
@@ -437,9 +471,10 @@
 
     <script>
         // --- INDEXEDDB WRAPPER ---
-        const DB_NAME = 'NextLevelWalletDB_Luxury';
+        const DB_NAME = 'NextLevelWalletDB_Platinum';
         const DB_VERSION = 1;
         let db;
+        let financeChart = null;
 
         const initDB = () => {
             return new Promise((resolve, reject) => {
@@ -454,7 +489,7 @@
                 };
                 request.onsuccess = (event) => {
                     db = event.target.result;
-                    document.getElementById('db-indicator').innerHTML = '<i class="fa-solid fa-check-circle ml-1"></i> متصل';
+                    document.getElementById('db-indicator').innerHTML = '<i class="fa-solid fa-check-circle ml-2"></i> متصل آمن';
                     document.getElementById('db-indicator').classList.add('connected');
                     resolve(db);
                 };
@@ -533,6 +568,7 @@
             document.getElementById('nav-avatar').src = avatar;
             
             renderTransactions();
+            updateChart();
         }
 
         window.saveProfile = function(e) {
@@ -565,7 +601,58 @@
                         document.getElementById('admin-badge').classList.remove('hidden');
                         sendNotification(`لديك ${pendingCount} طلبات جديدة للمراجعة`, 'alert');
                     }
+                    updateChart(allTx);
                 };
+            });
+        }
+
+        // --- CHART JS INTEGRATION ---
+        function updateChart(transactions = []) {
+            const ctx = document.getElementById('financeChart').getContext('2d');
+            
+            // Prepare data for last 7 transactions
+            const recentTx = transactions.slice(0, 7).reverse();
+            const labels = recentTx.map(t => new Date(t.date).toLocaleDateString('ar-SA', { day: 'numeric', month: 'short' }));
+            const data = recentTx.map(t => t.type === 'deposit' ? t.amount : -t.amount);
+            
+            if (financeChart) financeChart.destroy();
+            
+            financeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels.length ? labels : ['لا بيانات'],
+                    datasets: [{
+                        label: 'حركة الرصيد',
+                        data: data.length ? data : [0],
+                        borderColor: '#ffd700',
+                        backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#050505',
+                        pointBorderColor: '#ffd700',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    }
+                }
             });
         }
 
@@ -600,21 +687,25 @@
             if(type === 'success') icon = 'fa-check-circle';
             
             div.innerHTML = `
-                <i class="fa-solid ${icon} text-${type === 'alert' ? 'danger' : type === 'success' ? 'gold' : 'blue-400'} text-xl mt-1"></i>
+                <i class="fa-solid ${icon} text-${type === 'alert' ? 'danger' : type === 'success' ? 'gold' : 'blue-400'} text-2xl mt-1"></i>
                 <div>
                     <h4 class="text-sm font-bold text-white">${type === 'alert' ? 'تنبيه هام' : 'إشعار'}</h4>
-                    <p class="text-xs text-gray-400 mt-1">${message}</p>
+                    <p class="text-xs text-gray-400 mt-2">${message}</p>
                 </div>
             `;
             container.appendChild(div);
-            setTimeout(() => { div.style.opacity = '0'; setTimeout(()=>div.remove(), 500); }, 5000);
+            // Trigger reflow
+            void div.offsetWidth;
+            div.classList.add('show');
+            
+            setTimeout(() => { div.style.opacity = '0'; div.style.transform = 'translateX(-20px)'; setTimeout(()=>div.remove(), 500); }, 6000);
         }
 
         function updateNotifBadge() {
             const unread = notifications.filter(n => !n.read).length;
             const badge = document.getElementById('notif-badge');
             if(unread > 0) {
-                badge.innerText = unread;
+                badge.innerText = unread > 9 ? '+9' : unread;
                 badge.classList.remove('hidden');
             } else {
                 badge.classList.add('hidden');
@@ -650,19 +741,19 @@
             const div = document.createElement('div');
             div.className = 'field-group bg-black/20 border-white/5';
             div.innerHTML = `
-                <div class="flex justify-between mb-3">
-                    <span class="text-xs font-bold text-gold">حقل جديد</span>
-                    <button type="button" onclick="this.parentElement.parentElement.remove()" class="text-danger text-xs hover:text-white">حذف</button>
+                <div class="flex justify-between mb-4">
+                    <span class="text-xs font-bold text-gold tracking-widest">حقل جديد</span>
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" class="text-danger text-xs hover:text-white font-bold">حذف</button>
                 </div>
-                <input type="text" placeholder="اسم الحقل (مثال: رقم الآيبان)" class="field-label w-full rounded-xl px-4 py-3 text-xs mb-3 bg-black/30 border-white/5 focus:border-gold" required>
-                <select class="field-type w-full rounded-xl px-4 py-3 text-xs mb-3 bg-black/30 border-white/5 focus:border-gold">
+                <input type="text" placeholder="اسم الحقل (مثال: رقم الآيبان)" class="field-label w-full rounded-xl px-5 py-4 text-xs mb-4 bg-black/30 border-white/5 focus:border-gold" required>
+                <select class="field-type w-full rounded-xl px-5 py-4 text-xs mb-4 bg-black/30 border-white/5 focus:border-gold">
                     <option value="text">نص قصير</option>
                     <option value="number">رقم</option>
                     <option value="textarea">نص طويل</option>
                     <option value="select">قائمة منسدلة</option>
                     <option value="date">تاريخ</option>
                 </select>
-                <input type="text" placeholder="خيارات القائمة (مفصولة بفاصلة)" class="field-options w-full rounded-xl px-4 py-3 text-xs bg-black/30 border-white/5 focus:border-gold hidden" style="display:none;">
+                <input type="text" placeholder="خيارات القائمة (مفصولة بفاصلة)" class="field-options w-full rounded-xl px-5 py-4 text-xs bg-black/30 border-white/5 focus:border-gold hidden" style="display:none;">
             `;
             
             div.querySelector('.field-type').addEventListener('change', (e) => {
@@ -717,8 +808,8 @@
             list.innerHTML = '';
             gateways.forEach(gw => {
                 const item = document.createElement('div');
-                item.className = 'flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5 hover:border-gold/30 transition-all';
-                item.innerHTML = `<div class="flex items-center gap-4"><i class="fa-solid ${gw.icon} text-gold text-xl"></i><span class="text-sm text-white font-bold">${gw.name} <span class="text-xs text-gray-500 font-normal">(${gw.fields.length} حقول)</span></span></div><button onclick="deleteGateway(${gw.id})" class="text-danger text-xs hover:text-white">حذف</button>`;
+                item.className = 'flex justify-between items-center bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-gold/30 transition-all';
+                item.innerHTML = `<div class="flex items-center gap-5"><i class="fa-solid ${gw.icon} text-gold text-2xl"></i><span class="text-base text-white font-bold">${gw.name} <span class="text-xs text-gray-500 font-normal">(${gw.fields.length} حقول)</span></span></div><button onclick="deleteGateway(${gw.id})" class="text-danger text-xs hover:text-white font-bold">حذف</button>`;
                 list.appendChild(item);
             });
         }
@@ -736,8 +827,8 @@
         window.openTransactionModal = function(type) {
             currentTxType = type;
             document.getElementById('modal-title').innerText = type === 'deposit' ? 'إيداع رصيد' : 'سحب رصيد';
-            document.getElementById('btn-deposit').className = type === 'deposit' ? 'py-4 rounded-xl bg-gold text-black font-bold text-sm shadow-gold-glow transition-all' : 'py-4 rounded-xl text-gray-400 font-bold text-sm hover:text-white transition-all';
-            document.getElementById('btn-withdraw').className = type === 'withdraw' ? 'py-4 rounded-xl bg-blue-400 text-black font-bold text-sm shadow-blue-glow transition-all' : 'py-4 rounded-xl text-gray-400 font-bold text-sm hover:text-white transition-all';
+            document.getElementById('btn-deposit').className = type === 'deposit' ? 'py-5 rounded-2xl bg-gold text-black font-bold text-sm shadow-gold-glow transition-all transform hover:scale-105' : 'py-5 rounded-2xl text-gray-400 font-bold text-sm hover:text-white transition-all transform hover:scale-105';
+            document.getElementById('btn-withdraw').className = type === 'withdraw' ? 'py-5 rounded-2xl bg-blue-400 text-black font-bold text-sm shadow-blue-glow transition-all transform hover:scale-105' : 'py-5 rounded-2xl text-gray-400 font-bold text-sm hover:text-white transition-all transform hover:scale-105';
             
             document.getElementById('transaction-modal').classList.add('active');
             document.getElementById('dynamic-fields-container').innerHTML = '';
@@ -782,17 +873,17 @@
             if (gw.fields && gw.fields.length > 0) {
                 gw.fields.forEach(field => {
                     const wrapper = document.createElement('div');
-                    wrapper.className = 'space-y-2';
+                    wrapper.className = 'space-y-3';
                     
                     const label = document.createElement('label');
-                    label.className = 'block text-xs text-gray-400 font-bold tracking-wider';
+                    label.className = 'block text-xs text-gray-400 font-bold tracking-widest';
                     label.innerText = field.label;
                     wrapper.appendChild(label);
 
                     let input;
                     if (field.type === 'select') {
                         input = document.createElement('select');
-                        input.className = 'w-full rounded-xl px-4 py-3 text-sm bg-black/20 border-white/5 focus:border-gold';
+                        input.className = 'w-full rounded-xl px-5 py-4 text-sm bg-black/20 border-white/5 focus:border-gold';
                         field.options.forEach(opt => {
                             const o = document.createElement('option');
                             o.value = opt.trim();
@@ -801,16 +892,16 @@
                         });
                     } else if (field.type === 'textarea') {
                         input = document.createElement('textarea');
-                        input.className = 'w-full rounded-xl px-4 py-3 text-sm bg-black/20 border-white/5 focus:border-gold';
+                        input.className = 'w-full rounded-xl px-5 py-4 text-sm bg-black/20 border-white/5 focus:border-gold';
                         input.rows = 3;
                     } else if (field.type === 'date') {
                         input = document.createElement('input');
                         input.type = 'date';
-                        input.className = 'w-full rounded-xl px-4 py-3 text-sm bg-black/20 border-white/5 focus:border-gold';
+                        input.className = 'w-full rounded-xl px-5 py-4 text-sm bg-black/20 border-white/5 focus:border-gold';
                     } else {
                         input = document.createElement('input');
                         input.type = field.type === 'number' ? 'number' : 'text';
-                        input.className = 'w-full rounded-xl px-4 py-3 text-sm bg-black/20 border-white/5 focus:border-gold';
+                        input.className = 'w-full rounded-xl px-5 py-4 text-sm bg-black/20 border-white/5 focus:border-gold';
                         input.pattern = field.type === 'number' ? '[0-9]*' : '.*';
                     }
                     
@@ -877,13 +968,13 @@
 
             pending.forEach(tx => {
                 const item = document.createElement('div');
-                item.className = 'bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-gold/30 transition-all space-y-4';
+                item.className = 'bg-white/5 p-8 rounded-3xl border border-white/5 hover:border-gold/30 transition-all space-y-6';
                 
                 let detailsHtml = '';
                 if(tx.dynamicData && Object.keys(tx.dynamicData).length > 0) {
-                    detailsHtml = '<div class="grid grid-cols-2 gap-3 text-xs bg-black/30 p-3 rounded-xl border border-white/5">';
+                    detailsHtml = '<div class="grid grid-cols-2 gap-4 text-xs bg-black/30 p-5 rounded-2xl border border-white/5">';
                     for (const [key, value] of Object.entries(tx.dynamicData)) {
-                        detailsHtml += `<div><span class="text-gray-500 block mb-1">${key}:</span> <span class="text-white font-mono">${value}</span></div>`;
+                        detailsHtml += `<div><span class="text-gray-500 block mb-2 tracking-widest">${key}:</span> <span class="text-white font-mono text-sm">${value}</span></div>`;
                     }
                     detailsHtml += '</div>';
                 }
@@ -891,16 +982,16 @@
                 item.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-white font-bold text-lg">${tx.userName} <span class="text-xs font-normal text-gray-500">(${tx.gatewayName})</span></p>
-                            <p class="text-xs text-gray-500 mt-1">${new Date(tx.date).toLocaleString()}</p>
+                            <p class="text-white font-black text-2xl">${tx.userName} <span class="text-sm font-normal text-gray-500">(${tx.gatewayName})</span></p>
+                            <p class="text-xs text-gray-500 mt-2 font-mono">${new Date(tx.date).toLocaleString()}</p>
                         </div>
-                        <span class="${tx.type==='deposit'?'text-gold':'text-blue-400'} font-black text-2xl drop-shadow-lg">${tx.amount.toFixed(2)} $</span>
+                        <span class="${tx.type==='deposit'?'text-gold':'text-blue-400'} font-black text-3xl drop-shadow-lg">${tx.amount.toFixed(2)} $</span>
                     </div>
                     ${detailsHtml}
-                    ${tx.proofImage ? `<img src="${tx.proofImage}" class="w-full h-40 object-cover rounded-xl border border-white/10 cursor-pointer hover:opacity-80 transition-opacity" onclick="window.open(this.src)">` : ''}
-                    <div class="flex gap-3 pt-2">
-                        <button onclick="processTx(${tx.id}, 'approved')" class="flex-1 bg-gold/10 text-gold border border-gold/20 py-3 rounded-xl text-sm font-bold hover:bg-gold hover:text-black transition-all">موافقة</button>
-                        <button onclick="processTx(${tx.id}, 'rejected')" class="flex-1 bg-danger/10 text-danger border border-danger/20 py-3 rounded-xl text-sm font-bold hover:bg-danger hover:text-white transition-all">رفض</button>
+                    ${tx.proofImage ? `<img src="${tx.proofImage}" class="w-full h-48 object-cover rounded-2xl border border-white/10 cursor-pointer hover:opacity-80 transition-opacity" onclick="window.open(this.src)">` : ''}
+                    <div class="flex gap-4 pt-4">
+                        <button onclick="processTx(${tx.id}, 'approved')" class="flex-1 bg-gold/10 text-gold border border-gold/20 py-4 rounded-2xl text-sm font-bold hover:bg-gold hover:text-black transition-all">موافقة</button>
+                        <button onclick="processTx(${tx.id}, 'rejected')" class="flex-1 bg-danger/10 text-danger border border-danger/20 py-4 rounded-2xl text-sm font-bold hover:bg-danger hover:text-white transition-all">رفض</button>
                     </div>
                 `;
 
@@ -908,8 +999,8 @@
                 else withdrawList.appendChild(item);
             });
             
-            if(depositList.children.length === 0) depositList.innerHTML = '<p class="text-gray-500 text-center text-sm py-10">لا توجد طلبات إيداع معلقة</p>';
-            if(withdrawList.children.length === 0) withdrawList.innerHTML = '<p class="text-gray-500 text-center text-sm py-10">لا توجد طلبات سحب معلقة</p>';
+            if(depositList.children.length === 0) depositList.innerHTML = '<p class="text-gray-500 text-center text-sm py-12">لا توجد طلبات إيداع معلقة</p>';
+            if(withdrawList.children.length === 0) withdrawList.innerHTML = '<p class="text-gray-500 text-center text-sm py-12">لا توجد طلبات سحب معلقة</p>';
         }
 
         window.processTx = function(id, status) {
@@ -955,17 +1046,17 @@
                 const colorClass = isDeposit ? 'text-gold' : 'text-blue-400';
                 const sign = isDeposit ? '+' : '-';
                 let statusBadge = '';
-                if(tx.status === 'pending') statusBadge = '<span class="text-yellow-500 text-xs font-bold bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20">● مراجعة</span>';
-                else if(tx.status === 'approved') statusBadge = '<span class="text-green-500 text-xs font-bold bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20">● مكتمل</span>';
-                else statusBadge = '<span class="text-danger text-xs font-bold bg-danger/10 px-3 py-1 rounded-full border border-danger/20">● مرفوض</span>';
+                if(tx.status === 'pending') statusBadge = '<span class="text-yellow-500 text-xs font-bold bg-yellow-500/10 px-4 py-2 rounded-full border border-yellow-500/20">● مراجعة</span>';
+                else if(tx.status === 'approved') statusBadge = '<span class="text-green-500 text-xs font-bold bg-green-500/10 px-4 py-2 rounded-full border border-green-500/20">● مكتمل</span>';
+                else statusBadge = '<span class="text-danger text-xs font-bold bg-danger/10 px-4 py-2 rounded-full border border-danger/20">● مرفوض</span>';
 
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-white/5 transition-colors group';
                 row.innerHTML = `
-                    <td class="px-8 py-6"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded-full ${isDeposit?'bg-gold/10 text-gold':'bg-blue-500/10 text-blue-400'} flex items-center justify-center group-hover:scale-110 transition-transform"><i class="fa-solid ${isDeposit?'fa-arrow-down':'fa-arrow-up'}"></i></div><span class="text-white font-bold">${tx.gatewayName}</span></div></td>
-                    <td class="px-8 py-6 text-gray-500 font-mono">${new Date(tx.date).toLocaleDateString()}</td>
-                    <td class="px-8 py-6">${statusBadge}</td>
-                    <td class="px-8 py-6 text-left font-black text-lg ${colorClass} drop-shadow-sm">${sign}${tx.amount.toFixed(2)} $</td>
+                    <td class="px-10 py-8"><div class="flex items-center gap-5"><div class="w-12 h-12 rounded-full ${isDeposit?'bg-gold/10 text-gold':'bg-blue-500/10 text-blue-400'} flex items-center justify-center group-hover:scale-110 transition-transform"><i class="fa-solid ${isDeposit?'fa-arrow-down':'fa-arrow-up'} text-lg"></i></div><span class="text-white font-bold text-lg">${tx.gatewayName}</span></div></td>
+                    <td class="px-10 py-8 text-gray-500 font-mono">${new Date(tx.date).toLocaleDateString()}</td>
+                    <td class="px-10 py-8">${statusBadge}</td>
+                    <td class="px-10 py-8 text-left font-black text-2xl ${colorClass} drop-shadow-sm">${sign}${tx.amount.toFixed(2)} $</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -979,7 +1070,7 @@
                     list.innerHTML = '';
                     logs.forEach(log => {
                         const div = document.createElement('div');
-                        div.className = 'border-b border-white/5 py-3 flex justify-between items-center hover:bg-white/5 px-3 rounded-lg transition-all';
+                        div.className = 'border-b border-white/5 py-4 flex justify-between items-center hover:bg-white/5 px-4 rounded-xl transition-all';
                         div.innerHTML = `<span class="text-gold font-bold">[${log.actor}]</span> <span class="text-gray-300">${log.action}</span> <span class="text-gray-600 text-[10px] font-mono">${new Date(log.date).toLocaleTimeString()}</span>`;
                         list.appendChild(div);
                     });
@@ -991,9 +1082,11 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `notification-item ${type === 'error' ? 'alert' : 'success'}`;
-            toast.innerHTML = `<i class="fa-solid ${type==='success'?'fa-check-circle':'fa-exclamation-circle'} text-${type==='success'?'gold':'danger'} text-xl mt-1"></i><div><h4 class="text-sm font-bold text-white">${type==='success'?'نجاح':'خطأ'}</h4><p class="text-xs text-gray-400 mt-1">${msg}</p></div>`;
+            toast.innerHTML = `<i class="fa-solid ${type==='success'?'fa-check-circle':'fa-exclamation-circle'} text-${type==='success'?'gold':'danger'} text-2xl mt-1"></i><div><h4 class="text-sm font-bold text-white">${type==='success'?'نجاح':'خطأ'}</h4><p class="text-xs text-gray-400 mt-2">${msg}</p></div>`;
             container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; setTimeout(()=>toast.remove(), 500); }, 3000);
+            void toast.offsetWidth;
+            toast.classList.add('show');
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(-20px)'; setTimeout(()=>toast.remove(), 500); }, 4000);
         };
 
         // Three.js & Cursor
@@ -1005,15 +1098,15 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             container.appendChild(renderer.domElement);
             const geo = new THREE.BufferGeometry();
-            const count = 800;
+            const count = 1000;
             const pos = new Float32Array(count*3);
-            for(let i=0; i<count*3; i++) pos[i] = (Math.random()-0.5)*30;
+            for(let i=0; i<count*3; i++) pos[i] = (Math.random()-0.5)*40;
             geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-            const mat = new THREE.PointsMaterial({ size: 0.04, color: 0xffd700, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending });
+            const mat = new THREE.PointsMaterial({ size: 0.05, color: 0xffd700, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending });
             const mesh = new THREE.Points(geo, mat);
             scene.add(mesh);
-            camera.position.z = 8;
-            const animate = () => { mesh.rotation.y += 0.0005; mesh.rotation.x += 0.0002; renderer.render(scene, camera); requestAnimationFrame(animate); };
+            camera.position.z = 10;
+            const animate = () => { mesh.rotation.y += 0.0003; mesh.rotation.x += 0.0001; renderer.render(scene, camera); requestAnimationFrame(animate); };
             animate();
         }
 
@@ -1023,10 +1116,10 @@
                 const outline = document.getElementById('cursor-outline');
                 window.addEventListener('mousemove', e => {
                     dot.style.left = e.clientX+'px'; dot.style.top = e.clientY+'px';
-                    outline.animate({ left: e.clientX+'px', top: e.clientY+'px' }, { duration: 600, fill: "forwards" });
+                    outline.animate({ left: e.clientX+'px', top: e.clientY+'px' }, { duration: 700, fill: "forwards" });
                 });
                 document.querySelectorAll('a, button, input').forEach(el => {
-                    el.addEventListener('mouseenter', () => { outline.style.width='70px'; outline.style.height='70px'; outline.style.borderColor='#ffd700'; });
+                    el.addEventListener('mouseenter', () => { outline.style.width='80px'; outline.style.height='80px'; outline.style.borderColor='#ffd700'; });
                     el.addEventListener('mouseleave', () => { outline.style.width='40px'; outline.style.height='40px'; outline.style.borderColor='rgba(255, 215, 0, 0.3)'; });
                 });
             } else {
