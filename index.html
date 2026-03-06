@@ -364,7 +364,7 @@
         .footer-links a:hover { color: var(--antique-gold); padding-right: 5px; }
 
         /* =========================================
-           ARTICLE MODAL (NEW FEATURE)
+           ARTICLE MODAL (FULL SCREEN READER)
            ========================================= */
         #articleModal {
             position: fixed;
@@ -1234,7 +1234,6 @@
 
         function toggleSaveFromModal() {
             if(!currentOpenArticleId) return;
-            // Find the button in the grid to sync visual state if needed, but primarily update data
             if(savedNews.includes(currentOpenArticleId)) {
                 savedNews = savedNews.filter(sid => sid !== currentOpenArticleId);
                 showToast('تم إزالة من المحفوظات', 'info');
@@ -1244,12 +1243,6 @@
             }
             saveData();
             updateModalSaveBtn();
-            // Re-render grid if visible to update icons
-            const activeFilter = document.querySelector('.nav-item.active');
-            if(activeFilter) {
-                // Simple re-render based on current view logic would go here
-                // For simplicity, we just update the modal button and data
-            }
         }
 
         function shareCurrentArticle() {
