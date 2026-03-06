@@ -356,7 +356,7 @@
         .footer-links h4::after { content: ''; position: absolute; bottom: -8px; right: 0; width: 30px; height: 2px; background: var(--antique-gold); }
         .footer-links ul { list-style: none; }
         .footer-links li { margin-bottom: 15px; }
-        .footer-links a { color: var(--text-secondary); text-decoration: none; transition: 0.3s; }
+        .footer-links a { color: var(--text-secondary); text-decoration: none; transition: 0.3s; cursor: pointer; }
         .footer-links a:hover { color: var(--antique-gold); padding-right: 5px; }
 
         /* =========================================
@@ -507,6 +507,35 @@
             background: var(--antique-gold);
             color: #000;
             transform: rotate(90deg);
+        }
+
+        /* --- Page Modal for About, Team, Contact --- */
+        #pageModal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            z-index: 20001;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        #pageModal.active { display: flex; }
+        .page-modal-content {
+            background: var(--rich-black);
+            max-width: 800px;
+            width: 100%;
+            border-radius: 20px;
+            border: 1px solid var(--antique-gold);
+            padding: 40px;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .page-modal-content .close-modal-btn {
+            top: 10px;
+            left: 10px;
         }
 
         /* --- Search Modal --- */
@@ -761,6 +790,24 @@
         .stat-number { font-size: 2rem; font-weight: bold; color: var(--antique-gold); margin: 10px 0; }
         .stat-label { color: var(--text-secondary); font-size: 0.9rem; }
 
+        /* Pages Management */
+        .page-tabs {
+            display: flex; gap: 10px; margin-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+        }
+        .page-tab {
+            background: transparent; border: none;
+            color: var(--text-secondary); padding: 8px 16px;
+            cursor: pointer; border-radius: 30px;
+            transition: 0.3s; font-weight: 600;
+        }
+        .page-tab.active {
+            background: var(--antique-gold);
+            color: #000;
+        }
+        #pageQuillEditor { height: 400px; margin-bottom: 20px; }
+
         #toastContainer { position: fixed; top: 30px; left: 30px; z-index: 100001; }
         .toast {
             background: var(--rich-black);
@@ -886,9 +933,9 @@
             <div class="footer-links">
                 <h4>المؤسسة</h4>
                 <ul>
-                    <li><a href="#">من نحن</a></li>
-                    <li><a href="#">فريق العمل</a></li>
-                    <li><a href="#">اتصل بنا</a></li>
+                    <li><a onclick="openPageModal('about')">من نحن</a></li>
+                    <li><a onclick="openPageModal('team')">فريق العمل</a></li>
+                    <li><a onclick="openPageModal('contact')">اتصل بنا</a></li>
                 </ul>
             </div>
             <div class="footer-links">
@@ -946,7 +993,17 @@
     </div>
 
     <!-- =========================================
-         ADMIN SYSTEM (مع Quill.js)
+         PAGE MODAL for About, Team, Contact
+         ========================================= -->
+    <div id="pageModal">
+        <div class="page-modal-content">
+            <button class="close-modal-btn" onclick="closePageModal()"><i class="fas fa-times"></i></button>
+            <div id="pageModalContent"></div>
+        </div>
+    </div>
+
+    <!-- =========================================
+         ADMIN SYSTEM (مع Quill.js وتحسينات)
          ========================================= -->
 
     <div id="adminBtn" onclick="openLogin()" title="لوحة التحكم"><i class="fas fa-shield-alt"></i></div>
@@ -973,6 +1030,7 @@
             
             <div class="dash-tabs">
                 <button class="tab-btn active" onclick="switchTab('content')"><i class="fas fa-newspaper"></i> إدارة المحتوى</button>
+                <button class="tab-btn" onclick="switchTab('pages')"><i class="fas fa-file-alt"></i> الصفحات الثابتة</button>
                 <button class="tab-btn" onclick="switchTab('settings')"><i class="fas fa-cogs"></i> إعدادات الموقع</button>
                 <button class="tab-btn" onclick="switchTab('backup')"><i class="fas fa-database"></i> النسخ الاحتياطي</button>
                 <button class="tab-btn" onclick="switchTab('stats')"><i class="fas fa-chart-line"></i> إحصائيات النظام</button>
@@ -1050,6 +1108,23 @@
                         </thead>
                         <tbody id="commentsTableBody"></tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- Pages Tab (من نحن، فريق العمل، اتصل بنا) -->
+            <div id="tab-pages" style="display: none;">
+                <div class="panel" style="grid-column: 1 / -1;">
+                    <h3 style="color: var(--text-primary); margin-bottom: 25px;">إدارة الصفحات الثابتة</h3>
+                    
+                    <div class="page-tabs">
+                        <button class="page-tab active" onclick="switchPageTab('about')">من نحن</button>
+                        <button class="page-tab" onclick="switchPageTab('team')">فريق العمل</button>
+                        <button class="page-tab" onclick="switchPageTab('contact')">اتصل بنا</button>
+                    </div>
+
+                    <div id="pageEditorContainer" style="height: 400px; margin-bottom: 20px;"></div>
+
+                    <button class="btn-premium" style="width: auto;" onclick="saveCurrentPage()">حفظ الصفحة</button>
                 </div>
             </div>
 
@@ -1142,9 +1217,9 @@
     <script>
         // ==================== التهيئة الأساسية وقاعدة البيانات ====================
         
-        // استخدام IndexedDB بدلاً من localStorage لتخزين البيانات الكبيرة
+        // استخدام IndexedDB
         const DB_NAME = 'EmpireDB';
-        const DB_VERSION = 1;
+        const DB_VERSION = 2; // زيادة الإصدار لإضافة مخزن الصفحات
         let db;
 
         // بيانات افتراضية أولية
@@ -1162,6 +1237,13 @@
             theme: "dark",
             showNewsBar: true
         };
+        // الصفحات الثابتة
+        const defaultPages = {
+            about: "<h2>من نحن</h2><p>نحن الإمبراطورية، منصة إعلامية رائدة تسعى لتقديم محتوى فاخر ودقيق.</p>",
+            team: "<h2>فريق العمل</h2><p>يتكون فريقنا من نخبة من المحررين والصحفيين والخبراء في مختلف المجالات.</p>",
+            contact: "<h2>اتصل بنا</h2><p>يمكنكم التواصل معنا عبر البريد الإلكتروني: info@empire.com</p>"
+        };
+
         let savedNews = []; // IDs of saved articles
 
         // فتح قاعدة البيانات
@@ -1187,6 +1269,9 @@
                     }
                     if (!db.objectStoreNames.contains('saved')) {
                         db.createObjectStore('saved', { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains('pages')) {
+                        db.createObjectStore('pages', { keyPath: 'pageId' });
                     }
                 };
             });
@@ -1248,6 +1333,20 @@
                 savedRequest.onsuccess = () => {
                     savedNews = savedRequest.result.map(item => item.newsId);
                 };
+
+                // تحميل الصفحات الثابتة
+                const pagesTx = db.transaction('pages', 'readonly');
+                const pagesStore = pagesTx.objectStore('pages');
+                const pagesRequest = pagesStore.getAll();
+                pagesRequest.onsuccess = () => {
+                    if (pagesRequest.result.length > 0) {
+                        pagesData = {};
+                        pagesRequest.result.forEach(p => pagesData[p.pageId] = p.content);
+                    } else {
+                        pagesData = { ...defaultPages };
+                        savePagesToDB();
+                    }
+                };
             } catch (e) {
                 console.error('IndexedDB error, falling back to localStorage', e);
                 // fallback إلى localStorage
@@ -1255,6 +1354,7 @@
                 commentsData = JSON.parse(localStorage.getItem('empire_comments')) || defaultComments;
                 savedNews = JSON.parse(localStorage.getItem('empire_saved')) || [];
                 siteSettings = JSON.parse(localStorage.getItem('empire_settings')) || defaultSettings;
+                pagesData = JSON.parse(localStorage.getItem('empire_pages')) || defaultPages;
                 renderNews();
                 renderTables();
                 applySettings();
@@ -1283,9 +1383,17 @@
         function saveSavedToDB() {
             const tx = db.transaction('saved', 'readwrite');
             const store = tx.objectStore('saved');
-            // حذف الكل ثم إعادة الإضافة
             store.clear();
             savedNews.forEach(newsId => store.put({ id: Date.now() + Math.random(), newsId: newsId }));
+        }
+
+        function savePagesToDB() {
+            const tx = db.transaction('pages', 'readwrite');
+            const store = tx.objectStore('pages');
+            store.clear();
+            for (let [pageId, content] of Object.entries(pagesData)) {
+                store.put({ pageId, content });
+            }
         }
 
         // دالة حفظ كل البيانات (للاستخدام بعد التعديلات)
@@ -1295,12 +1403,14 @@
                 saveCommentsToDB(commentsData);
                 saveSettingsToDB();
                 saveSavedToDB();
+                savePagesToDB();
             } else {
                 // fallback
                 localStorage.setItem('empire_news', JSON.stringify(newsData));
                 localStorage.setItem('empire_comments', JSON.stringify(commentsData));
                 localStorage.setItem('empire_saved', JSON.stringify(savedNews));
                 localStorage.setItem('empire_settings', JSON.stringify(siteSettings));
+                localStorage.setItem('empire_pages', JSON.stringify(pagesData));
             }
             renderNews();
             renderTables();
@@ -1311,12 +1421,15 @@
         let newsData = [];
         let commentsData = [];
         let siteSettings = {};
+        let pagesData = {}; // { about: "...", team: "...", contact: "..." }
         let currentOpenArticleId = null;
-        let quill; // محرر Quill
+        let quill; // محرر Quill للأخبار
+        let pageQuill; // محرر Quill للصفحات الثابتة
+        let currentPage = 'about'; // الصفحة الحالية في إدارة الصفحات
 
         // ==================== تهيئة Quill ====================
         window.onload = function() {
-            // تهيئة Quill بعد تحميل DOM
+            // تهيئة Quill للأخبار
             quill = new Quill('#editorContainer', {
                 theme: 'snow',
                 placeholder: 'اكتب تفاصيل الخبر هنا...',
@@ -1333,7 +1446,22 @@
                 }
             });
 
-            // تحميل البيانات من IndexedDB
+            // تهيئة Quill للصفحات الثابتة
+            pageQuill = new Quill('#pageEditorContainer', {
+                theme: 'snow',
+                placeholder: 'اكتب محتوى الصفحة هنا...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            // تحميل البيانات
             loadData();
 
             // أحداث التمرير للهيدر
@@ -1342,11 +1470,6 @@
                 if(window.scrollY > 50) h.classList.add('scrolled');
                 else h.classList.remove('scrolled');
             });
-
-            // إضافة نمط الاهتزاز
-            const style = document.createElement('style');
-            style.innerHTML = `@keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }`;
-            document.head.appendChild(style);
         };
 
         // ==================== تطبيق الإعدادات ====================
@@ -1581,6 +1704,23 @@
             if(article) shareNews(article.title);
         }
 
+        // ==================== PAGE MODAL (عرض من نحن، فريق العمل، اتصل بنا) ====================
+        function openPageModal(pageId) {
+            const content = pagesData[pageId] || "<p>لا يوجد محتوى بعد.</p>";
+            document.getElementById('pageModalContent').innerHTML = content;
+            document.getElementById('pageModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePageModal() {
+            document.getElementById('pageModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('pageModal').addEventListener('click', function(e) {
+            if (e.target === this) closePageModal();
+        });
+
         // ==================== جداول الإدارة ====================
         function renderTables() {
             const nBody = document.getElementById('newsTableBody');
@@ -1632,7 +1772,6 @@
             // تقدير حجم البيانات
             let totalLen = 0;
             if (db) {
-                // لا يمكن حساب الحجم بسهولة، نعرض عدد العناصر
                 document.getElementById('statStorageSize').innerText = newsData.length + commentsData.length + ' عنصر';
             } else {
                 for(let key in localStorage) {
@@ -1647,14 +1786,49 @@
 
         function switchTab(tabName) {
             document.querySelectorAll('.dash-grid').forEach(el => el.style.display = 'none');
+            document.getElementById('tab-pages').style.display = 'none';
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             
-            document.getElementById(`tab-${tabName}`).style.display = tabName === 'content' ? 'grid' : 'block';
-            if(tabName === 'content') document.getElementById('tab-content').style.display = 'grid';
+            if (tabName === 'content') {
+                document.getElementById('tab-content').style.display = 'grid';
+            } else if (tabName === 'pages') {
+                document.getElementById('tab-pages').style.display = 'block';
+                // تحميل محتوى الصفحة الحالية في المحرر
+                pageQuill.root.innerHTML = pagesData[currentPage] || '';
+            } else if (tabName === 'settings') {
+                document.getElementById('tab-settings').style.display = 'block';
+            } else if (tabName === 'backup') {
+                document.getElementById('tab-backup').style.display = 'block';
+            } else if (tabName === 'stats') {
+                document.getElementById('tab-stats').style.display = 'block';
+                updateStats();
+            }
             
             event.target.classList.add('active');
+        }
+
+        // ==================== إدارة الصفحات الثابتة ====================
+        function switchPageTab(pageId) {
+            // حفظ المحتوى الحالي قبل التبديل
+            pagesData[currentPage] = pageQuill.root.innerHTML;
             
-            if(tabName === 'stats') updateStats();
+            // تحديث التبويب النشط
+            document.querySelectorAll('.page-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            currentPage = pageId;
+            pageQuill.root.innerHTML = pagesData[currentPage] || '';
+        }
+
+        function saveCurrentPage() {
+            pagesData[currentPage] = pageQuill.root.innerHTML;
+            saveData();
+            showToast(`تم حفظ صفحة ${getPageName(currentPage)} بنجاح`, 'success');
+        }
+
+        function getPageName(pageId) {
+            const names = { about: 'من نحن', team: 'فريق العمل', contact: 'اتصل بنا' };
+            return names[pageId] || pageId;
         }
 
         // ==================== معالجة الصور ====================
@@ -1827,6 +2001,7 @@
             if (e.key === 'Escape') {
                 closeSearchModal();
                 closeArticleModal();
+                closePageModal();
             }
         });
 
@@ -1837,6 +2012,7 @@
                 comments: commentsData,
                 settings: siteSettings,
                 saved: savedNews,
+                pages: pagesData,
                 date: new Date().toISOString()
             };
             const dataStr = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
@@ -1856,11 +2032,12 @@
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    if(data.news && data.comments && data.settings) {
+                    if(data.news && data.comments && data.settings && data.pages) {
                         newsData = data.news;
                         commentsData = data.comments;
                         siteSettings = data.settings;
-                        if(data.saved) savedNews = data.saved;
+                        savedNews = data.saved || [];
+                        pagesData = data.pages;
                         saveData();
                         showToast('تم استعادة البيانات بنجاح', 'success');
                         setTimeout(() => location.reload(), 1000);
@@ -1878,11 +2055,12 @@
             if(confirm('تحذير: سيتم حذف جميع الأخبار والتعليقات والإعدادات والعودة للوضع الافتراضي. هل أنت متأكد؟')) {
                 if (db) {
                     // حذف قواعد البيانات
-                    const tx = db.transaction(['news', 'comments', 'settings', 'saved'], 'readwrite');
+                    const tx = db.transaction(['news', 'comments', 'settings', 'saved', 'pages'], 'readwrite');
                     tx.objectStore('news').clear();
                     tx.objectStore('comments').clear();
                     tx.objectStore('settings').clear();
                     tx.objectStore('saved').clear();
+                    tx.objectStore('pages').clear();
                 }
                 localStorage.clear();
                 location.reload();
