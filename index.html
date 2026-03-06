@@ -10,8 +10,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <!-- Quill.js لتحرير النصوص المتقدم -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
+        /* نفس الأنماط السابقة مع إضافات بسيطة */
         :root {
             --royal-black: #0a0a0a;
             --rich-black: #121212;
@@ -94,6 +96,7 @@
             position: relative;
             transition: var(--transition);
             text-transform: uppercase;
+            cursor: pointer;
         }
         nav a::after {
             content: ''; position: absolute; bottom: -5px; right: 0;
@@ -506,17 +509,64 @@
             transform: rotate(90deg);
         }
 
-        @media(max-width: 768px) {
-            .modal-header-img { height: 250px; }
-            .modal-body { padding: 20px; }
-            .modal-title { font-size: 1.8rem; }
-            .modal-text { font-size: 1rem; }
+        /* --- Search Modal --- */
+        #searchModal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            z-index: 15000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        #searchModal.active { display: flex; }
+        .search-container {
+            background: var(--rich-black);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--antique-gold);
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            color: #fff;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        .search-results {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .search-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .search-item:hover {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        .search-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
         }
 
-        /* =========================================
-           ADMIN SYSTEM (RICH TEXT EDITOR)
-           ========================================= */
-        
+        /* --- Admin Dashboard --- */
         #adminBtn {
             position: fixed; bottom: 40px; right: 40px; width: 70px; height: 70px;
             background: var(--gold-gradient); border-radius: 50%;
@@ -617,55 +667,35 @@
         }
         .form-control:focus { border-color: var(--antique-gold); }
 
-        /* Rich Text Editor Toolbar */
-        .editor-toolbar {
-            display: flex;
-            gap: 5px;
-            background: rgba(0,0,0,0.5);
-            padding: 10px;
-            border-radius: 8px 8px 0 0;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-bottom: none;
-            flex-wrap: wrap;
-        }
-        .toolbar-btn {
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--text-secondary);
-            width: 35px;
-            height: 35px;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-        .toolbar-btn:hover {
-            background: rgba(255,255,255,0.1);
-            color: var(--antique-gold);
-        }
-        .toolbar-btn.active {
-            background: var(--antique-gold);
-            color: #000;
-        }
-        
-        #newTextEditor {
-            width: 100%;
-            min-height: 300px;
+        /* Quill Editor (يستبدل محرر النصوص السابق) */
+        .quill-editor {
             background: rgba(0,0,0,0.3);
+            border-radius: 8px;
             border: 1px solid rgba(255,255,255,0.1);
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-            padding: 15px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            line-height: 1.6;
-            overflow-y: auto;
         }
-        #newTextEditor:focus { border-color: var(--antique-gold); }
-        #newTextEditor img { max-width: 100%; border-radius: 8px; margin: 10px 0; }
-        #newTextEditor blockquote { border-right: 3px solid var(--antique-gold); padding-right: 10px; color: var(--bright-gold); }
+        #editorContainer {
+            height: 300px;
+            margin-bottom: 20px;
+        }
+        .ql-toolbar {
+            border-radius: 8px 8px 0 0;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1) !important;
+        }
+        .ql-container {
+            border-radius: 0 0 8px 8px;
+            background: rgba(0,0,0,0.3);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+        .ql-editor {
+            min-height: 250px;
+            color: var(--text-primary);
+        }
+        .ql-editor.ql-blank::before {
+            color: #666;
+        }
 
         .image-drop-zone {
             border: 2px dashed rgba(197, 160, 89, 0.3);
@@ -742,8 +772,8 @@
             display: flex; align-items: center; gap: 12px;
             min-width: 300px; animation: slideInLeft 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .toast.success { border-color: var(--success); }
-        .toast.error { border-color: var(--danger); }
+        .toast.success { border-color: #2ecc71; }
+        .toast.error { border-color: #e74c3c; }
         @keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
@@ -795,14 +825,14 @@
         </nav>
         <div class="header-actions">
             <button onclick="toggleFocusMode()" title="وضع التركيز"><i class="fas fa-eye"></i></button>
-            <button onclick="openSearch()"><i class="fas fa-search"></i> بحث</button>
+            <button onclick="openSearchModal()"><i class="fas fa-search"></i> بحث</button>
         </div>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
         <div class="main-feature">
-            <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80" alt="Main">
+            <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80" alt="Main" loading="lazy">
             <div class="feature-overlay">
                 <span class="badge-premium">حصري الآن</span>
                 <h1 class="feature-title">ثورة الذكاء الاصطناعي: المستقبل بين يديك</h1>
@@ -811,13 +841,13 @@
         </div>
         <div class="side-features">
             <div class="side-card">
-                <img src="https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=600&q=80" alt="Side">
+                <img src="https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=600&q=80" alt="Side" loading="lazy">
                 <div class="side-content">
                     <h3>مهرجان كان: لحظات تاريخية</h3>
                 </div>
             </div>
             <div class="side-card">
-                <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80" alt="Side">
+                <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80" alt="Side" loading="lazy">
                 <div class="side-content">
                     <h3>أكاديمية البرمجة المتقدمة</h3>
                 </div>
@@ -875,13 +905,27 @@
     </footer>
 
     <!-- =========================================
+         SEARCH MODAL (محسن)
+         ========================================= -->
+    <div id="searchModal">
+        <div class="search-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="color: var(--antique-gold);">بحث متقدم</h3>
+                <button class="close-modal-btn" onclick="closeSearchModal()" style="position: static; width: 40px; height: 40px;"><i class="fas fa-times"></i></button>
+            </div>
+            <input type="text" id="searchInput" class="search-input" placeholder="اكتب كلمات البحث..." autocomplete="off" oninput="performSearch()">
+            <div id="searchResults" class="search-results"></div>
+        </div>
+    </div>
+
+    <!-- =========================================
          ARTICLE MODAL (FULL SCREEN READER)
          ========================================= -->
     <div id="articleModal">
         <div class="modal-content">
             <button class="close-modal-btn" onclick="closeArticleModal()"><i class="fas fa-times"></i></button>
             <div class="modal-scroll-body">
-                <img src="" alt="" class="modal-header-img" id="modalImg">
+                <img src="" alt="" class="modal-header-img" id="modalImg" loading="lazy">
                 <div class="modal-body">
                     <span class="modal-category" id="modalCat">أخبار</span>
                     <h1 class="modal-title" id="modalTitle">عنوان الخبر</h1>
@@ -902,7 +946,7 @@
     </div>
 
     <!-- =========================================
-         ADMIN SYSTEM (RICH TEXT EDITOR)
+         ADMIN SYSTEM (مع Quill.js)
          ========================================= -->
 
     <div id="adminBtn" onclick="openLogin()" title="لوحة التحكم"><i class="fas fa-shield-alt"></i></div>
@@ -915,7 +959,7 @@
             <p style="color: #666; font-size: 0.9rem;">كلمة المرور: Ali1992@li</p>
             <input type="password" id="passInput" class="login-input" placeholder="أدخل كلمة المرور">
             <button class="btn-premium" onclick="checkPass()">دخول آمن</button>
-            <p id="errorMsg" style="color: var(--danger); margin-top: 15px; display: none; font-size: 0.9rem;">بيانات الدخول غير صحيحة</p>
+            <p id="errorMsg" style="color: #e74c3c; margin-top: 15px; display: none; font-size: 0.9rem;">بيانات الدخول غير صحيحة</p>
         </div>
     </div>
 
@@ -969,19 +1013,8 @@
 
                     <div class="form-group">
                         <label class="form-label">محرر المحتوى المتقدم (نصوص، صور، فيديو، روابط)</label>
-                        <div class="editor-toolbar">
-                            <button type="button" class="toolbar-btn" onclick="formatDoc('bold')" title="عريض"><i class="fas fa-bold"></i></button>
-                            <button type="button" class="toolbar-btn" onclick="formatDoc('italic')" title="مائل"><i class="fas fa-italic"></i></button>
-                            <button type="button" class="toolbar-btn" onclick="formatDoc('underline')" title="تسطير"><i class="fas fa-underline"></i></button>
-                            <button type="button" class="toolbar-btn" onclick="formatDoc('justifyRight')" title="يمين"><i class="fas fa-align-right"></i></button>
-                            <button type="button" class="toolbar-btn" onclick="formatDoc('justifyCenter')" title="وسط"><i class="fas fa-align-center"></i></button>
-                            <button type="button" class="toolbar-btn" onclick="formatDoc('insertOrderedList')" title="قائمة"><i class="fas fa-list-ol"></i></button>
-                            <button type="button" class="toolbar-btn" onclick="formatDoc('blockquote')" title="اقتباس"><i class="fas fa-quote-right"></i></button>
-                            <button type="button" class="toolbar-btn" onclick="addLink()" title="رابط"><i class="fas fa-link"></i></button>
-                            <button type="button" class="toolbar-btn" onclick="addImage()" title="صورة داخل النص"><i class="fas fa-image"></i></button>
-                            <button type="button" class="toolbar-btn" onclick="addVideo()" title="فيديو يوتيوب"><i class="fab fa-youtube"></i></button>
-                        </div>
-                        <div id="newTextEditor" contenteditable="true" placeholder="اكتب تفاصيل الخبر هنا..."></div>
+                        <!-- حاوية Quill -->
+                        <div id="editorContainer"></div>
                     </div>
 
                     <button class="btn-premium" onclick="saveNews()"><i class="fas fa-save"></i> نشر المحتوى</button>
@@ -1104,40 +1137,219 @@
 
     <div id="toastContainer"></div>
 
+    <!-- تحميل Quill.js -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     <script>
-        // --- DATA CORE ---
-        let newsData = JSON.parse(localStorage.getItem('empire_news')) || [
+        // ==================== التهيئة الأساسية وقاعدة البيانات ====================
+        
+        // استخدام IndexedDB بدلاً من localStorage لتخزين البيانات الكبيرة
+        const DB_NAME = 'EmpireDB';
+        const DB_VERSION = 1;
+        let db;
+
+        // بيانات افتراضية أولية
+        const defaultNews = [
             { id: 1, title: "إطلاق أول قمر صناعي كمومي", cat: "tech", img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80", text: "<p>خطوة تاريخية في عالم الاتصالات الكمومية...</p><p>في تطور نوعي غير مسبوق، نجحت وكالة الفضاء الدولية في إطلاق أول قمر صناعي يعتمد كلياً على تقنيات الحوسبة الكمومية.</p><blockquote>هذا الإنجاز يفتح آفاقاً جديدة في مجال الاتصالات الآمنة.</blockquote><p>يتميز القمر الجديد بقدرته على معالجة البيانات بسرعة تفوق أسرع الحواسيب العملاقة الحالية بملايين المرات.</p><h3>فيديو توضيحي للإطلاق:</h3><iframe src='https://www.youtube.com/embed/dQw4w9WgXcQ' frameborder='0' allowfullscreen></iframe>", date: "2023-10-01" },
             { id: 2, title: "أسواق المال تسجل أرقاماً قياسية", cat: "news", img: "https://images.unsplash.com/photo-1611974765270-ca12586343bb?auto=format&fit=crop&w=600&q=80", text: "<p>تحليل شامل لصعود المؤشرات العالمية...</p><p>شهدت أسواق المال العالمية اليوم ارتفاعاً جنونياً وغير مسبوق، حيث سجلت المؤشرات الرئيسية في وول ستريت وبورصة لندن أرقاماً قياسية جديدة.</p><ul><li>قطاع التكنولوجيا قاد الصعود.</li><li>انخفاض معدلات التضخم بشكل مفاجئ.</li></ul><p>يعزو المحللون هذا الارتفاع إلى التقارير الإيجابية حول نمو الاقتصاد العالمي.</p>", date: "2023-10-02" }
         ];
-
-        let commentsData = JSON.parse(localStorage.getItem('empire_comments')) || [
+        const defaultComments = [
             { id: 1, user: "محمد العلي", text: "محتوى راقي جداً ومتميز", status: "active" },
             { id: 2, user: "سارة أحمد", text: "أنتظر المزيد من مقالات التكنولوجيا", status: "pending" },
             { id: 3, user: "خالد", text: "الموقع بطيء قليلاً", status: "active" }
         ];
-
-        let savedNews = JSON.parse(localStorage.getItem('empire_saved')) || [];
-        let currentOpenArticleId = null;
-        
-        let siteSettings = JSON.parse(localStorage.getItem('empire_settings')) || {
+        const defaultSettings = {
             siteName: "الإمبراطورية",
             theme: "dark",
             showNewsBar: true
         };
+        let savedNews = []; // IDs of saved articles
 
+        // فتح قاعدة البيانات
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    // إنشاء مخازن الكائنات
+                    if (!db.objectStoreNames.contains('news')) {
+                        db.createObjectStore('news', { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains('comments')) {
+                        db.createObjectStore('comments', { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains('settings')) {
+                        db.createObjectStore('settings', { keyPath: 'key' });
+                    }
+                    if (!db.objectStoreNames.contains('saved')) {
+                        db.createObjectStore('saved', { keyPath: 'id' });
+                    }
+                };
+            });
+        }
+
+        // تحميل البيانات من IndexedDB إلى الذاكرة
+        async function loadData() {
+            try {
+                await openDB();
+
+                // تحميل الأخبار
+                const newsTx = db.transaction('news', 'readonly');
+                const newsStore = newsTx.objectStore('news');
+                const newsRequest = newsStore.getAll();
+                newsRequest.onsuccess = () => {
+                    if (newsRequest.result.length > 0) {
+                        newsData = newsRequest.result;
+                    } else {
+                        // إدراج البيانات الافتراضية
+                        newsData = defaultNews.slice();
+                        saveNewsToDB(newsData);
+                    }
+                    renderNews();
+                    renderTables();
+                    updateStats();
+                };
+
+                // تحميل التعليقات
+                const commentsTx = db.transaction('comments', 'readonly');
+                const commentsStore = commentsTx.objectStore('comments');
+                const commentsRequest = commentsStore.getAll();
+                commentsRequest.onsuccess = () => {
+                    if (commentsRequest.result.length > 0) {
+                        commentsData = commentsRequest.result;
+                    } else {
+                        commentsData = defaultComments.slice();
+                        saveCommentsToDB(commentsData);
+                    }
+                };
+
+                // تحميل الإعدادات
+                const settingsTx = db.transaction('settings', 'readonly');
+                const settingsStore = settingsTx.objectStore('settings');
+                const settingsRequest = settingsStore.get('siteSettings');
+                settingsRequest.onsuccess = () => {
+                    if (settingsRequest.result) {
+                        siteSettings = settingsRequest.result.value;
+                    } else {
+                        siteSettings = defaultSettings;
+                        saveSettingsToDB();
+                    }
+                    applySettings();
+                };
+
+                // تحميل المحفوظات
+                const savedTx = db.transaction('saved', 'readonly');
+                const savedStore = savedTx.objectStore('saved');
+                const savedRequest = savedStore.getAll();
+                savedRequest.onsuccess = () => {
+                    savedNews = savedRequest.result.map(item => item.newsId);
+                };
+            } catch (e) {
+                console.error('IndexedDB error, falling back to localStorage', e);
+                // fallback إلى localStorage
+                newsData = JSON.parse(localStorage.getItem('empire_news')) || defaultNews;
+                commentsData = JSON.parse(localStorage.getItem('empire_comments')) || defaultComments;
+                savedNews = JSON.parse(localStorage.getItem('empire_saved')) || [];
+                siteSettings = JSON.parse(localStorage.getItem('empire_settings')) || defaultSettings;
+                renderNews();
+                renderTables();
+                applySettings();
+            }
+        }
+
+        // دوال حفظ البيانات في IndexedDB
+        function saveNewsToDB(newsArray) {
+            const tx = db.transaction('news', 'readwrite');
+            const store = tx.objectStore('news');
+            newsArray.forEach(item => store.put(item));
+        }
+
+        function saveCommentsToDB(commentsArray) {
+            const tx = db.transaction('comments', 'readwrite');
+            const store = tx.objectStore('comments');
+            commentsArray.forEach(item => store.put(item));
+        }
+
+        function saveSettingsToDB() {
+            const tx = db.transaction('settings', 'readwrite');
+            const store = tx.objectStore('settings');
+            store.put({ key: 'siteSettings', value: siteSettings });
+        }
+
+        function saveSavedToDB() {
+            const tx = db.transaction('saved', 'readwrite');
+            const store = tx.objectStore('saved');
+            // حذف الكل ثم إعادة الإضافة
+            store.clear();
+            savedNews.forEach(newsId => store.put({ id: Date.now() + Math.random(), newsId: newsId }));
+        }
+
+        // دالة حفظ كل البيانات (للاستخدام بعد التعديلات)
         function saveData() {
-            localStorage.setItem('empire_news', JSON.stringify(newsData));
-            localStorage.setItem('empire_comments', JSON.stringify(commentsData));
-            localStorage.setItem('empire_saved', JSON.stringify(savedNews));
-            localStorage.setItem('empire_settings', JSON.stringify(siteSettings));
+            if (db) {
+                saveNewsToDB(newsData);
+                saveCommentsToDB(commentsData);
+                saveSettingsToDB();
+                saveSavedToDB();
+            } else {
+                // fallback
+                localStorage.setItem('empire_news', JSON.stringify(newsData));
+                localStorage.setItem('empire_comments', JSON.stringify(commentsData));
+                localStorage.setItem('empire_saved', JSON.stringify(savedNews));
+                localStorage.setItem('empire_settings', JSON.stringify(siteSettings));
+            }
             renderNews();
             renderTables();
-            applySettings();
             updateStats();
         }
 
-        // --- SETTINGS ENGINE ---
+        // ==================== المتغيرات العامة ====================
+        let newsData = [];
+        let commentsData = [];
+        let siteSettings = {};
+        let currentOpenArticleId = null;
+        let quill; // محرر Quill
+
+        // ==================== تهيئة Quill ====================
+        window.onload = function() {
+            // تهيئة Quill بعد تحميل DOM
+            quill = new Quill('#editorContainer', {
+                theme: 'snow',
+                placeholder: 'اكتب تفاصيل الخبر هنا...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'align': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['blockquote', 'code-block'],
+                        ['link', 'image', 'video'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            // تحميل البيانات من IndexedDB
+            loadData();
+
+            // أحداث التمرير للهيدر
+            window.addEventListener('scroll', () => {
+                const h = document.getElementById('mainHeader');
+                if(window.scrollY > 50) h.classList.add('scrolled');
+                else h.classList.remove('scrolled');
+            });
+
+            // إضافة نمط الاهتزاز
+            const style = document.createElement('style');
+            style.innerHTML = `@keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }`;
+            document.head.appendChild(style);
+        };
+
+        // ==================== تطبيق الإعدادات ====================
         function applySettings() {
             document.getElementById('siteNameDisplay').innerText = siteSettings.siteName;
             document.getElementById('footerLogoDisplay').innerText = siteSettings.siteName + ".";
@@ -1164,20 +1376,23 @@
         function toggleTheme() {
             siteSettings.theme = siteSettings.theme === 'dark' ? 'light' : 'dark';
             applySettings();
+            saveData();
         }
 
         function toggleNewsBar() {
             siteSettings.showNewsBar = !siteSettings.showNewsBar;
             applySettings();
+            saveData();
         }
 
         function saveSettings() {
             siteSettings.siteName = document.getElementById('settingSiteName').value;
+            applySettings();
             saveData();
             showToast('تم حفظ إعدادات الموقع بنجاح', 'success');
         }
 
-        // --- FOCUS MODE ---
+        // ==================== وضع التركيز ====================
         let isFocusMode = false;
         function toggleFocusMode() {
             isFocusMode = !isFocusMode;
@@ -1203,7 +1418,7 @@
             }
         }
 
-        // --- READING PROGRESS ---
+        // ==================== شريط التقدم ====================
         window.onscroll = function() {
             let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -1211,7 +1426,7 @@
             document.getElementById("progressBar").style.width = scrolled + "%";
         };
 
-        // --- RENDER ENGINE ---
+        // ==================== عرض الأخبار ====================
         function renderNews(filter = 'all') {
             const grid = document.getElementById('newsGrid');
             grid.innerHTML = '';
@@ -1230,7 +1445,6 @@
 
             filtered.forEach(item => {
                 const isSaved = savedNews.includes(item.id);
-                // Create excerpt from HTML content
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = item.text;
                 const plainText = tempDiv.textContent || tempDiv.innerText || "";
@@ -1240,7 +1454,7 @@
                     <article class="luxury-card" onclick="openArticleModal(${item.id})">
                         <div class="card-image-wrapper">
                             <span class="card-category">${getCatName(item.cat)}</span>
-                            <img src="${item.img}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/600x400/121212/c5a059?text=No+Image'">
+                            <img src="${item.img}" alt="${item.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400/121212/c5a059?text=No+Image'">
                         </div>
                         <div class="card-content">
                             <div class="card-meta">
@@ -1256,7 +1470,7 @@
                                 </button>
                                 <div style="display:flex; gap:10px;">
                                     <button class="action-btn-small" onclick="shareNews('${item.title}')"><i class="fas fa-share-alt"></i></button>
-                                    <a href="#" class="read-more-btn" onclick="openArticleModal(${item.id})">اقرأ المزيد <i class="fas fa-arrow-left"></i></a>
+                                    <a href="#" class="read-more-btn" onclick="openArticleModal(${item.id}); return false;">اقرأ المزيد <i class="fas fa-arrow-left"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -1279,7 +1493,7 @@
                 showToast('تم الحفظ للقراءة لاحقاً', 'success');
             }
             saveData();
-            if(document.querySelector('.nav-item.active') && document.querySelector('.nav-item.active').innerText.includes('المحفوظات')) {
+            if(document.querySelector('nav a.active') && document.querySelector('nav a.active').innerText.includes('المحفوظات')) {
                 renderNews('saved');
             }
             if(currentOpenArticleId === id) updateModalSaveBtn();
@@ -1293,7 +1507,19 @@
             });
         }
 
-        // --- ARTICLE MODAL LOGIC ---
+        function getCatName(cat) {
+            const names = { 'news':'أخبار', 'tech':'تكنولوجيا', 'edu':'تعليم', 'ent':'ترفيه', 'sport':'رياضة' };
+            return names[cat] || cat;
+        }
+
+        function filterNews(cat) {
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            event.target.classList.add('active');
+            renderNews(cat);
+            window.scrollTo({top: 800, behavior: 'smooth'});
+        }
+
+        // ==================== ARTICLE MODAL ====================
         function openArticleModal(id) {
             const article = newsData.find(n => n.id === id);
             if(!article) return;
@@ -1304,7 +1530,7 @@
             document.getElementById('modalCat').innerText = getCatName(article.cat);
             document.getElementById('modalTitle').innerText = article.title;
             document.getElementById('modalDate').innerText = article.date;
-            document.getElementById('modalText').innerHTML = article.text; // Render HTML
+            document.getElementById('modalText').innerHTML = article.text;
             
             updateModalSaveBtn();
 
@@ -1355,13 +1581,14 @@
             if(article) shareNews(article.title);
         }
 
+        // ==================== جداول الإدارة ====================
         function renderTables() {
             const nBody = document.getElementById('newsTableBody');
             nBody.innerHTML = '';
             [...newsData].reverse().forEach(item => {
                 nBody.innerHTML += `
                     <tr>
-                        <td><img src="${item.img}" class="thumb-img"></td>
+                        <td><img src="${item.img}" class="thumb-img" loading="lazy"></td>
                         <td style="font-weight:600; color:var(--text-primary);">${item.title}</td>
                         <td><span style="color:var(--antique-gold); border:1px solid rgba(197,160,89,0.3); padding:2px 8px; border-radius:4px; font-size:0.8rem;">${getCatName(item.cat)}</span></td>
                         <td>${item.date}</td>
@@ -1376,7 +1603,7 @@
             const cBody = document.getElementById('commentsTableBody');
             cBody.innerHTML = '';
             commentsData.forEach(c => {
-                let sentiment = 'neutral';
+                let sentiment = 'محايد';
                 let sentimentColor = '#f1c40f';
                 const lowerText = c.text.toLowerCase();
                 if(lowerText.includes('رائع') || lowerText.includes('ممتاز') || lowerText.includes('جيد')) {
@@ -1402,26 +1629,20 @@
             document.getElementById('statNewsCount').innerText = newsData.length;
             document.getElementById('statCommentsCount').innerText = commentsData.length;
             
+            // تقدير حجم البيانات
             let totalLen = 0;
-            for(let key in localStorage) {
-                if(localStorage.hasOwnProperty(key)) {
-                    totalLen += localStorage[key].length + key.length;
+            if (db) {
+                // لا يمكن حساب الحجم بسهولة، نعرض عدد العناصر
+                document.getElementById('statStorageSize').innerText = newsData.length + commentsData.length + ' عنصر';
+            } else {
+                for(let key in localStorage) {
+                    if(localStorage.hasOwnProperty(key)) {
+                        totalLen += localStorage[key].length + key.length;
+                    }
                 }
+                const sizeKB = (totalLen * 2 / 1024).toFixed(2);
+                document.getElementById('statStorageSize').innerText = sizeKB + ' KB';
             }
-            const sizeKB = (totalLen * 2 / 1024).toFixed(2);
-            document.getElementById('statStorageSize').innerText = sizeKB + ' KB';
-        }
-
-        function getCatName(cat) {
-            const names = { 'news':'أخبار', 'tech':'تكنولوجيا', 'edu':'تعليم', 'ent':'ترفيه', 'sport':'رياضة' };
-            return names[cat] || cat;
-        }
-
-        function filterNews(cat) {
-            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            event.target.classList.add('active');
-            renderNews(cat);
-            window.scrollTo({top: 800, behavior: 'smooth'});
         }
 
         function switchTab(tabName) {
@@ -1436,50 +1657,7 @@
             if(tabName === 'stats') updateStats();
         }
 
-        // --- RICH TEXT EDITOR FUNCTIONS ---
-        function formatDoc(cmd, value = null) {
-            if(value) {
-                document.execCommand(cmd, false, value);
-            } else {
-                document.execCommand(cmd);
-            }
-            document.getElementById('newTextEditor').focus();
-        }
-
-        function addLink() {
-            const url = prompt('أدخل الرابط:');
-            if(url) {
-                formatDoc('createLink', url);
-            }
-        }
-
-        function addImage() {
-            const url = prompt('أدخل رابط الصورة:');
-            if(url) {
-                formatDoc('insertImage', url);
-            }
-        }
-
-        function addVideo() {
-            const url = prompt('أدخل رابط يوتيوب (مثال: https://www.youtube.com/watch?v=...):');
-            if(url) {
-                let videoId = '';
-                if(url.includes('v=')) {
-                    videoId = url.split('v=')[1].split('&')[0];
-                } else if(url.includes('youtu.be/')) {
-                    videoId = url.split('youtu.be/')[1];
-                }
-                
-                if(videoId) {
-                    const embedCode = `<iframe src='https://www.youtube.com/embed/${videoId}' frameborder='0' allowfullscreen></iframe>`;
-                    document.execCommand('insertHTML', false, embedCode);
-                } else {
-                    alert('رابط غير صحيح');
-                }
-            }
-        }
-
-        // --- IMAGE PROCESSING ---
+        // ==================== معالجة الصور ====================
         function previewImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -1493,7 +1671,7 @@
             }
         }
 
-        // --- ADMIN LOGIC ---
+        // ==================== ADMIN LOGIC ====================
         function openLogin() {
             document.getElementById('loginModal').classList.add('active');
             setTimeout(() => document.getElementById('passInput').focus(), 100);
@@ -1532,7 +1710,7 @@
             const title = document.getElementById('newTitle').value;
             const cat = document.getElementById('newCat').value;
             const img = document.getElementById('imageData').value || "https://via.placeholder.com/600x400/121212/c5a059?text=No+Image";
-            const text = document.getElementById('newTextEditor').innerHTML; // Get HTML content
+            const text = quill.root.innerHTML; // الحصول على HTML من Quill
 
             if(!title || !text) { showToast('يرجى إكمال جميع الحقول', 'error'); return; }
 
@@ -1562,7 +1740,7 @@
             document.getElementById('editId').value = item.id;
             document.getElementById('newTitle').value = item.title;
             document.getElementById('newCat').value = item.cat;
-            document.getElementById('newTextEditor').innerHTML = item.text; // Set HTML content
+            quill.root.innerHTML = item.text; // تعيين HTML في Quill
             document.getElementById('imageData').value = item.img;
             
             const preview = document.getElementById('imagePreview');
@@ -1593,7 +1771,7 @@
         function resetForm() {
             document.getElementById('editId').value = '';
             document.getElementById('newTitle').value = '';
-            document.getElementById('newTextEditor').innerHTML = '';
+            quill.root.innerHTML = '';
             document.getElementById('imageData').value = '';
             document.getElementById('imagePreview').style.display = 'none';
             document.getElementById('fileInput').value = '';
@@ -1602,16 +1780,57 @@
             document.querySelector('.btn-premium').innerHTML = '<i class="fas fa-save"></i> نشر المحتوى';
         }
 
-        function openSearch() {
-            const query = prompt("ابحث في أرشيف الإمبراطورية:");
-            if(query) {
-                const results = newsData.filter(n => n.title.includes(query));
-                if(results.length > 0) showToast(`تم العثور على ${results.length} نتائج`, 'success');
-                else showToast('لا توجد نتائج مطابقة', 'error');
-            }
+        // ==================== SEARCH MODAL ====================
+        function openSearchModal() {
+            document.getElementById('searchModal').classList.add('active');
+            document.getElementById('searchInput').focus();
+            performSearch(); // عرض النتائج الأولية
         }
 
-        // --- BACKUP SYSTEM ---
+        function closeSearchModal() {
+            document.getElementById('searchModal').classList.remove('active');
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').innerHTML = '';
+        }
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            const resultsDiv = document.getElementById('searchResults');
+            if (query === '') {
+                resultsDiv.innerHTML = '<p style="color: #666;">ابدأ الكتابة للبحث...</p>';
+                return;
+            }
+
+            const results = newsData.filter(n => 
+                n.title.toLowerCase().includes(query) || 
+                n.text.toLowerCase().includes(query)
+            );
+
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<p style="color: #666;">لا توجد نتائج</p>';
+                return;
+            }
+
+            resultsDiv.innerHTML = results.map(item => `
+                <div class="search-item" onclick="openArticleModal(${item.id}); closeSearchModal();">
+                    <img src="${item.img}" alt="${item.title}" loading="lazy">
+                    <div>
+                        <h4 style="color: var(--text-primary);">${item.title}</h4>
+                        <span style="color: var(--antique-gold); font-size: 0.8rem;">${getCatName(item.cat)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // إغلاق البحث عند الضغط على Esc
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSearchModal();
+                closeArticleModal();
+            }
+        });
+
+        // ==================== BACKUP SYSTEM ====================
         function downloadBackup() {
             const data = {
                 news: newsData,
@@ -1657,12 +1876,20 @@
 
         function resetAllData() {
             if(confirm('تحذير: سيتم حذف جميع الأخبار والتعليقات والإعدادات والعودة للوضع الافتراضي. هل أنت متأكد؟')) {
+                if (db) {
+                    // حذف قواعد البيانات
+                    const tx = db.transaction(['news', 'comments', 'settings', 'saved'], 'readwrite');
+                    tx.objectStore('news').clear();
+                    tx.objectStore('comments').clear();
+                    tx.objectStore('settings').clear();
+                    tx.objectStore('saved').clear();
+                }
                 localStorage.clear();
                 location.reload();
             }
         }
 
-        // --- NOTIFICATION SYSTEM ---
+        // ==================== TOAST SYSTEM ====================
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -1676,23 +1903,6 @@
                 setTimeout(() => toast.remove(), 400);
             }, 3000);
         }
-
-        // --- INITIALIZATION ---
-        window.onload = function() {
-            applySettings();
-            renderNews();
-            updateStats();
-            
-            window.addEventListener('scroll', () => {
-                const h = document.getElementById('mainHeader');
-                if(window.scrollY > 50) h.classList.add('scrolled');
-                else h.classList.remove('scrolled');
-            });
-
-            const style = document.createElement('style');
-            style.innerHTML = `@keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }`;
-            document.head.appendChild(style);
-        };
     </script>
 </body>
 </html>
