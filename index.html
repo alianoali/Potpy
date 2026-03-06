@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الإمبراطورية | النظام الإداري المتكامل</title>
+    <title>الإمبراطورية | المنصة الإعلامية المتكاملة</title>
     
     <!-- خطوط فاخرة -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -50,6 +50,14 @@
             line-height: 1.8;
             scroll-behavior: smooth;
             transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* --- Reading Progress Bar --- */
+        #progressBar {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: var(--gold-gradient);
+            z-index: 10001; width: 0%;
+            transition: width 0.1s;
         }
 
         h1, h2, h3, .logo { font-family: 'Playfair Display', serif; }
@@ -102,11 +110,12 @@
         nav a:hover, nav a.active { color: var(--antique-gold); }
         nav a:hover::after, nav a.active::after { width: 100%; }
 
+        .header-actions { display: flex; gap: 10px; }
         .header-actions button {
             background: transparent;
             border: 1px solid var(--antique-gold);
             color: var(--antique-gold);
-            padding: 10px 25px;
+            padding: 10px 20px;
             border-radius: 50px;
             cursor: pointer;
             font-family: 'Tajawal';
@@ -132,17 +141,13 @@
             transition: max-height 0.5s ease, opacity 0.5s ease;
             overflow: hidden;
         }
-        #breakingNewsBar.hidden {
-            max-height: 0;
-            opacity: 0;
-            padding: 0;
-        }
+        #breakingNewsBar.hidden { max-height: 0; opacity: 0; padding: 0; }
         .bn-label { background: #000; color: var(--antique-gold); padding: 0 15px; height: 100%; display: inline-flex; align-items: center; font-weight: 900; }
         .bn-content marquee { display: inline-block; padding-right: 20px; }
 
         /* --- Hero --- */
         .hero {
-            margin-top: 80px; /* Adjusted for news bar */
+            margin-top: 80px;
             height: 85vh;
             display: grid;
             grid-template-columns: 1.5fr 1fr;
@@ -294,6 +299,30 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+        
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .action-btn-small {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .action-btn-small:hover { color: var(--antique-gold); }
+        .action-btn-small.saved { color: var(--antique-gold); }
+
         .read-more-btn {
             color: var(--antique-gold);
             text-decoration: none;
@@ -334,7 +363,7 @@
         .footer-links a:hover { color: var(--antique-gold); padding-right: 5px; }
 
         /* =========================================
-           ADMIN SYSTEM (ENTERPRISE GRADE)
+           ADMIN SYSTEM (ULTIMATE EDITION)
            ========================================= */
         
         #adminBtn {
@@ -402,7 +431,7 @@
         .dash-tabs {
             display: flex; gap: 15px; margin-bottom: 30px;
             border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 10px;
+            padding-bottom: 10px; flex-wrap: wrap;
         }
         .tab-btn {
             background: transparent; border: none;
@@ -490,6 +519,16 @@
         .toggle-switch.active { background: var(--antique-gold); }
         .toggle-switch.active::after { left: 27px; }
 
+        /* Stats Cards */
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-box {
+            background: rgba(255,255,255,0.03);
+            padding: 20px; border-radius: 12px;
+            text-align: center; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .stat-number { font-size: 2rem; font-weight: bold; color: var(--antique-gold); margin: 10px 0; }
+        .stat-label { color: var(--text-secondary); font-size: 0.9rem; }
+
         #toastContainer { position: fixed; top: 30px; left: 30px; z-index: 100001; }
         .toast {
             background: var(--rich-black);
@@ -521,6 +560,9 @@
 </head>
 <body>
 
+    <!-- Reading Progress Bar -->
+    <div id="progressBar"></div>
+
     <!-- Breaking News Bar -->
     <div id="breakingNewsBar">
         <div style="padding: 0 5%;">
@@ -546,9 +588,11 @@
                 <li><a onclick="filterNews('tech')">تكنولوجيا</a></li>
                 <li><a onclick="filterNews('edu')">تعليم</a></li>
                 <li><a onclick="filterNews('ent')">ترفيه</a></li>
+                <li><a onclick="filterNews('saved')">المحفوظات <i class="fas fa-bookmark" style="font-size:0.8em"></i></a></li>
             </ul>
         </nav>
         <div class="header-actions">
+            <button onclick="toggleFocusMode()" title="وضع التركيز"><i class="fas fa-eye"></i></button>
             <button onclick="openSearch()"><i class="fas fa-search"></i> بحث</button>
         </div>
     </header>
@@ -591,7 +635,7 @@
     </section>
 
     <!-- Footer -->
-    <footer>
+    <footer id="mainFooter">
         <div class="footer-content">
             <div class="footer-brand">
                 <h3 id="footerLogoDisplay">الإمبراطورية.</h3>
@@ -629,7 +673,7 @@
     </footer>
 
     <!-- =========================================
-         ADMIN SYSTEM (ENTERPRISE EDITION)
+         ADMIN SYSTEM (ULTIMATE EDITION)
          ========================================= -->
 
     <div id="adminBtn" onclick="openLogin()" title="لوحة التحكم"><i class="fas fa-shield-alt"></i></div>
@@ -658,6 +702,7 @@
                 <button class="tab-btn active" onclick="switchTab('content')"><i class="fas fa-newspaper"></i> إدارة المحتوى</button>
                 <button class="tab-btn" onclick="switchTab('settings')"><i class="fas fa-cogs"></i> إعدادات الموقع</button>
                 <button class="tab-btn" onclick="switchTab('backup')"><i class="fas fa-database"></i> النسخ الاحتياطي</button>
+                <button class="tab-btn" onclick="switchTab('stats')"><i class="fas fa-chart-line"></i> إحصائيات النظام</button>
             </div>
 
             <!-- Content Tab -->
@@ -719,13 +764,13 @@
                         </table>
                     </div>
 
-                    <h3 style="color: var(--text-primary); margin: 40px 0 25px; border-bottom: 1px solid #333; padding-bottom: 15px;">تعليقات القراء</h3>
+                    <h3 style="color: var(--text-primary); margin: 40px 0 25px; border-bottom: 1px solid #333; padding-bottom: 15px;">تعليقات القراء (AI تحليل)</h3>
                     <table class="data-table">
                         <thead>
                             <tr>
                                 <th>القارئ</th>
                                 <th>التعليق</th>
-                                <th>الحالة</th>
+                                <th>المشاعر</th>
                                 <th>إجراء</th>
                             </tr>
                         </thead>
@@ -771,7 +816,7 @@
             <div id="tab-backup" class="dash-grid" style="display: none;">
                 <div class="panel" style="grid-column: 1 / -1; text-align: center;">
                     <h3 style="color: var(--text-primary); margin-bottom: 25px;">النسخ الاحتياطي والاستعادة</h3>
-                    <p style="color: #666; margin-bottom: 30px;">قم بتنزيل نسخة من جميع بيانات الموقع (الأخبار، التعليقات، الإعدادات) أو استعادة نسخة سابقة.</p>
+                    <p style="color: #666; margin-bottom: 30px;">قم بتنزيل نسخة من جميع بيانات الموقع أو استعادة نسخة سابقة.</p>
                     
                     <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
                         <button class="btn-premium" style="max-width: 250px;" onclick="downloadBackup()"><i class="fas fa-download"></i> تنزيل نسخة احتياطية</button>
@@ -780,6 +825,35 @@
                             <input type="file" id="restoreFile" accept=".json" style="display: none;" onchange="restoreBackup(this)">
                         </label>
                         <button class="btn-premium btn-danger" style="max-width: 250px;" onclick="resetAllData()"><i class="fas fa-trash-alt"></i> حذف جميع البيانات</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Tab -->
+            <div id="tab-stats" class="dash-grid" style="display: none;">
+                <div class="panel" style="grid-column: 1 / -1;">
+                    <h3 style="color: var(--text-primary); margin-bottom: 25px;">إحصائيات النظام الحية</h3>
+                    <div class="stats-row">
+                        <div class="stat-box">
+                            <i class="fas fa-newspaper fa-2x" style="color: var(--antique-gold);"></i>
+                            <div class="stat-number" id="statNewsCount">0</div>
+                            <div class="stat-label">إجمالي الأخبار</div>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-comments fa-2x" style="color: var(--antique-gold);"></i>
+                            <div class="stat-number" id="statCommentsCount">0</div>
+                            <div class="stat-label">إجمالي التعليقات</div>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-database fa-2x" style="color: var(--antique-gold);"></i>
+                            <div class="stat-number" id="statStorageSize">0 KB</div>
+                            <div class="stat-label">حجم البيانات المخزنة</div>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-users fa-2x" style="color: var(--antique-gold);"></i>
+                            <div class="stat-number">12,450</div>
+                            <div class="stat-label">زيارات اليوم (محاكاة)</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -798,32 +872,35 @@
 
         let commentsData = JSON.parse(localStorage.getItem('empire_comments')) || [
             { id: 1, user: "محمد العلي", text: "محتوى راقي جداً ومتميز", status: "active" },
-            { id: 2, user: "سارة أحمد", text: "أنتظر المزيد من مقالات التكنولوجيا", status: "pending" }
+            { id: 2, user: "سارة أحمد", text: "أنتظر المزيد من مقالات التكنولوجيا", status: "pending" },
+            { id: 3, user: "خالد", text: "الموقع بطيء قليلاً", status: "active" }
         ];
 
+        let savedNews = JSON.parse(localStorage.getItem('empire_saved')) || [];
+        
         let siteSettings = JSON.parse(localStorage.getItem('empire_settings')) || {
             siteName: "الإمبراطورية",
-            theme: "dark", // dark or light
+            theme: "dark",
             showNewsBar: true
         };
 
         function saveData() {
             localStorage.setItem('empire_news', JSON.stringify(newsData));
             localStorage.setItem('empire_comments', JSON.stringify(commentsData));
+            localStorage.setItem('empire_saved', JSON.stringify(savedNews));
             localStorage.setItem('empire_settings', JSON.stringify(siteSettings));
             renderNews();
             renderTables();
             applySettings();
+            updateStats();
         }
 
         // --- SETTINGS ENGINE ---
         function applySettings() {
-            // Apply Name
             document.getElementById('siteNameDisplay').innerText = siteSettings.siteName;
             document.getElementById('footerLogoDisplay').innerText = siteSettings.siteName + ".";
             document.getElementById('settingSiteName').value = siteSettings.siteName;
 
-            // Apply Theme
             if(siteSettings.theme === 'light') {
                 document.documentElement.setAttribute('data-theme', 'light');
                 document.getElementById('themeToggle').classList.add('active');
@@ -832,7 +909,6 @@
                 document.getElementById('themeToggle').classList.remove('active');
             }
 
-            // Apply News Bar
             const newsBar = document.getElementById('breakingNewsBar');
             if(siteSettings.showNewsBar) {
                 newsBar.classList.remove('hidden');
@@ -859,11 +935,51 @@
             showToast('تم حفظ إعدادات الموقع بنجاح', 'success');
         }
 
+        // --- FOCUS MODE ---
+        let isFocusMode = false;
+        function toggleFocusMode() {
+            isFocusMode = !isFocusMode;
+            const header = document.getElementById('mainHeader');
+            const footer = document.getElementById('mainFooter');
+            const newsBar = document.getElementById('breakingNewsBar');
+            const adminBtn = document.getElementById('adminBtn');
+            
+            if(isFocusMode) {
+                header.style.opacity = '0';
+                header.style.pointerEvents = 'none';
+                footer.style.display = 'none';
+                newsBar.style.display = 'none';
+                adminBtn.style.display = 'none';
+                showToast('تم تفعيل وضع التركيز', 'info');
+            } else {
+                header.style.opacity = '1';
+                header.style.pointerEvents = 'all';
+                footer.style.display = 'block';
+                newsBar.style.display = 'block';
+                adminBtn.style.display = 'flex';
+                showToast('تم تعطيل وضع التركيز', 'info');
+            }
+        }
+
+        // --- READING PROGRESS ---
+        window.onscroll = function() {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            document.getElementById("progressBar").style.width = scrolled + "%";
+        };
+
         // --- RENDER ENGINE ---
         function renderNews(filter = 'all') {
             const grid = document.getElementById('newsGrid');
             grid.innerHTML = '';
-            const filtered = filter === 'all' ? newsData : newsData.filter(n => n.cat === filter);
+            
+            let filtered = [];
+            if(filter === 'saved') {
+                filtered = newsData.filter(n => savedNews.includes(n.id));
+            } else {
+                filtered = filter === 'all' ? newsData : newsData.filter(n => n.cat === filter);
+            }
             
             if(filtered.length === 0) {
                 grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding: 50px; color: #666;"><i class="fas fa-inbox fa-3x" style="margin-bottom:20px; opacity:0.5;"></i><br>لا توجد أخبار في هذا القسم حالياً</div>';
@@ -871,6 +987,7 @@
             }
 
             filtered.forEach(item => {
+                const isSaved = savedNews.includes(item.id);
                 grid.innerHTML += `
                     <article class="luxury-card">
                         <div class="card-image-wrapper">
@@ -884,10 +1001,45 @@
                             </div>
                             <h3 class="card-title">${item.title}</h3>
                             <p class="card-excerpt">${item.text}</p>
-                            <a href="#" class="read-more-btn" onclick="showToast('جارٍ تحميل المقال...', 'info')">اقرأ التفاصيل الكاملة <i class="fas fa-arrow-left"></i></a>
+                            
+                            <div class="card-actions">
+                                <button class="action-btn-small ${isSaved ? 'saved' : ''}" onclick="toggleSave(${item.id}, this)">
+                                    <i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i> ${isSaved ? 'محفوظ' : 'حفظ'}
+                                </button>
+                                <div style="display:flex; gap:10px;">
+                                    <button class="action-btn-small" onclick="shareNews('${item.title}')"><i class="fas fa-share-alt"></i></button>
+                                    <a href="#" class="read-more-btn" onclick="showToast('جارٍ تحميل المقال...', 'info')">اقرأ المزيد <i class="fas fa-arrow-left"></i></a>
+                                </div>
+                            </div>
                         </div>
                     </article>
                 `;
+            });
+        }
+
+        function toggleSave(id, btn) {
+            if(savedNews.includes(id)) {
+                savedNews = savedNews.filter(sid => sid !== id);
+                btn.classList.remove('saved');
+                btn.innerHTML = '<i class="far fa-bookmark"></i> حفظ';
+                showToast('تم إزالة من المحفوظات', 'info');
+            } else {
+                savedNews.push(id);
+                btn.classList.add('saved');
+                btn.innerHTML = '<i class="fas fa-bookmark"></i> محفوظ';
+                showToast('تم الحفظ للقراءة لاحقاً', 'success');
+            }
+            saveData();
+            // If currently viewing saved tab, re-render to remove/add item
+            if(document.querySelector('.nav-item.active') && document.querySelector('.nav-item.active').innerText.includes('المحفوظات')) {
+                renderNews('saved');
+            }
+        }
+
+        function shareNews(title) {
+            const url = window.location.href.split('#')[0] + '?news=' + encodeURIComponent(title);
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('تم نسخ رابط الخبر للمشاركة', 'success');
             });
         }
 
@@ -912,15 +1064,42 @@
             const cBody = document.getElementById('commentsTableBody');
             cBody.innerHTML = '';
             commentsData.forEach(c => {
+                // Mock AI Sentiment Analysis
+                let sentiment = 'neutral';
+                let sentimentColor = '#f1c40f';
+                const lowerText = c.text.toLowerCase();
+                if(lowerText.includes('رائع') || lowerText.includes('ممتاز') || lowerText.includes('جيد')) {
+                    sentiment = 'إيجابي';
+                    sentimentColor = '#2ecc71';
+                } else if(lowerText.includes('سيء') || lowerText.includes('بطيء') || lowerText.includes('خطأ')) {
+                    sentiment = 'سلبي';
+                    sentimentColor = '#e74c3c';
+                }
+
                 cBody.innerHTML += `
                     <tr>
                         <td style="color:var(--text-primary); font-weight:600;">${c.user}</td>
                         <td>${c.text}</td>
-                        <td><span style="color:${c.status==='active'?'#2ecc71':'#f1c40f'}">● ${c.status==='active'?'نشط':'انتظار'}</span></td>
+                        <td><span style="color:${sentimentColor}; font-weight:bold;">● ${sentiment}</span></td>
                         <td><i class="fas fa-trash action-icon delete" onclick="deleteComment(${c.id})"></i></td>
                     </tr>
                 `;
             });
+        }
+
+        function updateStats() {
+            document.getElementById('statNewsCount').innerText = newsData.length;
+            document.getElementById('statCommentsCount').innerText = commentsData.length;
+            
+            // Calculate storage size
+            let totalLen = 0;
+            for(let key in localStorage) {
+                if(localStorage.hasOwnProperty(key)) {
+                    totalLen += localStorage[key].length + key.length;
+                }
+            }
+            const sizeKB = (totalLen * 2 / 1024).toFixed(2);
+            document.getElementById('statStorageSize').innerText = sizeKB + ' KB';
         }
 
         function getCatName(cat) {
@@ -943,6 +1122,8 @@
             if(tabName === 'content') document.getElementById('tab-content').style.display = 'grid';
             
             event.target.classList.add('active');
+            
+            if(tabName === 'stats') updateStats();
         }
 
         // --- IMAGE PROCESSING ---
@@ -976,6 +1157,7 @@
                 document.getElementById('adminDashboard').classList.add('active');
                 document.body.style.overflow = 'hidden';
                 renderTables();
+                updateStats();
                 showToast('مرحباً بك في لوحة القيادة', 'success');
             } else {
                 document.getElementById('errorMsg').style.display = 'block';
@@ -1082,6 +1264,7 @@
                 news: newsData,
                 comments: commentsData,
                 settings: siteSettings,
+                saved: savedNews,
                 date: new Date().toISOString()
             };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
@@ -1105,6 +1288,7 @@
                         newsData = data.news;
                         commentsData = data.comments;
                         siteSettings = data.settings;
+                        if(data.saved) savedNews = data.saved;
                         saveData();
                         showToast('تم استعادة البيانات بنجاح', 'success');
                         setTimeout(() => location.reload(), 1000);
@@ -1144,6 +1328,7 @@
         window.onload = function() {
             applySettings();
             renderNews();
+            updateStats();
             
             window.addEventListener('scroll', () => {
                 const h = document.getElementById('mainHeader');
