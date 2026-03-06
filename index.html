@@ -1393,7 +1393,7 @@
                         <p style="color: #666; font-size: 0.8rem; margin-top: 5px;">سيتم عرض الأخبار بشكل متحرك في الشريط العلوي.</p>
                     </div>
 
-                    <!-- روابط التواصل الاجتماعي -->
+                    <!-- روابط التواصل الاجتماعي (مع إضافة تلغرام) -->
                     <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border);">
                         <h4 style="color: var(--text-primary); margin-bottom: 15px;"><i class="fas fa-share-alt" style="color: var(--antique-gold); margin-left: 5px;"></i> روابط التواصل الاجتماعي</h4>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
@@ -1416,6 +1416,11 @@
                             <div>
                                 <label class="form-label"><i class="fab fa-linkedin" style="color: #0077b5;"></i> لينكد إن</label>
                                 <input type="url" id="socialLinkedin" class="form-control" placeholder="https://linkedin.com/...">
+                            </div>
+                            <!-- حقل جديد لتلغرام -->
+                            <div>
+                                <label class="form-label"><i class="fab fa-telegram" style="color: #0088cc;"></i> تلغرام</label>
+                                <input type="url" id="socialTelegram" class="form-control" placeholder="https://t.me/...">
                             </div>
                         </div>
                     </div>
@@ -1508,7 +1513,8 @@
                 twitter: "",
                 instagram: "",
                 youtube: "",
-                linkedin: ""
+                linkedin: "",
+                telegram: ""   // إضافة تلغرام للاعدادات الافتراضية
             }
         };
         const defaultPages = {
@@ -1704,7 +1710,8 @@
                 { id: 'twitter', icon: 'fab fa-twitter' },
                 { id: 'instagram', icon: 'fab fa-instagram' },
                 { id: 'youtube', icon: 'fab fa-youtube' },
-                { id: 'linkedin', icon: 'fab fa-linkedin' }
+                { id: 'linkedin', icon: 'fab fa-linkedin' },
+                { id: 'telegram', icon: 'fab fa-telegram' }   // إضافة تلغرام
             ];
             let html = '';
             platforms.forEach(p => {
@@ -1748,6 +1755,7 @@
                 document.getElementById('socialInstagram').value = siteSettings.socialLinks.instagram || '';
                 document.getElementById('socialYoutube').value = siteSettings.socialLinks.youtube || '';
                 document.getElementById('socialLinkedin').value = siteSettings.socialLinks.linkedin || '';
+                document.getElementById('socialTelegram').value = siteSettings.socialLinks.telegram || '';  // إضافة تلغرام
             }
 
             updateBreakingNewsBar();
@@ -1775,7 +1783,8 @@
                 twitter: document.getElementById('socialTwitter').value.trim(),
                 instagram: document.getElementById('socialInstagram').value.trim(),
                 youtube: document.getElementById('socialYoutube').value.trim(),
-                linkedin: document.getElementById('socialLinkedin').value.trim()
+                linkedin: document.getElementById('socialLinkedin').value.trim(),
+                telegram: document.getElementById('socialTelegram').value.trim()   // حفظ تلغرام
             };
             applySettings();
             saveData();
@@ -1979,7 +1988,8 @@
                     { id: 'twitter', icon: 'fab fa-twitter', color: '#1da1f2' },
                     { id: 'instagram', icon: 'fab fa-instagram', color: '#e1306c' },
                     { id: 'youtube', icon: 'fab fa-youtube', color: '#ff0000' },
-                    { id: 'linkedin', icon: 'fab fa-linkedin', color: '#0077b5' }
+                    { id: 'linkedin', icon: 'fab fa-linkedin', color: '#0077b5' },
+                    { id: 'telegram', icon: 'fab fa-telegram', color: '#0088cc' }   // إضافة تلغرام
                 ];
                 let iconsHtml = '<div class="contact-social-icons">';
                 platforms.forEach(p => {
