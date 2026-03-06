@@ -254,6 +254,7 @@
             border: 1px solid var(--glass-border);
             transition: var(--transition);
             position: relative;
+            cursor: pointer;
         }
         .luxury-card:hover {
             transform: translateY(-10px);
@@ -361,6 +362,120 @@
         .footer-links li { margin-bottom: 15px; }
         .footer-links a { color: var(--text-secondary); text-decoration: none; transition: 0.3s; }
         .footer-links a:hover { color: var(--antique-gold); padding-right: 5px; }
+
+        /* =========================================
+           ARTICLE MODAL (NEW FEATURE)
+           ========================================= */
+        #articleModal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            z-index: 20000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        #articleModal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background: var(--rich-black);
+            width: 100%;
+            max-width: 900px;
+            border-radius: 20px;
+            border: 1px solid var(--antique-gold);
+            box-shadow: 0 0 50px rgba(197, 160, 89, 0.2);
+            position: relative;
+            transform: translateY(50px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            margin: auto;
+        }
+        #articleModal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header-img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .modal-body {
+            padding: 40px;
+        }
+
+        .modal-category {
+            color: var(--antique-gold);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .modal-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            line-height: 1.3;
+            color: var(--text-primary);
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .modal-text {
+            font-size: 1.2rem;
+            line-height: 2;
+            color: var(--text-secondary);
+            white-space: pre-wrap; /* Preserve formatting */
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .close-modal-btn:hover {
+            background: var(--antique-gold);
+            color: #000;
+            transform: rotate(90deg);
+        }
+
+        @media(max-width: 768px) {
+            .modal-header-img { height: 250px; }
+            .modal-body { padding: 20px; }
+            .modal-title { font-size: 1.8rem; }
+        }
 
         /* =========================================
            ADMIN SYSTEM (ULTIMATE EDITION)
@@ -673,6 +788,31 @@
     </footer>
 
     <!-- =========================================
+         ARTICLE MODAL (FULL SCREEN)
+         ========================================= -->
+    <div id="articleModal">
+        <div class="modal-content">
+            <button class="close-modal-btn" onclick="closeArticleModal()"><i class="fas fa-times"></i></button>
+            <img src="" alt="" class="modal-header-img" id="modalImg">
+            <div class="modal-body">
+                <span class="modal-category" id="modalCat">أخبار</span>
+                <h1 class="modal-title" id="modalTitle">عنوان الخبر</h1>
+                <div class="modal-meta">
+                    <span><i class="far fa-user"></i> الإدارة التحريرية</span>
+                    <span><i class="far fa-clock"></i> <span id="modalDate"></span></span>
+                </div>
+                <div class="modal-text" id="modalText">
+                    <!-- Text goes here -->
+                </div>
+                <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--glass-border); display: flex; gap: 15px;">
+                    <button class="btn-premium" style="width: auto;" onclick="shareCurrentArticle()"><i class="fas fa-share-alt"></i> مشاركة الخبر</button>
+                    <button class="btn-premium btn-secondary" style="width: auto;" id="modalSaveBtn" onclick="toggleSaveFromModal()"><i class="far fa-bookmark"></i> حفظ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================
          ADMIN SYSTEM (ULTIMATE EDITION)
          ========================================= -->
 
@@ -866,8 +1006,8 @@
     <script>
         // --- DATA CORE ---
         let newsData = JSON.parse(localStorage.getItem('empire_news')) || [
-            { id: 1, title: "إطلاق أول قمر صناعي كمومي", cat: "tech", img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80", text: "خطوة تاريخية في عالم الاتصالات الكمومية...", date: "2023-10-01" },
-            { id: 2, title: "أسواق المال تسجل أرقاماً قياسية", cat: "news", img: "https://images.unsplash.com/photo-1611974765270-ca12586343bb?auto=format&fit=crop&w=600&q=80", text: "تحليل شامل لصعود المؤشرات العالمية...", date: "2023-10-02" }
+            { id: 1, title: "إطلاق أول قمر صناعي كمومي", cat: "tech", img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80", text: "خطوة تاريخية في عالم الاتصالات الكمومية...\n\nفي تطور نوعي غير مسبوق، نجحت وكالة الفضاء الدولية في إطلاق أول قمر صناعي يعتمد كلياً على تقنيات الحوسبة الكمومية. هذا الإنجاز يفتح آفاقاً جديدة في مجال الاتصالات الآمنة والسرعة الفائقة في نقل البيانات.\n\nيتميز القمر الجديد بقدرته على معالجة البيانات بسرعة تفوق أسرع الحواسيب العملاقة الحالية بملايين المرات، مما يعد بثورة في مجالات التشفير والأرصاد الجوية والاكتشافات العلمية.", date: "2023-10-01" },
+            { id: 2, title: "أسواق المال تسجل أرقاماً قياسية", cat: "news", img: "https://images.unsplash.com/photo-1611974765270-ca12586343bb?auto=format&fit=crop&w=600&q=80", text: "تحليل شامل لصعود المؤشرات العالمية...\n\nشهدت أسواق المال العالمية اليوم ارتفاعاً جنونياً وغير مسبوق، حيث سجلت المؤشرات الرئيسية في وول ستريت وبورصة لندن أرقاماً قياسية جديدة. يعزو المحللون هذا الارتفاع إلى التقارير الإيجابية حول نمو الاقتصاد العالمي وانخفاض معدلات التضخم بشكل مفاجئ.\n\nقطاع التكنولوجيا كان الرائد في هذا الصعود، بقيادة شركات الذكاء الاصطناعي التي شهدت أسهمها مضاعفة في القيمة خلال الأشهر الأخيرة.", date: "2023-10-02" }
         ];
 
         let commentsData = JSON.parse(localStorage.getItem('empire_comments')) || [
@@ -877,6 +1017,7 @@
         ];
 
         let savedNews = JSON.parse(localStorage.getItem('empire_saved')) || [];
+        let currentOpenArticleId = null; // Track currently open article
         
         let siteSettings = JSON.parse(localStorage.getItem('empire_settings')) || {
             siteName: "الإمبراطورية",
@@ -989,7 +1130,7 @@
             filtered.forEach(item => {
                 const isSaved = savedNews.includes(item.id);
                 grid.innerHTML += `
-                    <article class="luxury-card">
+                    <article class="luxury-card" onclick="openArticleModal(${item.id})">
                         <div class="card-image-wrapper">
                             <span class="card-category">${getCatName(item.cat)}</span>
                             <img src="${item.img}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/600x400/121212/c5a059?text=No+Image'">
@@ -1002,13 +1143,13 @@
                             <h3 class="card-title">${item.title}</h3>
                             <p class="card-excerpt">${item.text}</p>
                             
-                            <div class="card-actions">
+                            <div class="card-actions" onclick="event.stopPropagation()">
                                 <button class="action-btn-small ${isSaved ? 'saved' : ''}" onclick="toggleSave(${item.id}, this)">
                                     <i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i> ${isSaved ? 'محفوظ' : 'حفظ'}
                                 </button>
                                 <div style="display:flex; gap:10px;">
                                     <button class="action-btn-small" onclick="shareNews('${item.title}')"><i class="fas fa-share-alt"></i></button>
-                                    <a href="#" class="read-more-btn" onclick="showToast('جارٍ تحميل المقال...', 'info')">اقرأ المزيد <i class="fas fa-arrow-left"></i></a>
+                                    <a href="#" class="read-more-btn" onclick="openArticleModal(${item.id})">اقرأ المزيد <i class="fas fa-arrow-left"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -1018,6 +1159,7 @@
         }
 
         function toggleSave(id, btn) {
+            event.stopPropagation(); // Prevent card click
             if(savedNews.includes(id)) {
                 savedNews = savedNews.filter(sid => sid !== id);
                 btn.classList.remove('saved');
@@ -1030,17 +1172,89 @@
                 showToast('تم الحفظ للقراءة لاحقاً', 'success');
             }
             saveData();
-            // If currently viewing saved tab, re-render to remove/add item
             if(document.querySelector('.nav-item.active') && document.querySelector('.nav-item.active').innerText.includes('المحفوظات')) {
                 renderNews('saved');
             }
+            // Update modal button if open
+            if(currentOpenArticleId === id) updateModalSaveBtn();
         }
 
         function shareNews(title) {
+            event.stopPropagation();
             const url = window.location.href.split('#')[0] + '?news=' + encodeURIComponent(title);
             navigator.clipboard.writeText(url).then(() => {
                 showToast('تم نسخ رابط الخبر للمشاركة', 'success');
             });
+        }
+
+        // --- ARTICLE MODAL LOGIC ---
+        function openArticleModal(id) {
+            const article = newsData.find(n => n.id === id);
+            if(!article) return;
+
+            currentOpenArticleId = id;
+            
+            document.getElementById('modalImg').src = article.img;
+            document.getElementById('modalCat').innerText = getCatName(article.cat);
+            document.getElementById('modalTitle').innerText = article.title;
+            document.getElementById('modalDate').innerText = article.date;
+            document.getElementById('modalText').innerText = article.text;
+            
+            updateModalSaveBtn();
+
+            const modal = document.getElementById('articleModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeArticleModal() {
+            const modal = document.getElementById('articleModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Restore scrolling
+            currentOpenArticleId = null;
+        }
+
+        // Close on outside click
+        document.getElementById('articleModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeArticleModal();
+            }
+        });
+
+        function updateModalSaveBtn() {
+            const btn = document.getElementById('modalSaveBtn');
+            if(savedNews.includes(currentOpenArticleId)) {
+                btn.innerHTML = '<i class="fas fa-bookmark"></i> محفوظ';
+                btn.classList.add('btn-success'); // Optional styling
+            } else {
+                btn.innerHTML = '<i class="far fa-bookmark"></i> حفظ';
+                btn.classList.remove('btn-success');
+            }
+        }
+
+        function toggleSaveFromModal() {
+            if(!currentOpenArticleId) return;
+            // Find the button in the grid to sync visual state if needed, but primarily update data
+            if(savedNews.includes(currentOpenArticleId)) {
+                savedNews = savedNews.filter(sid => sid !== currentOpenArticleId);
+                showToast('تم إزالة من المحفوظات', 'info');
+            } else {
+                savedNews.push(currentOpenArticleId);
+                showToast('تم الحفظ للقراءة لاحقاً', 'success');
+            }
+            saveData();
+            updateModalSaveBtn();
+            // Re-render grid if visible to update icons
+            const activeFilter = document.querySelector('.nav-item.active');
+            if(activeFilter) {
+                // Simple re-render based on current view logic would go here
+                // For simplicity, we just update the modal button and data
+            }
+        }
+
+        function shareCurrentArticle() {
+            const article = newsData.find(n => n.id === currentOpenArticleId);
+            if(article) shareNews(article.title);
         }
 
         function renderTables() {
@@ -1064,7 +1278,6 @@
             const cBody = document.getElementById('commentsTableBody');
             cBody.innerHTML = '';
             commentsData.forEach(c => {
-                // Mock AI Sentiment Analysis
                 let sentiment = 'neutral';
                 let sentimentColor = '#f1c40f';
                 const lowerText = c.text.toLowerCase();
@@ -1091,7 +1304,6 @@
             document.getElementById('statNewsCount').innerText = newsData.length;
             document.getElementById('statCommentsCount').innerText = commentsData.length;
             
-            // Calculate storage size
             let totalLen = 0;
             for(let key in localStorage) {
                 if(localStorage.hasOwnProperty(key)) {
@@ -1267,7 +1479,7 @@
                 saved: savedNews,
                 date: new Date().toISOString()
             };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+            const dataStr = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
             const downloadAnchorNode = document.createElement('a');
             downloadAnchorNode.setAttribute("href", dataStr);
             downloadAnchorNode.setAttribute("download", "empire_backup_" + new Date().toISOString().slice(0,10) + ".json");
