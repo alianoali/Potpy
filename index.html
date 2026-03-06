@@ -5,15 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الإمبراطورية | منصة النشر المتكاملة</title>
     
-    <!-- خطوط فاخرة -->
+    <!-- SEO Meta -->
+    <meta name="description" content="الإمبراطورية: منصة إعلامية رائدة تقدم آخر الأخبار والتقارير الحصرية في عالم التكنولوجيا والاقتصاد والثقافة.">
+    <meta name="keywords" content="أخبار, تكنولوجيا, اقتصاد, ثقافة, الذكاء الاصطناعي">
+    <meta name="author" content="الإمبراطورية">
+    <meta property="og:title" content="الإمبراطورية">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.empire.com">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630/121212/c5a059?text=Empire">
+    <meta property="og:description" content="منصة إعلامية تجمع بين الفخامة والدقة.">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/manifest+json,{
+        &quot;name&quot;: &quot;الإمبراطورية&quot;,
+        &quot;short_name&quot;: &quot;Empire&quot;,
+        &quot;start_url&quot;: &quot;/&quot;,
+        &quot;display&quot;: &quot;standalone&quot;,
+        &quot;background_color&quot;: &quot;#0a0a0a&quot;,
+        &quot;theme_color&quot;: &quot;#c5a059&quot;,
+        &quot;icons&quot;: [{
+            &quot;src&quot;: &quot;https://via.placeholder.com/192x192/121212/c5a059?text=E&quot;,
+            &quot;sizes&quot;: &quot;192x192&quot;,
+            &quot;type&quot;: &quot;image/png&quot;
+        }]
+    }">
+    
+    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Quill.js لتحرير النصوص المتقدم -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <!-- DOMPurify for security -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.5/purify.min.js"></script>
     <style>
-        /* الأنماط السابقة مع إضافات بسيطة */
+        /* الأنماط المحسنة مع إضافات التصميم المتجاوب والأداء */
         :root {
             --royal-black: #0a0a0a;
             --rich-black: #121212;
@@ -48,23 +75,65 @@
             scroll-behavior: smooth;
         }
 
-        /* --- Reading Progress Bar --- */
+        /* --- Reading Progress Bar محسّن --- */
         #progressBar {
-            position: fixed; top: 0; left: 0; height: 3px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
             background: var(--gold-gradient);
-            z-index: 10001; width: 0%;
-            transition: width 0.1s;
+            z-index: 10001;
+            width: 0%;
+            transition: width 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+            box-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
+        }
+
+        /* --- Back to Top Button --- */
+        #backToTop {
+            position: fixed;
+            bottom: 120px;
+            right: 40px;
+            width: 55px;
+            height: 55px;
+            background: var(--gold-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 9990;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            border: 2px solid #fff;
+            box-shadow: 0 0 20px rgba(197,160,89,0.5);
+        }
+        #backToTop.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        #backToTop:hover {
+            transform: scale(1.1) translateY(-5px);
         }
 
         h1, h2, h3, .logo { font-family: 'Playfair Display', serif; }
 
-        /* --- Header --- */
+        /* --- Header محسّن للجوال --- */
         header {
-            position: fixed; top: 0; width: 100%; z-index: 1000;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
             padding: 20px 5%;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             transition: var(--transition);
             background: transparent;
+            backdrop-filter: blur(0);
         }
         header.scrolled {
             background: var(--glass-bg);
@@ -83,10 +152,17 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             text-decoration: none;
-            display: flex; align-items: center; gap: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        nav ul { display: flex; list-style: none; gap: 30px; }
+        /* Desktop Navigation */
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
         nav a {
             color: var(--text-primary);
             text-decoration: none;
@@ -99,14 +175,34 @@
             cursor: pointer;
         }
         nav a::after {
-            content: ''; position: absolute; bottom: -5px; right: 0;
-            width: 0; height: 1px; background: var(--antique-gold);
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            right: 0;
+            width: 0;
+            height: 1px;
+            background: var(--antique-gold);
             transition: var(--transition);
         }
         nav a:hover, nav a.active { color: var(--antique-gold); }
         nav a:hover::after, nav a.active::after { width: 100%; }
 
-        .header-actions { display: flex; gap: 10px; }
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--antique-gold);
+            font-size: 1.8rem;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
         .header-actions button {
             background: transparent;
             border: 1px solid var(--antique-gold);
@@ -117,7 +213,9 @@
             font-family: 'Tajawal';
             font-weight: bold;
             transition: var(--transition);
-            display: flex; align-items: center; gap: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .header-actions button:hover {
             background: var(--antique-gold);
@@ -125,7 +223,7 @@
             box-shadow: 0 0 20px rgba(197, 160, 89, 0.4);
         }
 
-        /* --- Breaking News Bar محسّن --- */
+        /* --- Breaking News Bar محسّن (قابل للنقر وبه زر إغلاق) --- */
         #breakingNewsBar {
             background: var(--antique-gold);
             color: #000;
@@ -138,14 +236,23 @@
             overflow: hidden;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             border-bottom: 2px solid rgba(255,215,0,0.5);
+            cursor: pointer;
         }
-        #breakingNewsBar.hidden { max-height: 0; opacity: 0; padding: 0; margin: 0; border: none; }
+        #breakingNewsBar.hidden {
+            max-height: 0;
+            opacity: 0;
+            padding: 0;
+            margin: 0;
+            border: none;
+            pointer-events: none;
+        }
         .bn-container {
             display: flex;
             align-items: center;
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 5%;
+            position: relative;
         }
         .bn-label {
             background: #000;
@@ -178,6 +285,10 @@
             padding: 0 10px;
             color: #000;
             font-weight: 600;
+            transition: background 0.2s;
+        }
+        .bn-item:hover {
+            background: rgba(255,255,255,0.2);
         }
         .bn-item i { margin-left: 8px; color: #000; }
         @keyframes scrollNews {
@@ -190,6 +301,21 @@
             75% { transform: translateY(-90px); }
             85% { transform: translateY(-90px); }
             100% { transform: translateY(-120px); }
+        }
+        #closeNewsBar {
+            background: transparent;
+            border: none;
+            color: #000;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-right: 15px;
+            padding: 0 8px;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+        #closeNewsBar:hover {
+            opacity: 1;
+            transform: scale(1.2);
         }
 
         /* --- Hero --- */
@@ -210,14 +336,19 @@
             border: 1px solid var(--glass-border);
         }
         .main-feature img {
-            width: 100%; height: 100%; object-fit: cover;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
             filter: brightness(0.8);
         }
         .main-feature:hover img { transform: scale(1.1); filter: brightness(1); }
         
         .feature-overlay {
-            position: absolute; bottom: 0; left: 0; width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
             padding: 40px;
             background: linear-gradient(to top, #000 0%, transparent 100%);
             z-index: 2;
@@ -258,12 +389,17 @@
             box-shadow: var(--shadow-gold);
         }
         .side-card img {
-            width: 100%; height: 100%; object-fit: cover;
-            opacity: 0.6; transition: var(--transition);
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+            transition: var(--transition);
         }
         .side-card:hover img { opacity: 0.4; transform: scale(1.05); }
         .side-content {
-            position: absolute; bottom: 0; padding: 20px;
+            position: absolute;
+            bottom: 0;
+            padding: 20px;
             width: 100%;
             background: linear-gradient(to top, #000, transparent);
         }
@@ -271,7 +407,9 @@
         /* --- News Grid --- */
         .section { padding: 100px 5%; }
         .section-header {
-            display: flex; justify-content: space-between; align-items: flex-end;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
             margin-bottom: 60px;
             border-bottom: 1px solid var(--glass-border);
             padding-bottom: 20px;
@@ -283,8 +421,13 @@
             padding-right: 20px;
         }
         .section-title::before {
-            content: ''; position: absolute; right: 0; top: 0; bottom: 0;
-            width: 4px; background: var(--gold-gradient);
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--gold-gradient);
             border-radius: 2px;
         }
 
@@ -308,15 +451,23 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             border-color: rgba(197, 160, 89, 0.3);
         }
-        .card-image-wrapper { height: 240px; overflow: hidden; position: relative; }
+        .card-image-wrapper {
+            height: 240px;
+            overflow: hidden;
+            position: relative;
+        }
         .card-image-wrapper img {
-            width: 100%; height: 100%; object-fit: cover;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             transition: transform 0.8s ease;
         }
         .luxury-card:hover .card-image-wrapper img { transform: scale(1.1); }
         
         .card-category {
-            position: absolute; top: 15px; right: 15px;
+            position: absolute;
+            top: 15px;
+            right: 15px;
             background: rgba(0,0,0,0.8);
             backdrop-filter: blur(5px);
             color: var(--antique-gold);
@@ -326,17 +477,25 @@
             font-weight: 700;
             text-transform: uppercase;
             border: 1px solid rgba(197, 160, 89, 0.3);
+            z-index: 5;
         }
 
         .card-content { padding: 25px; }
         .card-meta {
-            display: flex; justify-content: space-between;
+            display: flex;
+            justify-content: space-between;
             color: var(--text-secondary);
             font-size: 0.8rem;
             margin-bottom: 15px;
             font-family: 'Cinzel', serif;
         }
-        .card-title { font-size: 1.4rem; margin-bottom: 12px; line-height: 1.4; font-weight: 700; color: var(--text-primary); }
+        .card-title {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
         .card-excerpt {
             color: var(--text-secondary);
             font-size: 0.95rem;
@@ -403,14 +562,33 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 20px;
         }
-        .footer-links h4 { color: var(--text-primary); margin-bottom: 25px; font-size: 1.1rem; position: relative; display: inline-block; }
-        .footer-links h4::after { content: ''; position: absolute; bottom: -8px; right: 0; width: 30px; height: 2px; background: var(--antique-gold); }
+        .footer-links h4 {
+            color: var(--text-primary);
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            position: relative;
+            display: inline-block;
+        }
+        .footer-links h4::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 0;
+            width: 30px;
+            height: 2px;
+            background: var(--antique-gold);
+        }
         .footer-links ul { list-style: none; }
         .footer-links li { margin-bottom: 15px; }
-        .footer-links a { color: var(--text-secondary); text-decoration: none; transition: 0.3s; cursor: pointer; }
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+        }
         .footer-links a:hover { color: var(--antique-gold); padding-right: 5px; }
 
-        /* Social Icons in Footer */
+        /* Social Icons */
         .social-icons {
             display: flex;
             gap: 15px;
@@ -428,6 +606,7 @@
             font-size: 1.2rem;
             transition: var(--transition);
             border: 1px solid rgba(197,160,89,0.3);
+            text-decoration: none;
         }
         .social-icons a:hover {
             background: var(--antique-gold);
@@ -435,12 +614,13 @@
             transform: translateY(-5px);
         }
 
-        /* =========================================
-           ARTICLE MODAL (FULL SCREEN READER)
-           ========================================= */
+        /* --- Article Modal (Full Screen) --- */
         #articleModal {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(20px);
             z-index: 20000;
@@ -520,14 +700,17 @@
             border-bottom: 1px solid var(--glass-border);
         }
 
-        /* Rich Content Styles inside Modal */
         .modal-text {
             font-size: 1.25rem;
             line-height: 2.2;
             color: var(--text-secondary);
         }
         .modal-text p { margin-bottom: 25px; }
-        .modal-text h2, .modal-text h3 { color: var(--text-primary); margin: 30px 0 15px; font-family: 'Playfair Display'; }
+        .modal-text h2, .modal-text h3 {
+            color: var(--text-primary);
+            margin: 30px 0 15px;
+            font-family: 'Playfair Display';
+        }
         .modal-text blockquote {
             border-right: 4px solid var(--antique-gold);
             padding-right: 20px;
@@ -585,10 +768,13 @@
             transform: rotate(90deg);
         }
 
-        /* --- Page Modal for About, Team, Contact --- */
+        /* --- Page Modal --- */
         #pageModal {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0,0,0,0.95);
             backdrop-filter: blur(20px);
             z-index: 20001;
@@ -613,7 +799,6 @@
             top: 10px;
             left: 10px;
         }
-        /* أيقونات التواصل داخل صفحة اتصل بنا */
         .contact-social-icons {
             display: flex;
             gap: 20px;
@@ -644,7 +829,10 @@
         /* --- Search Modal --- */
         #searchModal {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0,0,0,0.95);
             backdrop-filter: blur(20px);
             z-index: 15000;
@@ -698,54 +886,98 @@
             border-radius: 8px;
         }
 
-        /* --- Admin Dashboard --- */
+        /* --- Admin Dashboard (محسّن) --- */
         #adminBtn {
-            position: fixed; bottom: 40px; right: 40px; width: 70px; height: 70px;
-            background: var(--gold-gradient); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 22px; color: #000;
-            cursor: pointer; z-index: 9999;
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 70px;
+            height: 70px;
+            background: var(--gold-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 22px;
+            color: #000;
+            cursor: pointer;
+            z-index: 9999;
             box-shadow: 0 0 30px rgba(197, 160, 89, 0.6);
             animation: floatGold 3s ease-in-out infinite;
             border: 2px solid #fff;
             transition: var(--transition);
         }
-        #adminBtn:hover { transform: scale(1.1) rotate(10deg); box-shadow: 0 0 50px rgba(197, 160, 89, 1); }
-        @keyframes floatGold { 0% { transform: translateY(0); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
+        #adminBtn:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 0 50px rgba(197, 160, 89, 1);
+        }
+        @keyframes floatGold {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
 
         #loginModal {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
-            z-index: 10000; justify-content: center; align-items: center;
-            opacity: 0; transition: opacity 0.4s;
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s;
         }
         #loginModal.active { display: flex; opacity: 1; }
         
         .login-box {
             background: var(--rich-black);
-            padding: 50px; border-radius: 20px;
+            padding: 50px;
+            border-radius: 20px;
             border: 1px solid var(--antique-gold);
-            width: 450px; text-align: center;
+            width: 450px;
+            text-align: center;
             box-shadow: 0 0 60px rgba(197, 160, 89, 0.2);
-            transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative; overflow: hidden;
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
         }
         #loginModal.active .login-box { transform: scale(1); }
-        .login-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--gold-gradient); }
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gold-gradient);
+        }
 
         .login-input {
-            width: 100%; padding: 15px; margin: 25px 0;
+            width: 100%;
+            padding: 15px;
+            margin: 25px 0;
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-primary); border-radius: 8px;
-            text-align: center; font-size: 1.1rem; transition: 0.3s;
+            color: var(--text-primary);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.1rem;
+            transition: 0.3s;
         }
         .login-input:focus { border-color: var(--antique-gold); background: rgba(255,255,255,0.08); }
 
         #adminDashboard {
-            display: none; position: fixed; inset: 0;
+            display: none;
+            position: fixed;
+            inset: 0;
             background: var(--royal-black);
-            z-index: 9998; overflow-y: auto; padding: 30px;
+            z-index: 9998;
+            overflow-y: auto;
+            padding: 30px;
             backdrop-filter: blur(20px);
         }
         #adminDashboard.active { display: block; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -753,45 +985,59 @@
         .dash-container { max-width: 1400px; margin: 0 auto; }
         
         .dash-header {
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 25px 30px;
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 16px; margin-bottom: 40px;
+            border-radius: 16px;
+            margin-bottom: 40px;
             backdrop-filter: blur(10px);
         }
 
         .dash-tabs {
-            display: flex; gap: 15px; margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
             border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 10px; flex-wrap: wrap;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
         }
         .tab-btn {
-            background: transparent; border: none;
+            background: transparent;
+            border: none;
             color: var(--text-secondary);
-            padding: 10px 20px; font-size: 1rem;
-            cursor: pointer; font-family: 'Tajawal';
-            font-weight: 600; transition: 0.3s;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-family: 'Tajawal';
+            font-weight: 600;
+            transition: 0.3s;
             position: relative;
         }
         .tab-btn.active { color: var(--antique-gold); }
         .tab-btn.active::after {
-            content: ''; position: absolute; bottom: -11px; left: 0;
-            width: 100%; height: 2px; background: var(--antique-gold);
+            content: '';
+            position: absolute;
+            bottom: -11px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--antique-gold);
         }
 
         .dash-grid { display: grid; grid-template-columns: 350px 1fr; gap: 30px; }
         .panel {
             background: var(--glass-bg);
-            padding: 30px; border-radius: 16px;
+            padding: 30px;
+            border-radius: 16px;
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(10px);
         }
 
-        /* تحسينات حقول الإدخال */
-        .form-group {
-            margin-bottom: 25px;
-        }
+        /* تحسينات النماذج */
+        .form-group { margin-bottom: 25px; }
         .form-label {
             display: block;
             margin-bottom: 10px;
@@ -802,12 +1048,8 @@
             align-items: center;
             gap: 8px;
         }
-        .form-label i {
-            font-size: 1.1rem;
-            color: var(--bright-gold);
-        }
+        .form-label i { font-size: 1.1rem; color: var(--bright-gold); }
 
-        /* حاويات الإدخال مع الأيقونات */
         .input-icon-wrapper {
             position: relative;
             display: flex;
@@ -855,17 +1097,16 @@
             background: rgba(0,0,0,0.6);
             box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.2);
         }
-        .form-control::placeholder {
-            color: #666;
-            font-size: 0.95rem;
-        }
 
-        /* منطقة رفع الصور */
+        /* منطقة رفع الصور المحسنة (معاينة متعددة) */
         .image-drop-zone {
             border: 2px dashed rgba(197, 160, 89, 0.3);
-            padding: 30px; text-align: center;
-            border-radius: 16px; cursor: pointer;
-            transition: 0.3s; background: rgba(255,255,255,0.02);
+            padding: 30px;
+            text-align: center;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            background: rgba(255,255,255,0.02);
             margin-bottom: 15px;
             display: flex;
             flex-direction: column;
@@ -876,34 +1117,53 @@
             border-color: var(--antique-gold);
             background: rgba(197, 160, 89, 0.05);
         }
-        .image-drop-zone i {
-            font-size: 2.5rem;
-            color: var(--antique-gold);
+        .image-drop-zone i { font-size: 2.5rem; color: var(--antique-gold); }
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
         }
-        #imagePreview {
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 15px;
-            border-radius: 12px;
-            display: none;
+        .image-preview-container img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
             border: 2px solid var(--antique-gold);
             box-shadow: var(--shadow-gold);
         }
+        #mainImagePreview {
+            max-width: 200px;
+            max-height: 150px;
+            margin: 10px auto;
+            border-radius: 12px;
+            display: none;
+            border: 2px solid var(--antique-gold);
+        }
 
-        /* الأزرار */
         .btn-premium {
-            width: 100%; padding: 16px;
-            background: var(--gold-gradient); border: none;
-            border-radius: 12px; color: #000;
-            font-weight: 800; cursor: pointer;
-            transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+            width: 100%;
+            padding: 16px;
+            background: var(--gold-gradient);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             font-size: 1rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
         }
-        .btn-premium:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(197, 160, 89, 0.3); }
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(197, 160, 89, 0.3);
+        }
         .btn-danger { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
         .btn-edit { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
         .btn-secondary { background: #333; color: #fff; }
@@ -949,6 +1209,7 @@
         }
         .action-icon.edit { background: rgba(52, 152, 219, 0.2); color: #3498db; }
         .action-icon.delete { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+        .action-icon.restore { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
         .action-icon:hover { transform: scale(1.1); }
 
         /* الإعدادات */
@@ -973,14 +1234,24 @@
             font-size: 1rem;
         }
         .toggle-switch {
-            position: relative; width: 50px; height: 26px;
-            background: #333; border-radius: 20px;
-            cursor: pointer; transition: 0.3s;
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #333;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
         }
         .toggle-switch::after {
-            content: ''; position: absolute; top: 3px; left: 3px;
-            width: 20px; height: 20px; background: #fff;
-            border-radius: 50%; transition: 0.3s;
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            transition: 0.3s;
         }
         .toggle-switch.active { background: var(--antique-gold); }
         .toggle-switch.active::after { left: 27px; }
@@ -1009,48 +1280,156 @@
 
         /* علامات التبويب الداخلية للصفحات */
         .page-tabs {
-            display: flex; gap: 10px; margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
             border-bottom: 1px solid var(--glass-border);
             padding-bottom: 10px;
         }
         .page-tab {
-            background: transparent; border: none;
-            color: var(--text-secondary); padding: 8px 16px;
-            cursor: pointer; border-radius: 30px;
-            transition: 0.3s; font-weight: 600;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: 0.3s;
+            font-weight: 600;
         }
         .page-tab.active {
             background: var(--antique-gold);
             color: #000;
         }
 
-        /* Toast */
-        #toastContainer { position: fixed; top: 30px; left: 30px; z-index: 100001; }
+        /* Toast محسّن */
+        #toastContainer {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 100001;
+        }
         .toast {
             background: var(--rich-black);
             backdrop-filter: blur(10px);
             color: var(--text-primary);
-            padding: 16px 24px; border-radius: 12px;
-            margin-bottom: 15px; border-right: 4px solid var(--antique-gold);
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-right: 4px solid var(--antique-gold);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            display: flex; align-items: center; gap: 12px;
-            min-width: 300px; animation: slideInLeft 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            animation: slideInLeft 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .toast.success { border-color: #2ecc71; }
         .toast.error { border-color: #e74c3c; }
-        @keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideInLeft {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
 
-        @media(max-width: 1024px) {
-            .hero { grid-template-columns: 1fr; height: auto; }
+        /* --- Comments Section المحسّن في المقالة --- */
+        .comments-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid var(--glass-border);
+        }
+        .comment-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            border-right: 3px solid var(--antique-gold);
+        }
+        .comment-item.reply {
+            margin-right: 40px;
+            background: rgba(0,0,0,0.2);
+        }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .comment-author {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .comment-date {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .comment-text {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+        .comment-actions {
+            display: flex;
+            gap: 20px;
+        }
+        .comment-actions button {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.3s;
+        }
+        .comment-actions button:hover {
+            color: var(--antique-gold);
+        }
+        .comment-actions button.liked i { color: var(--antique-gold); }
+
+        /* التجاوب مع الجوال */
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
             .side-features { display: none; }
             .dash-grid { grid-template-columns: 1fr; }
             .footer-content { grid-template-columns: 1fr 1fr; }
         }
-        @media(max-width: 768px) {
-            nav ul { display: none; }
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                width: 100%;
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                align-items: center;
+                padding: 30px;
+                gap: 20px;
+                border-bottom: 1px solid var(--glass-border);
+            }
+            nav ul.active {
+                display: flex;
+            }
             .footer-content { grid-template-columns: 1fr; }
-            #adminBtn { bottom: 20px; right: 20px; width: 60px; height: 60px; }
+            #adminBtn {
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+            }
+            #backToTop {
+                bottom: 100px;
+                right: 20px;
+            }
         }
     </style>
 </head>
@@ -1058,14 +1437,17 @@
 
     <!-- Reading Progress Bar -->
     <div id="progressBar"></div>
+    <!-- Back to Top -->
+    <div id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
 
     <!-- Breaking News Bar محسّن -->
-    <div id="breakingNewsBar">
+    <div id="breakingNewsBar" onclick="openFirstNews()">
         <div class="bn-container">
             <span class="bn-label"><i class="fas fa-bolt"></i> عاجل</span>
             <div class="bn-content" id="breakingNewsContent">
                 <!-- سيتم تعبئته ديناميكياً -->
             </div>
+            <button id="closeNewsBar" onclick="event.stopPropagation(); toggleNewsBar(true)"><i class="fas fa-times"></i></button>
         </div>
     </div>
 
@@ -1075,6 +1457,7 @@
             <i class="fas fa-crown"></i>
             <span id="siteNameDisplay">الإمبراطورية</span>
         </a>
+        <button class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
         <nav>
             <ul id="navMenu">
                 <li><a onclick="filterNews('all')" class="active">الرئيسية</a></li>
@@ -1136,7 +1519,6 @@
                 <p style="color: #666; line-height: 1.8; max-width: 400px;">
                     المنصة الإعلامية الأولى التي تجمع بين الفخامة في التصميم ودقة في المحتوى.
                 </p>
-                <!-- أيقونات التواصل الاجتماعي -->
                 <div class="social-icons" id="socialIcons"></div>
             </div>
             <div class="footer-links">
@@ -1157,19 +1539,19 @@
             </div>
             <div class="footer-links">
                 <h4>النشرة الملكية</h4>
-                <form onsubmit="event.preventDefault(); showToast('تم الاشتراك بنجاح', 'success')" style="display: flex; gap: 10px; margin-top: 15px;">
-                    <input type="email" placeholder="بريدك الإلكتروني" style="flex: 1; padding: 10px; border-radius: 6px; border: none; background: #222; color: #fff;">
+                <form onsubmit="event.preventDefault(); subscribeNewsletter()" style="display: flex; gap: 10px; margin-top: 15px;">
+                    <input type="email" id="newsletterEmail" placeholder="بريدك الإلكتروني" style="flex: 1; padding: 10px; border-radius: 6px; border: none; background: #222; color: #fff;">
                     <button type="submit" style="background: var(--antique-gold); border: none; border-radius: 6px; cursor: pointer;"><i class="fas fa-paper-plane"></i></button>
                 </form>
             </div>
         </div>
         <div style="text-align: center; color: #444; padding-top: 20px; border-top: 1px solid #222;">
-            &copy; 2023 <span id="copyrightYear">2023</span>. جميع الحقوق محفوظة.
+            &copy; <span id="copyrightYear">2023</span> الإمبراطورية. جميع الحقوق محفوظة.
         </div>
     </footer>
 
     <!-- =========================================
-         SEARCH MODAL (محسن)
+         SEARCH MODAL
          ========================================= -->
     <div id="searchModal">
         <div class="search-container">
@@ -1183,7 +1565,7 @@
     </div>
 
     <!-- =========================================
-         ARTICLE MODAL (FULL SCREEN READER)
+         ARTICLE MODAL (مع قسم التعليقات المحسّن)
          ========================================= -->
     <div id="articleModal">
         <div class="modal-content">
@@ -1194,14 +1576,26 @@
                     <span class="modal-category" id="modalCat">أخبار</span>
                     <h1 class="modal-title" id="modalTitle">عنوان الخبر</h1>
                     <div class="modal-meta">
-                        <span><i class="far fa-user"></i> الإدارة التحريرية</span>
+                        <span><i class="far fa-user"></i> <span id="modalAuthor">الإدارة التحريرية</span></span>
                         <span><i class="far fa-clock"></i> <span id="modalDate"></span></span>
+                        <span><i class="far fa-eye"></i> <span id="modalViews">0</span> مشاهدة</span>
                     </div>
                     <div class="modal-text" id="modalText">
-                        <!-- Rich Content goes here -->
+                        <!-- Rich Content -->
                     </div>
+
+                    <!-- قسم التعليقات المتقدم -->
+                    <div class="comments-section" id="modalComments">
+                        <h3 style="color: var(--text-primary); margin-bottom: 25px;">التعليقات</h3>
+                        <div id="commentsList"></div>
+                        <div style="margin-top: 30px;">
+                            <textarea id="newCommentText" class="form-control" placeholder="أضف تعليقك..." rows="3"></textarea>
+                            <button class="btn-premium" style="width: auto; margin-top: 10px;" onclick="addCommentToCurrentArticle()">نشر التعليق</button>
+                        </div>
+                    </div>
+
                     <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--glass-border); display: flex; gap: 15px;">
-                        <button class="btn-premium" style="width: auto;" onclick="shareCurrentArticle()"><i class="fas fa-share-alt"></i> مشاركة الخبر</button>
+                        <button class="btn-premium" style="width: auto;" onclick="shareCurrentArticle()"><i class="fas fa-share-alt"></i> مشاركة</button>
                         <button class="btn-premium btn-secondary" style="width: auto;" id="modalSaveBtn" onclick="toggleSaveFromModal()"><i class="far fa-bookmark"></i> حفظ</button>
                     </div>
                 </div>
@@ -1210,7 +1604,7 @@
     </div>
 
     <!-- =========================================
-         PAGE MODAL for About, Team, Contact
+         PAGE MODAL (About, Team, Contact)
          ========================================= -->
     <div id="pageModal">
         <div class="page-modal-content">
@@ -1220,9 +1614,8 @@
     </div>
 
     <!-- =========================================
-         ADMIN SYSTEM (مع تحسينات التواصل الاجتماعي والأخبار العاجلة)
+         ADMIN SYSTEM (مع سلة المحذوفات وتحسينات)
          ========================================= -->
-
     <div id="adminBtn" onclick="openLogin()" title="لوحة التحكم"><i class="fas fa-shield-alt"></i></div>
 
     <!-- Login Modal -->
@@ -1230,7 +1623,7 @@
         <div class="login-box">
             <i class="fas fa-times" onclick="closeLogin()" style="position: absolute; top: 20px; left: 20px; color: #666; cursor: pointer; font-size: 1.2rem;"></i>
             <h2 style="color: var(--antique-gold); margin-bottom: 10px; font-family: 'Cinzel';">دخول النخبة</h2>
-            <p style="color: #666; font-size: 0.9rem;">كلمة المرور: Ali1992@li</p>
+            <p style="color: #666; font-size: 0.9rem;">كلمة المرور الافتراضية: Ali1992@li (يمكن تغييرها من الإعدادات)</p>
             <input type="password" id="passInput" class="login-input" placeholder="أدخل كلمة المرور">
             <button class="btn-premium" onclick="checkPass()">دخول آمن</button>
             <p id="errorMsg" style="color: #e74c3c; margin-top: 15px; display: none; font-size: 0.9rem;">بيانات الدخول غير صحيحة</p>
@@ -1248,21 +1641,23 @@
             <div class="dash-tabs">
                 <button class="tab-btn active" onclick="switchTab('content')"><i class="fas fa-newspaper"></i> إدارة المحتوى</button>
                 <button class="tab-btn" onclick="switchTab('pages')"><i class="fas fa-file-alt"></i> الصفحات الثابتة</button>
+                <button class="tab-btn" onclick="switchTab('comments')"><i class="fas fa-comments"></i> التعليقات</button>
+                <button class="tab-btn" onclick="switchTab('trash')"><i class="fas fa-trash-alt"></i> سلة المحذوفات</button>
                 <button class="tab-btn" onclick="switchTab('settings')"><i class="fas fa-cogs"></i> إعدادات الموقع</button>
                 <button class="tab-btn" onclick="switchTab('backup')"><i class="fas fa-database"></i> النسخ الاحتياطي</button>
-                <button class="tab-btn" onclick="switchTab('stats')"><i class="fas fa-chart-line"></i> إحصائيات النظام</button>
+                <button class="tab-btn" onclick="switchTab('stats')"><i class="fas fa-chart-line"></i> إحصائيات</button>
             </div>
 
             <!-- Content Tab (إدارة الأخبار) -->
             <div id="tab-content" class="dash-grid">
                 <div class="panel">
-                    <h3 style="color: var(--text-primary); margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px;" id="formTitle">
+                    <h3 style="color: var(--text-primary); margin-bottom: 25px;" id="formTitle">
                         <i class="fas fa-feather-alt" style="color: var(--antique-gold); margin-left: 10px;"></i> صياغة خبر جديد
                     </h3>
                     <input type="hidden" id="editId">
                     
                     <div class="form-group">
-                        <label class="form-label"><i class="fas fa-heading"></i> عنوان الخبر الرئيسي</label>
+                        <label class="form-label"><i class="fas fa-heading"></i> عنوان الخبر</label>
                         <div class="input-icon-wrapper">
                             <i class="fas fa-heading"></i>
                             <input type="text" id="newTitle" class="form-control" placeholder="اكتب عنواناً جذاباً...">
@@ -1284,14 +1679,24 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label"><i class="fas fa-image"></i> الصورة الرئيسية للخبر</label>
-                        <div class="image-drop-zone" onclick="document.getElementById('fileInput').click()">
+                        <label class="form-label"><i class="fas fa-image"></i> الصورة الرئيسية</label>
+                        <div class="image-drop-zone" onclick="document.getElementById('mainFileInput').click()">
                             <i class="fas fa-cloud-upload-alt"></i>
-                            <p style="color: #888; font-size: 0.9rem;">اضغط لرفع الصورة الرئيسية من جهازك</p>
-                            <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="previewImage(this)">
+                            <p style="color: #888; font-size: 0.9rem;">اضغط لرفع الصورة الرئيسية</p>
+                            <input type="file" id="mainFileInput" accept="image/*" style="display:none" onchange="previewMainImage(this)">
                         </div>
-                        <img id="imagePreview" src="" alt="Preview">
+                        <img id="mainImagePreview" src="" alt="Preview">
                         <input type="hidden" id="imageData">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-images"></i> صور إضافية (اختياري)</label>
+                        <div class="image-drop-zone" onclick="document.getElementById('extraFilesInput').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p style="color: #888; font-size: 0.9rem;">اضغط لاختيار صور متعددة</p>
+                            <input type="file" id="extraFilesInput" accept="image/*" multiple style="display:none" onchange="previewExtraImages(this)">
+                        </div>
+                        <div class="image-preview-container" id="extraImagesPreview"></div>
                     </div>
 
                     <div class="form-group">
@@ -1299,13 +1704,16 @@
                         <div id="editorContainer" style="border-radius: 12px; overflow: hidden;"></div>
                     </div>
 
-                    <button class="btn-premium" onclick="saveNews()"><i class="fas fa-save"></i> نشر المحتوى</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-premium" onclick="saveNews()"><i class="fas fa-save"></i> نشر المحتوى</button>
+                        <button class="btn-premium btn-secondary" onclick="previewArticle()"><i class="fas fa-eye"></i> معاينة</button>
+                    </div>
                     <button id="cancelBtn" class="btn-premium btn-danger" style="margin-top: 10px; display:none;" onclick="resetForm()"><i class="fas fa-times"></i> إلغاء التعديل</button>
                 </div>
 
                 <div class="panel">
-                    <h3 style="color: var(--text-primary); margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px;">
-                        <i class="fas fa-list-ul" style="color: var(--antique-gold); margin-left: 10px;"></i> إدارة المحتوى المنشور
+                    <h3 style="color: var(--text-primary); margin-bottom: 25px;">
+                        <i class="fas fa-list-ul" style="color: var(--antique-gold); margin-left: 10px;"></i> الأخبار المنشورة
                     </h3>
                     <div style="overflow-x:auto;">
                         <table class="data-table">
@@ -1315,31 +1723,17 @@
                                     <th>العنوان</th>
                                     <th>القسم</th>
                                     <th>التاريخ</th>
+                                    <th>المشاهدات</th>
                                     <th>الإجراءات</th>
                                 </tr>
                             </thead>
                             <tbody id="newsTableBody"></tbody>
                         </table>
                     </div>
-
-                    <h3 style="color: var(--text-primary); margin: 40px 0 25px; border-bottom: 1px solid #333; padding-bottom: 15px;">
-                        <i class="fas fa-comments" style="color: var(--antique-gold); margin-left: 10px;"></i> تعليقات القراء (AI تحليل)
-                    </h3>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>القارئ</th>
-                                <th>التعليق</th>
-                                <th>المشاعر</th>
-                                <th>إجراء</th>
-                            </tr>
-                        </thead>
-                        <tbody id="commentsTableBody"></tbody>
-                    </table>
                 </div>
             </div>
 
-            <!-- Pages Tab (الصفحات الثابتة) -->
+            <!-- Pages Tab -->
             <div id="tab-pages" style="display: none;">
                 <div class="panel" style="grid-column: 1 / -1;">
                     <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-file-alt" style="color: var(--antique-gold); margin-left: 10px;"></i> إدارة الصفحات الثابتة</h3>
@@ -1356,67 +1750,92 @@
                 </div>
             </div>
 
-            <!-- Settings Tab (مع إضافات الأخبار العاجلة وروابط التواصل) -->
+            <!-- Comments Management Tab -->
+            <div id="tab-comments" style="display: none;">
+                <div class="panel" style="grid-column: 1 / -1;">
+                    <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-comments" style="color: var(--antique-gold); margin-left: 10px;"></i> إدارة التعليقات</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>المقال</th>
+                                <th>المستخدم</th>
+                                <th>التعليق</th>
+                                <th>التاريخ</th>
+                                <th>الإعجابات</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminCommentsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Trash Tab -->
+            <div id="tab-trash" style="display: none;">
+                <div class="panel" style="grid-column: 1 / -1;">
+                    <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-trash-alt" style="color: var(--antique-gold); margin-left: 10px;"></i> سلة المحذوفات</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>الصورة</th>
+                                <th>العنوان</th>
+                                <th>تاريخ الحذف</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trashTableBody"></tbody>
+                    </table>
+                    <button class="btn-premium btn-danger" style="width: auto; margin-top: 20px;" onclick="emptyTrash()"><i class="fas fa-trash-alt"></i> إفراغ السلة</button>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
             <div id="tab-settings" class="dash-grid" style="display: none;">
                 <div class="panel" style="grid-column: 1 / -1;">
-                    <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-cogs" style="color: var(--antique-gold); margin-left: 10px;"></i> إعدادات الموقع العامة</h3>
+                    <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-cogs" style="color: var(--antique-gold); margin-left: 10px;"></i> إعدادات الموقع</h3>
                     <div class="settings-grid">
                         <div class="setting-card">
                             <div>
-                                <h4><i class="fas fa-globe" style="color: var(--antique-gold); margin-left: 5px;"></i> اسم الموقع</h4>
-                                <p style="color: #666; font-size: 0.8rem;">يظهر في الشعار والعنوان</p>
+                                <h4><i class="fas fa-globe"></i> اسم الموقع</h4>
                             </div>
-                            <input type="text" id="settingSiteName" class="form-control" style="width: 200px;" value="الإمبراطورية">
+                            <input type="text" id="settingSiteName" class="form-control" style="width: 200px;">
                         </div>
                         
                         <div class="setting-card">
                             <div>
-                                <h4><i class="fas fa-moon" style="color: var(--antique-gold); margin-left: 5px;"></i> الوضع الليلي</h4>
-                                <p style="color: #666; font-size: 0.8rem;">تبديل بين الوضع الداكن والفاتح</p>
+                                <h4><i class="fas fa-moon"></i> الوضع الليلي</h4>
                             </div>
                             <div class="toggle-switch active" id="themeToggle" onclick="toggleTheme()"></div>
                         </div>
 
                         <div class="setting-card">
                             <div>
-                                <h4><i class="fas fa-bolt" style="color: var(--antique-gold); margin-left: 5px;"></i> شريط الأخبار العاجلة</h4>
-                                <p style="color: #666; font-size: 0.8rem;">إظهار أو إخفاء الشريط العلوي</p>
+                                <h4><i class="fas fa-bolt"></i> شريط الأخبار العاجلة</h4>
                             </div>
                             <div class="toggle-switch active" id="newsBarToggle" onclick="toggleNewsBar()"></div>
                         </div>
+
+                        <div class="setting-card">
+                            <div>
+                                <h4><i class="fas fa-lock"></i> تغيير كلمة المرور</h4>
+                            </div>
+                            <input type="password" id="newPassword" class="form-control" style="width: 150px;" placeholder="جديدة">
+                        </div>
                     </div>
 
-                    <!-- إدارة الأخبار العاجلة -->
-                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border);">
-                        <h4 style="color: var(--text-primary); margin-bottom: 15px;"><i class="fas fa-newspaper" style="color: var(--antique-gold); margin-left: 5px;"></i> الأخبار العاجلة (سطر لكل خبر)</h4>
+                    <div style="margin-top: 30px;">
+                        <h4 style="color: var(--text-primary); margin-bottom: 15px;">الأخبار العاجلة (سطر لكل خبر)</h4>
                         <textarea id="breakingNewsInput" class="form-control" rows="5" placeholder="أدخل كل خبر في سطر منفصل"></textarea>
-                        <p style="color: #666; font-size: 0.8rem; margin-top: 5px;">سيتم عرض الأخبار بشكل متحرك في الشريط العلوي.</p>
                     </div>
 
-                    <!-- روابط التواصل الاجتماعي -->
-                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border);">
-                        <h4 style="color: var(--text-primary); margin-bottom: 15px;"><i class="fas fa-share-alt" style="color: var(--antique-gold); margin-left: 5px;"></i> روابط التواصل الاجتماعي</h4>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                            <div>
-                                <label class="form-label"><i class="fab fa-facebook" style="color: #3b5998;"></i> فيسبوك</label>
-                                <input type="url" id="socialFb" class="form-control" placeholder="https://facebook.com/...">
-                            </div>
-                            <div>
-                                <label class="form-label"><i class="fab fa-twitter" style="color: #1da1f2;"></i> تويتر</label>
-                                <input type="url" id="socialTwitter" class="form-control" placeholder="https://twitter.com/...">
-                            </div>
-                            <div>
-                                <label class="form-label"><i class="fab fa-instagram" style="color: #e1306c;"></i> إنستغرام</label>
-                                <input type="url" id="socialInstagram" class="form-control" placeholder="https://instagram.com/...">
-                            </div>
-                            <div>
-                                <label class="form-label"><i class="fab fa-youtube" style="color: #ff0000;"></i> يوتيوب</label>
-                                <input type="url" id="socialYoutube" class="form-control" placeholder="https://youtube.com/...">
-                            </div>
-                            <div>
-                                <label class="form-label"><i class="fab fa-linkedin" style="color: #0077b5;"></i> لينكد إن</label>
-                                <input type="url" id="socialLinkedin" class="form-control" placeholder="https://linkedin.com/...">
-                            </div>
+                    <div style="margin-top: 30px;">
+                        <h4 style="color: var(--text-primary); margin-bottom: 15px;">روابط التواصل الاجتماعي</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <input type="url" id="socialFb" class="form-control" placeholder="فيسبوك">
+                            <input type="url" id="socialTwitter" class="form-control" placeholder="تويتر">
+                            <input type="url" id="socialInstagram" class="form-control" placeholder="إنستغرام">
+                            <input type="url" id="socialYoutube" class="form-control" placeholder="يوتيوب">
+                            <input type="url" id="socialLinkedin" class="form-control" placeholder="لينكد إن">
                         </div>
                     </div>
 
@@ -1427,12 +1846,10 @@
             <!-- Backup Tab -->
             <div id="tab-backup" class="dash-grid" style="display: none;">
                 <div class="panel" style="grid-column: 1 / -1; text-align: center;">
-                    <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-database" style="color: var(--antique-gold); margin-left: 10px;"></i> النسخ الاحتياطي والاستعادة</h3>
-                    <p style="color: #666; margin-bottom: 30px;">قم بتنزيل نسخة من جميع بيانات الموقع أو استعادة نسخة سابقة.</p>
-                    
+                    <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-database" style="color: var(--antique-gold); margin-left: 10px;"></i> النسخ الاحتياطي</h3>
                     <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-                        <button class="btn-premium" style="max-width: 250px;" onclick="downloadBackup()"><i class="fas fa-download"></i> تنزيل نسخة احتياطية</button>
-                        <label class="btn-premium btn-secondary" style="max-width: 250px; cursor: pointer; display: inline-block;">
+                        <button class="btn-premium" style="max-width: 250px;" onclick="downloadBackup()"><i class="fas fa-download"></i> تنزيل نسخة</button>
+                        <label class="btn-premium btn-secondary" style="max-width: 250px;">
                             <i class="fas fa-upload"></i> استعادة نسخة
                             <input type="file" id="restoreFile" accept=".json" style="display: none;" onchange="restoreBackup(this)">
                         </label>
@@ -1444,7 +1861,7 @@
             <!-- Stats Tab -->
             <div id="tab-stats" class="dash-grid" style="display: none;">
                 <div class="panel" style="grid-column: 1 / -1;">
-                    <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-chart-line" style="color: var(--antique-gold); margin-left: 10px;"></i> إحصائيات النظام الحية</h3>
+                    <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-chart-line" style="color: var(--antique-gold); margin-left: 10px;"></i> إحصائيات النظام</h3>
                     <div class="stats-row">
                         <div class="stat-box">
                             <i class="fas fa-newspaper fa-2x" style="color: var(--antique-gold);"></i>
@@ -1454,44 +1871,54 @@
                         <div class="stat-box">
                             <i class="fas fa-comments fa-2x" style="color: var(--antique-gold);"></i>
                             <div class="stat-number" id="statCommentsCount">0</div>
-                            <div class="stat-label">إجمالي التعليقات</div>
+                            <div class="stat-label">التعليقات</div>
                         </div>
                         <div class="stat-box">
-                            <i class="fas fa-database fa-2x" style="color: var(--antique-gold);"></i>
-                            <div class="stat-number" id="statStorageSize">0 KB</div>
-                            <div class="stat-label">حجم البيانات المخزنة</div>
+                            <i class="fas fa-eye fa-2x" style="color: var(--antique-gold);"></i>
+                            <div class="stat-number" id="statViews">0</div>
+                            <div class="stat-label">إجمالي المشاهدات</div>
                         </div>
                         <div class="stat-box">
                             <i class="fas fa-users fa-2x" style="color: var(--antique-gold);"></i>
-                            <div class="stat-number">12,450</div>
-                            <div class="stat-label">زيارات اليوم (محاكاة)</div>
+                            <div class="stat-number" id="statSaved">0</div>
+                            <div class="stat-label">المحفوظات</div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
     <div id="toastContainer"></div>
 
-    <!-- تحميل Quill.js -->
+    <!-- Service Worker for PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:application/javascript,' + encodeURIComponent(`
+                self.addEventListener('install', e => e.waitUntil(skipWaiting()));
+                self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+                self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
+            `)).then(() => console.log('SW registered'));
+        }
+    </script>
+
+    <!-- Quill.js -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     <script>
         // ==================== التهيئة الأساسية وقاعدة البيانات ====================
-        
         const DB_NAME = 'EmpireDB';
-        const DB_VERSION = 3;
+        const DB_VERSION = 5;
         let db;
 
+        // البيانات الافتراضية
         const defaultNews = [
-            { id: 1, title: "إطلاق أول قمر صناعي كمومي", cat: "tech", img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80", text: "<p>خطوة تاريخية في عالم الاتصالات الكمومية...</p><p>في تطور نوعي غير مسبوق، نجحت وكالة الفضاء الدولية في إطلاق أول قمر صناعي يعتمد كلياً على تقنيات الحوسبة الكمومية.</p><blockquote>هذا الإنجاز يفتح آفاقاً جديدة في مجال الاتصالات الآمنة.</blockquote><p>يتميز القمر الجديد بقدرته على معالجة البيانات بسرعة تفوق أسرع الحواسيب العملاقة الحالية بملايين المرات.</p><h3>فيديو توضيحي للإطلاق:</h3><iframe src='https://www.youtube.com/embed/dQw4w9WgXcQ' frameborder='0' allowfullscreen></iframe>", date: "2023-10-01" },
-            { id: 2, title: "أسواق المال تسجل أرقاماً قياسية", cat: "news", img: "https://images.unsplash.com/photo-1611974765270-ca12586343bb?auto=format&fit=crop&w=600&q=80", text: "<p>تحليل شامل لصعود المؤشرات العالمية...</p><p>شهدت أسواق المال العالمية اليوم ارتفاعاً جنونياً وغير مسبوق، حيث سجلت المؤشرات الرئيسية في وول ستريت وبورصة لندن أرقاماً قياسية جديدة.</p><ul><li>قطاع التكنولوجيا قاد الصعود.</li><li>انخفاض معدلات التضخم بشكل مفاجئ.</li></ul><p>يعزو المحللون هذا الارتفاع إلى التقارير الإيجابية حول نمو الاقتصاد العالمي.</p>", date: "2023-10-02" }
+            { id: 1, title: "إطلاق أول قمر صناعي كمومي", cat: "tech", img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80", text: "<p>خطوة تاريخية في عالم الاتصالات الكمومية...</p><p>في تطور نوعي غير مسبوق، نجحت وكالة الفضاء الدولية في إطلاق أول قمر صناعي يعتمد كلياً على تقنيات الحوسبة الكمومية.</p><blockquote>هذا الإنجاز يفتح آفاقاً جديدة في مجال الاتصالات الآمنة.</blockquote><p>يتميز القمر الجديد بقدرته على معالجة البيانات بسرعة تفوق أسرع الحواسيب العملاقة الحالية بملايين المرات.</p><h3>فيديو توضيحي للإطلاق:</h3><iframe src='https://www.youtube.com/embed/dQw4w9WgXcQ' frameborder='0' allowfullscreen></iframe>", date: "2023-10-01", views: 150, author: "أحمد منصور" },
+            { id: 2, title: "أسواق المال تسجل أرقاماً قياسية", cat: "news", img: "https://images.unsplash.com/photo-1611974765270-ca12586343bb?auto=format&fit=crop&w=600&q=80", text: "<p>تحليل شامل لصعود المؤشرات العالمية...</p><p>شهدت أسواق المال العالمية اليوم ارتفاعاً جنونياً وغير مسبوق، حيث سجلت المؤشرات الرئيسية في وول ستريت وبورصة لندن أرقاماً قياسية جديدة.</p><ul><li>قطاع التكنولوجيا قاد الصعود.</li><li>انخفاض معدلات التضخم بشكل مفاجئ.</li></ul><p>يعزو المحللون هذا الارتفاع إلى التقارير الإيجابية حول نمو الاقتصاد العالمي.</p>", date: "2023-10-02", views: 89, author: "سارة خالد" }
         ];
         const defaultComments = [
-            { id: 1, user: "محمد العلي", text: "محتوى راقي جداً ومتميز", status: "active" },
-            { id: 2, user: "سارة أحمد", text: "أنتظر المزيد من مقالات التكنولوجيا", status: "pending" },
-            { id: 3, user: "خالد", text: "الموقع بطيء قليلاً", status: "active" }
+            { id: 1, newsId: 1, user: "محمد العلي", text: "محتوى راقي جداً ومتميز", date: "2023-10-01", likes: 5, replies: [] },
+            { id: 2, newsId: 1, user: "سارة أحمد", text: "أنتظر المزيد من مقالات التكنولوجيا", date: "2023-10-01", likes: 2, replies: [] },
+            { id: 3, newsId: 2, user: "خالد", text: "الموقع بطيء قليلاً", date: "2023-10-02", likes: 0, replies: [] }
         ];
         const defaultSettings = {
             siteName: "الإمبراطورية",
@@ -1503,13 +1930,8 @@
                 "فوز المنتخب الوطني بكأس العالم",
                 "اكتشاف كوكب جديد صالح للحياة"
             ],
-            socialLinks: {
-                facebook: "",
-                twitter: "",
-                instagram: "",
-                youtube: "",
-                linkedin: ""
-            }
+            socialLinks: { facebook: "", twitter: "", instagram: "", youtube: "", linkedin: "" },
+            adminPassword: "Ali1992@li"
         };
         const defaultPages = {
             about: "<h2>من نحن</h2><p>نحن الإمبراطورية، منصة إعلامية رائدة تسعى لتقديم محتوى فاخر ودقيق.</p>",
@@ -1517,15 +1939,16 @@
             contact: "<h2>اتصل بنا</h2><p>يمكنكم التواصل معنا عبر البريد الإلكتروني: info@empire.com</p>"
         };
 
-        let savedNews = [];
         let newsData = [];
         let commentsData = [];
         let siteSettings = {};
         let pagesData = {};
+        let savedNews = [];
+        let trashNews = []; // سلة المحذوفات
         let currentOpenArticleId = null;
-        let quill;
-        let pageQuill;
+        let quill, pageQuill;
         let currentPage = 'about';
+        let extraImages = []; // لتخزين الصور الإضافية
 
         // فتح قاعدة البيانات
         function openDB() {
@@ -1543,6 +1966,7 @@
                     if (!db.objectStoreNames.contains('settings')) db.createObjectStore('settings', { keyPath: 'key' });
                     if (!db.objectStoreNames.contains('saved')) db.createObjectStore('saved', { keyPath: 'id' });
                     if (!db.objectStoreNames.contains('pages')) db.createObjectStore('pages', { keyPath: 'pageId' });
+                    if (!db.objectStoreNames.contains('trash')) db.createObjectStore('trash', { keyPath: 'id' });
                 };
             });
         }
@@ -1556,8 +1980,8 @@
                 const newsStore = newsTx.objectStore('news');
                 const newsRequest = newsStore.getAll();
                 newsRequest.onsuccess = () => {
-                    if (newsRequest.result.length > 0) newsData = newsRequest.result;
-                    else { newsData = defaultNews.slice(); saveNewsToDB(newsData); }
+                    newsData = newsRequest.result.length ? newsRequest.result : defaultNews.slice();
+                    if (!newsRequest.result.length) saveNewsToDB(newsData);
                     renderNews();
                     renderTables();
                     updateStats();
@@ -1567,8 +1991,8 @@
                 const commentsStore = commentsTx.objectStore('comments');
                 const commentsRequest = commentsStore.getAll();
                 commentsRequest.onsuccess = () => {
-                    if (commentsRequest.result.length > 0) commentsData = commentsRequest.result;
-                    else { commentsData = defaultComments.slice(); saveCommentsToDB(commentsData); }
+                    commentsData = commentsRequest.result.length ? commentsRequest.result : defaultComments.slice();
+                    if (!commentsRequest.result.length) saveCommentsToDB(commentsData);
                 };
 
                 const settingsTx = db.transaction('settings', 'readonly');
@@ -1591,13 +2015,20 @@
                 const pagesStore = pagesTx.objectStore('pages');
                 const pagesRequest = pagesStore.getAll();
                 pagesRequest.onsuccess = () => {
-                    if (pagesRequest.result.length > 0) {
+                    if (pagesRequest.result.length) {
                         pagesData = {};
                         pagesRequest.result.forEach(p => pagesData[p.pageId] = p.content);
                     } else {
                         pagesData = { ...defaultPages };
                         savePagesToDB();
                     }
+                };
+
+                const trashTx = db.transaction('trash', 'readonly');
+                const trashStore = trashTx.objectStore('trash');
+                const trashRequest = trashStore.getAll();
+                trashRequest.onsuccess = () => {
+                    trashNews = trashRequest.result || [];
                 };
             } catch (e) {
                 console.error('IndexedDB error, falling back to localStorage', e);
@@ -1606,6 +2037,7 @@
                 savedNews = JSON.parse(localStorage.getItem('empire_saved')) || [];
                 siteSettings = JSON.parse(localStorage.getItem('empire_settings')) || defaultSettings;
                 pagesData = JSON.parse(localStorage.getItem('empire_pages')) || defaultPages;
+                trashNews = JSON.parse(localStorage.getItem('empire_trash')) || [];
                 renderNews();
                 renderTables();
                 applySettings();
@@ -1634,7 +2066,7 @@
             const tx = db.transaction('saved', 'readwrite');
             const store = tx.objectStore('saved');
             store.clear();
-            savedNews.forEach(newsId => store.put({ id: Date.now() + Math.random(), newsId: newsId }));
+            savedNews.forEach(newsId => store.put({ id: Date.now() + Math.random(), newsId }));
         }
 
         function savePagesToDB() {
@@ -1646,6 +2078,13 @@
             }
         }
 
+        function saveTrashToDB() {
+            const tx = db.transaction('trash', 'readwrite');
+            const store = tx.objectStore('trash');
+            store.clear();
+            trashNews.forEach(item => store.put(item));
+        }
+
         function saveData() {
             if (db) {
                 saveNewsToDB(newsData);
@@ -1653,12 +2092,14 @@
                 saveSettingsToDB();
                 saveSavedToDB();
                 savePagesToDB();
+                saveTrashToDB();
             } else {
                 localStorage.setItem('empire_news', JSON.stringify(newsData));
                 localStorage.setItem('empire_comments', JSON.stringify(commentsData));
                 localStorage.setItem('empire_saved', JSON.stringify(savedNews));
                 localStorage.setItem('empire_settings', JSON.stringify(siteSettings));
                 localStorage.setItem('empire_pages', JSON.stringify(pagesData));
+                localStorage.setItem('empire_trash', JSON.stringify(trashNews));
             }
             renderNews();
             renderTables();
@@ -1667,7 +2108,7 @@
             updateSocialIcons();
         }
 
-        // ==================== تحديث شريط الأخبار العاجلة ====================
+        // ==================== تحديثات واجهة المستخدم ====================
         function updateBreakingNewsBar() {
             const container = document.getElementById('breakingNewsContent');
             if (!container) return;
@@ -1678,10 +2119,10 @@
             }
             let html = '<div class="bn-slider">';
             items.forEach(item => {
-                html += `<div class="bn-item"><i class="fas fa-circle" style="font-size: 0.5rem; vertical-align: middle; margin-left: 8px;"></i>${item}</div>`;
+                html += `<div class="bn-item"><i class="fas fa-circle" style="font-size: 0.5rem;"></i>${item}</div>`;
             });
             items.forEach(item => {
-                html += `<div class="bn-item"><i class="fas fa-circle" style="font-size: 0.5rem; vertical-align: middle; margin-left: 8px;"></i>${item}</div>`;
+                html += `<div class="bn-item"><i class="fas fa-circle" style="font-size: 0.5rem;"></i>${item}</div>`;
             });
             html += '</div>';
             container.innerHTML = html;
@@ -1694,7 +2135,22 @@
             }
         }
 
-        // ==================== تحديث أيقونات التواصل الاجتماعي (في التذييل) ====================
+        function openFirstNews() {
+            if (newsData.length > 0) openArticleModal(newsData[0].id);
+        }
+
+        function toggleNewsBar(forceHide) {
+            if (forceHide) {
+                siteSettings.showNewsBar = false;
+                applySettings();
+                saveData();
+            } else {
+                siteSettings.showNewsBar = !siteSettings.showNewsBar;
+                applySettings();
+                saveData();
+            }
+        }
+
         function updateSocialIcons() {
             const socialDiv = document.getElementById('socialIcons');
             if (!socialDiv) return;
@@ -1709,22 +2165,17 @@
             let html = '';
             platforms.forEach(p => {
                 const url = links[p.id];
-                if (url && url.trim() !== '') {
-                    html += `<a href="${url}" target="_blank" rel="noopener noreferrer"><i class="${p.icon}"></i></a>`;
-                } else {
-                    html += `<a href="#" style="opacity: 0.5; cursor: default;" onclick="return false;"><i class="${p.icon}"></i></a>`;
-                }
+                html += `<a href="${url || '#'}" target="_blank" rel="noopener noreferrer" style="${!url ? 'opacity:0.5; cursor:default; pointer-events:none;' : ''}"><i class="${p.icon}"></i></a>`;
             });
             socialDiv.innerHTML = html;
         }
 
-        // ==================== تطبيق الإعدادات ====================
         function applySettings() {
             document.getElementById('siteNameDisplay').innerText = siteSettings.siteName;
             document.getElementById('footerLogoDisplay').innerText = siteSettings.siteName + ".";
             document.getElementById('settingSiteName').value = siteSettings.siteName;
 
-            if(siteSettings.theme === 'light') {
+            if (siteSettings.theme === 'light') {
                 document.documentElement.setAttribute('data-theme', 'light');
                 document.getElementById('themeToggle').classList.add('active');
             } else {
@@ -1733,7 +2184,7 @@
             }
 
             const newsBar = document.getElementById('breakingNewsBar');
-            if(siteSettings.showNewsBar) {
+            if (siteSettings.showNewsBar) {
                 newsBar.classList.remove('hidden');
                 document.getElementById('newsBarToggle').classList.add('active');
             } else {
@@ -1760,12 +2211,6 @@
             saveData();
         }
 
-        function toggleNewsBar() {
-            siteSettings.showNewsBar = !siteSettings.showNewsBar;
-            applySettings();
-            saveData();
-        }
-
         function saveSettings() {
             siteSettings.siteName = document.getElementById('settingSiteName').value;
             const newsText = document.getElementById('breakingNewsInput').value;
@@ -1777,6 +2222,8 @@
                 youtube: document.getElementById('socialYoutube').value.trim(),
                 linkedin: document.getElementById('socialLinkedin').value.trim()
             };
+            const newPass = document.getElementById('newPassword').value;
+            if (newPass) siteSettings.adminPassword = newPass;
             applySettings();
             saveData();
             showToast('تم حفظ إعدادات الموقع بنجاح', 'success');
@@ -1790,30 +2237,35 @@
             const footer = document.getElementById('mainFooter');
             const newsBar = document.getElementById('breakingNewsBar');
             const adminBtn = document.getElementById('adminBtn');
+            const backToTop = document.getElementById('backToTop');
             
-            if(isFocusMode) {
-                header.style.opacity = '0';
-                header.style.pointerEvents = 'none';
+            if (isFocusMode) {
+                header.style.opacity = '0'; header.style.pointerEvents = 'none';
                 footer.style.display = 'none';
                 newsBar.style.display = 'none';
                 adminBtn.style.display = 'none';
+                backToTop.style.display = 'none';
                 showToast('تم تفعيل وضع التركيز', 'info');
             } else {
-                header.style.opacity = '1';
-                header.style.pointerEvents = 'all';
+                header.style.opacity = '1'; header.style.pointerEvents = 'all';
                 footer.style.display = 'block';
                 newsBar.style.display = 'block';
                 adminBtn.style.display = 'flex';
+                backToTop.style.display = 'flex';
                 showToast('تم تعطيل وضع التركيز', 'info');
             }
         }
 
-        // ==================== شريط التقدم ====================
+        // ==================== شريط التقدم والعودة للأعلى ====================
         window.onscroll = function() {
             let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             let scrolled = (winScroll / height) * 100;
             document.getElementById("progressBar").style.width = scrolled + "%";
+            
+            const backBtn = document.getElementById('backToTop');
+            if (winScroll > 300) backBtn.classList.add('visible');
+            else backBtn.classList.remove('visible');
         };
 
         // ==================== عرض الأخبار ====================
@@ -1822,13 +2274,13 @@
             grid.innerHTML = '';
             
             let filtered = [];
-            if(filter === 'saved') {
+            if (filter === 'saved') {
                 filtered = newsData.filter(n => savedNews.includes(n.id));
             } else {
                 filtered = filter === 'all' ? newsData : newsData.filter(n => n.cat === filter);
             }
             
-            if(filtered.length === 0) {
+            if (filtered.length === 0) {
                 grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding: 50px; color: #666;"><i class="fas fa-inbox fa-3x" style="margin-bottom:20px; opacity:0.5;"></i><br>لا توجد أخبار في هذا القسم حالياً</div>';
                 return;
             }
@@ -1848,8 +2300,9 @@
                         </div>
                         <div class="card-content">
                             <div class="card-meta">
-                                <span><i class="far fa-user"></i> الإدارة التحريرية</span>
+                                <span><i class="far fa-user"></i> ${item.author || 'الإدارة التحريرية'}</span>
                                 <span><i class="far fa-clock"></i> ${item.date}</span>
+                                <span><i class="far fa-eye"></i> ${item.views || 0}</span>
                             </div>
                             <h3 class="card-title">${item.title}</h3>
                             <p class="card-excerpt">${excerpt}</p>
@@ -1871,7 +2324,7 @@
 
         function toggleSave(id, btn) {
             event.stopPropagation();
-            if(savedNews.includes(id)) {
+            if (savedNews.includes(id)) {
                 savedNews = savedNews.filter(sid => sid !== id);
                 btn.classList.remove('saved');
                 btn.innerHTML = '<i class="far fa-bookmark"></i> حفظ';
@@ -1883,10 +2336,10 @@
                 showToast('تم الحفظ للقراءة لاحقاً', 'success');
             }
             saveData();
-            if(document.querySelector('nav a.active') && document.querySelector('nav a.active').innerText.includes('المحفوظات')) {
+            if (document.querySelector('nav a.active') && document.querySelector('nav a.active').innerText.includes('المحفوظات')) {
                 renderNews('saved');
             }
-            if(currentOpenArticleId === id) updateModalSaveBtn();
+            if (currentOpenArticleId === id) updateModalSaveBtn();
         }
 
         function shareNews(title) {
@@ -1906,13 +2359,19 @@
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
             event.target.classList.add('active');
             renderNews(cat);
-            window.scrollTo({top: 800, behavior: 'smooth'});
+            window.scrollTo({ top: 800, behavior: 'smooth' });
+            // تحديث URL
+            history.pushState({}, '', `?cat=${cat}`);
         }
 
         // ==================== ARTICLE MODAL ====================
         function openArticleModal(id) {
             const article = newsData.find(n => n.id === id);
-            if(!article) return;
+            if (!article) return;
+
+            // زيادة عدد المشاهدات
+            article.views = (article.views || 0) + 1;
+            saveData();
 
             currentOpenArticleId = id;
             
@@ -1920,29 +2379,110 @@
             document.getElementById('modalCat').innerText = getCatName(article.cat);
             document.getElementById('modalTitle').innerText = article.title;
             document.getElementById('modalDate').innerText = article.date;
-            document.getElementById('modalText').innerHTML = article.text;
+            document.getElementById('modalAuthor').innerText = article.author || 'الإدارة التحريرية';
+            document.getElementById('modalViews').innerText = article.views || 0;
+            document.getElementById('modalText').innerHTML = DOMPurify.sanitize(article.text);
             
+            // عرض التعليقات
+            renderCommentsForArticle(id);
+
             updateModalSaveBtn();
 
             const modal = document.getElementById('articleModal');
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+
+            // تحديث URL
+            history.pushState({}, '', `?news=${id}`);
         }
 
         function closeArticleModal() {
-            const modal = document.getElementById('articleModal');
-            modal.classList.remove('active');
+            document.getElementById('articleModal').classList.remove('active');
             document.body.style.overflow = 'auto';
             currentOpenArticleId = null;
+            history.pushState({}, '', window.location.pathname);
         }
 
-        document.getElementById('articleModal').addEventListener('click', function(e) {
-            if (e.target === this) closeArticleModal();
-        });
+        function renderCommentsForArticle(newsId) {
+            const commentsList = document.getElementById('commentsList');
+            const articleComments = commentsData.filter(c => c.newsId === newsId);
+            if (articleComments.length === 0) {
+                commentsList.innerHTML = '<p style="color: #666;">لا توجد تعليقات بعد. كن أول من يعلق!</p>';
+                return;
+            }
+            commentsList.innerHTML = articleComments.map(c => `
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-author">${c.user}</span>
+                        <span class="comment-date">${c.date}</span>
+                    </div>
+                    <div class="comment-text">${c.text}</div>
+                    <div class="comment-actions">
+                        <button onclick="likeComment(${c.id})" class="${c.liked ? 'liked' : ''}"><i class="fas fa-thumbs-up"></i> ${c.likes || 0}</button>
+                        <button onclick="replyToComment(${c.id})"><i class="fas fa-reply"></i> رد</button>
+                    </div>
+                    ${c.replies ? c.replies.map(r => `
+                        <div class="comment-item reply">
+                            <div class="comment-header">
+                                <span class="comment-author">${r.user}</span>
+                                <span class="comment-date">${r.date}</span>
+                            </div>
+                            <div class="comment-text">${r.text}</div>
+                        </div>
+                    `).join('') : ''}
+                </div>
+            `).join('');
+        }
+
+        function addCommentToCurrentArticle() {
+            if (!currentOpenArticleId) return;
+            const text = document.getElementById('newCommentText').value.trim();
+            if (!text) { showToast('يرجى كتابة تعليق', 'error'); return; }
+            const newComment = {
+                id: Date.now(),
+                newsId: currentOpenArticleId,
+                user: "قارئ" + Math.floor(Math.random() * 1000),
+                text: text,
+                date: new Date().toLocaleDateString('ar-EG'),
+                likes: 0,
+                replies: []
+            };
+            commentsData.push(newComment);
+            saveData();
+            renderCommentsForArticle(currentOpenArticleId);
+            document.getElementById('newCommentText').value = '';
+            showToast('تم إضافة تعليقك', 'success');
+        }
+
+        function likeComment(commentId) {
+            const comment = commentsData.find(c => c.id === commentId);
+            if (comment) {
+                comment.likes = (comment.likes || 0) + 1;
+                comment.liked = true;
+                saveData();
+                renderCommentsForArticle(currentOpenArticleId);
+            }
+        }
+
+        function replyToComment(commentId) {
+            const replyText = prompt('أكتب ردك:');
+            if (!replyText) return;
+            const comment = commentsData.find(c => c.id === commentId);
+            if (comment) {
+                if (!comment.replies) comment.replies = [];
+                comment.replies.push({
+                    user: "قارئ",
+                    text: replyText,
+                    date: new Date().toLocaleDateString('ar-EG')
+                });
+                saveData();
+                renderCommentsForArticle(currentOpenArticleId);
+            }
+        }
 
         function updateModalSaveBtn() {
             const btn = document.getElementById('modalSaveBtn');
-            if(savedNews.includes(currentOpenArticleId)) {
+            if (savedNews.includes(currentOpenArticleId)) {
                 btn.innerHTML = '<i class="fas fa-bookmark"></i> محفوظ';
             } else {
                 btn.innerHTML = '<i class="far fa-bookmark"></i> حفظ';
@@ -1950,8 +2490,8 @@
         }
 
         function toggleSaveFromModal() {
-            if(!currentOpenArticleId) return;
-            if(savedNews.includes(currentOpenArticleId)) {
+            if (!currentOpenArticleId) return;
+            if (savedNews.includes(currentOpenArticleId)) {
                 savedNews = savedNews.filter(sid => sid !== currentOpenArticleId);
                 showToast('تم إزالة من المحفوظات', 'info');
             } else {
@@ -1964,35 +2504,30 @@
 
         function shareCurrentArticle() {
             const article = newsData.find(n => n.id === currentOpenArticleId);
-            if(article) shareNews(article.title);
+            if (article) shareNews(article.title);
         }
 
-        // ==================== PAGE MODAL (عرض من نحن، فريق العمل، اتصل بنا) ====================
+        // ==================== PAGE MODAL ====================
         function openPageModal(pageId) {
             let content = pagesData[pageId] || "<p>لا يوجد محتوى بعد.</p>";
-            
-            // إذا كانت الصفحة هي "اتصل بنا"، نضيف أيقونات التواصل الاجتماعي بعد المحتوى
             if (pageId === 'contact') {
                 const links = siteSettings.socialLinks || {};
                 const platforms = [
-                    { id: 'facebook', icon: 'fab fa-facebook', color: '#3b5998' },
-                    { id: 'twitter', icon: 'fab fa-twitter', color: '#1da1f2' },
-                    { id: 'instagram', icon: 'fab fa-instagram', color: '#e1306c' },
-                    { id: 'youtube', icon: 'fab fa-youtube', color: '#ff0000' },
-                    { id: 'linkedin', icon: 'fab fa-linkedin', color: '#0077b5' }
+                    { id: 'facebook', icon: 'fab fa-facebook' },
+                    { id: 'twitter', icon: 'fab fa-twitter' },
+                    { id: 'instagram', icon: 'fab fa-instagram' },
+                    { id: 'youtube', icon: 'fab fa-youtube' },
+                    { id: 'linkedin', icon: 'fab fa-linkedin' }
                 ];
                 let iconsHtml = '<div class="contact-social-icons">';
                 platforms.forEach(p => {
                     const url = links[p.id];
-                    if (url && url.trim() !== '') {
-                        iconsHtml += `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: ${p.color};"><i class="${p.icon}"></i></a>`;
-                    }
+                    if (url) iconsHtml += `<a href="${url}" target="_blank"><i class="${p.icon}"></i></a>`;
                 });
                 iconsHtml += '</div>';
                 content += iconsHtml;
             }
-
-            document.getElementById('pageModalContent').innerHTML = content;
+            document.getElementById('pageModalContent').innerHTML = DOMPurify.sanitize(content);
             document.getElementById('pageModal').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
@@ -2002,21 +2537,48 @@
             document.body.style.overflow = 'auto';
         }
 
-        document.getElementById('pageModal').addEventListener('click', function(e) {
-            if (e.target === this) closePageModal();
-        });
+        // ==================== ADMIN ====================
+        function openLogin() {
+            document.getElementById('loginModal').classList.add('active');
+            setTimeout(() => document.getElementById('passInput').focus(), 100);
+        }
 
-        // ==================== جداول الإدارة ====================
+        function closeLogin() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        function checkPass() {
+            const pass = document.getElementById('passInput').value;
+            if (pass === siteSettings.adminPassword) {
+                closeLogin();
+                document.getElementById('adminDashboard').classList.add('active');
+                document.body.style.overflow = 'hidden';
+                renderTables();
+                updateStats();
+                showToast('مرحباً بك في لوحة القيادة', 'success');
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+                showToast('كلمة المرور غير صحيحة', 'error');
+            }
+        }
+
+        function logout() {
+            document.getElementById('adminDashboard').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            showToast('تم تسجيل الخروج', 'info');
+        }
+
         function renderTables() {
             const nBody = document.getElementById('newsTableBody');
             nBody.innerHTML = '';
             [...newsData].reverse().forEach(item => {
                 nBody.innerHTML += `
                     <tr>
-                        <td><img src="${item.img}" class="thumb-img" loading="lazy"></td>
-                        <td style="font-weight:600; color:var(--text-primary);">${item.title}</td>
-                        <td><span style="color:var(--antique-gold); border:1px solid rgba(197,160,89,0.3); padding:2px 8px; border-radius:4px; font-size:0.8rem;">${getCatName(item.cat)}</span></td>
+                        <td><img src="${item.img}" class="thumb-img"></td>
+                        <td>${item.title}</td>
+                        <td>${getCatName(item.cat)}</td>
                         <td>${item.date}</td>
+                        <td>${item.views || 0}</td>
                         <td>
                             <i class="fas fa-edit action-icon edit" onclick="editNews(${item.id})" title="تعديل"></i>
                             <i class="fas fa-trash-alt action-icon delete" onclick="deleteNews(${item.id})" title="حذف"></i>
@@ -2025,26 +2587,34 @@
                 `;
             });
 
-            const cBody = document.getElementById('commentsTableBody');
-            cBody.innerHTML = '';
+            const adminComments = document.getElementById('adminCommentsTable');
+            adminComments.innerHTML = '';
             commentsData.forEach(c => {
-                let sentiment = 'محايد';
-                let sentimentColor = '#f1c40f';
-                const lowerText = c.text.toLowerCase();
-                if(lowerText.includes('رائع') || lowerText.includes('ممتاز') || lowerText.includes('جيد')) {
-                    sentiment = 'إيجابي';
-                    sentimentColor = '#2ecc71';
-                } else if(lowerText.includes('سيء') || lowerText.includes('بطيء') || lowerText.includes('خطأ')) {
-                    sentiment = 'سلبي';
-                    sentimentColor = '#e74c3c';
-                }
-
-                cBody.innerHTML += `
+                const news = newsData.find(n => n.id === c.newsId);
+                adminComments.innerHTML += `
                     <tr>
-                        <td style="color:var(--text-primary); font-weight:600;">${c.user}</td>
+                        <td>${news ? news.title : 'غير معروف'}</td>
+                        <td>${c.user}</td>
                         <td>${c.text}</td>
-                        <td><span style="color:${sentimentColor}; font-weight:bold;">● ${sentiment}</span></td>
+                        <td>${c.date}</td>
+                        <td>${c.likes || 0}</td>
                         <td><i class="fas fa-trash action-icon delete" onclick="deleteComment(${c.id})"></i></td>
+                    </tr>
+                `;
+            });
+
+            const trashBody = document.getElementById('trashTableBody');
+            trashBody.innerHTML = '';
+            trashNews.forEach(item => {
+                trashBody.innerHTML += `
+                    <tr>
+                        <td><img src="${item.img}" class="thumb-img"></td>
+                        <td>${item.title}</td>
+                        <td>${item.deletedAt || 'غير معروف'}</td>
+                        <td>
+                            <i class="fas fa-trash-restore action-icon restore" onclick="restoreNews(${item.id})" title="استعادة"></i>
+                            <i class="fas fa-trash-alt action-icon delete" onclick="permanentDelete(${item.id})" title="حذف نهائي"></i>
+                        </td>
                     </tr>
                 `;
             });
@@ -2053,23 +2623,16 @@
         function updateStats() {
             document.getElementById('statNewsCount').innerText = newsData.length;
             document.getElementById('statCommentsCount').innerText = commentsData.length;
-            let totalLen = 0;
-            if (db) {
-                document.getElementById('statStorageSize').innerText = newsData.length + commentsData.length + ' عنصر';
-            } else {
-                for(let key in localStorage) {
-                    if(localStorage.hasOwnProperty(key)) {
-                        totalLen += localStorage[key].length + key.length;
-                    }
-                }
-                const sizeKB = (totalLen * 2 / 1024).toFixed(2);
-                document.getElementById('statStorageSize').innerText = sizeKB + ' KB';
-            }
+            const totalViews = newsData.reduce((sum, n) => sum + (n.views || 0), 0);
+            document.getElementById('statViews').innerText = totalViews;
+            document.getElementById('statSaved').innerText = savedNews.length;
         }
 
         function switchTab(tabName) {
             document.querySelectorAll('.dash-grid').forEach(el => el.style.display = 'none');
             document.getElementById('tab-pages').style.display = 'none';
+            document.getElementById('tab-comments').style.display = 'none';
+            document.getElementById('tab-trash').style.display = 'none';
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             
             if (tabName === 'content') {
@@ -2077,6 +2640,11 @@
             } else if (tabName === 'pages') {
                 document.getElementById('tab-pages').style.display = 'block';
                 pageQuill.root.innerHTML = pagesData[currentPage] || '';
+            } else if (tabName === 'comments') {
+                document.getElementById('tab-comments').style.display = 'block';
+            } else if (tabName === 'trash') {
+                document.getElementById('tab-trash').style.display = 'block';
+                renderTables();
             } else if (tabName === 'settings') {
                 document.getElementById('tab-settings').style.display = 'block';
             } else if (tabName === 'backup') {
@@ -2099,61 +2667,39 @@
         function saveCurrentPage() {
             pagesData[currentPage] = pageQuill.root.innerHTML;
             saveData();
-            showToast(`تم حفظ صفحة ${getPageName(currentPage)} بنجاح`, 'success');
-        }
-
-        function getPageName(pageId) {
-            const names = { about: 'من نحن', team: 'فريق العمل', contact: 'اتصل بنا' };
-            return names[pageId] || pageId;
+            showToast('تم حفظ الصفحة بنجاح', 'success');
         }
 
         // ==================== معالجة الصور ====================
-        function previewImage(input) {
+        function previewMainImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('imagePreview').src = e.target.result;
-                    document.getElementById('imagePreview').style.display = 'block';
+                    document.getElementById('mainImagePreview').src = e.target.result;
+                    document.getElementById('mainImagePreview').style.display = 'block';
                     document.getElementById('imageData').value = e.target.result;
                 }
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-        // ==================== ADMIN LOGIC ====================
-        function openLogin() {
-            document.getElementById('loginModal').classList.add('active');
-            setTimeout(() => document.getElementById('passInput').focus(), 100);
+        function previewExtraImages(input) {
+            const preview = document.getElementById('extraImagesPreview');
+            preview.innerHTML = '';
+            extraImages = [];
+            Array.from(input.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    preview.appendChild(img);
+                    extraImages.push(e.target.result);
+                }
+                reader.readAsDataURL(file);
+            });
         }
 
-        function closeLogin() {
-            document.getElementById('loginModal').classList.remove('active');
-        }
-
-        function checkPass() {
-            const pass = document.getElementById('passInput').value;
-            if(pass === "Ali1992@li") {
-                closeLogin();
-                document.getElementById('adminDashboard').classList.add('active');
-                document.body.style.overflow = 'hidden';
-                renderTables();
-                updateStats();
-                showToast('مرحباً بك في لوحة القيادة', 'success');
-            } else {
-                document.getElementById('errorMsg').style.display = 'block';
-                const box = document.querySelector('.login-box');
-                box.style.animation = 'shake 0.4s';
-                setTimeout(() => box.style.animation = '', 400);
-                showToast('كلمة المرور غير صحيحة', 'error');
-            }
-        }
-
-        function logout() {
-            document.getElementById('adminDashboard').classList.remove('active');
-            document.body.style.overflow = 'auto';
-            showToast('تم تسجيل الخروج بأمان', 'info');
-        }
-
+        // ==================== إدارة الأخبار ====================
         function saveNews() {
             const id = document.getElementById('editId').value;
             const title = document.getElementById('newTitle').value;
@@ -2161,21 +2707,24 @@
             const img = document.getElementById('imageData').value || "https://via.placeholder.com/600x400/121212/c5a059?text=No+Image";
             const text = quill.root.innerHTML;
 
-            if(!title || !text) { showToast('يرجى إكمال جميع الحقول', 'error'); return; }
+            if (!title || !text) { showToast('يرجى إكمال جميع الحقول', 'error'); return; }
 
-            if(id) {
+            if (id) {
                 const index = newsData.findIndex(n => n.id == id);
-                if(index !== -1) {
+                if (index !== -1) {
                     newsData[index] = { ...newsData[index], title, cat, img, text };
-                    showToast('تم تحديث الخبر بنجاح', 'success');
+                    showToast('تم تحديث الخبر', 'success');
                 }
             } else {
-                newsData.unshift({
+                const newNews = {
                     id: Date.now(),
                     title, cat, img, text,
-                    date: new Date().toLocaleDateString('ar-EG')
-                });
-                showToast('تم نشر الخبر الملكي بنجاح', 'success');
+                    date: new Date().toLocaleDateString('ar-EG'),
+                    views: 0,
+                    author: "الإدارة التحريرية"
+                };
+                newsData.unshift(newNews);
+                showToast('تم نشر الخبر', 'success');
             }
 
             saveData();
@@ -2184,17 +2733,15 @@
 
         function editNews(id) {
             const item = newsData.find(n => n.id == id);
-            if(!item) return;
+            if (!item) return;
 
             document.getElementById('editId').value = item.id;
             document.getElementById('newTitle').value = item.title;
             document.getElementById('newCat').value = item.cat;
             quill.root.innerHTML = item.text;
             document.getElementById('imageData').value = item.img;
-            
-            const preview = document.getElementById('imagePreview');
-            preview.src = item.img;
-            preview.style.display = 'block';
+            document.getElementById('mainImagePreview').src = item.img;
+            document.getElementById('mainImagePreview').style.display = 'block';
 
             document.getElementById('formTitle').innerHTML = '<i class="fas fa-edit" style="color: var(--antique-gold); margin-left: 10px;"></i> تعديل المحتوى';
             document.getElementById('cancelBtn').style.display = 'block';
@@ -2204,10 +2751,42 @@
         }
 
         function deleteNews(id) {
-            if(confirm('هل أنت متأكد من حذف هذا الخبر نهائياً؟')) {
-                newsData = newsData.filter(n => n.id != id);
+            if (confirm('هل أنت متأكد من حذف هذا الخبر؟ يمكن استعادته من سلة المحذوفات')) {
+                const news = newsData.find(n => n.id == id);
+                if (news) {
+                    news.deletedAt = new Date().toLocaleDateString('ar-EG');
+                    trashNews.push(news);
+                    newsData = newsData.filter(n => n.id != id);
+                    saveData();
+                    showToast('تم نقل الخبر إلى سلة المحذوفات', 'success');
+                }
+            }
+        }
+
+        function restoreNews(id) {
+            const news = trashNews.find(n => n.id == id);
+            if (news) {
+                delete news.deletedAt;
+                newsData.push(news);
+                trashNews = trashNews.filter(n => n.id != id);
                 saveData();
-                showToast('تم حذف الخبر', 'success');
+                showToast('تم استعادة الخبر', 'success');
+            }
+        }
+
+        function permanentDelete(id) {
+            if (confirm('هل أنت متأكد من الحذف النهائي؟ لا يمكن التراجع')) {
+                trashNews = trashNews.filter(n => n.id != id);
+                saveData();
+                showToast('تم الحذف النهائي', 'success');
+            }
+        }
+
+        function emptyTrash() {
+            if (confirm('سيتم حذف جميع العناصر في السلة نهائياً. هل أنت متأكد؟')) {
+                trashNews = [];
+                saveData();
+                showToast('تم إفراغ السلة', 'success');
             }
         }
 
@@ -2222,14 +2801,43 @@
             document.getElementById('newTitle').value = '';
             quill.root.innerHTML = '';
             document.getElementById('imageData').value = '';
-            document.getElementById('imagePreview').style.display = 'none';
-            document.getElementById('fileInput').value = '';
+            document.getElementById('mainImagePreview').style.display = 'none';
+            document.getElementById('mainFileInput').value = '';
+            document.getElementById('extraFilesInput').value = '';
+            document.getElementById('extraImagesPreview').innerHTML = '';
             document.getElementById('formTitle').innerHTML = '<i class="fas fa-feather-alt" style="color: var(--antique-gold); margin-left: 10px;"></i> صياغة خبر جديد';
             document.getElementById('cancelBtn').style.display = 'none';
             document.querySelector('.btn-premium').innerHTML = '<i class="fas fa-save"></i> نشر المحتوى';
         }
 
-        // ==================== SEARCH MODAL ====================
+        function previewArticle() {
+            const title = document.getElementById('newTitle').value || 'عنوان تجريبي';
+            const cat = document.getElementById('newCat').value;
+            const img = document.getElementById('imageData').value || "https://via.placeholder.com/600x400/121212/c5a059?text=No+Image";
+            const text = quill.root.innerHTML || '<p>محتوى تجريبي</p>';
+            const tempId = Date.now();
+            const fakeArticle = {
+                id: tempId,
+                title, cat, img, text,
+                date: new Date().toLocaleDateString('ar-EG'),
+                views: 0,
+                author: "الإدارة التحريرية"
+            };
+            // عرض في modal مؤقت
+            currentOpenArticleId = tempId;
+            document.getElementById('modalImg').src = img;
+            document.getElementById('modalCat').innerText = getCatName(cat);
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDate').innerText = fakeArticle.date;
+            document.getElementById('modalAuthor').innerText = fakeArticle.author;
+            document.getElementById('modalViews').innerText = '0';
+            document.getElementById('modalText').innerHTML = DOMPurify.sanitize(text);
+            document.getElementById('commentsList').innerHTML = '<p style="color: #666;">المعاينة: لا توجد تعليقات</p>';
+            updateModalSaveBtn();
+            document.getElementById('articleModal').classList.add('active');
+        }
+
+        // ==================== SEARCH ====================
         function openSearchModal() {
             document.getElementById('searchModal').classList.add('active');
             document.getElementById('searchInput').focus();
@@ -2238,8 +2846,6 @@
 
         function closeSearchModal() {
             document.getElementById('searchModal').classList.remove('active');
-            document.getElementById('searchInput').value = '';
-            document.getElementById('searchResults').innerHTML = '';
         }
 
         function performSearch() {
@@ -2249,54 +2855,31 @@
                 resultsDiv.innerHTML = '<p style="color: #666;">ابدأ الكتابة للبحث...</p>';
                 return;
             }
-
-            const results = newsData.filter(n => 
-                n.title.toLowerCase().includes(query) || 
-                n.text.toLowerCase().includes(query)
-            );
-
+            const results = newsData.filter(n => n.title.toLowerCase().includes(query) || n.text.toLowerCase().includes(query));
             if (results.length === 0) {
                 resultsDiv.innerHTML = '<p style="color: #666;">لا توجد نتائج</p>';
                 return;
             }
-
             resultsDiv.innerHTML = results.map(item => `
                 <div class="search-item" onclick="openArticleModal(${item.id}); closeSearchModal();">
-                    <img src="${item.img}" alt="${item.title}" loading="lazy">
+                    <img src="${item.img}" alt="${item.title}">
                     <div>
                         <h4 style="color: var(--text-primary);">${item.title}</h4>
-                        <span style="color: var(--antique-gold); font-size: 0.8rem;">${getCatName(item.cat)}</span>
+                        <span style="color: var(--antique-gold);">${getCatName(item.cat)}</span>
                     </div>
                 </div>
             `).join('');
         }
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeSearchModal();
-                closeArticleModal();
-                closePageModal();
-            }
-        });
-
-        // ==================== BACKUP SYSTEM ====================
+        // ==================== BACKUP ====================
         function downloadBackup() {
-            const data = {
-                news: newsData,
-                comments: commentsData,
-                settings: siteSettings,
-                saved: savedNews,
-                pages: pagesData,
-                date: new Date().toISOString()
-            };
+            const data = { news: newsData, comments: commentsData, settings: siteSettings, saved: savedNews, pages: pagesData, trash: trashNews };
             const dataStr = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "empire_backup_" + new Date().toISOString().slice(0,10) + ".json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-            showToast('تم تنزيل النسخة الاحتياطية بنجاح', 'success');
+            const a = document.createElement('a');
+            a.setAttribute("href", dataStr);
+            a.setAttribute("download", "empire_backup_" + new Date().toISOString().slice(0,10) + ".json");
+            a.click();
+            showToast('تم تنزيل النسخة', 'success');
         }
 
         function restoreBackup(input) {
@@ -2306,47 +2889,47 @@
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    if(data.news && data.comments && data.settings && data.pages) {
+                    if (data.news && data.comments && data.settings) {
                         newsData = data.news;
                         commentsData = data.comments;
                         siteSettings = data.settings;
                         savedNews = data.saved || [];
-                        pagesData = data.pages;
+                        pagesData = data.pages || defaultPages;
+                        trashNews = data.trash || [];
                         saveData();
                         showToast('تم استعادة البيانات بنجاح', 'success');
                         setTimeout(() => location.reload(), 1000);
-                    } else {
-                        throw new Error('Invalid format');
-                    }
-                } catch (err) {
-                    showToast('ملف النسخة الاحتياطية تالف أو غير صالح', 'error');
+                    } else throw new Error();
+                } catch {
+                    showToast('ملف غير صالح', 'error');
                 }
             };
             reader.readAsText(file);
         }
 
         function resetAllData() {
-            if(confirm('تحذير: سيتم حذف جميع الأخبار والتعليقات والإعدادات والعودة للوضع الافتراضي. هل أنت متأكد؟')) {
+            if (confirm('سيتم حذف كل البيانات وإعادة تعيين الموقع. هل أنت متأكد؟')) {
                 if (db) {
-                    const tx = db.transaction(['news', 'comments', 'settings', 'saved', 'pages'], 'readwrite');
+                    const tx = db.transaction(['news','comments','settings','saved','pages','trash'], 'readwrite');
                     tx.objectStore('news').clear();
                     tx.objectStore('comments').clear();
                     tx.objectStore('settings').clear();
                     tx.objectStore('saved').clear();
                     tx.objectStore('pages').clear();
+                    tx.objectStore('trash').clear();
                 }
                 localStorage.clear();
                 location.reload();
             }
         }
 
-        // ==================== TOAST SYSTEM ====================
+        // ==================== TOAST ====================
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             let icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
-            toast.innerHTML = `<i class="fas ${icon}" style="color:${type==='success'?'#2ecc71':(type==='error'?'#e74c3c':'#3498db')}"></i> <span>${message}</span>`;
+            toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
@@ -2355,45 +2938,46 @@
             }, 3000);
         }
 
-        // ==================== تهيئة Quill عند تحميل الصفحة ====================
+        // ==================== متفرقات ====================
+        function toggleMobileMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+
+        function subscribeNewsletter() {
+            const email = document.getElementById('newsletterEmail').value;
+            if (email) showToast('تم الاشتراك بنجاح', 'success');
+            else showToast('يرجى إدخال بريد إلكتروني', 'error');
+        }
+
+        // تهيئة Quill
         window.onload = function() {
             quill = new Quill('#editorContainer', {
                 theme: 'snow',
                 placeholder: 'اكتب تفاصيل الخبر هنا...',
-                modules: {
-                    toolbar: [
-                        [{ 'header': [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'align': [] }],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        ['blockquote', 'code-block'],
-                        ['link', 'image', 'video'],
-                        ['clean']
-                    ]
-                }
+                modules: { toolbar: [ [{header:[1,2,3,false]}], ['bold','italic','underline'], [{align:[]}], [{list:'ordered'},{list:'bullet'}], ['blockquote','code-block'], ['link','image','video'], ['clean'] ] }
             });
 
             pageQuill = new Quill('#pageEditorContainer', {
                 theme: 'snow',
-                placeholder: 'اكتب محتوى الصفحة هنا...',
-                modules: {
-                    toolbar: [
-                        [{ 'header': [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline'],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        ['link'],
-                        ['clean']
-                    ]
-                }
+                placeholder: 'اكتب محتوى الصفحة...',
+                modules: { toolbar: [ [{header:[1,2,3,false]}], ['bold','italic','underline'], [{list:'ordered'},{list:'bullet'}], ['link'], ['clean'] ] }
             });
 
             loadData();
 
             window.addEventListener('scroll', () => {
                 const h = document.getElementById('mainHeader');
-                if(window.scrollY > 50) h.classList.add('scrolled');
+                if (window.scrollY > 50) h.classList.add('scrolled');
                 else h.classList.remove('scrolled');
             });
+
+            // التعامل مع روابط URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const newsId = urlParams.get('news');
+            if (newsId) {
+                const id = parseInt(newsId);
+                if (newsData.find(n => n.id === id)) openArticleModal(id);
+            }
         };
     </script>
 </body>
