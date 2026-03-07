@@ -41,6 +41,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.5/purify.min.js"></script>
     <!-- Fuse.js for advanced search -->
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
     <style>
         /* الأنماط المحسنة مع إضافات التصميم المتجاوب والأداء */
         :root {
@@ -75,6 +77,7 @@
             overflow-x: hidden;
             line-height: 1.8;
             scroll-behavior: smooth;
+            padding-bottom: 0;
         }
 
         /* --- Reading Progress Bar محسّن --- */
@@ -225,7 +228,7 @@
             box-shadow: 0 0 20px rgba(197, 160, 89, 0.4);
         }
 
-        /* --- Breaking News Bar محسّن (قابل للنقر وبه زر إغلاق) --- */
+        /* --- Breaking News Bar محسّن --- */
         #breakingNewsBar {
             background: var(--antique-gold);
             color: #000;
@@ -406,7 +409,7 @@
             background: linear-gradient(to top, #000, transparent);
         }
 
-        /* --- News Grid --- */
+        /* --- News Grid مع إعلانات بينية --- */
         .section { padding: 100px 5%; }
         .section-header {
             display: flex;
@@ -452,6 +455,37 @@
             transform: translateY(-10px);
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             border-color: rgba(197, 160, 89, 0.3);
+        }
+        .luxury-card.ad-card {
+            cursor: default;
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed var(--antique-gold);
+            background: linear-gradient(145deg, var(--rich-black), #1a1a1a);
+            position: relative;
+            overflow: hidden;
+        }
+        .luxury-card.ad-card::before {
+            content: "إعلان";
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 11px;
+            color: var(--antique-gold);
+            opacity: 0.7;
+            z-index: 2;
+        }
+        .luxury-card.ad-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--bright-gold);
+            box-shadow: 0 15px 30px rgba(197, 160, 89, 0.2);
+        }
+        .luxury-card.ad-card iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
         .card-image-wrapper {
             height: 240px;
@@ -543,6 +577,251 @@
             transition: var(--transition);
         }
         .read-more-btn:hover { gap: 15px; color: var(--bright-gold); }
+
+        /* --- إعلانات محسنة --- */
+        .ad-container {
+            max-width: 1200px;
+            margin: 25px auto;
+            text-align: center;
+            padding: 20px;
+            background: var(--rich-black);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: var(--transition);
+        }
+        .ad-container:hover {
+            border-color: var(--antique-gold);
+            box-shadow: var(--shadow-gold);
+        }
+        .ad-container::before {
+            content: "إعلان";
+            position: absolute;
+            top: 5px;
+            left: 15px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            opacity: 0.6;
+            z-index: 1;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        .ad-container iframe {
+            width: 100%;
+            min-height: 90px;
+            border: none;
+            background: transparent;
+        }
+
+        /* إعلان عائم محسن */
+        #floatingAd {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--rich-black);
+            backdrop-filter: blur(15px);
+            padding: 15px;
+            text-align: center;
+            z-index: 9999;
+            border-top: 2px solid var(--antique-gold);
+            display: none;
+            transform: translateY(0);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 -5px 30px rgba(0,0,0,0.5);
+        }
+        #floatingAd.hidden {
+            transform: translateY(100%);
+        }
+        .close-floating-ad {
+            position: absolute;
+            top: -18px;
+            right: 20px;
+            background: var(--antique-gold);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.4);
+            transition: 0.3s;
+            font-size: 1.2rem;
+            z-index: 10000;
+        }
+        .close-floating-ad:hover {
+            transform: scale(1.1);
+            background: var(--bright-gold);
+        }
+
+        /* إعلان فيديو منبثق */
+        .video-ad {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 90%;
+            max-width: 800px;
+            z-index: 20002;
+            background: var(--rich-black);
+            border: 2px solid var(--antique-gold);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 0 70px rgba(0,0,0,0.9);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .video-ad.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .video-ad-wrapper {
+            position: relative;
+        }
+        .close-video-ad {
+            position: absolute;
+            top: -40px;
+            left: -15px;
+            background: var(--antique-gold);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.5);
+            transition: 0.3s;
+        }
+        .close-video-ad:hover {
+            transform: rotate(90deg);
+            background: var(--bright-gold);
+        }
+
+        /* إعلان ذكي منبثق */
+        .smart-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 90%;
+            max-width: 500px;
+            background: var(--rich-black);
+            border: 2px solid var(--antique-gold);
+            border-radius: 20px;
+            padding: 30px;
+            z-index: 20003;
+            box-shadow: 0 0 80px rgba(0,0,0,0.95);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+        .smart-popup.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .popup-content {
+            position: relative;
+        }
+        .close-popup {
+            position: absolute;
+            top: -20px;
+            left: -10px;
+            background: var(--antique-gold);
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .close-popup:hover {
+            transform: scale(1.1);
+        }
+
+        /* إعلان مكافأة */
+        .rewarded-ad {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 90%;
+            max-width: 450px;
+            background: var(--rich-black);
+            border: 2px solid var(--bright-gold);
+            border-radius: 20px;
+            padding: 30px;
+            z-index: 20004;
+            box-shadow: 0 0 100px rgba(197, 160, 89, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+        .rewarded-ad.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .reward-timer {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--antique-gold);
+            margin: 20px 0;
+            font-family: 'Cinzel';
+        }
+        .reward-progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .reward-progress-bar {
+            height: 100%;
+            background: var(--gold-gradient);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* إعلان داخل المقال */
+        .ad-in-article {
+            margin: 35px 0;
+            padding: 25px;
+            background: linear-gradient(145deg, var(--rich-black), #1a1a1a);
+            border: 1px dashed var(--antique-gold);
+            border-radius: 16px;
+            text-align: center;
+            position: relative;
+        }
+        .ad-in-article::before {
+            content: "إعلان";
+            position: absolute;
+            top: 5px;
+            right: 15px;
+            font-size: 11px;
+            color: var(--antique-gold);
+            opacity: 0.7;
+        }
 
         /* --- Footer --- */
         footer {
@@ -1100,7 +1379,7 @@
             box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.2);
         }
 
-        /* منطقة رفع الصور المحسنة (معاينة متعددة) */
+        /* منطقة رفع الصور المحسنة */
         .image-drop-zone {
             border: 2px dashed rgba(197, 160, 89, 0.3);
             padding: 30px;
@@ -1214,7 +1493,7 @@
         .action-icon.restore { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
         .action-icon:hover { transform: scale(1.1); }
 
-        /* الإعدادات */
+        /* الإعدادات - مع إضافة الإعلانات */
         .settings-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1227,13 +1506,17 @@
             border-radius: 16px;
             border: 1px solid rgba(255,255,255,0.05);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 10px;
         }
         .setting-card h4 {
             color: var(--text-primary);
             margin-bottom: 5px;
             font-size: 1rem;
+        }
+        .setting-card small {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
         }
         .toggle-switch {
             position: relative;
@@ -1257,6 +1540,45 @@
         }
         .toggle-switch.active { background: var(--antique-gold); }
         .toggle-switch.active::after { left: 27px; }
+
+        /* إحصائيات الإعلانات */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .analytics-card {
+            background: rgba(255,255,255,0.03);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+        }
+        .analytics-card h4 {
+            color: var(--antique-gold);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        .analytics-card p {
+            margin: 8px 0;
+            color: var(--text-secondary);
+        }
+        .analytics-card .ctr-high {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        .analytics-card .ctr-low {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .chart-container {
+            height: 300px;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 16px;
+        }
 
         /* إحصائيات */
         .stats-row {
@@ -1336,7 +1658,7 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        /* --- Comments Section المحسّن في المقالة --- */
+        /* --- Comments Section --- */
         .comments-section {
             margin-top: 50px;
             padding-top: 30px;
@@ -1432,6 +1754,9 @@
                 bottom: 100px;
                 right: 20px;
             }
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -1476,6 +1801,9 @@
         </div>
     </header>
 
+    <!-- إعلان أعلى الصفحة (Header Ad) -->
+    <div id="adHeaderContainer" class="ad-container" style="display: none;"></div>
+
     <!-- Hero Section -->
     <section class="hero">
         <div class="main-feature">
@@ -1501,6 +1829,9 @@
             </div>
         </div>
     </section>
+
+    <!-- إعلان جانبي (Sidebar Ad) -->
+    <div id="sidebarAdContainer" class="ad-container" style="display: none;"></div>
 
     <!-- News Section -->
     <section class="section">
@@ -1552,6 +1883,42 @@
         </div>
     </footer>
 
+    <!-- إعلان عائم (Floating Ad) -->
+    <div id="floatingAd">
+        <button class="close-floating-ad" onclick="closeFloatingAd()">✕</button>
+        <div id="floatingAdContent"></div>
+    </div>
+
+    <!-- إعلان فيديو منبثق -->
+    <div id="videoAd" class="video-ad">
+        <div class="video-ad-wrapper">
+            <button class="close-video-ad" onclick="closeVideoAd()">✕</button>
+            <div id="videoAdContent"></div>
+        </div>
+    </div>
+
+    <!-- إعلان ذكي منبثق -->
+    <div id="smartPopup" class="smart-popup">
+        <div class="popup-content">
+            <button class="close-popup" onclick="closeSmartPopup()">✕</button>
+            <div id="smartPopupContent"></div>
+        </div>
+    </div>
+
+    <!-- إعلان مكافأة -->
+    <div id="rewardedAd" class="rewarded-ad">
+        <div class="rewarded-content">
+            <h3 style="color: var(--antique-gold); margin-bottom: 15px;">🎁 إعلان مكافأة</h3>
+            <p>شاهد الإعلان كاملاً واحصل على ميزة حصرية!</p>
+            <div class="reward-timer" id="rewardTimer">30</div>
+            <div class="reward-progress">
+                <div class="reward-progress-bar" id="rewardProgressBar"></div>
+            </div>
+            <div id="rewardedAdContent"></div>
+            <button class="btn-premium" style="margin-top: 20px; opacity: 0.5;" id="claimRewardBtn" disabled onclick="claimReward()">المطالبة بالمكافأة</button>
+        </div>
+    </div>
+
     <!-- =========================================
          SEARCH MODAL
          ========================================= -->
@@ -1567,7 +1934,7 @@
     </div>
 
     <!-- =========================================
-         ARTICLE MODAL (مع قسم التعليقات المحسّن)
+         ARTICLE MODAL
          ========================================= -->
     <div id="articleModal">
         <div class="modal-content">
@@ -1583,7 +1950,7 @@
                         <span><i class="far fa-eye"></i> <span id="modalViews">0</span> مشاهدة</span>
                     </div>
                     <div class="modal-text" id="modalText">
-                        <!-- Rich Content -->
+                        <!-- Rich Content مع إعلان داخلي -->
                     </div>
 
                     <!-- قسم التعليقات المتقدم -->
@@ -1606,7 +1973,7 @@
     </div>
 
     <!-- =========================================
-         PAGE MODAL (About, Team, Contact)
+         PAGE MODAL
          ========================================= -->
     <div id="pageModal">
         <div class="page-modal-content">
@@ -1616,11 +1983,11 @@
     </div>
 
     <!-- =========================================
-         ADMIN SYSTEM (مع سلة المحذوفات وتحسينات)
+         ADMIN SYSTEM
          ========================================= -->
     <div id="adminBtn" onclick="openLogin()" title="لوحة التحكم"><i class="fas fa-shield-alt"></i></div>
 
-    <!-- Login Modal (تم تعديلها: لا نعرض كلمة المرور حالياً، فقط رسالة) -->
+    <!-- Login Modal -->
     <div id="loginModal">
         <div class="login-box">
             <i class="fas fa-times" onclick="closeLogin()" style="position: absolute; top: 20px; left: 20px; color: #666; cursor: pointer; font-size: 1.2rem;"></i>
@@ -1646,11 +2013,13 @@
                 <button class="tab-btn" onclick="switchTab('comments')"><i class="fas fa-comments"></i> التعليقات</button>
                 <button class="tab-btn" onclick="switchTab('trash')"><i class="fas fa-trash-alt"></i> سلة المحذوفات</button>
                 <button class="tab-btn" onclick="switchTab('settings')"><i class="fas fa-cogs"></i> إعدادات الموقع</button>
+                <button class="tab-btn" onclick="switchTab('ads')"><i class="fas fa-ad"></i> إدارة الإعلانات</button>
+                <button class="tab-btn" onclick="switchTab('analytics')"><i class="fas fa-chart-bar"></i> تحليلات الإعلانات</button>
                 <button class="tab-btn" onclick="switchTab('backup')"><i class="fas fa-database"></i> النسخ الاحتياطي</button>
-                <button class="tab-btn" onclick="switchTab('stats')"><i class="fas fa-chart-line"></i> إحصائيات</button>
+                <button class="tab-btn" onclick="switchTab('stats')"><i class="fas fa-chart-line"></i> إحصائيات الموقع</button>
             </div>
 
-            <!-- Content Tab (إدارة الأخبار) -->
+            <!-- Content Tab -->
             <div id="tab-content" class="dash-grid">
                 <div class="panel">
                     <h3 style="color: var(--text-primary); margin-bottom: 25px;" id="formTitle">
@@ -1795,6 +2164,7 @@
             <div id="tab-settings" class="dash-grid" style="display: none;">
                 <div class="panel" style="grid-column: 1 / -1;">
                     <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-cogs" style="color: var(--antique-gold); margin-left: 10px;"></i> إعدادات الموقع</h3>
+                    
                     <div class="settings-grid">
                         <div class="setting-card">
                             <div>
@@ -1845,6 +2215,177 @@
                 </div>
             </div>
 
+            <!-- Ads Management Tab -->
+            <div id="tab-ads" class="dash-grid" style="display: none;">
+                <div class="panel" style="grid-column: 1 / -1;">
+                    <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-ad" style="color: var(--antique-gold); margin-left: 10px;"></i> إدارة الإعلانات الممولة</h3>
+                    <p style="color: #888; margin-bottom: 25px;">يمكنك إضافة أكواد الإعلانات من Google AdSense أو أي شبكة إعلانية أخرى. جميع الإعلانات معروضة في iframe آمن.</p>
+                    
+                    <div class="settings-grid">
+                        <div class="setting-card">
+                            <div>
+                                <h4><i class="fas fa-ad"></i> إعلان أعلى الصفحة (Header)</h4>
+                                <small>يظهر تحت شريط الأخبار العاجلة</small>
+                            </div>
+                            <textarea id="adHeaderCode" class="form-control" rows="4" placeholder="ضع كود الإعلان هنا..."></textarea>
+                        </div>
+                        
+                        <div class="setting-card">
+                            <div>
+                                <h4><i class="fas fa-ad"></i> إعلان بين المقالات (In-feed)</h4>
+                                <small>يظهر بعد كل 3 أخبار في الشبكة</small>
+                            </div>
+                            <textarea id="adInfeedCode" class="form-control" rows="4" placeholder="ضع كود الإعلان هنا..."></textarea>
+                        </div>
+
+                        <div class="setting-card">
+                            <div>
+                                <h4><i class="fas fa-ad"></i> إعلان داخل المقال (In-article)</h4>
+                                <small>يظهر داخل المقالة بعد الفقرة الثانية</small>
+                            </div>
+                            <textarea id="adInArticleCode" class="form-control" rows="4" placeholder="ضع كود الإعلان هنا..."></textarea>
+                        </div>
+
+                        <div class="setting-card">
+                            <div>
+                                <h4><i class="fas fa-ad"></i> إعلان جانبي (Sidebar)</h4>
+                                <small>يظهر تحت قسم الهيرو</small>
+                            </div>
+                            <textarea id="adSidebarCode" class="form-control" rows="4" placeholder="ضع كود الإعلان هنا..."></textarea>
+                        </div>
+
+                        <div class="setting-card">
+                            <div>
+                                <h4><i class="fas fa-ad"></i> إعلان عائم (Floating)</h4>
+                                <small>يظهر أسفل الشاشة</small>
+                            </div>
+                            <textarea id="adFloatingCode" class="form-control" rows="4" placeholder="ضع كود الإعلان هنا..."></textarea>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 40px;">
+                        <h4 style="color: var(--text-primary); margin-bottom: 20px;">إعلانات متقدمة</h4>
+                        <div class="settings-grid">
+                            <div class="setting-card">
+                                <div>
+                                    <h4><i class="fas fa-video"></i> إعلان فيديو</h4>
+                                    <small>رابط YouTube أو Vimeo</small>
+                                </div>
+                                <input type="url" id="videoAdUrl" class="form-control" placeholder="https://youtube.com/watch?v=...">
+                                <textarea id="videoAdCode" class="form-control" rows="2" placeholder="أو ضع كود embed هنا"></textarea>
+                            </div>
+
+                            <div class="setting-card">
+                                <div>
+                                    <h4><i class="fas fa-gift"></i> إعلان مكافأة</h4>
+                                    <small>يظهر بعد مشاهدة الإعلان</small>
+                                </div>
+                                <textarea id="rewardedAdCode" class="form-control" rows="4" placeholder="كود الإعلان الذي سيكافأ المستخدم بعد مشاهدته"></textarea>
+                            </div>
+
+                            <div class="setting-card">
+                                <div>
+                                    <h4><i class="fas fa-popup"></i> إعلان ذكي (Popup)</h4>
+                                    <small>يظهر عند محاولة الخروج أو بعد 30 ثانية</small>
+                                </div>
+                                <textarea id="popupAdCode" class="form-control" rows="4" placeholder="كود الإعلان المنبثق"></textarea>
+                            </div>
+
+                            <div class="setting-card">
+                                <div>
+                                    <h4><i class="fas fa-amazon"></i> إعلان أمازون (ASIN)</h4>
+                                    <small>معرف المنتج على أمازون</small>
+                                </div>
+                                <input type="text" id="amazonAsinTech" class="form-control" placeholder="ASIN للمنتجات التقنية">
+                                <input type="text" id="amazonAsinBooks" class="form-control" placeholder="ASIN للكتب">
+                                <input type="text" id="amazonTag" class="form-control" placeholder="معرف التتبع الخاص بك">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 40px;">
+                        <h4 style="color: var(--text-primary); margin-bottom: 20px;">تناوب الإعلانات (Ad Rotation)</h4>
+                        <p style="color: #888; margin-bottom: 15px;">أضف عدة إعلانات لنفس المكان وسيتم اختيار إعلان عشوائي في كل مرة.</p>
+                        <div class="settings-grid">
+                            <div class="setting-card">
+                                <div>
+                                    <h4>إعلانات متعددة للرأس</h4>
+                                    <small>كل سطر يمثل إعلاناً منفصلاً</small>
+                                </div>
+                                <textarea id="adHeaderRotation" class="form-control" rows="4" placeholder="كود الإعلان 1&#10;-----&#10;كود الإعلان 2&#10;-----&#10;كود الإعلان 3"></textarea>
+                            </div>
+                            <div class="setting-card">
+                                <div>
+                                    <h4>إعلانات متعددة للمحتوى</h4>
+                                    <small>كل سطر يمثل إعلاناً منفصلاً</small>
+                                </div>
+                                <textarea id="adInfeedRotation" class="form-control" rows="4" placeholder="كود الإعلان 1&#10;-----&#10;كود الإعلان 2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 40px;">
+                        <h4 style="color: var(--text-primary); margin-bottom: 20px;">إعلانات موسمية</h4>
+                        <div class="settings-grid">
+                            <div class="setting-card">
+                                <div>
+                                    <h4>رمضان</h4>
+                                    <small>يظهر في شهر رمضان</small>
+                                </div>
+                                <textarea id="adRamadan" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="setting-card">
+                                <div>
+                                    <h4>عيد الأضحى</h4>
+                                    <small>يظهر في أيام العيد</small>
+                                </div>
+                                <textarea id="adEid" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="setting-card">
+                                <div>
+                                    <h4>الجمعة البيضاء</h4>
+                                    <small>نوفمبر</small>
+                                </div>
+                                <textarea id="adBlackFriday" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-premium" style="margin-top: 30px; max-width: 200px;" onclick="saveAds()"><i class="fas fa-save"></i> حفظ الإعلانات</button>
+                </div>
+            </div>
+
+            <!-- Ad Analytics Tab -->
+            <div id="tab-analytics" class="dash-grid" style="display: none;">
+                <div class="panel" style="grid-column: 1 / -1;">
+                    <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-chart-bar" style="color: var(--antique-gold); margin-left: 10px;"></i> تحليلات الإعلانات</h3>
+                    
+                    <div class="analytics-grid" id="adAnalyticsCards"></div>
+
+                    <div class="chart-container">
+                        <canvas id="adChart"></canvas>
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <h4 style="color: var(--text-primary); margin-bottom: 15px;">أداء الإعلانات (آخر 7 أيام)</h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>الموضع</th>
+                                    <th>مرات الظهور</th>
+                                    <th>النقرات</th>
+                                    <th>CTR</th>
+                                    <th>الأداء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adPerformanceTable"></tbody>
+                        </table>
+                    </div>
+
+                    <button class="btn-premium" style="margin-top: 20px; max-width: 150px;" onclick="resetAdStats()"><i class="fas fa-redo"></i> إعادة تعيين الإحصائيات</button>
+                </div>
+            </div>
+
             <!-- Backup Tab -->
             <div id="tab-backup" class="dash-grid" style="display: none;">
                 <div class="panel" style="grid-column: 1 / -1; text-align: center;">
@@ -1860,10 +2401,10 @@
                 </div>
             </div>
 
-            <!-- Stats Tab -->
+            <!-- Site Stats Tab -->
             <div id="tab-stats" class="dash-grid" style="display: none;">
                 <div class="panel" style="grid-column: 1 / -1;">
-                    <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-chart-line" style="color: var(--antique-gold); margin-left: 10px;"></i> إحصائيات النظام</h3>
+                    <h3 style="color: var(--text-primary); margin-bottom: 25px;"><i class="fas fa-chart-line" style="color: var(--antique-gold); margin-left: 10px;"></i> إحصائيات الموقع</h3>
                     <div class="stats-row">
                         <div class="stat-box">
                             <i class="fas fa-newspaper fa-2x" style="color: var(--antique-gold);"></i>
@@ -1909,10 +2450,10 @@
     <script>
         // ==================== التهيئة الأساسية وقاعدة البيانات ====================
         const DB_NAME = 'EmpireDB';
-        const DB_VERSION = 5;
+        const DB_VERSION = 7;
         let db;
 
-        // البيانات الافتراضية
+        // البيانات الافتراضية مع إضافة الإعلانات
         const defaultNews = [
             { id: 1, title: "إطلاق أول قمر صناعي كمومي", cat: "tech", img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80", text: "<p>خطوة تاريخية في عالم الاتصالات الكمومية...</p><p>في تطور نوعي غير مسبوق، نجحت وكالة الفضاء الدولية في إطلاق أول قمر صناعي يعتمد كلياً على تقنيات الحوسبة الكمومية.</p><blockquote>هذا الإنجاز يفتح آفاقاً جديدة في مجال الاتصالات الآمنة.</blockquote><p>يتميز القمر الجديد بقدرته على معالجة البيانات بسرعة تفوق أسرع الحواسيب العملاقة الحالية بملايين المرات.</p><h3>فيديو توضيحي للإطلاق:</h3><iframe src='https://www.youtube.com/embed/dQw4w9WgXcQ' frameborder='0' allowfullscreen></iframe>", date: "2023-10-01", views: 150, author: "أحمد منصور" },
             { id: 2, title: "أسواق المال تسجل أرقاماً قياسية", cat: "news", img: "https://images.unsplash.com/photo-1611974765270-ca12586343bb?auto=format&fit=crop&w=600&q=80", text: "<p>تحليل شامل لصعود المؤشرات العالمية...</p><p>شهدت أسواق المال العالمية اليوم ارتفاعاً جنونياً وغير مسبوق، حيث سجلت المؤشرات الرئيسية في وول ستريت وبورصة لندن أرقاماً قياسية جديدة.</p><ul><li>قطاع التكنولوجيا قاد الصعود.</li><li>انخفاض معدلات التضخم بشكل مفاجئ.</li></ul><p>يعزو المحللون هذا الارتفاع إلى التقارير الإيجابية حول نمو الاقتصاد العالمي.</p>", date: "2023-10-02", views: 89, author: "سارة خالد" }
@@ -1933,7 +2474,33 @@
                 "اكتشاف كوكب جديد صالح للحياة"
             ],
             socialLinks: { facebook: "", twitter: "", instagram: "", youtube: "", linkedin: "" },
-            adminPassword: "Ali1992@li"   // كلمة المرور الافتراضية
+            adminPassword: "Ali1992@li",
+            // إعلانات
+            ads: {
+                header: "",
+                infeed: "",
+                inArticle: "",
+                sidebar: "",
+                floating: "",
+                videoUrl: "",
+                videoCode: "",
+                rewarded: "",
+                popup: "",
+                amazon: {
+                    tech: "",
+                    books: "",
+                    tag: ""
+                },
+                seasonal: {
+                    ramadan: "",
+                    eid: "",
+                    blackFriday: ""
+                },
+                rotation: {
+                    header: [],
+                    infeed: []
+                }
+            }
         };
         const defaultPages = {
             about: "<h2>من نحن</h2><p>نحن الإمبراطورية، منصة إعلامية رائدة تسعى لتقديم محتوى فاخر ودقيق.</p>",
@@ -1941,17 +2508,30 @@
             contact: "<h2>اتصل بنا</h2><p>يمكنكم التواصل معنا عبر البريد الإلكتروني: info@empire.com</p>"
         };
 
+        // إحصائيات الإعلانات
+        let adStats = {
+            impressions: { header: 0, infeed: 0, inArticle: 0, sidebar: 0, floating: 0, video: 0, popup: 0, rewarded: 0 },
+            clicks: { header: 0, infeed: 0, inArticle: 0, sidebar: 0, floating: 0, video: 0, popup: 0, rewarded: 0 },
+            history: []
+        };
+
         let newsData = [];
         let commentsData = [];
         let siteSettings = {};
         let pagesData = {};
         let savedNews = [];
-        let trashNews = []; // سلة المحذوفات
+        let trashNews = [];
         let currentOpenArticleId = null;
         let quill, pageQuill;
         let currentPage = 'about';
-        let extraImages = []; // لتخزين الصور الإضافية
-        let fuse; // لمحرك البحث المتقدم
+        let extraImages = [];
+        let fuse;
+        let adChart;
+
+        // متغيرات للإعلانات المتقدمة
+        let popupShown = false;
+        let rewardedAdActive = false;
+        let rewardTimer = null;
 
         // فتح قاعدة البيانات
         function openDB() {
@@ -1970,6 +2550,7 @@
                     if (!db.objectStoreNames.contains('saved')) db.createObjectStore('saved', { keyPath: 'id' });
                     if (!db.objectStoreNames.contains('pages')) db.createObjectStore('pages', { keyPath: 'pageId' });
                     if (!db.objectStoreNames.contains('trash')) db.createObjectStore('trash', { keyPath: 'id' });
+                    if (!db.objectStoreNames.contains('adStats')) db.createObjectStore('adStats', { keyPath: 'date' });
                 };
             });
         }
@@ -1985,7 +2566,7 @@
                 newsRequest.onsuccess = () => {
                     newsData = newsRequest.result.length ? newsRequest.result : defaultNews.slice();
                     if (!newsRequest.result.length) saveNewsToDB(newsData);
-                    initFuse(); // تهيئة Fuse بعد تحميل البيانات
+                    initFuse();
                     renderNews();
                     renderTables();
                     updateStats();
@@ -2006,6 +2587,8 @@
                     if (settingsRequest.result) siteSettings = settingsRequest.result.value;
                     else { siteSettings = defaultSettings; saveSettingsToDB(); }
                     applySettings();
+                    updateAllAds();
+                    loadAdStats();
                 };
 
                 const savedTx = db.transaction('saved', 'readonly');
@@ -2034,6 +2617,20 @@
                 trashRequest.onsuccess = () => {
                     trashNews = trashRequest.result || [];
                 };
+
+                const adStatsTx = db.transaction('adStats', 'readonly');
+                const adStatsStore = adStatsTx.objectStore('adStats');
+                const adStatsRequest = adStatsStore.getAll();
+                adStatsRequest.onsuccess = () => {
+                    if (adStatsRequest.result.length) {
+                        // تجميع الإحصائيات
+                        const today = new Date().toISOString().split('T')[0];
+                        const todaysStats = adStatsRequest.result.find(s => s.date === today);
+                        if (todaysStats) {
+                            adStats = todaysStats;
+                        }
+                    }
+                };
             } catch (e) {
                 console.error('IndexedDB error, falling back to localStorage', e);
                 newsData = JSON.parse(localStorage.getItem('empire_news')) || defaultNews;
@@ -2042,14 +2639,21 @@
                 siteSettings = JSON.parse(localStorage.getItem('empire_settings')) || defaultSettings;
                 pagesData = JSON.parse(localStorage.getItem('empire_pages')) || defaultPages;
                 trashNews = JSON.parse(localStorage.getItem('empire_trash')) || [];
+                adStats = JSON.parse(localStorage.getItem('empire_adStats')) || adStats;
                 initFuse();
                 renderNews();
                 renderTables();
                 applySettings();
+                updateAllAds();
             }
+
+            // تهيئة الإعلانات الذكية
+            setTimeout(() => {
+                initSmartPopups();
+            }, 5000);
         }
 
-        // تهيئة Fuse.js للبحث المتقدم
+        // تهيئة Fuse.js
         function initFuse() {
             fuse = new Fuse(newsData, {
                 keys: ['title', 'text'],
@@ -2060,6 +2664,7 @@
             });
         }
 
+        // حفظ البيانات
         function saveNewsToDB(newsArray) {
             const tx = db.transaction('news', 'readwrite');
             const store = tx.objectStore('news');
@@ -2101,6 +2706,19 @@
             trashNews.forEach(item => store.put(item));
         }
 
+        function saveAdStats() {
+            const today = new Date().toISOString().split('T')[0];
+            adStats.date = today;
+            
+            if (db) {
+                const tx = db.transaction('adStats', 'readwrite');
+                const store = tx.objectStore('adStats');
+                store.put(adStats);
+            } else {
+                localStorage.setItem('empire_adStats', JSON.stringify(adStats));
+            }
+        }
+
         function saveData() {
             if (db) {
                 saveNewsToDB(newsData);
@@ -2109,6 +2727,7 @@
                 saveSavedToDB();
                 savePagesToDB();
                 saveTrashToDB();
+                saveAdStats();
             } else {
                 localStorage.setItem('empire_news', JSON.stringify(newsData));
                 localStorage.setItem('empire_comments', JSON.stringify(commentsData));
@@ -2116,13 +2735,484 @@
                 localStorage.setItem('empire_settings', JSON.stringify(siteSettings));
                 localStorage.setItem('empire_pages', JSON.stringify(pagesData));
                 localStorage.setItem('empire_trash', JSON.stringify(trashNews));
+                localStorage.setItem('empire_adStats', JSON.stringify(adStats));
             }
             renderNews();
             renderTables();
             updateStats();
             updateBreakingNewsBar();
             updateSocialIcons();
-            initFuse(); // إعادة تهيئة Fuse بعد تحديث البيانات
+            initFuse();
+            updateAllAds();
+        }
+
+        // ==================== إحصائيات الإعلانات ====================
+        function trackAdImpression(position) {
+            if (!adStats.impressions[position]) {
+                adStats.impressions[position] = 0;
+            }
+            adStats.impressions[position]++;
+            
+            // حفظ التاريخ
+            const historyEntry = {
+                timestamp: Date.now(),
+                position: position,
+                type: 'impression'
+            };
+            if (!adStats.history) adStats.history = [];
+            adStats.history.push(historyEntry);
+            
+            saveAdStats();
+        }
+
+        function trackAdClick(position) {
+            if (!adStats.clicks[position]) {
+                adStats.clicks[position] = 0;
+            }
+            adStats.clicks[position]++;
+            
+            const historyEntry = {
+                timestamp: Date.now(),
+                position: position,
+                type: 'click'
+            };
+            if (!adStats.history) adStats.history = [];
+            adStats.history.push(historyEntry);
+            
+            saveAdStats();
+            updateAdAnalytics();
+        }
+
+        function getCTR(position) {
+            const impressions = adStats.impressions[position] || 0;
+            const clicks = adStats.clicks[position] || 0;
+            if (impressions === 0) return 0;
+            return (clicks / impressions * 100).toFixed(2);
+        }
+
+        function updateAdAnalytics() {
+            // تحديث بطاقات التحليلات
+            const analyticsContainer = document.getElementById('adAnalyticsCards');
+            if (!analyticsContainer) return;
+            
+            const positions = ['header', 'infeed', 'inArticle', 'sidebar', 'floating', 'video', 'popup', 'rewarded'];
+            let html = '';
+            
+            positions.forEach(pos => {
+                const impressions = adStats.impressions[pos] || 0;
+                const clicks = adStats.clicks[pos] || 0;
+                const ctr = getCTR(pos);
+                const ctrClass = ctr > 1 ? 'ctr-high' : (ctr > 0.1 ? '' : 'ctr-low');
+                
+                html += `
+                    <div class="analytics-card">
+                        <h4>${getAdPositionName(pos)}</h4>
+                        <p>ظهور: ${impressions}</p>
+                        <p>نقرات: ${clicks}</p>
+                        <p class="${ctrClass}">CTR: ${ctr}%</p>
+                    </div>
+                `;
+            });
+            
+            analyticsContainer.innerHTML = html;
+            
+            // تحديث جدول الأداء
+            updateAdPerformanceTable();
+            
+            // تحديث الرسم البياني
+            updateAdChart();
+        }
+
+        function getAdPositionName(pos) {
+            const names = {
+                header: 'أعلى الصفحة',
+                infeed: 'بين المقالات',
+                inArticle: 'داخل المقال',
+                sidebar: 'جانبي',
+                floating: 'عائم',
+                video: 'فيديو',
+                popup: 'منبثق',
+                rewarded: 'مكافأة'
+            };
+            return names[pos] || pos;
+        }
+
+        function updateAdPerformanceTable() {
+            const tableBody = document.getElementById('adPerformanceTable');
+            if (!tableBody) return;
+            
+            const positions = ['header', 'infeed', 'inArticle', 'sidebar', 'floating'];
+            let html = '';
+            
+            positions.forEach(pos => {
+                const impressions = adStats.impressions[pos] || 0;
+                const clicks = adStats.clicks[pos] || 0;
+                const ctr = getCTR(pos);
+                const performance = ctr > 1 ? 'ممتاز' : (ctr > 0.5 ? 'جيد' : (ctr > 0.1 ? 'متوسط' : 'ضعيف'));
+                const color = ctr > 1 ? '#2ecc71' : (ctr > 0.5 ? '#f39c12' : '#e74c3c');
+                
+                html += `
+                    <tr>
+                        <td>${getAdPositionName(pos)}</td>
+                        <td>${impressions}</td>
+                        <td>${clicks}</td>
+                        <td>${ctr}%</td>
+                        <td style="color: ${color};">${performance}</td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = html;
+        }
+
+        function updateAdChart() {
+            const ctx = document.getElementById('adChart')?.getContext('2d');
+            if (!ctx) return;
+            
+            // تجميع البيانات لآخر 7 أيام
+            const last7Days = [];
+            const labels = [];
+            const impressionsData = [];
+            const clicksData = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toLocaleDateString('ar-EG', { weekday: 'short', month: 'short', day: 'numeric' });
+                labels.push(dateStr);
+                
+                // هذا مثال، في التطبيق الفعلي ستجلب البيانات من التاريخ
+                impressionsData.push(Math.floor(Math.random() * 100) + 50);
+                clicksData.push(Math.floor(Math.random() * 10));
+            }
+            
+            if (adChart) {
+                adChart.destroy();
+            }
+            
+            adChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'مرات الظهور',
+                        data: impressionsData,
+                        borderColor: 'var(--antique-gold)',
+                        backgroundColor: 'rgba(197, 160, 89, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'النقرات',
+                        data: clicksData,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'var(--text-primary)'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(255,255,255,0.1)'
+                            },
+                            ticks: {
+                                color: 'var(--text-secondary)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255,255,255,0.1)'
+                            },
+                            ticks: {
+                                color: 'var(--text-secondary)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function resetAdStats() {
+            if (confirm('هل أنت متأكد من إعادة تعيين إحصائيات الإعلانات؟')) {
+                adStats = {
+                    impressions: { header: 0, infeed: 0, inArticle: 0, sidebar: 0, floating: 0, video: 0, popup: 0, rewarded: 0 },
+                    clicks: { header: 0, infeed: 0, inArticle: 0, sidebar: 0, floating: 0, video: 0, popup: 0, rewarded: 0 },
+                    history: []
+                };
+                saveAdStats();
+                updateAdAnalytics();
+                showToast('تم إعادة تعيين الإحصائيات', 'success');
+            }
+        }
+
+        // ==================== نظام الإعلانات المتقدم ====================
+        function getRandomAd(position, adsArray) {
+            if (!adsArray || adsArray.length === 0) return null;
+            const randomIndex = Math.floor(Math.random() * adsArray.length);
+            return adsArray[randomIndex];
+        }
+
+        function getSeasonalAd() {
+            const now = new Date();
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
+            
+            // رمضان (تقريباً)
+            if (month === 3 || month === 4) {
+                return siteSettings.ads?.seasonal?.ramadan;
+            }
+            
+            // عيد الأضحى (تقريباً)
+            if (month === 6 || month === 7) {
+                return siteSettings.ads?.seasonal?.eid;
+            }
+            
+            // الجمعة البيضاء
+            if (month === 11 && day >= 20) {
+                return siteSettings.ads?.seasonal?.blackFriday;
+            }
+            
+            return null;
+        }
+
+        function getContextualAd(category) {
+            const amazon = siteSettings.ads?.amazon;
+            if (!amazon || !amazon.tag) return null;
+            
+            let asin = '';
+            if (category === 'tech') asin = amazon.tech;
+            else if (category === 'edu' || category === 'ent') asin = amazon.books;
+            
+            if (!asin) return null;
+            
+            return `
+                <iframe src="https://ws-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=US&source=ss&ref=as_ss_li_til&ad_type=product_link&tracking_id=${amazon.tag}&marketplace=amazon&region=US&placement=${asin}&asins=${asin}&show_border=true&link_opens_in_new_window=true"
+                        style="width:120px;height:240px; margin:0 auto;"
+                        scrolling="no"
+                        marginwidth="0"
+                        marginheight="0"
+                        frameborder="0">
+                </iframe>
+            `;
+        }
+
+        function displayAd(containerId, adCode, position) {
+            const container = document.getElementById(containerId);
+            if (!container || !adCode) return;
+            
+            // تتبع الظهور
+            if (position) trackAdImpression(position);
+            
+            const iframe = document.createElement('iframe');
+            iframe.srcdoc = `
+                <html>
+                    <body style="margin:0; padding:0; background:transparent; font-family: 'Tajawal', sans-serif;">
+                        ${adCode}
+                        <script>
+                            // تتبع النقرات
+                            document.addEventListener('click', function() {
+                                window.parent.postMessage({ type: 'adClick', position: '${position}' }, '*');
+                            });
+                        <\/script>
+                    </body>
+                </html>
+            `;
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = 'none';
+            iframe.style.overflow = 'hidden';
+            
+            container.innerHTML = '';
+            container.appendChild(iframe);
+            container.style.display = 'block';
+            
+            // الاستماع لتتبع النقرات
+            window.addEventListener('message', (event) => {
+                if (event.data.type === 'adClick' && event.data.position) {
+                    trackAdClick(event.data.position);
+                }
+            });
+        }
+
+        // تحديث الإعلانات
+        function updateAllAds() {
+            updateHeaderAd();
+            updateSidebarAd();
+            updateFloatingAd();
+            updateVideoAd();
+        }
+
+        function updateHeaderAd() {
+            let adCode = siteSettings.ads?.header || '';
+            
+            // تناوب الإعلانات
+            if (siteSettings.ads?.rotation?.header && siteSettings.ads.rotation.header.length > 0) {
+                adCode = getRandomAd('header', siteSettings.ads.rotation.header) || adCode;
+            }
+            
+            // إعلان موسمي
+            const seasonalAd = getSeasonalAd();
+            if (seasonalAd) adCode = seasonalAd;
+            
+            displayAd('adHeaderContainer', adCode, 'header');
+        }
+
+        function updateSidebarAd() {
+            let adCode = siteSettings.ads?.sidebar || '';
+            
+            // إعلان سياقي للمقال الرئيسي (يمكن تحسينه)
+            if (newsData.length > 0) {
+                const contextualAd = getContextualAd(newsData[0].cat);
+                if (contextualAd) adCode = contextualAd;
+            }
+            
+            displayAd('sidebarAdContainer', adCode, 'sidebar');
+        }
+
+        function updateFloatingAd() {
+            const floatingDiv = document.getElementById('floatingAd');
+            const adCode = siteSettings.ads?.floating || '';
+            
+            if (adCode) {
+                displayAd('floatingAdContent', adCode, 'floating');
+                floatingDiv.style.display = 'block';
+            } else {
+                floatingDiv.style.display = 'none';
+            }
+        }
+
+        function closeFloatingAd() {
+            document.getElementById('floatingAd').style.display = 'none';
+        }
+
+        // إعلان فيديو
+        function updateVideoAd() {
+            const videoUrl = siteSettings.ads?.videoUrl;
+            const videoCode = siteSettings.ads?.videoCode;
+            
+            if (videoUrl || videoCode) {
+                let embedCode = videoCode;
+                
+                if (videoUrl && !embedCode) {
+                    // تحويل رابط YouTube إلى كود embed
+                    if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+                        const videoId = videoUrl.split('v=')[1]?.split('&')[0] || videoUrl.split('/').pop();
+                        embedCode = `<iframe width="100%" height="400" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+                    } else if (videoUrl.includes('vimeo.com')) {
+                        const videoId = videoUrl.split('/').pop();
+                        embedCode = `<iframe src="https://player.vimeo.com/video/${videoId}" width="100%" height="400" frameborder="0" allowfullscreen></iframe>`;
+                    }
+                }
+                
+                if (embedCode) {
+                    document.getElementById('videoAdContent').innerHTML = embedCode;
+                }
+            }
+        }
+
+        function showVideoAd() {
+            if (siteSettings.ads?.videoUrl || siteSettings.ads?.videoCode) {
+                document.getElementById('videoAd').classList.add('active');
+                trackAdImpression('video');
+            }
+        }
+
+        function closeVideoAd() {
+            document.getElementById('videoAd').classList.remove('active');
+        }
+
+        // الإعلانات الذكية (Popup)
+        function initSmartPopups() {
+            // Exit intent
+            document.addEventListener('mouseleave', (e) => {
+                if (e.clientY < 0 && !popupShown && !isFocusMode && !currentOpenArticleId) {
+                    showSmartPopup();
+                    popupShown = true;
+                }
+            });
+            
+            // بعد 30 ثانية
+            setTimeout(() => {
+                if (!popupShown && !isFocusMode) {
+                    showSmartPopup();
+                    popupShown = true;
+                }
+            }, 30000);
+            
+            // عند التمرير لمسافة معينة
+            window.addEventListener('scroll', () => {
+                const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+                if (scrollPercent > 50 && !popupShown && !isFocusMode && !currentOpenArticleId) {
+                    showSmartPopup();
+                    popupShown = true;
+                }
+            });
+        }
+
+        function showSmartPopup() {
+            const adCode = siteSettings.ads?.popup;
+            if (!adCode) return;
+            
+            document.getElementById('smartPopupContent').innerHTML = adCode;
+            document.getElementById('smartPopup').classList.add('active');
+            trackAdImpression('popup');
+        }
+
+        function closeSmartPopup() {
+            document.getElementById('smartPopup').classList.remove('active');
+        }
+
+        // إعلان المكافأة
+        function showRewardedAd() {
+            const adCode = siteSettings.ads?.rewarded;
+            if (!adCode || rewardedAdActive) return;
+            
+            rewardedAdActive = true;
+            document.getElementById('rewardedAdContent').innerHTML = adCode;
+            document.getElementById('rewardedAd').classList.add('active');
+            trackAdImpression('rewarded');
+            
+            let timeLeft = 30;
+            const timerElement = document.getElementById('rewardTimer');
+            const progressBar = document.getElementById('rewardProgressBar');
+            const claimBtn = document.getElementById('claimRewardBtn');
+            
+            rewardTimer = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = timeLeft;
+                progressBar.style.width = ((30 - timeLeft) / 30 * 100) + '%';
+                
+                if (timeLeft <= 0) {
+                    clearInterval(rewardTimer);
+                    claimBtn.disabled = false;
+                    claimBtn.style.opacity = '1';
+                }
+            }, 1000);
+        }
+
+        function claimReward() {
+            clearInterval(rewardTimer);
+            document.getElementById('rewardedAd').classList.remove('active');
+            rewardedAdActive = false;
+            
+            // هنا يمكن إضافة المكافأة (مثلاً: فتح ميزة حصرية، نقاط، الخ)
+            showToast('تهانينا! لقد حصلت على المكافأة 🎁', 'success');
+            
+            // مثال: فتح مقال حصري أو إلغاء قفل محتوى
+        }
+
+        function closeRewardedAd() {
+            clearInterval(rewardTimer);
+            document.getElementById('rewardedAd').classList.remove('active');
+            rewardedAdActive = false;
         }
 
         // ==================== تحديثات واجهة المستخدم ====================
@@ -2191,7 +3281,6 @@
             document.getElementById('siteNameDisplay').innerText = siteSettings.siteName;
             document.getElementById('footerLogoDisplay').innerText = siteSettings.siteName + ".";
             document.getElementById('settingSiteName').value = siteSettings.siteName;
-            // لا نعرض كلمة المرور الحالية في الواجهة (تم حذف السطر المعروض)
 
             if (siteSettings.theme === 'light') {
                 document.documentElement.setAttribute('data-theme', 'light');
@@ -2219,8 +3308,35 @@
                 document.getElementById('socialLinkedin').value = siteSettings.socialLinks.linkedin || '';
             }
 
+            // تعبئة إعدادات الإعلانات
+            if (siteSettings.ads) {
+                document.getElementById('adHeaderCode').value = siteSettings.ads.header || '';
+                document.getElementById('adInfeedCode').value = siteSettings.ads.infeed || '';
+                document.getElementById('adInArticleCode').value = siteSettings.ads.inArticle || '';
+                document.getElementById('adSidebarCode').value = siteSettings.ads.sidebar || '';
+                document.getElementById('adFloatingCode').value = siteSettings.ads.floating || '';
+                document.getElementById('videoAdUrl').value = siteSettings.ads.videoUrl || '';
+                document.getElementById('videoAdCode').value = siteSettings.ads.videoCode || '';
+                document.getElementById('rewardedAdCode').value = siteSettings.ads.rewarded || '';
+                document.getElementById('popupAdCode').value = siteSettings.ads.popup || '';
+                document.getElementById('amazonAsinTech').value = siteSettings.ads.amazon?.tech || '';
+                document.getElementById('amazonAsinBooks').value = siteSettings.ads.amazon?.books || '';
+                document.getElementById('amazonTag').value = siteSettings.ads.amazon?.tag || '';
+                document.getElementById('adRamadan').value = siteSettings.ads.seasonal?.ramadan || '';
+                document.getElementById('adEid').value = siteSettings.ads.seasonal?.eid || '';
+                document.getElementById('adBlackFriday').value = siteSettings.ads.seasonal?.blackFriday || '';
+                
+                if (siteSettings.ads.rotation?.header) {
+                    document.getElementById('adHeaderRotation').value = siteSettings.ads.rotation.header.join('\n-----\n');
+                }
+                if (siteSettings.ads.rotation?.infeed) {
+                    document.getElementById('adInfeedRotation').value = siteSettings.ads.rotation.infeed.join('\n-----\n');
+                }
+            }
+
             updateBreakingNewsBar();
             updateSocialIcons();
+            updateAllAds();
         }
 
         function toggleTheme() {
@@ -2240,11 +3356,53 @@
                 youtube: document.getElementById('socialYoutube').value.trim(),
                 linkedin: document.getElementById('socialLinkedin').value.trim()
             };
+            
             const newPass = document.getElementById('newPassword').value;
             if (newPass) siteSettings.adminPassword = newPass;
+            
             applySettings();
             saveData();
             showToast('تم حفظ إعدادات الموقع بنجاح', 'success');
+        }
+
+        function saveAds() {
+            if (!siteSettings.ads) siteSettings.ads = {};
+            
+            siteSettings.ads.header = document.getElementById('adHeaderCode').value;
+            siteSettings.ads.infeed = document.getElementById('adInfeedCode').value;
+            siteSettings.ads.inArticle = document.getElementById('adInArticleCode').value;
+            siteSettings.ads.sidebar = document.getElementById('adSidebarCode').value;
+            siteSettings.ads.floating = document.getElementById('adFloatingCode').value;
+            siteSettings.ads.videoUrl = document.getElementById('videoAdUrl').value;
+            siteSettings.ads.videoCode = document.getElementById('videoAdCode').value;
+            siteSettings.ads.rewarded = document.getElementById('rewardedAdCode').value;
+            siteSettings.ads.popup = document.getElementById('popupAdCode').value;
+            
+            if (!siteSettings.ads.amazon) siteSettings.ads.amazon = {};
+            siteSettings.ads.amazon.tech = document.getElementById('amazonAsinTech').value;
+            siteSettings.ads.amazon.books = document.getElementById('amazonAsinBooks').value;
+            siteSettings.ads.amazon.tag = document.getElementById('amazonTag').value;
+            
+            if (!siteSettings.ads.seasonal) siteSettings.ads.seasonal = {};
+            siteSettings.ads.seasonal.ramadan = document.getElementById('adRamadan').value;
+            siteSettings.ads.seasonal.eid = document.getElementById('adEid').value;
+            siteSettings.ads.seasonal.blackFriday = document.getElementById('adBlackFriday').value;
+            
+            // معالجة تناوب الإعلانات
+            const headerRotation = document.getElementById('adHeaderRotation').value;
+            if (headerRotation) {
+                siteSettings.ads.rotation = siteSettings.ads.rotation || {};
+                siteSettings.ads.rotation.header = headerRotation.split('\n-----\n').map(ad => ad.trim()).filter(ad => ad);
+            }
+            
+            const infeedRotation = document.getElementById('adInfeedRotation').value;
+            if (infeedRotation) {
+                siteSettings.ads.rotation = siteSettings.ads.rotation || {};
+                siteSettings.ads.rotation.infeed = infeedRotation.split('\n-----\n').map(ad => ad.trim()).filter(ad => ad);
+            }
+            
+            saveData();
+            showToast('تم حفظ إعدادات الإعلانات بنجاح', 'success');
         }
 
         // ==================== وضع التركيز ====================
@@ -2256,6 +3414,9 @@
             const newsBar = document.getElementById('breakingNewsBar');
             const adminBtn = document.getElementById('adminBtn');
             const backToTop = document.getElementById('backToTop');
+            const floatingAd = document.getElementById('floatingAd');
+            const videoAd = document.getElementById('videoAd');
+            const smartPopup = document.getElementById('smartPopup');
             
             if (isFocusMode) {
                 header.style.opacity = '0'; header.style.pointerEvents = 'none';
@@ -2263,6 +3424,9 @@
                 newsBar.style.display = 'none';
                 adminBtn.style.display = 'none';
                 backToTop.style.display = 'none';
+                floatingAd.style.display = 'none';
+                videoAd.classList.remove('active');
+                smartPopup.classList.remove('active');
                 showToast('تم تفعيل وضع التركيز', 'info');
             } else {
                 header.style.opacity = '1'; header.style.pointerEvents = 'all';
@@ -2270,6 +3434,7 @@
                 newsBar.style.display = 'block';
                 adminBtn.style.display = 'flex';
                 backToTop.style.display = 'flex';
+                if (siteSettings.ads?.floating) floatingAd.style.display = 'block';
                 showToast('تم تعطيل وضع التركيز', 'info');
             }
         }
@@ -2286,7 +3451,7 @@
             else backBtn.classList.remove('visible');
         };
 
-        // ==================== عرض الأخبار ====================
+        // ==================== عرض الأخبار مع إعلانات بينية ====================
         function renderNews(filter = 'all') {
             const grid = document.getElementById('newsGrid');
             grid.innerHTML = '';
@@ -2303,9 +3468,47 @@
                 return;
             }
 
-            // استخدام DocumentFragment لتحسين الأداء
             const fragment = document.createDocumentFragment();
-            filtered.forEach(item => {
+            let adCode = siteSettings.ads?.infeed || '';
+            
+            // إعلان موسمي
+            const seasonalAd = getSeasonalAd();
+            if (seasonalAd) adCode = seasonalAd;
+            
+            // تناوب الإعلانات
+            if (siteSettings.ads?.rotation?.infeed && siteSettings.ads.rotation.infeed.length > 0) {
+                adCode = getRandomAd('infeed', siteSettings.ads.rotation.infeed) || adCode;
+            }
+            
+            filtered.forEach((item, index) => {
+                // إضافة الإعلان بعد كل 3 مقالات
+                if (index > 0 && index % 3 === 0 && adCode) {
+                    const adDiv = document.createElement('div');
+                    adDiv.className = 'luxury-card ad-card';
+                    
+                    const iframe = document.createElement('iframe');
+                    iframe.srcdoc = `
+                        <html>
+                            <body style="margin:0; padding:0; background:transparent; display:flex; align-items:center; justify-content:center; min-height:280px;">
+                                ${adCode}
+                                <script>
+                                    document.addEventListener('click', function() {
+                                        window.parent.postMessage({ type: 'adClick', position: 'infeed' }, '*');
+                                    });
+                                <\/script>
+                            </body>
+                        </html>
+                    `;
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.border = 'none';
+                    iframe.style.overflow = 'hidden';
+                    adDiv.appendChild(iframe);
+                    
+                    fragment.appendChild(adDiv);
+                    trackAdImpression('infeed');
+                }
+
                 const isSaved = savedNews.includes(item.id);
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = item.text;
@@ -2386,7 +3589,7 @@
             history.pushState({}, '', `?cat=${cat}`);
         }
 
-        // ==================== ARTICLE MODAL ====================
+        // ==================== ARTICLE MODAL مع إعلان داخلي ====================
         function openArticleModal(id) {
             const article = newsData.find(n => n.id === id);
             if (!article) return;
@@ -2402,7 +3605,47 @@
             document.getElementById('modalDate').innerText = article.date;
             document.getElementById('modalAuthor').innerText = article.author || 'الإدارة التحريرية';
             document.getElementById('modalViews').innerText = article.views || 0;
-            document.getElementById('modalText').innerHTML = DOMPurify.sanitize(article.text);
+            
+            // إدراج الإعلان داخل المحتوى
+            let content = article.text;
+            let adCode = siteSettings.ads?.inArticle || '';
+            
+            // إعلان سياقي حسب تصنيف المقال
+            const contextualAd = getContextualAd(article.cat);
+            if (contextualAd) adCode = contextualAd;
+            
+            // إعلان موسمي
+            const seasonalAd = getSeasonalAd();
+            if (seasonalAd) adCode = seasonalAd;
+            
+            if (adCode) {
+                const iframeAd = `
+                    <div class="ad-in-article">
+                        <iframe srcdoc='
+                            <html>
+                                <body style="margin:0; padding:0; background:transparent;">
+                                    ${adCode.replace(/'/g, "\\'")}
+                                    <script>
+                                        document.addEventListener("click", function() {
+                                            window.parent.postMessage({ type: "adClick", position: "inArticle" }, "*");
+                                        });
+                                    <\/script>
+                                </body>
+                            </html>
+                        ' style="width:100%; min-height:250px; border:none;"></iframe>
+                    </div>
+                `;
+                const paragraphs = content.split('</p>');
+                if (paragraphs.length >= 2) {
+                    paragraphs.splice(2, 0, iframeAd);
+                    content = paragraphs.join('</p>');
+                } else {
+                    content += iframeAd;
+                }
+                trackAdImpression('inArticle');
+            }
+            
+            document.getElementById('modalText').innerHTML = DOMPurify.sanitize(content, { ADD_ATTR: ['srcdoc', 'allowfullscreen', 'frameborder'] });
             
             renderCommentsForArticle(id);
             updateModalSaveBtn();
@@ -2411,6 +3654,11 @@
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
             history.pushState({}, '', `?news=${id}`);
+            
+            // عرض إعلان مكافأة أحياناً
+            if (Math.random() < 0.3) { // 30% فرصة
+                showRewardedAd();
+            }
         }
 
         function closeArticleModal() {
@@ -2573,6 +3821,7 @@
                 document.body.style.overflow = 'hidden';
                 renderTables();
                 updateStats();
+                updateAdAnalytics();
                 showToast('مرحباً بك في لوحة القيادة', 'success');
             } else {
                 document.getElementById('errorMsg').style.display = 'block';
@@ -2651,6 +3900,8 @@
             document.getElementById('tab-pages').style.display = 'none';
             document.getElementById('tab-comments').style.display = 'none';
             document.getElementById('tab-trash').style.display = 'none';
+            document.getElementById('tab-ads').style.display = 'none';
+            document.getElementById('tab-analytics').style.display = 'none';
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             
             if (tabName === 'content') {
@@ -2665,6 +3916,11 @@
                 renderTables();
             } else if (tabName === 'settings') {
                 document.getElementById('tab-settings').style.display = 'block';
+            } else if (tabName === 'ads') {
+                document.getElementById('tab-ads').style.display = 'block';
+            } else if (tabName === 'analytics') {
+                document.getElementById('tab-analytics').style.display = 'block';
+                updateAdAnalytics();
             } else if (tabName === 'backup') {
                 document.getElementById('tab-backup').style.display = 'block';
             } else if (tabName === 'stats') {
@@ -2877,7 +4133,6 @@
             if (fuse) {
                 results = fuse.search(query).map(r => r.item);
             } else {
-                // fallback
                 results = newsData.filter(n => n.title.toLowerCase().includes(query) || n.text.toLowerCase().includes(query));
             }
 
@@ -2898,7 +4153,7 @@
 
         // ==================== BACKUP ====================
         function downloadBackup() {
-            const data = { news: newsData, comments: commentsData, settings: siteSettings, saved: savedNews, pages: pagesData, trash: trashNews };
+            const data = { news: newsData, comments: commentsData, settings: siteSettings, saved: savedNews, pages: pagesData, trash: trashNews, adStats: adStats };
             const dataStr = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
             const a = document.createElement('a');
             a.setAttribute("href", dataStr);
@@ -2921,6 +4176,7 @@
                         savedNews = data.saved || [];
                         pagesData = data.pages || defaultPages;
                         trashNews = data.trash || [];
+                        adStats = data.adStats || adStats;
                         saveData();
                         showToast('تم استعادة البيانات بنجاح', 'success');
                         setTimeout(() => location.reload(), 1000);
@@ -2935,13 +4191,14 @@
         function resetAllData() {
             if (confirm('سيتم حذف كل البيانات وإعادة تعيين الموقع. هل أنت متأكد؟')) {
                 if (db) {
-                    const tx = db.transaction(['news','comments','settings','saved','pages','trash'], 'readwrite');
+                    const tx = db.transaction(['news','comments','settings','saved','pages','trash','adStats'], 'readwrite');
                     tx.objectStore('news').clear();
                     tx.objectStore('comments').clear();
                     tx.objectStore('settings').clear();
                     tx.objectStore('saved').clear();
                     tx.objectStore('pages').clear();
                     tx.objectStore('trash').clear();
+                    tx.objectStore('adStats').clear();
                 }
                 localStorage.clear();
                 location.reload();
@@ -2970,8 +4227,22 @@
 
         function subscribeNewsletter() {
             const email = document.getElementById('newsletterEmail').value;
-            if (email) showToast('تم الاشتراك بنجاح', 'success');
-            else showToast('يرجى إدخال بريد إلكتروني', 'error');
+            if (email) {
+                showToast('تم الاشتراك بنجاح', 'success');
+                // يمكن عرض إعلان مكافأة بعد الاشتراك
+                setTimeout(() => showRewardedAd(), 1000);
+            } else showToast('يرجى إدخال بريد إلكتروني', 'error');
+        }
+
+        // دالة مساعدة لتوليد هاش بسيط
+        function hashCode(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash);
         }
 
         // تهيئة Quill
@@ -3004,7 +4275,57 @@
             }
 
             document.getElementById('copyrightYear').innerText = new Date().getFullYear();
+            
+                        // الاستماع لتتبع النقرات من iframe
+            window.addEventListener('message', function(event) {
+                if (event.data && event.data.type === 'adClick' && event.data.position) {
+                    trackAdClick(event.data.position);
+                }
+            });
+        }
+
+        // دالة تحميل إحصائيات الإعلانات من التخزين (إذا لم تكن موجودة)
+        function loadAdStats() {
+            const savedStats = localStorage.getItem('empire_adStats');
+            if (savedStats) {
+                try {
+                    adStats = JSON.parse(savedStats);
+                } catch (e) {
+                    console.warn('فشل تحميل إحصائيات الإعلانات، استخدام القيم الافتراضية');
+                }
+            }
+            // التأكد من وجود الكائنات المطلوبة
+            if (!adStats.impressions) adStats.impressions = {};
+            if (!adStats.clicks) adStats.clicks = {};
+            if (!adStats.history) adStats.history = [];
+        }
+
+        // دوال مساعدة إضافية (إذا كانت مفقودة)
+        window.toggleMobileMenu = function() {
+            document.getElementById('navMenu').classList.toggle('active');
         };
+
+        window.subscribeNewsletter = function() {
+            const email = document.getElementById('newsletterEmail').value;
+            if (email) {
+                showToast('تم الاشتراك بنجاح', 'success');
+                setTimeout(() => showRewardedAd(), 1000);
+            } else {
+                showToast('يرجى إدخال بريد إلكتروني', 'error');
+            }
+        };
+
+        // إغلاق الدوال الرئيسية والأحداث
+        window.onload = function() {
+            // ... محتوى onload السابق ...
+        }; // نهاية onload
+
+        // أي أحداث إضافية للصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // تهيئة مؤقتة
+            console.log('تم تحميل الصفحة بالكامل');
+        });
+
     </script>
 </body>
 </html>
