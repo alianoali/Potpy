@@ -17,9 +17,6 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
-    <!-- Emoji Support -->
-    <link href="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.14.0/dist/emoji-picker-element.min.css" rel="stylesheet">
-
     <style>
         * {
             margin: 0;
@@ -216,6 +213,40 @@
             transform: scale(1.05);
         }
 
+        /* Settings Panel المحسن */
+        .settings-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(20, 30, 40, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 24px;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            border-radius: 30px 30px 0 0;
+        }
+
+        .settings-panel.open { transform: translateY(0); }
+
+        .settings-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .settings-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
         /* أيقونة المحفظة المتطورة */
         .wallet-icon {
             width: 80px;
@@ -309,245 +340,316 @@
             100% { transform: scale(1); }
         }
 
-        /* Chat Styles */
-        .chat-container {
+        /* Payment Methods */
+        .payment-method {
             display: flex;
-            flex-direction: column;
-            height: 500px;
-            max-height: 70vh;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-            scroll-behavior: smooth;
-        }
-
-        .chat-message {
-            display: flex;
-            margin-bottom: 12px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .chat-message.incoming { justify-content: flex-start; }
-        .chat-message.outgoing { justify-content: flex-end; }
-
-        .message-bubble {
-            max-width: 80%;
-            padding: 10px 14px;
-            border-radius: 20px;
-            position: relative;
-            word-wrap: break-word;
-        }
-
-        .incoming .message-bubble {
-            background: rgba(59, 130, 246, 0.2);
-            border-bottom-right-radius: 5px;
-        }
-
-        .outgoing .message-bubble {
-            background: rgba(16, 185, 129, 0.2);
-            border-bottom-left-radius: 5px;
-        }
-
-        .message-info {
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-top: 4px;
-            display: flex;
-            gap: 8px;
-        }
-
-        .message-status {
-            display: inline-flex;
             align-items: center;
-            gap: 2px;
-        }
-
-        .typing-indicator {
-            display: flex;
-            gap: 4px;
-            padding: 10px 14px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            width: fit-content;
-        }
-
-        .typing-indicator span {
-            width: 8px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            animation: typing 1s infinite;
-        }
-
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes typing {
-            0%, 100% { transform: translateY(0); opacity: 0.5; }
-            50% { transform: translateY(-5px); opacity: 1; }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Emoji Picker */
-        .emoji-picker-container {
-            position: absolute;
-            bottom: 70px;
-            left: 10px;
-            z-index: 1000;
-            display: none;
-        }
-
-        .emoji-picker-container.open { display: block; }
-
-        emoji-picker {
-            width: 300px;
-            height: 400px;
-            --background: rgba(20, 30, 40, 0.95);
-            --border-color: var(--glass-border);
-            --category-emoji-size: 1.2rem;
-        }
-
-        /* Quick Replies */
-        .quick-replies {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            padding: 10px;
-            border-top: 1px solid var(--glass-border);
-        }
-
-        .quick-reply-btn {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 20px;
-            padding: 6px 12px;
-            font-size: 12px;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
             cursor: pointer;
             transition: all 0.2s;
-            white-space: nowrap;
+            margin-bottom: 8px;
         }
 
-        .quick-reply-btn:hover {
+        .payment-method:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .payment-method.selected {
             background: rgba(59, 130, 246, 0.2);
-            transform: scale(1.05);
+            border-color: var(--primary);
         }
 
-        /* Ticket System */
-        .ticket-item {
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: #334155;
+            color: white;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .payment-icon img {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        /* Payment Details */
+        .payment-details {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid var(--glass-border);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .payment-details strong { color: var(--primary); }
+
+        /* Tabs */
+        .wallet-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .wallet-tab {
+            flex: 1;
+            min-width: 70px;
+            padding: 8px 5px;
+            text-align: center;
+            border-radius: 12px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+
+        .wallet-tab.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary);
+        }
+
+        .wallet-tab i { margin-left: 6px; }
+
+        /* Transactions */
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .transaction-item:last-child { border-bottom: none; }
+        .transaction-amount.positive { color: var(--success); }
+        .transaction-amount.negative { color: var(--danger); }
+
+        /* Balance Progress */
+        .balance-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .balance-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* Auto Update Indicator */
+        .auto-update-indicator {
+            position: fixed;
+            bottom: 80px;
+            right: 16px;
+            background: rgba(16, 185, 129, 0.2);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 11px;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 999;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .auto-update-indicator i {
+            animation: spin 1s linear infinite;
+        }
+
+        /* Image Upload */
+        .image-upload-area {
+            border: 2px dashed rgba(59, 130, 246, 0.5);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .image-upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .image-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            margin: 10px auto;
+        }
+
+        .delete-image-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .delete-image-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: rgba(20, 30, 40, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 24px;
+            width: 100%;
+            max-width: 450px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-overlay.open .modal-content { transform: scale(1); }
+
+        /* Form Elements */
+        input, select, textarea {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 10px 12px;
+            color: inherit;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* User Item */
+        .user-item {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 16px;
             padding: 12px;
             margin-bottom: 10px;
             border: 1px solid var(--glass-border);
-            cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .ticket-item:hover {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: rgba(59, 130, 246, 0.3);
-        }
+        .user-item.blocked { opacity: 0.5; }
 
-        .ticket-item.closed { opacity: 0.6; }
-
-        .ticket-status {
+        .badge-blocked {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            padding: 2px 10px;
+            border-radius: 30px;
             font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 12px;
-            display: inline-block;
+            font-weight: 600;
         }
 
-        .ticket-status.open { background: rgba(16, 185, 129, 0.2); color: var(--success); }
-        .ticket-status.closed { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
-        .ticket-status.pending { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
-
-        /* FAQ Section */
-        .faq-item {
-            border-bottom: 1px solid var(--glass-border);
-            padding: 12px 0;
+        /* Balance Update Animation */
+        .balance-update {
+            animation: balancePulse 0.5s ease;
         }
 
-        .faq-question {
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 13px;
-            padding-right: 15px;
-        }
-
-        .faq-item.open .faq-answer { max-height: 200px; margin-top: 8px; }
-
-        /* Dollar Symbol */
-        .currency-symbol {
-            font-size: 0.8em;
-            margin-left: 2px;
-            color: var(--warning);
-        }
-
-        /* Progress Steps */
-        .progress-steps {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            position: relative;
-        }
-
-        .progress-step {
-            flex: 1;
-            text-align: center;
-            position: relative;
-        }
-
-        .progress-step::before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            right: -50%;
-            width: 100%;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.1);
-            z-index: 1;
-        }
-
-        .progress-step:last-child::before { display: none; }
-
-        .progress-step.active .step-number {
-            background: var(--primary);
-            color: white;
-        }
-
-        .progress-step.completed .step-number {
-            background: var(--success);
-            color: white;
-        }
-
-        .step-number {
-            width: 30px;
-            height: 30px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 5px;
-            position: relative;
-            z-index: 2;
+        @keyframes balancePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); color: var(--success); }
+            100% { transform: scale(1); }
         }
 
         /* Hide scrollbar but keep functionality */
@@ -577,6 +679,54 @@
     <!-- Main Container -->
     <div id="app" class="w-full max-w-md p-5 relative"></div>
 
+    <!-- Settings Panel -->
+    <div class="settings-overlay" id="settingsOverlay"></div>
+    <div class="settings-panel" id="settingsPanel">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold">الإعدادات</h3>
+            <button id="closeSettings" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <span class="text-gray-300">اللغة</span>
+                <select class="bg-white/10 rounded-lg p-2 w-32" id="languageSelect">
+                    <option value="ar">العربية</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-300">الإشعارات</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" id="notificationsToggle">
+                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600 transition-colors"></div>
+                </label>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-300">تنبيه صوتي</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" id="soundToggle" checked>
+                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600 transition-colors"></div>
+                </label>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-300">اهتزاز</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" id="vibrateToggle" checked>
+                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600 transition-colors"></div>
+                </label>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-300">تحديث تلقائي</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" id="autoRefreshToggle" checked>
+                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600 transition-colors"></div>
+                </label>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
@@ -597,33 +747,20 @@
         <div class="modal-content" id="editBalanceModalContent" style="max-width: 350px;"></div>
     </div>
 
-    <div class="modal-overlay" id="supportChatModalOverlay">
-        <div class="modal-content" id="supportChatModalContent" style="max-width: 450px;"></div>
-    </div>
-
-    <div class="modal-overlay" id="ticketModalOverlay">
-        <div class="modal-content" id="ticketModalContent" style="max-width: 400px;"></div>
-    </div>
-
-    <!-- Emoji Picker Container -->
-    <div class="emoji-picker-container" id="emojiPickerContainer">
-        <emoji-picker class="light"></emoji-picker>
-    </div>
-
     <!-- Auto Update Indicator -->
     <div id="autoUpdateIndicator" class="auto-update-indicator hidden">
         <i class="fa-solid fa-rotate"></i>
         <span>جاري تحديث الرصيد...</span>
     </div>
 
-    <script type="module">
+    <script>
         (function() {
             'use strict';
 
             // ==================== Configuration ====================
             const CONFIG = {
                 ADMIN_ID: 7609492965,
-                DEFAULT_BALANCE: 100, // بدأ بـ 100 دولار
+                DEFAULT_BALANCE: 1000,
                 MAX_TRANSACTIONS: 50,
                 MAX_IMAGE_SIZE: 2 * 1024 * 1024, // 2MB
                 ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
@@ -636,56 +773,14 @@
                     THEME: 'wallet_theme',
                     SETTINGS: 'wallet_settings',
                     NOTIFICATIONS: 'wallet_notifications',
-                    DAILY_OPS: 'wallet_daily_ops',
-                    CHAT_MESSAGES: 'wallet_chat_messages',
-                    SUPPORT_TICKETS: 'wallet_support_tickets',
-                    FAQ_ITEMS: 'wallet_faq_items'
+                    DAILY_OPS: 'wallet_daily_ops'
                 },
                 BALANCE_LEVELS: [
                     { threshold: 0, color: '#ef4444', name: 'منخفض' },
-                    { threshold: 100, color: '#f59e0b', name: 'متوسط' },
-                    { threshold: 500, color: '#10b981', name: 'جيد' },
-                    { threshold: 1000, color: '#3b82f6', name: 'ممتاز' },
-                    { threshold: 5000, color: '#8b5cf6', name: 'ماسي' }
-                ],
-                SUPPORT_TEAM: [
-                    { id: 'support1', name: 'فهد الدعم', avatar: 'fa-solid fa-headset' },
-                    { id: 'support2', name: 'سارة الخدمة', avatar: 'fa-solid fa-user-tie' },
-                    { id: 'support3', name: 'أحمد المساعدة', avatar: 'fa-solid fa-user-graduate' }
-                ],
-                QUICK_REPLIES: {
-                    user: [
-                        'كيف يمكنني الشحن؟ 💰',
-                        'مشكلة في السحب ❌',
-                        'تحويل إلى مستخدم آخر 🔄',
-                        'الرصيد لا يظهر ⚠️',
-                        'شكراً لكم 👍'
-                    ],
-                    admin: [
-                        'تم استلام طلبك ✅',
-                        'يرجى الانتظار قليلاً ⏳',
-                        'تم حل المشكلة 🎉',
-                        'هل تحتاج مساعدة أخرى؟ 🤔',
-                        'شكراً لتواصلك معنا 🙏'
-                    ]
-                },
-                FAQ_ITEMS: [
-                    {
-                        question: 'كيف يمكنني شحن المحفظة؟',
-                        answer: 'يمكنك شحن المحفظة عبر طرق الدفع المتاحة: USDT، بطاقات فيزا، أو تحويل بنكي. اختر طريقة الدفع المناسبة لك وأدخل رقم العملية.'
-                    },
-                    {
-                        question: 'كم يستغرق طلب السحب؟',
-                        answer: 'يتم مراجعة طلبات السحب خلال 24 ساعة كحد أقصى، وفي معظم الحالات خلال 2-4 ساعات عمل.'
-                    },
-                    {
-                        question: 'ما هي عمولة التحويل بين المستخدمين؟',
-                        answer: 'التحويلات بين المستخدمين مجانية تماماً!'
-                    },
-                    {
-                        question: 'كيف أتصل بفريق الدعم؟',
-                        answer: 'يمكنك التواصل معنا مباشرة عبر نظام الدردشة المدمج، أو فتح تذكرة دعم للمشاكل المعقدة.'
-                    }
+                    { threshold: 1000, color: '#f59e0b', name: 'متوسط' },
+                    { threshold: 5000, color: '#10b981', name: 'جيد' },
+                    { threshold: 10000, color: '#3b82f6', name: 'ممتاز' },
+                    { threshold: 50000, color: '#8b5cf6', name: 'ماسي' }
                 ]
             };
 
@@ -711,20 +806,8 @@
                     }
                 },
                 
-                formatTime: (isoString) => {
-                    try {
-                        return new Date(isoString).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-                    } catch {
-                        return isoString;
-                    }
-                },
-                
                 formatNumber: (num) => {
                     return num?.toLocaleString('ar-EG') || '0';
-                },
-                
-                formatUSD: (num) => {
-                    return `$${Utils.formatNumber(num)}`;
                 },
                 
                 validateImage: (file) => {
@@ -763,16 +846,6 @@
                         clearTimeout(timeout);
                         timeout = setTimeout(later, wait);
                     };
-                },
-                
-                truncate: (str, length = 50) => {
-                    return str.length > length ? str.substring(0, length) + '...' : str;
-                },
-                
-                escapeHtml: (text) => {
-                    const div = document.createElement('div');
-                    div.textContent = text;
-                    return div.innerHTML;
                 }
             };
 
@@ -937,9 +1010,6 @@
                     this.loadPaymentMethods();
                     this.loadSettings();
                     this.loadNotifications();
-                    this.loadChatMessages();
-                    this.loadSupportTickets();
-                    this.loadFAQItems();
                 }
 
                 // Users
@@ -959,10 +1029,7 @@
                             blocked: false,
                             createdAt: new Date().toISOString(),
                             lastActive: new Date().toISOString(),
-                            name: this.state.user ? `${this.state.user.first_name} ${this.state.user.last_name || ''}`.trim() : `مستخدم ${userId}`,
-                            username: this.state.user?.username || '',
-                            supportTickets: 0,
-                            totalChats: 0
+                            name: this.state.user ? `${this.state.user.first_name} ${this.state.user.last_name || ''}`.trim() : `مستخدم ${userId}`
                         };
                         this.saveUsers();
                     }
@@ -1011,7 +1078,7 @@
                     this.addNotification(
                         userId,
                         delta > 0 ? '💰 إيداع' : '💸 سحب',
-                        `${delta > 0 ? 'تمت إضافة' : 'تم خصم'} ${Utils.formatUSD(Math.abs(delta))} إلى رصيدك. الرصيد الجديد: ${Utils.formatUSD(newBalance)}`,
+                        `${delta > 0 ? 'تمت إضافة' : 'تم خصم'} ${Math.abs(delta)} إلى رصيدك. الرصيد الجديد: ${newBalance}`,
                         delta > 0 ? 'success' : 'warning'
                     );
                     
@@ -1022,13 +1089,11 @@
                     return Object.entries(this.state.users).map(([id, data]) => ({
                         id: parseInt(id),
                         name: data.name || `مستخدم ${id}`,
-                        username: data.username || '',
                         balance: data.balance,
                         blocked: data.blocked || false,
                         transactionsCount: data.transactions.length,
                         lastActive: data.lastActive,
-                        createdAt: data.createdAt,
-                        supportTickets: data.supportTickets || 0
+                        createdAt: data.createdAt
                     }));
                 }
 
@@ -1107,12 +1172,6 @@
                             );
                             if (result.success) {
                                 this.saveRequests();
-                                this.addNotification(
-                                    request.userId,
-                                    '✅ تم قبول طلب الشحن',
-                                    `تمت إضافة ${Utils.formatUSD(request.amount)} إلى رصيدك.`,
-                                    'success'
-                                );
                                 return true;
                             }
                         }
@@ -1130,12 +1189,6 @@
                                 );
                                 if (result.success) {
                                     this.saveRequests();
-                                    this.addNotification(
-                                        request.userId,
-                                        '✅ تم قبول طلب السحب',
-                                        `تم خصم ${Utils.formatUSD(request.amount)} من رصيدك.`,
-                                        'success'
-                                    );
                                     return true;
                                 }
                             }
@@ -1153,7 +1206,7 @@
                             this.addNotification(
                                 request.userId,
                                 '❌ تم رفض طلب الشحن',
-                                `تم رفض طلب الشحن بمبلغ ${Utils.formatUSD(request.amount)}`,
+                                `تم رفض طلب الشحن بمبلغ ${request.amount}`,
                                 'error'
                             );
                             return true;
@@ -1166,7 +1219,7 @@
                             this.addNotification(
                                 request.userId,
                                 '❌ تم رفض طلب السحب',
-                                `تم رفض طلب السحب بمبلغ ${Utils.formatUSD(request.amount)}`,
+                                `تم رفض طلب السحب بمبلغ ${request.amount}`,
                                 'error'
                             );
                             return true;
@@ -1192,7 +1245,7 @@
                                 name: 'USDT (TRC20)', 
                                 icon: 'fa-brands fa-tether', 
                                 iconType: 'fa', 
-                                description: 'عملة رقمية مستقرة - دولار',
+                                description: 'عملة رقمية مستقرة',
                                 depositDetails: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ\nشبكة: TRC20',
                                 withdrawDetails: 'أدخل عنوان USDT الخاص بك'
                             },
@@ -1201,7 +1254,7 @@
                                 name: 'Visa / Mastercard', 
                                 icon: 'fa-regular fa-credit-card', 
                                 iconType: 'fa', 
-                                description: 'بطاقات ائتمانية - دولار',
+                                description: 'بطاقات ائتمانية',
                                 depositDetails: 'رقم البطاقة: **** **** **** 1234\nتاريخ الانتهاء: 12/25\nCVV: ***',
                                 withdrawDetails: 'أدخل بيانات بطاقتك'
                             },
@@ -1210,7 +1263,7 @@
                                 name: 'تحويل بنكي', 
                                 icon: 'fa-solid fa-building-columns', 
                                 iconType: 'fa', 
-                                description: 'حوالة بنكية - دولار',
+                                description: 'حوالة بنكية محلية',
                                 depositDetails: 'IBAN: SA0380000000608010167519\nاسم المستفيد: شركة المدفوعات\nالبنك: الأهلي السعودي',
                                 withdrawDetails: 'أدخل رقم IBAN الخاص بك'
                             }
@@ -1265,12 +1318,6 @@
                     };
                     this.state.notifications.push(notification);
                     this.saveNotifications();
-                    
-                    // تحديث شارة الإشعارات في الواجهة
-                    if (this.state.user && this.state.user.id == userId) {
-                        this.state.set('unreadNotifications', this.getUnreadCount(userId));
-                    }
-                    
                     return notification;
                 }
 
@@ -1279,9 +1326,6 @@
                     if (notification) {
                         notification.read = true;
                         this.saveNotifications();
-                        if (this.state.user) {
-                            this.state.set('unreadNotifications', this.getUnreadCount(this.state.user.id));
-                        }
                     }
                 }
 
@@ -1290,9 +1334,6 @@
                         if (n.userId === userId && !n.read) n.read = true;
                     });
                     this.saveNotifications();
-                    if (userId === this.state.user?.id) {
-                        this.state.set('unreadNotifications', 0);
-                    }
                 }
 
                 getUserNotifications(userId) {
@@ -1303,232 +1344,6 @@
 
                 getUnreadCount(userId) {
                     return this.state.notifications.filter(n => n.userId === userId && !n.read).length;
-                }
-
-                // Chat Messages
-                loadChatMessages() {
-                    this.state.chatMessages = StorageService.get(CONFIG.STORAGE_KEYS.CHAT_MESSAGES, []);
-                }
-
-                saveChatMessages() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.CHAT_MESSAGES, this.state.chatMessages);
-                }
-
-                addChatMessage(message, userId = null, isSupport = false) {
-                    const msg = {
-                        id: Utils.generateId('chat_'),
-                        userId: userId || this.state.user?.id,
-                        userName: this.state.user ? `${this.state.user.first_name} ${this.state.user.last_name || ''}`.trim() : 'مستخدم',
-                        message: message,
-                        isSupport: isSupport,
-                        supportId: isSupport ? CONFIG.SUPPORT_TEAM[Math.floor(Math.random() * CONFIG.SUPPORT_TEAM.length)].id : null,
-                        supportName: isSupport ? CONFIG.SUPPORT_TEAM[Math.floor(Math.random() * CONFIG.SUPPORT_TEAM.length)].name : null,
-                        read: false,
-                        date: new Date().toISOString(),
-                        status: 'sent'
-                    };
-                    
-                    this.state.chatMessages.push(msg);
-                    this.saveChatMessages();
-                    
-                    // إشعار للمسؤولين عند رسالة مستخدم
-                    if (!isSupport && this.state.user && !this.state.isAdmin) {
-                        this.addNotification(
-                            CONFIG.ADMIN_ID,
-                            '💬 رسالة دعم جديدة',
-                            `من: ${this.state.user.first_name}\nالرسالة: ${Utils.truncate(message, 30)}`,
-                            'info'
-                        );
-                    }
-                    
-                    return msg;
-                }
-
-                getChatMessages(userId = null, limit = 50) {
-                    let messages = this.state.chatMessages;
-                    
-                    if (userId) {
-                        // رسائل خاصة بمستخدم معين
-                        messages = messages.filter(m => m.userId === userId || m.isSupport);
-                    }
-                    
-                    return messages
-                        .sort((a, b) => new Date(a.date) - new Date(b.date))
-                        .slice(-limit);
-                }
-
-                markChatAsRead(userId) {
-                    this.state.chatMessages.forEach(m => {
-                        if (m.userId === userId && !m.read) m.read = true;
-                    });
-                    this.saveChatMessages();
-                }
-
-                getUnreadChatCount(userId = null) {
-                    if (userId) {
-                        return this.state.chatMessages.filter(m => m.userId === userId && !m.read).length;
-                    }
-                    return this.state.chatMessages.filter(m => !m.read).length;
-                }
-
-                // Support Tickets
-                loadSupportTickets() {
-                    this.state.supportTickets = StorageService.get(CONFIG.STORAGE_KEYS.SUPPORT_TICKETS, []);
-                }
-
-                saveSupportTickets() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.SUPPORT_TICKETS, this.state.supportTickets);
-                }
-
-                createSupportTicket(title, description, priority = 'medium') {
-                    if (!this.state.user) return null;
-                    
-                    const user = this.getUserData(this.state.user.id);
-                    
-                    const ticket = {
-                        id: Utils.generateId('ticket_'),
-                        userId: this.state.user.id,
-                        userName: `${this.state.user.first_name} ${this.state.user.last_name || ''}`.trim(),
-                        title: title,
-                        description: description,
-                        priority: priority, // low, medium, high
-                        status: 'open',
-                        createdAt: new Date().toISOString(),
-                        updatedAt: new Date().toISOString(),
-                        messages: [
-                            {
-                                id: Utils.generateId('tmsg_'),
-                                sender: 'user',
-                                message: description,
-                                date: new Date().toISOString()
-                            }
-                        ]
-                    };
-                    
-                    this.state.supportTickets.push(ticket);
-                    
-                    // تحديث عدد تذاكر المستخدم
-                    user.supportTickets = (user.supportTickets || 0) + 1;
-                    this.updateUser(this.state.user.id, user);
-                    
-                    this.saveSupportTickets();
-                    
-                    // إشعار للمسؤول
-                    this.addNotification(
-                        CONFIG.ADMIN_ID,
-                        '🎫 تذكرة دعم جديدة',
-                        `من: ${ticket.userName}\nالعنوان: ${Utils.truncate(title, 30)}`,
-                        'warning'
-                    );
-                    
-                    return ticket;
-                }
-
-                addTicketMessage(ticketId, message, sender = 'user') {
-                    const ticket = this.state.supportTickets.find(t => t.id === ticketId);
-                    if (ticket) {
-                        const msg = {
-                            id: Utils.generateId('tmsg_'),
-                            sender: sender,
-                            message: message,
-                            date: new Date().toISOString()
-                        };
-                        
-                        ticket.messages.push(msg);
-                        ticket.updatedAt = new Date().toISOString();
-                        
-                        if (sender === 'user' && ticket.status === 'closed') {
-                            ticket.status = 'pending';
-                        }
-                        
-                        this.saveSupportTickets();
-                        
-                        // إشعار للمسؤول إذا كان المستخدم هو المرسل
-                        if (sender === 'user') {
-                            this.addNotification(
-                                CONFIG.ADMIN_ID,
-                                '📝 رد على تذكرة',
-                                `التذكرة: ${Utils.truncate(ticket.title, 30)}`,
-                                'info'
-                            );
-                        }
-                        
-                        return msg;
-                    }
-                    return null;
-                }
-
-                updateTicketStatus(ticketId, status) {
-                    const ticket = this.state.supportTickets.find(t => t.id === ticketId);
-                    if (ticket) {
-                        ticket.status = status;
-                        ticket.updatedAt = new Date().toISOString();
-                        this.saveSupportTickets();
-                        
-                        // إشعار للمستخدم
-                        this.addNotification(
-                            ticket.userId,
-                            status === 'closed' ? '🔒 تم إغلاق التذكرة' : '📬 تحديث على التذكرة',
-                            `التذكرة: ${Utils.truncate(ticket.title, 30)}`,
-                            status === 'closed' ? 'error' : 'info'
-                        );
-                        
-                        return true;
-                    }
-                    return false;
-                }
-
-                getUserTickets(userId) {
-                    return this.state.supportTickets
-                        .filter(t => t.userId === userId)
-                        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-                }
-
-                getAllTickets() {
-                    return this.state.supportTickets
-                        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-                }
-
-                // FAQ Items
-                loadFAQItems() {
-                    const saved = StorageService.get(CONFIG.STORAGE_KEYS.FAQ_ITEMS, null);
-                    if (saved && saved.length) {
-                        this.state.faqItems = saved;
-                    } else {
-                        this.state.faqItems = CONFIG.FAQ_ITEMS;
-                    }
-                }
-
-                saveFAQItems() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.FAQ_ITEMS, this.state.faqItems);
-                }
-
-                addFAQItem(question, answer) {
-                    const item = {
-                        id: Utils.generateId('faq_'),
-                        question,
-                        answer,
-                        date: new Date().toISOString()
-                    };
-                    this.state.faqItems.push(item);
-                    this.saveFAQItems();
-                    return item;
-                }
-
-                updateFAQItem(id, question, answer) {
-                    const item = this.state.faqItems.find(i => i.id === id);
-                    if (item) {
-                        item.question = question;
-                        item.answer = answer;
-                        this.saveFAQItems();
-                        return true;
-                    }
-                    return false;
-                }
-
-                deleteFAQItem(id) {
-                    this.state.faqItems = this.state.faqItems.filter(i => i.id !== id);
-                    this.saveFAQItems();
                 }
 
                 // Settings
@@ -1609,7 +1424,7 @@
                 updateBalanceDisplays(balance) {
                     const elements = document.querySelectorAll('[data-balance]');
                     elements.forEach(el => {
-                        el.textContent = Utils.formatUSD(balance);
+                        el.textContent = Utils.formatNumber(balance);
                         el.classList.add('balance-update');
                         setTimeout(() => el.classList.remove('balance-update'), 500);
                     });
@@ -1701,7 +1516,6 @@
                     const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
                     const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
                     const unreadCount = this.data.getUnreadCount(user.id);
-                    const unreadChatCount = this.data.getUnreadChatCount(user.id);
                     const balanceLevel = Utils.calculateBalanceLevel(userData.balance);
                     
                     this.app.innerHTML = `
@@ -1719,19 +1533,11 @@
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-center justify-between">
                                             <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
-                                            <div class="flex gap-3">
-                                                <div class="relative cursor-pointer" id="supportChatBell">
-                                                    <i class="fa-regular fa-message text-xl"></i>
-                                                    ${unreadChatCount > 0 ? `
-                                                        <span class="notification-badge">${unreadChatCount > 9 ? '9+' : unreadChatCount}</span>
-                                                    ` : ''}
-                                                </div>
-                                                <div class="relative cursor-pointer" id="notificationBell">
-                                                    <i class="fa-regular fa-bell text-xl"></i>
-                                                    ${unreadCount > 0 ? `
-                                                        <span class="notification-badge">${unreadCount > 9 ? '9+' : unreadCount}</span>
-                                                    ` : ''}
-                                                </div>
+                                            <div class="relative cursor-pointer" id="notificationBell">
+                                                <i class="fa-regular fa-bell text-xl"></i>
+                                                ${unreadCount > 0 ? `
+                                                    <span class="notification-badge">${unreadCount > 9 ? '9+' : unreadCount}</span>
+                                                ` : ''}
                                             </div>
                                         </div>
                                         <p class="text-xs text-gray-400 font-mono mt-0.5">ID: ${user.id}</p>
@@ -1753,8 +1559,8 @@
                             <!-- Balance Badge -->
                             <div class="flex justify-center">
                                 <div class="balance-badge">
-                                    <i class="fa-solid fa-dollar-sign"></i>
-                                    <span data-balance>${Utils.formatUSD(userData.balance)}</span>
+                                    <i class="fa-solid fa-coins"></i>
+                                    <span data-balance>${Utils.formatNumber(userData.balance)}</span>
                                 </div>
                             </div>
 
@@ -1769,50 +1575,21 @@
                                 </div>
                             </div>
 
-                            <!-- Quick Actions -->
-                            <div class="grid grid-cols-3 gap-2 mt-4">
-                                <button class="glass-card p-3 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-blue-500/10 transition-all quick-action" data-action="wallet">
-                                    <div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-1">
-                                        <i class="fa-solid fa-wallet text-sm"></i>
+                            <!-- Stats -->
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                                    <div class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2">
+                                        <i class="fa-solid fa-chart-pie"></i>
                                     </div>
-                                    <span class="text-gray-400 text-[10px]">محفظتي</span>
-                                </button>
-                                <button class="glass-card p-3 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-green-500/10 transition-all quick-action" data-action="support">
-                                    <div class="w-8 h-8 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center mb-1">
-                                        <i class="fa-solid fa-headset text-sm"></i>
+                                    <span class="text-gray-400 text-xs mb-1">الإحصائيات</span>
+                                    <span class="text-white font-bold text-lg">100%</span>
+                                </div>
+                                <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                                    <div class="w-10 h-10 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2">
+                                        <i class="fa-solid fa-crown"></i>
                                     </div>
-                                    <span class="text-gray-400 text-[10px]">الدعم</span>
-                                    ${unreadChatCount > 0 ? `
-                                        <span class="bg-red-500 text-white text-[8px] px-1 rounded-full mt-1">${unreadChatCount}</span>
-                                    ` : ''}
-                                </button>
-                                <button class="glass-card p-3 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-purple-500/10 transition-all quick-action" data-action="tickets">
-                                    <div class="w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mb-1">
-                                        <i class="fa-solid fa-ticket text-sm"></i>
-                                    </div>
-                                    <span class="text-gray-400 text-[10px]">التذاكر</span>
-                                </button>
-                            </div>
-
-                            <!-- FAQ Section -->
-                            <div class="glass-card p-4 rounded-2xl">
-                                <h3 class="text-md font-bold mb-3 flex items-center gap-2">
-                                    <i class="fa-regular fa-circle-question text-blue-400"></i>
-                                    الأسئلة الشائعة
-                                </h3>
-                                <div class="space-y-2">
-                                    ${this.state.faqItems.slice(0, 3).map(faq => `
-                                        <div class="faq-item">
-                                            <div class="faq-question text-sm">
-                                                ${faq.question}
-                                                <i class="fa-solid fa-chevron-down text-gray-400 text-xs transition-transform"></i>
-                                            </div>
-                                            <div class="faq-answer text-xs">${faq.answer}</div>
-                                        </div>
-                                    `).join('')}
-                                    ${this.state.faqItems.length > 3 ? `
-                                        <button id="showAllFAQ" class="text-blue-400 text-xs mt-2">عرض المزيد...</button>
-                                    ` : ''}
+                                    <span class="text-gray-400 text-xs mb-1">الرتبة</span>
+                                    <span class="text-white font-bold text-lg">مميز</span>
                                 </div>
                             </div>
 
@@ -1823,17 +1600,6 @@
                             </button>
                         </div>
                     `;
-
-                    // FAQ toggle
-                    document.querySelectorAll('.faq-item').forEach(item => {
-                        item.addEventListener('click', () => {
-                            item.classList.toggle('open');
-                            const icon = item.querySelector('.fa-chevron-down');
-                            if (icon) {
-                                icon.style.transform = item.classList.contains('open') ? 'rotate(180deg)' : '';
-                            }
-                        });
-                    });
                 }
 
                 renderAdminDashboard() {
@@ -1845,8 +1611,6 @@
                     const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
                     const unreadCount = this.data.getUnreadCount(user.id);
                     const pendingCount = this.data.getPendingRequestsCount();
-                    const unreadChatCount = this.data.getUnreadChatCount();
-                    const openTickets = this.state.supportTickets.filter(t => t.status !== 'closed').length;
                     const balanceLevel = Utils.calculateBalanceLevel(userData.balance);
                     
                     this.app.innerHTML = `
@@ -1864,19 +1628,11 @@
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-center justify-between">
                                             <h2 class="text-lg font-bold truncate" title="${fullName}">${fullName}</h2>
-                                            <div class="flex gap-3">
-                                                <div class="relative cursor-pointer" id="supportChatBell">
-                                                    <i class="fa-regular fa-message text-xl"></i>
-                                                    ${unreadChatCount > 0 ? `
-                                                        <span class="notification-badge">${unreadChatCount > 9 ? '9+' : unreadChatCount}</span>
-                                                    ` : ''}
-                                                </div>
-                                                <div class="relative cursor-pointer" id="notificationBell">
-                                                    <i class="fa-regular fa-bell text-xl"></i>
-                                                    ${unreadCount > 0 ? `
-                                                        <span class="notification-badge">${unreadCount > 9 ? '9+' : unreadCount}</span>
-                                                    ` : ''}
-                                                </div>
+                                            <div class="relative cursor-pointer" id="notificationBell">
+                                                <i class="fa-regular fa-bell text-xl"></i>
+                                                ${unreadCount > 0 ? `
+                                                    <span class="notification-badge">${unreadCount > 9 ? '9+' : unreadCount}</span>
+                                                ` : ''}
                                             </div>
                                         </div>
                                         <p class="text-xs text-gray-400 font-mono mt-0.5">ID: ${user.id}</p>
@@ -1901,8 +1657,8 @@
                             <!-- Balance Badge -->
                             <div class="flex justify-center">
                                 <div class="balance-badge">
-                                    <i class="fa-solid fa-dollar-sign"></i>
-                                    <span data-balance>${Utils.formatUSD(userData.balance)}</span>
+                                    <i class="fa-solid fa-coins"></i>
+                                    <span data-balance>${Utils.formatNumber(userData.balance)}</span>
                                 </div>
                             </div>
 
@@ -1918,85 +1674,38 @@
                             </div>
 
                             <!-- Stats -->
-                            <div class="grid grid-cols-4 gap-1 mt-4">
-                                <div class="glass-card p-2 rounded-2xl text-center">
-                                    <div class="w-6 h-6 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-1">
-                                        <i class="fa-solid fa-users text-xs"></i>
+                            <div class="grid grid-cols-3 gap-2 mt-4">
+                                <div class="glass-card p-3 rounded-2xl text-center">
+                                    <div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-1">
+                                        <i class="fa-solid fa-users text-sm"></i>
                                     </div>
-                                    <span class="text-gray-400 text-[8px]">المستخدمين</span>
-                                    <span class="text-white font-bold text-sm" id="statsUsers">${Object.keys(this.state.users).length}</span>
+                                    <span class="text-gray-400 text-[10px]">المستخدمين</span>
+                                    <span class="text-white font-bold text-base" id="statsUsers">${Object.keys(this.state.users).length}</span>
                                 </div>
-                                <div class="glass-card p-2 rounded-2xl text-center">
-                                    <div class="w-6 h-6 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center mx-auto mb-1">
-                                        <i class="fa-solid fa-clock text-xs"></i>
+                                <div class="glass-card p-3 rounded-2xl text-center">
+                                    <div class="w-8 h-8 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center mx-auto mb-1">
+                                        <i class="fa-solid fa-robot text-sm"></i>
                                     </div>
-                                    <span class="text-gray-400 text-[8px]">طلبات</span>
-                                    <span class="text-white font-bold text-sm">${pendingCount}</span>
+                                    <span class="text-gray-400 text-[10px]">البوتات</span>
+                                    <span class="text-white font-bold text-base" id="statsBots">0</span>
                                 </div>
-                                <div class="glass-card p-2 rounded-2xl text-center">
-                                    <div class="w-6 h-6 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto mb-1">
-                                        <i class="fa-solid fa-ticket text-xs"></i>
+                                <div class="glass-card p-3 rounded-2xl text-center">
+                                    <div class="w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto mb-1">
+                                        <i class="fa-solid fa-chart-line text-sm"></i>
                                     </div>
-                                    <span class="text-gray-400 text-[8px]">تذاكر</span>
-                                    <span class="text-white font-bold text-sm">${openTickets}</span>
-                                </div>
-                                <div class="glass-card p-2 rounded-2xl text-center">
-                                    <div class="w-6 h-6 rounded-full bg-orange-500/10 text-orange-400 flex items-center justify-center mx-auto mb-1">
-                                        <i class="fa-solid fa-chart-line text-xs"></i>
-                                    </div>
-                                    <span class="text-gray-400 text-[8px]">اليوم</span>
-                                    <span class="text-white font-bold text-sm">${this.state.stats.dailyOps || 0}</span>
+                                    <span class="text-gray-400 text-[10px]">عمليات اليوم</span>
+                                    <span class="text-white font-bold text-base" id="statsDailyOps">${this.state.stats.dailyOps || 0}</span>
                                 </div>
                             </div>
 
-                            <!-- Admin Actions -->
-                            <div class="grid grid-cols-2 gap-2 mt-2">
-                                <button id="openAdminPanelBtn" class="glass-card p-3 rounded-2xl flex items-center gap-3 hover:bg-yellow-500/10 transition-all">
-                                    <div class="w-10 h-10 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-gears"></i>
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="font-bold text-sm">لوحة الإدارة</div>
-                                        <div class="text-xs text-gray-400">إدارة الطلبات</div>
-                                    </div>
-                                    ${pendingCount > 0 ? `
-                                        <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-auto">${pendingCount}</span>
-                                    ` : ''}
-                                </button>
-                                <button id="openSupportChatBtn" class="glass-card p-3 rounded-2xl flex items-center gap-3 hover:bg-green-500/10 transition-all">
-                                    <div class="w-10 h-10 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-headset"></i>
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="font-bold text-sm">الدردشة</div>
-                                        <div class="text-xs text-gray-400">رد على المستخدمين</div>
-                                    </div>
-                                    ${unreadChatCount > 0 ? `
-                                        <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-auto">${unreadChatCount}</span>
-                                    ` : ''}
-                                </button>
-                                <button id="manageTicketsBtn" class="glass-card p-3 rounded-2xl flex items-center gap-3 hover:bg-purple-500/10 transition-all">
-                                    <div class="w-10 h-10 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-ticket"></i>
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="font-bold text-sm">التذاكر</div>
-                                        <div class="text-xs text-gray-400">إدارة تذاكر الدعم</div>
-                                    </div>
-                                    ${openTickets > 0 ? `
-                                        <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-auto">${openTickets}</span>
-                                    ` : ''}
-                                </button>
-                                <button id="manageFAQBtn" class="glass-card p-3 rounded-2xl flex items-center gap-3 hover:bg-blue-500/10 transition-all">
-                                    <div class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-circle-question"></i>
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="font-bold text-sm">الأسئلة</div>
-                                        <div class="text-xs text-gray-400">إدارة الأسئلة الشائعة</div>
-                                    </div>
-                                </button>
-                            </div>
+                            <!-- Admin Panel Button -->
+                            <button id="openAdminPanelBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2 mt-2">
+                                <i class="fa-solid fa-gears"></i>
+                                لوحة الإدارة
+                                ${pendingCount > 0 ? `
+                                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">${pendingCount}</span>
+                                ` : ''}
+                            </button>
 
                             <!-- Logout Button -->
                             <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
@@ -2026,737 +1735,12 @@
                         adminPanelBtn.addEventListener('click', () => this.openAdminPanel());
                     }
 
-                    const supportChatBell = document.getElementById('supportChatBell');
-                    if (supportChatBell) {
-                        supportChatBell.addEventListener('click', () => this.openSupportChat());
-                    }
-
-                    const openSupportChatBtn = document.getElementById('openSupportChatBtn');
-                    if (openSupportChatBtn) {
-                        openSupportChatBtn.addEventListener('click', () => this.openSupportChat());
-                    }
-
-                    const manageTicketsBtn = document.getElementById('manageTicketsBtn');
-                    if (manageTicketsBtn) {
-                        manageTicketsBtn.addEventListener('click', () => this.openTicketManagement());
-                    }
-
-                    const manageFAQBtn = document.getElementById('manageFAQBtn');
-                    if (manageFAQBtn) {
-                        manageFAQBtn.addEventListener('click', () => this.openFAQManagement());
-                    }
-
                     const notificationBell = document.getElementById('notificationBell');
                     if (notificationBell) {
                         notificationBell.addEventListener('click', () => this.openNotificationsModal());
                     }
-
-                    // Quick actions
-                    document.querySelectorAll('.quick-action').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const action = btn.dataset.action;
-                            if (action === 'wallet') {
-                                this.openWalletModal();
-                            } else if (action === 'support') {
-                                this.openSupportChat();
-                            } else if (action === 'tickets') {
-                                this.openUserTickets();
-                            }
-                        });
-                    });
-
-                    // Show all FAQ
-                    const showAllFAQ = document.getElementById('showAllFAQ');
-                    if (showAllFAQ) {
-                        showAllFAQ.addEventListener('click', () => {
-                            this.openFAQModal();
-                        });
-                    }
                 }
 
-                // Chat System Methods
-                openSupportChat() {
-                    const modal = document.getElementById('supportChatModalOverlay');
-                    const content = document.getElementById('supportChatModalContent');
-                    content.innerHTML = this.renderSupportChat();
-                    modal.classList.add('open');
-                    
-                    // تحميل مكتبة الإيموجي
-                    this.loadEmojiPicker();
-                    
-                    this.bindChatEvents();
-                    
-                    // تحديد الرسائل كمقروءة
-                    if (this.state.user) {
-                        this.data.markChatAsRead(this.state.user.id);
-                    }
-                }
-
-                renderSupportChat() {
-                    const isAdmin = this.state.isAdmin;
-                    const messages = this.data.getChatMessages(isAdmin ? null : this.state.user?.id, 50);
-                    
-                    const messagesHtml = messages.map(msg => {
-                        const isOutgoing = isAdmin ? !msg.isSupport : (msg.userId === this.state.user?.id && !msg.isSupport);
-                        return `
-                            <div class="chat-message ${isOutgoing ? 'outgoing' : 'incoming'}">
-                                <div class="message-bubble">
-                                    <div class="text-sm">${Utils.escapeHtml(msg.message)}</div>
-                                    <div class="message-info">
-                                        <span>${Utils.formatTime(msg.date)}</span>
-                                        ${msg.isSupport ? `<span>فريق الدعم</span>` : ''}
-                                        ${isOutgoing ? `
-                                            <span class="message-status">
-                                                <i class="fa-regular fa-circle-check"></i>
-                                            </span>
-                                        ` : ''}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-
-                    const quickReplies = isAdmin ? CONFIG.QUICK_REPLIES.admin : CONFIG.QUICK_REPLIES.user;
-
-                    return `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">
-                                <i class="fa-solid fa-headset ml-2 text-green-400"></i>
-                                ${isAdmin ? 'دردشة الدعم - جميع المستخدمين' : 'التواصل مع فريق الدعم'}
-                            </h2>
-                            <button id="closeSupportChat" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
-                        <div class="chat-container glass-card p-3 rounded-2xl">
-                            <div class="chat-messages hide-scrollbar" id="chatMessages">
-                                ${messagesHtml || '<p class="text-center text-gray-400 py-4">لا توجد رسائل بعد... ابدأ المحادثة الآن</p>'}
-                            </div>
-
-                            <!-- Typing Indicator (hidden by default) -->
-                            <div id="typingIndicator" class="typing-indicator hidden">
-                                <span></span><span></span><span></span>
-                                <span class="text-xs text-gray-400 mr-2">يكتب...</span>
-                            </div>
-
-                            <!-- Quick Replies -->
-                            <div class="quick-replies hide-scrollbar" id="quickReplies">
-                                ${quickReplies.map(reply => `
-                                    <button class="quick-reply-btn">${reply}</button>
-                                `).join('')}
-                            </div>
-
-                            <!-- Message Input -->
-                            <div class="flex gap-2 mt-2 relative">
-                                <button id="emojiPickerBtn" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors flex-shrink-0">
-                                    <i class="fa-regular fa-face-smile"></i>
-                                </button>
-                                <input type="text" id="chatMessageInput" placeholder="اكتب رسالتك..." class="flex-1 bg-slate-800 border border-white/10 rounded-full px-4 py-2 text-white">
-                                <button id="sendChatMessage" class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors flex-shrink-0">
-                                    <i class="fa-solid fa-paper-plane"></i>
-                                </button>
-                            </div>
-
-                            ${isAdmin ? `
-                                <div class="mt-2 text-xs text-gray-400">
-                                    <i class="fa-regular fa-circle-info ml-1"></i>
-                                    أنت تتحدث كفريق الدعم
-                                </div>
-                            ` : ''}
-                        </div>
-                    `;
-                }
-
-                bindChatEvents() {
-                    const modal = document.getElementById('supportChatModalOverlay');
-                    const messagesContainer = document.getElementById('chatMessages');
-                    const input = document.getElementById('chatMessageInput');
-                    const sendBtn = document.getElementById('sendChatMessage');
-                    const emojiBtn = document.getElementById('emojiPickerBtn');
-                    const emojiContainer = document.getElementById('emojiPickerContainer');
-                    
-                    // Close modal
-                    document.getElementById('closeSupportChat').addEventListener('click', () => {
-                        modal.classList.remove('open');
-                    });
-
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) modal.classList.remove('open');
-                    });
-
-                    // Send message
-                    const sendMessage = () => {
-                        const message = input.value.trim();
-                        if (!message) return;
-
-                        this.data.addChatMessage(message, this.state.user?.id, this.state.isAdmin);
-                        
-                        // إضافة الرسالة للواجهة
-                        const msgDiv = document.createElement('div');
-                        msgDiv.className = 'chat-message outgoing';
-                        msgDiv.innerHTML = `
-                            <div class="message-bubble">
-                                <div class="text-sm">${Utils.escapeHtml(message)}</div>
-                                <div class="message-info">
-                                    <span>${Utils.formatTime(new Date().toISOString())}</span>
-                                    <span class="message-status"><i class="fa-regular fa-circle-check"></i></span>
-                                </div>
-                            </div>
-                        `;
-                        messagesContainer.appendChild(msgDiv);
-                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                        
-                        input.value = '';
-                        
-                        // محاكاة رد تلقائي بعد ثانيتين (للمستخدم العادي)
-                        if (!this.state.isAdmin) {
-                            setTimeout(() => {
-                                this.simulateSupportReply(message);
-                            }, 2000);
-                        }
-                    };
-
-                    sendBtn.addEventListener('click', sendMessage);
-                    
-                    input.addEventListener('keypress', (e) => {
-                        if (e.key === 'Enter') sendMessage();
-                    });
-
-                    // Emoji picker
-                    if (emojiBtn) {
-                        emojiBtn.addEventListener('click', () => {
-                            emojiContainer.classList.toggle('open');
-                        });
-                    }
-
-                    // Quick replies
-                    document.querySelectorAll('.quick-reply-btn').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            input.value = btn.textContent;
-                            sendMessage();
-                        });
-                    });
-
-                    // Scroll to bottom
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                }
-
-                simulateSupportReply(userMessage) {
-                    const messagesContainer = document.getElementById('chatMessages');
-                    const typingIndicator = document.getElementById('typingIndicator');
-                    
-                    // Show typing indicator
-                    typingIndicator.classList.remove('hidden');
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                    
-                    setTimeout(() => {
-                        typingIndicator.classList.add('hidden');
-                        
-                        // Generate reply based on keywords
-                        let reply = 'شكراً لتواصلك معنا. سيتم الرد عليك في أقرب وقت ممكن.';
-                        
-                        if (userMessage.includes('شحن') || userMessage.includes('إيداع')) {
-                            reply = 'لشحن المحفظة، يرجى اختيار طريقة الدفع المناسبة من قسم المحفظة وإدخال رقم العملية. فريق الدعم متاح للمساعدة.';
-                        } else if (userMessage.includes('سحب')) {
-                            reply = 'لطلب السحب، تأكد من توفر الرصيد الكافي واختر طريقة السحب المناسبة. سيتم مراجعة طلبك خلال 24 ساعة.';
-                        } else if (userMessage.includes('تحويل')) {
-                            reply = 'التحويل بين المستخدمين سهل!只需 أدخل معرف المستخدم المستهدف والمبلغ من قسم التحويل في المحفظة.';
-                        }
-                        
-                        this.data.addChatMessage(reply, null, true);
-                        
-                        const msgDiv = document.createElement('div');
-                        msgDiv.className = 'chat-message incoming';
-                        msgDiv.innerHTML = `
-                            <div class="message-bubble">
-                                <div class="text-sm">${reply}</div>
-                                <div class="message-info">
-                                    <span>${Utils.formatTime(new Date().toISOString())}</span>
-                                    <span>فريق الدعم</span>
-                                </div>
-                            </div>
-                        `;
-                        messagesContainer.appendChild(msgDiv);
-                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                    }, 2000);
-                }
-
-                loadEmojiPicker() {
-                    // Dynamic import of emoji picker
-                    import('https://cdn.jsdelivr.net/npm/emoji-picker-element@1.14.0/dist/emoji-picker-element.min.js')
-                        .then(() => {
-                            const picker = document.querySelector('emoji-picker');
-                            if (picker) {
-                                picker.addEventListener('emoji-click', (event) => {
-                                    const input = document.getElementById('chatMessageInput');
-                                    if (input) {
-                                        input.value += event.detail.unicode;
-                                        document.getElementById('emojiPickerContainer').classList.remove('open');
-                                    }
-                                });
-                            }
-                        })
-                        .catch(err => console.log('Emoji picker not loaded', err));
-                }
-
-                // Ticket System Methods
-                openUserTickets() {
-                    const modal = document.getElementById('ticketModalOverlay');
-                    const content = document.getElementById('ticketModalContent');
-                    content.innerHTML = this.renderUserTickets();
-                    modal.classList.add('open');
-                    this.bindTicketEvents();
-                }
-
-                renderUserTickets() {
-                    const tickets = this.data.getUserTickets(this.state.user.id);
-                    
-                    return `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">
-                                <i class="fa-solid fa-ticket ml-2 text-purple-400"></i>
-                                تذاكري
-                            </h2>
-                            <button id="closeTicketModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
-                        <button id="createNewTicket" class="w-full btn-primary py-3 mb-4 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-plus"></i>
-                            إنشاء تذكرة جديدة
-                        </button>
-
-                        <div id="ticketList" class="space-y-2 max-h-96 overflow-y-auto hide-scrollbar">
-                            ${tickets.map(ticket => `
-                                <div class="ticket-item ${ticket.status === 'closed' ? 'closed' : ''}" data-id="${ticket.id}">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex-1">
-                                            <div class="font-bold">${ticket.title}</div>
-                                            <div class="text-xs text-gray-400 mt-1">${Utils.truncate(ticket.description, 50)}</div>
-                                            <div class="flex items-center gap-2 mt-2">
-                                                <span class="ticket-status ${ticket.status}">
-                                                    ${ticket.status === 'open' ? 'مفتوحة' : (ticket.status === 'closed' ? 'مغلقة' : 'معلقة')}
-                                                </span>
-                                                <span class="text-xs text-gray-400">
-                                                    ${Utils.formatDate(ticket.updatedAt)}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <i class="fa-solid fa-chevron-left text-gray-400"></i>
-                                    </div>
-                                </div>
-                            `).join('') || '<p class="text-center text-gray-400 py-4">لا توجد تذاكر بعد</p>'}
-                        </div>
-
-                        <!-- Create Ticket Form (hidden initially) -->
-                        <div id="createTicketForm" class="hidden mt-4">
-                            <h3 class="font-bold mb-3">إنشاء تذكرة جديدة</h3>
-                            <input type="text" id="ticketTitle" placeholder="عنوان التذكرة" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
-                            <textarea id="ticketDescription" placeholder="وصف المشكلة بالتفصيل" rows="3" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white"></textarea>
-                            <select id="ticketPriority" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-3 text-white">
-                                <option value="low">منخفضة</option>
-                                <option value="medium" selected>متوسطة</option>
-                                <option value="high">عالية</option>
-                            </select>
-                            <div class="flex gap-2">
-                                <button id="submitTicket" class="flex-1 btn-success py-2">إرسال</button>
-                                <button id="cancelCreateTicket" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold hover:bg-gray-700 transition-colors">إلغاء</button>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                bindTicketEvents() {
-                    const modal = document.getElementById('ticketModalOverlay');
-                    
-                    document.getElementById('closeTicketModal').addEventListener('click', () => {
-                        modal.classList.remove('open');
-                    });
-
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) modal.classList.remove('open');
-                    });
-
-                    const createBtn = document.getElementById('createNewTicket');
-                    const form = document.getElementById('createTicketForm');
-                    const list = document.getElementById('ticketList');
-
-                    createBtn.addEventListener('click', () => {
-                        form.classList.remove('hidden');
-                        list.classList.add('hidden');
-                        createBtn.classList.add('hidden');
-                    });
-
-                    document.getElementById('cancelCreateTicket')?.addEventListener('click', () => {
-                        form.classList.add('hidden');
-                        list.classList.remove('hidden');
-                        createBtn.classList.remove('hidden');
-                    });
-
-                    document.getElementById('submitTicket')?.addEventListener('click', () => {
-                        const title = document.getElementById('ticketTitle').value.trim();
-                        const description = document.getElementById('ticketDescription').value.trim();
-                        const priority = document.getElementById('ticketPriority').value;
-
-                        if (!title || !description) {
-                            this.toast.error('يرجى ملء جميع الحقول');
-                            return;
-                        }
-
-                        const ticket = this.data.createSupportTicket(title, description, priority);
-                        if (ticket) {
-                            this.toast.success('✅ تم إنشاء التذكرة بنجاح');
-                            form.classList.add('hidden');
-                            list.classList.remove('hidden');
-                            createBtn.classList.remove('hidden');
-                            this.openUserTickets(); // Refresh
-                        }
-                    });
-
-                    // View ticket details
-                    document.querySelectorAll('.ticket-item').forEach(item => {
-                        item.addEventListener('click', () => {
-                            const ticketId = item.dataset.id;
-                            this.openTicketDetails(ticketId);
-                        });
-                    });
-                }
-
-                openTicketDetails(ticketId) {
-                    const modal = document.getElementById('ticketModalOverlay');
-                    const content = document.getElementById('ticketModalContent');
-                    const ticket = this.state.supportTickets.find(t => t.id === ticketId);
-                    
-                    if (!ticket) return;
-
-                    const messagesHtml = ticket.messages.map(msg => `
-                        <div class="chat-message ${msg.sender === 'user' ? 'outgoing' : 'incoming'}">
-                            <div class="message-bubble">
-                                <div class="text-sm">${Utils.escapeHtml(msg.message)}</div>
-                                <div class="message-info">
-                                    <span>${Utils.formatTime(msg.date)}</span>
-                                    <span>${msg.sender === 'user' ? 'أنت' : 'فريق الدعم'}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-
-                    content.innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">تفاصيل التذكرة</h2>
-                            <button id="closeTicketDetails" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
-                        <div class="glass-card p-4 rounded-2xl mb-4">
-                            <div class="font-bold">${ticket.title}</div>
-                            <div class="text-sm text-gray-300 mt-1">${ticket.description}</div>
-                            <div class="flex items-center gap-2 mt-2">
-                                <span class="ticket-status ${ticket.status}">
-                                    ${ticket.status === 'open' ? 'مفتوحة' : (ticket.status === 'closed' ? 'مغلقة' : 'معلقة')}
-                                </span>
-                                <span class="text-xs text-gray-400">الأولوية: ${ticket.priority === 'high' ? 'عالية' : (ticket.priority === 'medium' ? 'متوسطة' : 'منخفضة')}</span>
-                            </div>
-                        </div>
-
-                        <div class="chat-container glass-card p-3 rounded-2xl" style="height: 300px;">
-                            <div class="chat-messages hide-scrollbar" id="ticketMessages">
-                                ${messagesHtml}
-                            </div>
-
-                            ${ticket.status !== 'closed' ? `
-                                <div class="flex gap-2 mt-2">
-                                    <input type="text" id="ticketReply" placeholder="اكتب ردك..." class="flex-1 bg-slate-800 border border-white/10 rounded-full px-4 py-2 text-white">
-                                    <button id="sendTicketReply" class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors flex-shrink-0">
-                                        <i class="fa-solid fa-paper-plane"></i>
-                                    </button>
-                                </div>
-                            ` : ''}
-                        </div>
-
-                        ${ticket.status !== 'closed' && !this.state.isAdmin ? `
-                            <button id="closeTicketBtn" class="w-full btn-danger py-2 mt-3">
-                                <i class="fa-solid fa-lock ml-2"></i>
-                                إغلاق التذكرة
-                            </button>
-                        ` : ''}
-                    `;
-
-                    modal.classList.add('open');
-
-                    document.getElementById('closeTicketDetails').addEventListener('click', () => {
-                        modal.classList.remove('open');
-                    });
-
-                    const sendReply = document.getElementById('sendTicketReply');
-                    if (sendReply) {
-                        sendReply.addEventListener('click', () => {
-                            const reply = document.getElementById('ticketReply').value.trim();
-                            if (!reply) return;
-
-                            this.data.addTicketMessage(ticketId, reply, this.state.isAdmin ? 'support' : 'user');
-                            this.openTicketDetails(ticketId);
-                        });
-                    }
-
-                    const closeTicketBtn = document.getElementById('closeTicketBtn');
-                    if (closeTicketBtn) {
-                        closeTicketBtn.addEventListener('click', () => {
-                            if (confirm('هل أنت متأكد من إغلاق هذه التذكرة؟')) {
-                                this.data.updateTicketStatus(ticketId, 'closed');
-                                this.toast.info('تم إغلاق التذكرة');
-                                modal.classList.remove('open');
-                            }
-                        });
-                    }
-
-                    // Scroll to bottom
-                    const messagesContainer = document.getElementById('ticketMessages');
-                    if (messagesContainer) {
-                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                    }
-                }
-
-                // Admin Methods
-                openTicketManagement() {
-                    const modal = document.getElementById('ticketModalOverlay');
-                    const content = document.getElementById('ticketModalContent');
-                    const tickets = this.data.getAllTickets();
-
-                    content.innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">
-                                <i class="fa-solid fa-ticket ml-2 text-purple-400"></i>
-                                إدارة تذاكر الدعم
-                            </h2>
-                            <button id="closeTicketModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
-                        <div class="space-y-2 max-h-96 overflow-y-auto hide-scrollbar">
-                            ${tickets.map(ticket => `
-                                <div class="ticket-item ${ticket.status === 'closed' ? 'closed' : ''}" data-id="${ticket.id}">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex-1">
-                                            <div class="font-bold">${ticket.title}</div>
-                                            <div class="text-xs text-gray-400">من: ${ticket.userName}</div>
-                                            <div class="flex items-center gap-2 mt-2">
-                                                <span class="ticket-status ${ticket.status}">
-                                                    ${ticket.status === 'open' ? 'مفتوحة' : (ticket.status === 'closed' ? 'مغلقة' : 'معلقة')}
-                                                </span>
-                                                <span class="text-xs text-gray-400">
-                                                    ${Utils.formatDate(ticket.updatedAt)}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <i class="fa-solid fa-chevron-left text-gray-400"></i>
-                                    </div>
-                                </div>
-                            `).join('') || '<p class="text-center text-gray-400 py-4">لا توجد تذاكر</p>'}
-                        </div>
-                    `;
-
-                    modal.classList.add('open');
-
-                    document.getElementById('closeTicketModal').addEventListener('click', () => {
-                        modal.classList.remove('open');
-                    });
-
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) modal.classList.remove('open');
-                    });
-
-                    document.querySelectorAll('.ticket-item').forEach(item => {
-                        item.addEventListener('click', () => {
-                            this.openTicketDetails(item.dataset.id);
-                        });
-                    });
-                }
-
-                openFAQManagement() {
-                    const modal = document.getElementById('walletModalOverlay');
-                    const content = document.getElementById('walletModalContent');
-
-                    content.innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">
-                                <i class="fa-solid fa-circle-question ml-2 text-blue-400"></i>
-                                إدارة الأسئلة الشائعة
-                            </h2>
-                            <button id="closeFAQModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
-                        <button id="addFAQBtn" class="w-full btn-primary py-2 mb-4 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-plus"></i>
-                            إضافة سؤال جديد
-                        </button>
-
-                        <div id="faqList" class="space-y-2 max-h-96 overflow-y-auto hide-scrollbar">
-                            ${this.state.faqItems.map(faq => `
-                                <div class="glass-card p-3 rounded-2xl" data-id="${faq.id}">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex-1">
-                                            <div class="font-bold">${faq.question}</div>
-                                            <div class="text-xs text-gray-400 mt-1">${Utils.truncate(faq.answer, 100)}</div>
-                                        </div>
-                                        <div class="flex gap-2">
-                                            <button class="edit-faq text-blue-400 hover:text-blue-300" data-id="${faq.id}">
-                                                <i class="fa-solid fa-pen-to-square"></i>
-                                            </button>
-                                            <button class="delete-faq text-red-400 hover:text-red-300" data-id="${faq.id}">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-
-                        <!-- Add/Edit Form -->
-                        <div id="faqForm" class="hidden mt-4">
-                            <h3 class="font-bold mb-3" id="faqFormTitle">إضافة سؤال جديد</h3>
-                            <input type="hidden" id="faqId">
-                            <input type="text" id="faqQuestion" placeholder="السؤال" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
-                            <textarea id="faqAnswer" placeholder="الإجابة" rows="3" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white"></textarea>
-                            <div class="flex gap-2">
-                                <button id="saveFAQ" class="flex-1 btn-success py-2">حفظ</button>
-                                <button id="cancelFAQ" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold hover:bg-gray-700 transition-colors">إلغاء</button>
-                            </div>
-                        </div>
-                    `;
-
-                    modal.classList.add('open');
-
-                    document.getElementById('closeFAQModal').addEventListener('click', () => {
-                        modal.classList.remove('open');
-                    });
-
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) modal.classList.remove('open');
-                    });
-
-                    document.getElementById('addFAQBtn').addEventListener('click', () => {
-                        document.getElementById('faqList').classList.add('hidden');
-                        document.getElementById('addFAQBtn').classList.add('hidden');
-                        document.getElementById('faqForm').classList.remove('hidden');
-                        document.getElementById('faqFormTitle').textContent = 'إضافة سؤال جديد';
-                        document.getElementById('faqId').value = '';
-                        document.getElementById('faqQuestion').value = '';
-                        document.getElementById('faqAnswer').value = '';
-                    });
-
-                    document.getElementById('cancelFAQ').addEventListener('click', () => {
-                        document.getElementById('faqForm').classList.add('hidden');
-                        document.getElementById('faqList').classList.remove('hidden');
-                        document.getElementById('addFAQBtn').classList.remove('hidden');
-                    });
-
-                    document.getElementById('saveFAQ').addEventListener('click', () => {
-                        const id = document.getElementById('faqId').value;
-                        const question = document.getElementById('faqQuestion').value.trim();
-                        const answer = document.getElementById('faqAnswer').value.trim();
-
-                        if (!question || !answer) {
-                            this.toast.error('يرجى ملء جميع الحقول');
-                            return;
-                        }
-
-                        if (id) {
-                            this.data.updateFAQItem(id, question, answer);
-                            this.toast.success('✅ تم تحديث السؤال');
-                        } else {
-                            this.data.addFAQItem(question, answer);
-                            this.toast.success('✅ تم إضافة السؤال');
-                        }
-
-                        this.openFAQManagement();
-                    });
-
-                    document.querySelectorAll('.edit-faq').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const id = btn.dataset.id;
-                            const faq = this.state.faqItems.find(f => f.id === id);
-                            
-                            document.getElementById('faqList').classList.add('hidden');
-                            document.getElementById('addFAQBtn').classList.add('hidden');
-                            document.getElementById('faqForm').classList.remove('hidden');
-                            document.getElementById('faqFormTitle').textContent = 'تعديل السؤال';
-                            document.getElementById('faqId').value = id;
-                            document.getElementById('faqQuestion').value = faq.question;
-                            document.getElementById('faqAnswer').value = faq.answer;
-                        });
-                    });
-
-                    document.querySelectorAll('.delete-faq').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const id = btn.dataset.id;
-                            if (confirm('هل أنت متأكد من الحذف؟')) {
-                                this.data.deleteFAQItem(id);
-                                this.toast.success('تم الحذف');
-                                this.openFAQManagement();
-                            }
-                        });
-                    });
-                }
-
-                openFAQModal() {
-                    const modal = document.getElementById('walletModalOverlay');
-                    const content = document.getElementById('walletModalContent');
-
-                    content.innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">
-                                <i class="fa-regular fa-circle-question ml-2 text-blue-400"></i>
-                                الأسئلة الشائعة
-                            </h2>
-                            <button id="closeFAQModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
-                            </button>
-                        </div>
-
-                        <div class="space-y-3 max-h-96 overflow-y-auto hide-scrollbar">
-                            ${this.state.faqItems.map(faq => `
-                                <div class="faq-item">
-                                    <div class="faq-question font-bold">
-                                        ${faq.question}
-                                        <i class="fa-solid fa-chevron-down text-gray-400 text-xs transition-transform"></i>
-                                    </div>
-                                    <div class="faq-answer text-sm text-gray-300">${faq.answer}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-
-                    modal.classList.add('open');
-
-                    document.getElementById('closeFAQModal').addEventListener('click', () => {
-                        modal.classList.remove('open');
-                    });
-
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) modal.classList.remove('open');
-                    });
-
-                    document.querySelectorAll('.faq-item').forEach(item => {
-                        item.addEventListener('click', () => {
-                            item.classList.toggle('open');
-                            const icon = item.querySelector('.fa-chevron-down');
-                            if (icon) {
-                                icon.style.transform = item.classList.contains('open') ? 'rotate(180deg)' : '';
-                            }
-                        });
-                    });
-                }
-
-                // Existing modal methods (wallet, admin panel, etc.)
                 openWalletModal() {
                     const modal = document.getElementById('walletModalOverlay');
                     const content = document.getElementById('walletModalContent');
@@ -2777,7 +1761,7 @@
                                     <div class="text-xs text-gray-400">${Utils.formatDateTime(tx.date)}</div>
                                 </div>
                                 <div class="transaction-amount ${tx.amount > 0 ? 'positive' : 'negative'} font-bold">
-                                    ${tx.amount > 0 ? '+' : ''}${Utils.formatUSD(tx.amount)}
+                                    ${tx.amount > 0 ? '+' : ''}${Utils.formatNumber(tx.amount)}
                                 </div>
                             </div>
                         `).join('') :
@@ -2808,7 +1792,7 @@
 
                         <div class="glass-card p-6 rounded-2xl text-center mb-4">
                             <div class="text-gray-400 text-sm mb-1">الرصيد الحالي</div>
-                            <div class="text-3xl font-bold text-white" data-balance>${Utils.formatUSD(userData.balance)}</div>
+                            <div class="text-3xl font-bold text-white" data-balance>${Utils.formatNumber(userData.balance)}</div>
                         </div>
 
                         <div class="wallet-tabs">
@@ -2835,7 +1819,7 @@
                                 </div>
 
                                 <div class="flex gap-2">
-                                    <input type="number" id="depositAmount" placeholder="المبلغ ($)" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                    <input type="number" id="depositAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
                                     <button id="depositBtn" class="btn-primary px-4">تقديم</button>
                                 </div>
                                 <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلبك من قبل الإدارة</p>
@@ -2851,7 +1835,7 @@
                                 </div>
 
                                 <div class="flex gap-2">
-                                    <input type="number" id="withdrawAmount" placeholder="المبلغ ($)" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                    <input type="number" id="withdrawAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
                                     <button id="withdrawBtn" class="btn-danger px-4">طلب</button>
                                 </div>
                                 <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلبك من قبل الإدارة</p>
@@ -2862,7 +1846,7 @@
                                 <p class="text-sm text-gray-300 mb-2">تحويل إلى مستخدم آخر:</p>
                                 <input type="text" id="transferUserId" placeholder="معرف المستخدم" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
                                 <div class="flex gap-2">
-                                    <input type="number" id="transferAmount" placeholder="المبلغ ($)" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                    <input type="number" id="transferAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
                                     <button id="transferBtn" class="btn-success px-4">تحويل</button>
                                 </div>
                             </div>
@@ -2943,7 +1927,7 @@
 
                         const request = this.data.addDepositRequest(amount, selectedMethod, txId);
                         if (request) {
-                            this.toast.success(`✅ تم تقديم طلب الشحن بمبلغ ${Utils.formatUSD(amount)}`);
+                            this.toast.success(`✅ تم تقديم طلب الشحن بنجاح`);
                             document.getElementById('depositAmount').value = '';
                             document.getElementById('depositTransactionId').value = '';
                             methods.forEach(m => m.classList.remove('selected'));
@@ -2987,7 +1971,7 @@
 
                         const result = this.data.addWithdrawalRequest(amount, selectedWithdrawMethod, details);
                         if (result.success) {
-                            this.toast.success(`✅ تم تقديم طلب السحب بمبلغ ${Utils.formatUSD(amount)}`);
+                            this.toast.success(`✅ تم تقديم طلب السحب بنجاح`);
                             document.getElementById('withdrawAmount').value = '';
                             document.getElementById('withdrawDetails').value = '';
                             document.querySelectorAll('#tab-withdraw .payment-method').forEach(m => m.classList.remove('selected'));
@@ -3037,7 +2021,7 @@
                                 'transfer_in'
                             );
 
-                            this.toast.success(`✅ تم تحويل ${Utils.formatUSD(amount)} بنجاح`);
+                            this.toast.success(`✅ تم التحويل بنجاح`);
                             document.getElementById('transferAmount').value = '';
                             document.getElementById('transferUserId').value = '';
                         }
@@ -3084,7 +2068,7 @@
                                             <div class="flex justify-between items-start">
                                                 <div>
                                                     <div class="font-bold">${req.userName}</div>
-                                                    <div class="text-sm">المبلغ: <span class="text-blue-400">${Utils.formatUSD(req.amount)}</span></div>
+                                                    <div class="text-sm">المبلغ: <span class="text-blue-400">${req.amount}</span></div>
                                                     <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
                                                     <div class="text-xs text-gray-400">TXID: ${req.transactionId}</div>
                                                 </div>
@@ -3106,7 +2090,7 @@
                                             <div class="flex justify-between items-start">
                                                 <div>
                                                     <div class="font-bold">${req.userName}</div>
-                                                    <div class="text-sm">المبلغ: <span class="text-red-400">${Utils.formatUSD(req.amount)}</span></div>
+                                                    <div class="text-sm">المبلغ: <span class="text-red-400">${req.amount}</span></div>
                                                     <div class="text-xs text-gray-400">الطريقة: ${req.method}</div>
                                                     <div class="text-xs text-gray-400">التفاصيل: ${req.details}</div>
                                                 </div>
@@ -3131,7 +2115,7 @@
                                             <div>
                                                 <div class="font-bold">${u.name}</div>
                                                 <div class="text-xs text-gray-400">ID: ${u.id}</div>
-                                                <div class="text-sm">الرصيد: ${Utils.formatUSD(u.balance)}</div>
+                                                <div class="text-sm">الرصيد: ${u.balance}</div>
                                             </div>
                                             <div class="flex gap-2">
                                                 <button class="edit-user-balance text-blue-400 hover:text-blue-300" data-id="${u.id}" title="تعديل الرصيد">
@@ -3307,7 +2291,7 @@
                         <div class="space-y-3">
                             <div class="text-center">
                                 <span class="text-gray-400">الرصيد الحالي:</span>
-                                <span class="text-xl font-bold text-white">${Utils.formatUSD(user.balance)}</span>
+                                <span class="text-xl font-bold text-white">${user.balance}</span>
                             </div>
                             <div>
                                 <select id="balanceOperation" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
@@ -3317,7 +2301,7 @@
                                 </select>
                             </div>
                             <div>
-                                <input type="number" id="balanceAmount" placeholder="المبلغ ($)" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                <input type="number" id="balanceAmount" placeholder="المبلغ" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
                             </div>
                             <div>
                                 <input type="text" id="balanceReason" placeholder="السبب (اختياري)" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
@@ -3401,7 +2385,7 @@
                                 <textarea id="methodDepositDetails" placeholder="تفاصيل الإيداع" rows="2" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">${method?.depositDetails || ''}</textarea>
                             </div>
                             <div>
-                                <input type="text" id="methodWithdrawDetails" placeholder="تفاصيل السحب" value="${method?.withdrawDetails || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                                                <input type="text" id="methodWithdrawDetails" placeholder="تفاصيل السحب" value="${method?.withdrawDetails || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
                             </div>
                             <div class="flex gap-2 pt-2">
                                 <button type="submit" class="flex-1 btn-primary py-2">حفظ</button>
@@ -3622,10 +2606,6 @@
                         withdrawalRequests: [],
                         paymentMethods: [],
                         notifications: [],
-                        chatMessages: [],
-                        supportTickets: [],
-                        faqItems: [],
-                        unreadNotifications: 0,
                         settings: {
                             language: 'ar',
                             notifications: true,
@@ -3730,12 +2710,6 @@
                         if (userData.balance !== this.state.currentUser?.balance) {
                             this.state.set('currentUser', userData);
                             this.showAutoUpdateIndicator('تم تحديث الرصيد تلقائياً');
-                        }
-                        
-                        // تحديث الإشعارات غير المقروءة
-                        const unreadCount = this.data.getUnreadCount(this.state.user.id);
-                        if (unreadCount !== this.state.unreadNotifications) {
-                            this.state.set('unreadNotifications', unreadCount);
                         }
                     }
                 }
@@ -3847,7 +2821,9 @@
                 }
             });
 
-            console.log('✅ App initialized successfully with USD currency and chat support');
+            // Open settings panel on gear icon click (you can add a settings button in the UI if needed)
+            // For now, we'll add a hidden trigger - you can add a settings button in the UI later
+            console.log('✅ App initialized successfully');
         })();
     </script>
 </body>
