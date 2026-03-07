@@ -474,7 +474,6 @@
                 AUTO_REFRESH_INTERVAL: 3000,
                 STORAGE_KEYS: {
                     USERS_DATA: 'wallet_users_data',
-                    DEPOSIT_REQUESTS: 'wallet_deposit_requests',
                     WITHDRAWAL_REQUESTS: 'wallet_withdrawal_requests',
                     PAYMENT_METHODS: 'wallet_payment_methods',
                     THEME: 'wallet_theme',
@@ -876,38 +875,13 @@
                     }));
                 }
 
-                // Requests
+                // Requests (only withdrawal)
                 loadRequests() {
-                    this.state.depositRequests = StorageService.get(CONFIG.STORAGE_KEYS.DEPOSIT_REQUESTS, []);
                     this.state.withdrawalRequests = StorageService.get(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, []);
                 }
 
                 saveRequests() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.DEPOSIT_REQUESTS, this.state.depositRequests);
                     StorageService.set(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, this.state.withdrawalRequests);
-                }
-
-                addDepositRequest(amount, methodId, transactionId) {
-                    if (!this.state.user) return null;
-                    
-                    const method = this.state.paymentMethods.find(m => m.id === methodId);
-                    const request = {
-                        id: Utils.generateId('dep_'),
-                        userId: this.state.user.id,
-                        userName: `${this.state.user.first_name} ${this.state.user.last_name || ''}`.trim(),
-                        amount,
-                        method: method ? method.name : methodId,
-                        methodId,
-                        transactionId,
-                        status: 'pending',
-                        date: new Date().toISOString()
-                    };
-                    
-                    this.state.depositRequests.push(request);
-                    this.saveRequests();
-                    this.incrementDailyOps();
-                    
-                    return request;
                 }
 
                 addWithdrawalRequest(amount, methodId, details) {
@@ -939,28 +913,7 @@
                 }
 
                 acceptRequest(requestId, type) {
-                    if (type === 'deposit') {
-                        const request = this.state.depositRequests.find(r => r.id === requestId);
-                        if (request && request.status === 'pending') {
-                            request.status = 'approved';
-                            const result = this.updateBalance(
-                                request.userId,
-                                request.amount,
-                                `شحن عبر ${request.method}`,
-                                'deposit'
-                            );
-                            if (result.success) {
-                                this.saveRequests();
-                                this.addNotification(
-                                    request.userId,
-                                    '✅ تم قبول طلب الشحن',
-                                    `تمت إضافة ${Utils.formatUSD(request.amount)} إلى رصيدك.`,
-                                    'success'
-                                );
-                                return true;
-                            }
-                        }
-                    } else if (type === 'withdrawal') {
+                    if (type === 'withdrawal') {
                         const request = this.state.withdrawalRequests.find(r => r.id === requestId);
                         if (request && request.status === 'pending') {
                             const user = this.getUserData(request.userId);
@@ -989,20 +942,7 @@
                 }
 
                 rejectRequest(requestId, type) {
-                    if (type === 'deposit') {
-                        const request = this.state.depositRequests.find(r => r.id === requestId);
-                        if (request) {
-                            request.status = 'rejected';
-                            this.saveRequests();
-                            this.addNotification(
-                                request.userId,
-                                '❌ تم رفض طلب الشحن',
-                                `تم رفض طلب الشحن بمبلغ ${Utils.formatUSD(request.amount)}`,
-                                'error'
-                            );
-                            return true;
-                        }
-                    } else if (type === 'withdrawal') {
+                    if (type === 'withdrawal') {
                         const request = this.state.withdrawalRequests.find(r => r.id === requestId);
                         if (request) {
                             request.status = 'rejected';
@@ -1020,8 +960,7 @@
                 }
 
                 getPendingRequestsCount() {
-                    return this.state.depositRequests.filter(r => r.status === 'pending').length +
-                           this.state.withdrawalRequests.filter(r => r.status === 'pending').length;
+                    return this.state.withdrawalRequests.filter(r => r.status === 'pending').length;
                 }
 
                 // Payment Methods
@@ -1037,7 +976,6 @@
                                 icon: 'fa-brands fa-tether', 
                                 iconType: 'fa', 
                                 description: 'عملة رقمية مستقرة - دولار',
-                                depositDetails: 'عنوان المحفظة: T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ\nشبكة: TRC20',
                                 withdrawDetails: 'أدخل عنوان USDT الخاص بك'
                             },
                             { 
@@ -1046,7 +984,6 @@
                                 icon: 'fa-regular fa-credit-card', 
                                 iconType: 'fa', 
                                 description: 'بطاقات ائتمانية - دولار',
-                                depositDetails: 'رقم البطاقة: **** **** **** 1234\nتاريخ الانتهاء: 12/25\nCVV: ***',
                                 withdrawDetails: 'أدخل بيانات بطاقتك'
                             },
                             { 
@@ -1055,7 +992,6 @@
                                 icon: 'fa-solid fa-building-columns', 
                                 iconType: 'fa', 
                                 description: 'حوالة بنكية - دولار',
-                                depositDetails: 'IBAN: SA0380000000608010167519\nاسم المستفيد: شركة المدفوعات\nالبنك: الأهلي السعودي',
                                 withdrawDetails: 'أدخل رقم IBAN الخاص بك'
                             }
                         ];
@@ -2623,35 +2559,13 @@
                         </div>
 
                         <div class="wallet-tabs">
-                            <button class="wallet-tab active" data-tab="deposit"><i class="fa-solid fa-arrow-down"></i> شحن</button>
-                            <button class="wallet-tab" data-tab="withdraw"><i class="fa-solid fa-arrow-up"></i> سحب</button>
+                            <button class="wallet-tab active" data-tab="withdraw"><i class="fa-solid fa-arrow-up"></i> سحب</button>
                             <button class="wallet-tab" data-tab="transfer"><i class="fa-solid fa-exchange-alt"></i> تحويل</button>
                             <button class="wallet-tab" data-tab="history"><i class="fa-solid fa-history"></i> السجل</button>
                         </div>
 
                         <div id="walletTabContent">
-                            <div class="tab-pane" id="tab-deposit">
-                                <p class="text-xs md:text-sm text-gray-300 mb-2 md:mb-3">اختر طريقة الدفع:</p>
-                                <div class="payment-methods-list mb-3 md:mb-4">${paymentMethodsHtml}</div>
-                                
-                                <div id="depositDetails" class="payment-details hidden glass-card p-2 md:p-3 text-xs md:text-sm mb-2 md:mb-3">
-                                    <strong>تفاصيل الإيداع:</strong>
-                                    <div id="depositDetailsText" class="mt-1"></div>
-                                </div>
-
-                                <div class="mb-2 md:mb-3">
-                                    <label class="text-[10px] md:text-xs text-gray-400">رقم العملية (TXID):</label>
-                                    <input type="text" id="depositTransactionId" placeholder="أدخل رقم العملية" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
-                                </div>
-
-                                <div class="flex gap-2">
-                                    <input type="number" id="depositAmount" placeholder="المبلغ ($)" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
-                                    <button id="depositBtn" class="btn-primary px-3 md:px-4 text-sm">تقديم</button>
-                                </div>
-                                <p class="text-[9px] md:text-xs text-gray-400 mt-2">سيتم مراجعة طلبك من قبل الإدارة</p>
-                            </div>
-
-                            <div class="tab-pane hidden" id="tab-withdraw">
+                            <div class="tab-pane" id="tab-withdraw">
                                 <p class="text-xs md:text-sm text-gray-300 mb-2 md:mb-3">اختر طريقة السحب:</p>
                                 <div class="payment-methods-list mb-3 md:mb-4">${paymentMethodsHtml}</div>
                                 
@@ -2704,56 +2618,7 @@
                         });
                     });
 
-                    document.getElementById('tab-deposit').classList.remove('hidden');
-
-                    let selectedMethod = null;
-                    const methods = document.querySelectorAll('.payment-methods-list .payment-method');
-                    const detailsDiv = document.getElementById('depositDetails');
-                    const detailsText = document.getElementById('depositDetailsText');
-
-                    methods.forEach(method => {
-                        method.addEventListener('click', () => {
-                            methods.forEach(m => m.classList.remove('selected'));
-                            method.classList.add('selected');
-                            selectedMethod = method.dataset.methodId;
-
-                            const methodObj = this.state.paymentMethods.find(m => m.id === selectedMethod);
-                            if (methodObj?.depositDetails) {
-                                detailsText.innerHTML = methodObj.depositDetails.replace(/\n/g, '<br>');
-                                detailsDiv.classList.remove('hidden');
-                            } else {
-                                detailsDiv.classList.add('hidden');
-                            }
-                        });
-                    });
-
-                    document.getElementById('depositBtn')?.addEventListener('click', () => {
-                        const amount = parseFloat(document.getElementById('depositAmount').value);
-                        const txId = document.getElementById('depositTransactionId').value.trim();
-
-                        if (isNaN(amount) || amount <= 0) {
-                            this.toast.error('أدخل مبلغ صحيح');
-                            return;
-                        }
-                        if (!selectedMethod) {
-                            this.toast.error('اختر طريقة دفع');
-                            return;
-                        }
-                        if (!txId) {
-                            this.toast.error('أدخل رقم العملية');
-                            return;
-                        }
-
-                        const request = this.data.addDepositRequest(amount, selectedMethod, txId);
-                        if (request) {
-                            this.toast.success(`✅ تم تقديم طلب الشحن بمبلغ ${Utils.formatUSD(amount)}`);
-                            document.getElementById('depositAmount').value = '';
-                            document.getElementById('depositTransactionId').value = '';
-                            methods.forEach(m => m.classList.remove('selected'));
-                            detailsDiv.classList.add('hidden');
-                            selectedMethod = null;
-                        }
-                    });
+                    document.getElementById('tab-withdraw').classList.remove('hidden');
 
                     let selectedWithdrawMethod = null;
                     document.querySelectorAll('#tab-withdraw .payment-method').forEach(method => {
@@ -2854,7 +2719,6 @@
                 }
 
                 renderAdminPanel() {
-                    const pendingDeposits = this.state.depositRequests.filter(r => r.status === 'pending');
                     const pendingWithdrawals = this.state.withdrawalRequests.filter(r => r.status === 'pending');
                     const users = this.data.getAllUsers();
 
@@ -2874,28 +2738,6 @@
 
                         <div id="adminRequestsTab" class="admin-tab">
                             <div class="space-y-4 md:space-y-6">
-                                <div>
-                                    <h3 class="text-base md:text-lg font-bold mb-2 flex items-center gap-2">
-                                        <i class="fa-solid fa-arrow-down text-green-400"></i>
-                                        طلبات الشحن (${pendingDeposits.length})
-                                    </h3>
-                                    ${pendingDeposits.map(req => `
-                                        <div class="glass-card p-2 md:p-3 mb-2" data-id="${req.id}" data-type="deposit">
-                                            <div class="flex justify-between items-start">
-                                                <div>
-                                                    <div class="font-bold text-xs md:text-sm">${req.userName}</div>
-                                                    <div class="text-[10px] md:text-xs">المبلغ: <span class="text-blue-400">${Utils.formatUSD(req.amount)}</span></div>
-                                                    <div class="text-[9px] md:text-xs text-gray-400">الطريقة: ${req.method}</div>
-                                                    <div class="text-[9px] md:text-xs text-gray-400">TXID: ${req.transactionId}</div>
-                                                </div>
-                                                <div class="flex gap-1 md:gap-2">
-                                                    <button class="accept-request btn-success px-2 md:px-3 py-0.5 md:py-1 text-[9px] md:text-xs">قبول</button>
-                                                    <button class="reject-request btn-danger px-2 md:px-3 py-0.5 md:py-1 text-[9px] md:text-xs">رفض</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `).join('') || '<p class="text-gray-400 text-center py-2 text-sm">لا توجد طلبات معلقة</p>'}
-                                </div>
                                 <div>
                                     <h3 class="text-base md:text-lg font-bold mb-2 flex items-center gap-2">
                                         <i class="fa-solid fa-arrow-up text-red-400"></i>
@@ -3192,9 +3034,6 @@
                                 <input type="text" id="methodDescription" placeholder="وصف مختصر" value="${method?.description || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
                             </div>
                             <div>
-                                <textarea id="methodDepositDetails" placeholder="تفاصيل الإيداع" rows="2" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">${method?.depositDetails || ''}</textarea>
-                            </div>
-                            <div>
                                 <input type="text" id="methodWithdrawDetails" placeholder="تفاصيل السحب" value="${method?.withdrawDetails || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
                             </div>
                             <div class="flex gap-2 pt-2">
@@ -3304,7 +3143,6 @@
                             icon: icon,
                             iconType: iconType,
                             description: document.getElementById('methodDescription').value,
-                            depositDetails: document.getElementById('methodDepositDetails').value,
                             withdrawDetails: document.getElementById('methodWithdrawDetails').value
                         };
                         
@@ -3411,7 +3249,6 @@
                         theme: 'dark',
                         users: {},
                         currentUser: null,
-                        depositRequests: [],
                         withdrawalRequests: [],
                         paymentMethods: [],
                         notifications: [],
@@ -3575,7 +3412,7 @@
                 app.toast.info(`تم تغيير السمة إلى ${newTheme === 'dark' ? 'الداكنة' : 'الفاتحة'}`);
             });
 
-            console.log('✅ App initialized successfully with responsive design');
+            console.log('✅ App initialized successfully with responsive design and only withdrawal feature');
         })();
     </script>
 
