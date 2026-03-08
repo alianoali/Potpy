@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>المحفظة الذكية - Telegram Web App</title>
+    <title>المحفظة الذكية - مع نظام الإعلانات</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -418,198 +418,39 @@
             background: rgba(59,130,246,0.1);
         }
 
-        /* Modal overlay */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 10px;
-        }
-
-        .modal-overlay.open {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 20px;
-            max-height: 90vh;
-            overflow-y: auto;
-            width: min(95%, 500px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            animation: slideUp 0.3s ease;
-        }
-
-        @media (min-width: 768px) {
-            .modal-content {
-                padding: 24px;
-                width: min(90%, 600px);
-            }
-        }
-
-        /* Payment method selection */
-        .payment-method.selected {
-            background: rgba(59, 130, 246, 0.2);
-            border-color: #3b82f6;
-        }
-
-        /* Transaction amounts */
-        .transaction-amount.positive {
-            color: var(--success);
-        }
-
-        .transaction-amount.negative {
-            color: var(--danger);
-        }
-
-        /* Emoji picker */
-        .emoji-picker-container {
-            position: fixed;
-            bottom: 70px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            display: none;
-        }
-
-        .emoji-picker-container.open {
-            display: block;
-        }
-
-        emoji-picker {
-            width: min(300px, 90vw);
-            height: 400px;
-            --background: rgba(20, 30, 40, 0.95);
-            --border-color: var(--glass-border);
-        }
-
-        /* Chat message */
-        .chat-message {
-            display: flex;
-            margin-bottom: 8px;
-        }
-        .chat-message.outgoing {
-            justify-content: flex-end;
-        }
-        .chat-message.incoming {
-            justify-content: flex-start;
-        }
-        .message-bubble {
-            max-width: 70%;
-            padding: 8px 12px;
-            border-radius: 18px;
-            background: rgba(255,255,255,0.1);
-            color: white;
-        }
-        .outgoing .message-bubble {
-            background: #3b82f6;
-        }
-        .message-info {
-            display: flex;
-            gap: 8px;
-            margin-top: 4px;
-            font-size: 10px;
-            opacity: 0.7;
-        }
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .typing-indicator {
-            display: flex;
-            align-items: center;
-            padding: 8px;
-        }
-        .typing-indicator span {
-            width: 6px;
-            height: 6px;
-            margin: 0 2px;
-            background: #888;
-            border-radius: 50%;
-            display: inline-block;
-            animation: typing 1.4s infinite both;
-        }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typing {
-            0% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-            100% { opacity: 0.4; transform: scale(1); }
-        }
-        .quick-replies {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding: 8px 0;
-        }
-        .quick-reply-btn {
-            background: rgba(255,255,255,0.1);
-            border: none;
+        /* Ads styling */
+        .ad-card {
+            background: rgba(0,0,0,0.2);
             border-radius: 16px;
-            padding: 6px 12px;
-            color: white;
-            white-space: nowrap;
-        }
-        .chat-list-item {
-            cursor: pointer;
             padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid var(--glass-border);
+        }
+        .ad-card .ad-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(145deg, var(--primary), var(--secondary));
             border-radius: 12px;
-            background: rgba(255,255,255,0.05);
-            transition: background 0.2s;
-        }
-        .chat-list-item:hover {
-            background: rgba(255,255,255,0.1);
-        }
-        .chat-list-item.unread {
-            background: rgba(59,130,246,0.15);
-        }
-        .notification-badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: #ef4444;
-            color: white;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            font-size: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .faq-item {
+        .ad-card .ad-info {
+            flex: 1;
+        }
+        .ad-card .ad-price {
+            color: var(--success);
+            font-weight: bold;
+        }
+        .ad-card.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .ad-stats {
             background: rgba(255,255,255,0.05);
             border-radius: 12px;
-            padding: 8px 12px;
-            cursor: pointer;
-        }
-        .faq-question {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .faq-answer {
-            margin-top: 8px;
-            color: #aaa;
-            display: none;
-        }
-        .faq-item.open .faq-answer {
-            display: block;
+            padding: 10px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -680,6 +521,7 @@
                 MAX_IMAGE_SIZE: 200 * 1024, // 200KB after compression
                 ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
                 AUTO_REFRESH_INTERVAL: 15000, // 15 seconds
+                ADS_DEFAULT_PRICE: 0.10, // سعر النقرة الافتراضي
                 STORAGE_KEYS: {
                     USERS_DATA: 'wallet_users_data',
                     WITHDRAWAL_REQUESTS: 'wallet_withdrawal_requests',
@@ -691,9 +533,8 @@
                     CHAT_MESSAGES: 'wallet_chat_messages',
                     SUPPORT_TICKETS: 'wallet_support_tickets',
                     FAQ_ITEMS: 'wallet_faq_items',
-                    // جديد: مفاتيح الإعلانات
-                    CAMPAIGNS: 'wallet_campaigns',
-                    CLICKS: 'wallet_clicks'
+                    ADS_DATA: 'wallet_ads',
+                    AD_CLICKS: 'wallet_ad_clicks'
                 },
                 BALANCE_LEVELS: [
                     { threshold: 0, color: '#ef4444', name: 'منخفض' },
@@ -741,14 +582,7 @@
                         answer: 'يمكنك التواصل معنا مباشرة عبر نظام الدردشة المدمج، أو فتح تذكرة دعم للمشاكل المعقدة.'
                     }
                 ],
-                SUPPORT_ID: 'support_team', // معرف ثابت للدعم
-                // جديد: إعدادات الإعلانات
-                CAMPAIGNS: {
-                    DEFAULT_CPC: 0.05, // 5 سنتات افتراضياً
-                    MAX_CLICKS_PER_USER_PER_CAMPAIGN: 1, // مرة واحدة لكل حملة
-                    COOLDOWN_HOURS: 24, // فترة التهدئة بين النقرات
-                    MIN_BUDGET: 1 // أقل ميزانية للحملة بالدولار
-                }
+                SUPPORT_ID: 'support_team' // معرف ثابت للدعم
             };
 
             // ==================== Utilities ====================
@@ -793,6 +627,7 @@
                     if (!CONFIG.ALLOWED_IMAGE_TYPES.includes(file.type)) {
                         return { valid: false, error: 'نوع الملف غير مسموح' };
                     }
+                    // سنقوم بالضغط لاحقاً، نتحقق فقط من الحجم الأولي
                     if (file.size > 5 * 1024 * 1024) {
                         return { valid: false, error: 'حجم الصورة كبير جداً (الحد الأقصى 5 ميجابايت قبل الضغط)' };
                     }
@@ -826,12 +661,13 @@
                                 const ctx = canvas.getContext('2d');
                                 ctx.drawImage(img, 0, 0, width, height);
                                 
+                                // جرب جودة 0.9 ثم قلل حتى يصبح الحجم أقل من maxSize
                                 let quality = 0.9;
                                 let compressedDataUrl;
                                 do {
                                     compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
                                     quality -= 0.1;
-                                } while (compressedDataUrl.length > maxSize * 1.37 && quality > 0.1);
+                                } while (compressedDataUrl.length > maxSize * 1.37 && quality > 0.1); // تقريب حجم base64
     
                                 resolve(compressedDataUrl);
                             };
@@ -881,6 +717,7 @@
                     return div.innerHTML;
                 },
 
+                // التحقق من أن المستخدم غير محظور
                 checkNotBlocked: (user) => {
                     return user && !user.blocked;
                 }
@@ -1050,9 +887,8 @@
                     this.loadChatMessages();
                     this.loadSupportTickets();
                     this.loadFAQItems();
-                    // جديد: تحميل بيانات الإعلانات
-                    this.loadCampaigns();
-                    this.loadClicks();
+                    this.loadAds();           // إضافة
+                    this.loadAdClicks();      // إضافة
                 }
 
                 // Users
@@ -1075,10 +911,7 @@
                             name: this.state.user ? `${this.state.user.first_name} ${this.state.user.last_name || ''}`.trim() : `مستخدم ${userId}`,
                             username: this.state.user?.username || '',
                             supportTickets: 0,
-                            totalChats: 0,
-                            // جديد: إحصائيات الإعلانات للمستخدم
-                            totalEarnedFromAds: 0,
-                            totalClicks: 0
+                            totalChats: 0
                         };
                         this.saveUsers();
                     }
@@ -1094,6 +927,7 @@
                     }
                 }
 
+                // التحقق من الحظر قبل أي عملية
                 checkBlocked(userId) {
                     const user = this.getUserData(userId);
                     if (user.blocked) {
@@ -1102,6 +936,7 @@
                     return { blocked: false };
                 }
 
+                // عملية تحديث الرصيد مع التحقق من الحظر
                 updateBalance(userId, delta, reason, type = 'adjust') {
                     const blockCheck = this.checkBlocked(userId);
                     if (blockCheck.blocked) {
@@ -1157,9 +992,7 @@
                         transactionsCount: data.transactions.length,
                         lastActive: data.lastActive,
                         createdAt: data.createdAt,
-                        supportTickets: data.supportTickets || 0,
-                        totalEarnedFromAds: data.totalEarnedFromAds || 0,
-                        totalClicks: data.totalClicks || 0
+                        supportTickets: data.supportTickets || 0
                     }));
                 }
 
@@ -1377,7 +1210,7 @@
                     return this.state.notifications.filter(n => n.userId === userId && !n.read).length;
                 }
 
-                // Chat Messages
+                // Chat Messages - مع دعم معرف ثابت للدعم
                 loadChatMessages() {
                     this.state.chatMessages = StorageService.get(CONFIG.STORAGE_KEYS.CHAT_MESSAGES, []);
                 }
@@ -1386,7 +1219,9 @@
                     StorageService.set(CONFIG.STORAGE_KEYS.CHAT_MESSAGES, this.state.chatMessages);
                 }
 
+                // إضافة رسالة دردشة
                 addChatMessage(message, userId = null, isSupport = false, recipientUserId = null) {
+                    // تعقيم الإدخال
                     const cleanMessage = Utils.escapeHtml(message);
                     
                     const msg = {
@@ -1397,7 +1232,7 @@
                         isSupport: isSupport,
                         supportId: isSupport ? CONFIG.SUPPORT_TEAM[Math.floor(Math.random() * CONFIG.SUPPORT_TEAM.length)].id : null,
                         supportName: isSupport ? CONFIG.SUPPORT_TEAM[Math.floor(Math.random() * CONFIG.SUPPORT_TEAM.length)].name : null,
-                        recipientUserId: recipientUserId,
+                        recipientUserId: recipientUserId, // يمكن أن يكون CONFIG.SUPPORT_ID أو userId حقيقي
                         read: false,
                         date: new Date().toISOString(),
                         status: 'sent'
@@ -1406,6 +1241,7 @@
                     this.state.chatMessages.push(msg);
                     this.saveChatMessages();
                     
+                    // إشعار للأدمن إذا كانت رسالة من مستخدم
                     if (!isSupport && this.state.user && !this.state.isAdmin) {
                         this.addNotification(
                             CONFIG.ADMIN_ID,
@@ -1418,6 +1254,7 @@
                     return msg;
                 }
 
+                // جلب الرسائل بين مستخدم وآخر (الدعم معرف ب CONFIG.SUPPORT_ID)
                 getChatMessages(userId = null, otherUserId = null) {
                     let messages = this.state.chatMessages;
                     
@@ -1435,9 +1272,10 @@
                     
                     return messages
                         .sort((a, b) => new Date(a.date) - new Date(b.date))
-                        .slice(-50);
+                        .slice(-50); // آخر 50 رسالة
                 }
 
+                // تحديد قراءة رسائل محادثة مع مستخدم معين
                 markChatAsRead(userId, otherUserId = null) {
                     this.state.chatMessages.forEach(m => {
                         if (otherUserId) {
@@ -1454,6 +1292,7 @@
                     this.saveChatMessages();
                 }
 
+                // عدد الرسائل غير المقروءة لمستخدم (أو بين مستخدمين)
                 getUnreadChatCount(userId = null, otherUserId = null) {
                     let messages = this.state.chatMessages.filter(m => !m.read);
                     if (userId && otherUserId) {
@@ -1469,9 +1308,11 @@
                     return messages.length;
                 }
 
+                // الحصول على قائمة المستخدمين الذين لديهم محادثات مع الدعم (للأدمن)
                 getUsersWithChats() {
                     const usersMap = new Map();
                     this.state.chatMessages.forEach(msg => {
+                        // المستخدم الذي أرسل الرسالة
                         if (msg.userId && msg.userId !== CONFIG.ADMIN_ID && msg.userId !== CONFIG.SUPPORT_ID) {
                             if (!usersMap.has(msg.userId)) {
                                 usersMap.set(msg.userId, {
@@ -1492,6 +1333,7 @@
                                 }
                             }
                         }
+                        // المستلم للرسالة (إذا كان مستخدم)
                         if (msg.recipientUserId && msg.recipientUserId !== CONFIG.ADMIN_ID && msg.recipientUserId !== CONFIG.SUPPORT_ID) {
                             if (!usersMap.has(msg.recipientUserId)) {
                                 const userData = this.getUserData(msg.recipientUserId);
@@ -1735,7 +1577,9 @@
                     }
                 }
 
+                // التحويل الآمن بين المستخدمين (معاملات ذرية)
                 transferBalance(fromUserId, toUserId, amount, reason = 'تحويل') {
+                    // التحقق من الحظر لكلا الطرفين
                     const fromBlock = this.checkBlocked(fromUserId);
                     if (fromBlock.blocked) {
                         return { success: false, error: 'المرسل محظور' };
@@ -1752,12 +1596,14 @@
                         return { success: false, error: 'الرصيد غير كافٍ' };
                     }
 
+                    // محاولة تحديث كلا المستخدمين
                     const oldFromBalance = fromUser.balance;
                     const oldToBalance = toUser.balance;
 
                     fromUser.balance -= amount;
                     toUser.balance += amount;
 
+                    // إنشاء المعاملات
                     const fromTx = {
                         id: Utils.generateId('tx_'),
                         type: 'transfer_out',
@@ -1782,15 +1628,18 @@
                     };
                     toUser.transactions.unshift(toTx);
 
+                    // حفظ التغييرات (إذا فشل أحدهما نستعيد الحالة القديمة)
                     try {
                         this.updateUser(fromUserId, fromUser);
                         this.updateUser(toUserId, toUser);
                         
+                        // إشعارات
                         this.addNotification(fromUserId, '💸 تحويل صادر', `تم تحويل ${Utils.formatUSD(amount)} إلى المستخدم ${toUserId}`, 'info');
                         this.addNotification(toUserId, '💰 تحويل وارد', `استلمت ${Utils.formatUSD(amount)} من المستخدم ${fromUserId}`, 'success');
                         
                         return { success: true, fromTx, toTx };
                     } catch (error) {
+                        // استعادة الحالة القديمة (يدوياً)
                         fromUser.balance = oldFromBalance;
                         toUser.balance = oldToBalance;
                         fromUser.transactions.shift();
@@ -1801,172 +1650,136 @@
                     }
                 }
 
-                // ========== جديد: دوال الإعلانات ==========
-                loadCampaigns() {
-                    this.state.campaigns = StorageService.get(CONFIG.STORAGE_KEYS.CAMPAIGNS, []);
+                // ========== نظام الإعلانات (Ads) ==========
+                loadAds() {
+                    this.state.ads = StorageService.get(CONFIG.STORAGE_KEYS.ADS_DATA, []);
                 }
 
-                saveCampaigns() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.CAMPAIGNS, this.state.campaigns);
+                saveAds() {
+                    StorageService.set(CONFIG.STORAGE_KEYS.ADS_DATA, this.state.ads);
                 }
 
-                loadClicks() {
-                    this.state.clicks = StorageService.get(CONFIG.STORAGE_KEYS.CLICKS, []);
-                }
-
-                saveClicks() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.CLICKS, this.state.clicks);
-                }
-
-                getActiveCampaigns() {
-                    const now = new Date().toISOString();
-                    return this.state.campaigns.filter(c => 
-                        c.status === 'active' && 
-                        c.spent < c.budget &&
-                        (!c.endDate || c.endDate > now) &&
-                        (!c.startDate || c.startDate <= now)
-                    );
-                }
-
-                addCampaign(campaignData) {
-                    const campaign = {
-                        id: Utils.generateId('camp_'),
-                        ...campaignData,
-                        spent: 0,
-                        createdAt: new Date().toISOString(),
-                        status: campaignData.status || 'active',
-                        maxClicksPerUser: campaignData.maxClicksPerUser || CONFIG.CAMPAIGNS.MAX_CLICKS_PER_USER_PER_CAMPAIGN,
-                        cooldownHours: campaignData.cooldownHours || CONFIG.CAMPAIGNS.COOLDOWN_HOURS
+                addAd(adData) {
+                    const newAd = {
+                        id: Utils.generateId('ad_'),
+                        title: adData.title,
+                        url: adData.url,
+                        image: adData.image || null,
+                        iconType: adData.iconType || 'fa',
+                        price: adData.price || CONFIG.ADS_DEFAULT_PRICE,
+                        active: adData.active !== undefined ? adData.active : true,
+                        maxClicksPerUser: adData.maxClicksPerUser || 1,
+                        totalClicks: 0,
+                        createdAt: new Date().toISOString()
                     };
-                    this.state.campaigns.push(campaign);
-                    this.saveCampaigns();
-                    return campaign;
+                    this.state.ads.push(newAd);
+                    this.saveAds();
+                    return newAd;
                 }
 
-                updateCampaign(id, data) {
-                    const index = this.state.campaigns.findIndex(c => c.id === id);
+                updateAd(id, adData) {
+                    const index = this.state.ads.findIndex(ad => ad.id === id);
                     if (index !== -1) {
-                        this.state.campaigns[index] = { ...this.state.campaigns[index], ...data };
-                        this.saveCampaigns();
+                        this.state.ads[index] = { ...this.state.ads[index], ...adData };
+                        this.saveAds();
                         return true;
                     }
                     return false;
                 }
 
-                deleteCampaign(id) {
-                    this.state.campaigns = this.state.campaigns.filter(c => c.id !== id);
-                    this.saveCampaigns();
+                deleteAd(id) {
+                    this.state.ads = this.state.ads.filter(ad => ad.id !== id);
+                    this.saveAds();
+                    // حذف النقرات المرتبطة بهذا الإعلان؟ نعم لحفظ المساحة
+                    this.state.adClicks = this.state.adClicks.filter(click => click.adId !== id);
+                    this.saveAdClicks();
                 }
 
-                recordClick(campaignId, userId) {
-                    // 1. التحقق من وجود المستخدم وعدم حظره
-                    const user = this.getUserData(userId);
-                    if (user.blocked) {
-                        return { success: false, error: 'المستخدم محظور' };
-                    }
+                getActiveAds() {
+                    return this.state.ads.filter(ad => ad.active);
+                }
 
-                    // 2. العثور على الحملة
-                    const campaign = this.state.campaigns.find(c => c.id === campaignId);
-                    if (!campaign) {
-                        return { success: false, error: 'الحملة غير موجودة' };
-                    }
+                // سجل النقرات
+                loadAdClicks() {
+                    this.state.adClicks = StorageService.get(CONFIG.STORAGE_KEYS.AD_CLICKS, []);
+                }
 
-                    // 3. التحقق من حالة الحملة
-                    if (campaign.status !== 'active') {
-                        return { success: false, error: 'الحملة غير نشطة' };
-                    }
+                saveAdClicks() {
+                    StorageService.set(CONFIG.STORAGE_KEYS.AD_CLICKS, this.state.adClicks);
+                }
 
-                    // 4. التحقق من الميزانية
-                    if (campaign.spent >= campaign.budget) {
-                        return { success: false, error: 'انتهت ميزانية الحملة' };
-                    }
+                hasUserClickedAd(userId, adId) {
+                    const clicks = this.state.adClicks.filter(c => c.userId === userId && c.adId === adId);
+                    return clicks.length;
+                }
 
-                    // 5. التحقق من تاريخ الانتهاء
-                    if (campaign.endDate && new Date(campaign.endDate) < new Date()) {
-                        return { success: false, error: 'انتهت صلاحية الحملة' };
-                    }
-
-                    // 6. التحقق من عدد النقرات السابقة للمستخدم على هذه الحملة
-                    const userClicks = this.state.clicks.filter(c => 
-                        c.campaignId === campaignId && c.userId === userId
-                    );
-                    if (userClicks.length >= campaign.maxClicksPerUser) {
-                        return { success: false, error: 'لقد تجاوزت الحد المسموح من النقرات على هذا الإعلان' };
-                    }
-
-                    // 7. التحقق من فترة التهدئة (إذا وجدت نقرات سابقة)
-                    if (userClicks.length > 0 && campaign.cooldownHours > 0) {
-                        const lastClick = userClicks.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
-                        const hoursSinceLast = (new Date() - new Date(lastClick.timestamp)) / (1000 * 60 * 60);
-                        if (hoursSinceLast < campaign.cooldownHours) {
-                            const remaining = Math.ceil(campaign.cooldownHours - hoursSinceLast);
-                            return { success: false, error: `يجب الانتظار ${remaining} ساعة قبل النقر مرة أخرى` };
-                        }
-                    }
-
-                    // 8. تسجيل النقرة
+                recordAdClick(userId, adId, amount) {
                     const click = {
                         id: Utils.generateId('click_'),
-                        campaignId,
                         userId,
-                        earned: campaign.cpc,
-                        userAgent: navigator.userAgent,
-                        timestamp: new Date().toISOString(),
-                        validated: true
+                        adId,
+                        amount,
+                        date: new Date().toISOString()
                     };
-                    this.state.clicks.push(click);
-                    this.saveClicks();
+                    this.state.adClicks.push(click);
+                    this.saveAdClicks();
 
-                    // 9. تحديث رصيد المستخدم
-                    const balanceResult = this.updateBalance(
+                    // تحديث totalClicks في الإعلان
+                    const ad = this.state.ads.find(a => a.id === adId);
+                    if (ad) {
+                        ad.totalClicks = (ad.totalClicks || 0) + 1;
+                        this.saveAds();
+                    }
+                }
+
+                // النقر على إعلان (معالجة كاملة)
+                clickAd(adId, userId) {
+                    // تحقق من الحظر
+                    const blockCheck = this.checkBlocked(userId);
+                    if (blockCheck.blocked) {
+                        return { success: false, error: blockCheck.message };
+                    }
+
+                    const ad = this.state.ads.find(a => a.id === adId);
+                    if (!ad) {
+                        return { success: false, error: 'الإعلان غير موجود' };
+                    }
+                    if (!ad.active) {
+                        return { success: false, error: 'الإعلان غير نشط' };
+                    }
+
+                    // تحقق من عدد النقرات المسموح بها للمستخدم
+                    const userClicks = this.hasUserClickedAd(userId, adId);
+                    if (userClicks >= ad.maxClicksPerUser) {
+                        return { success: false, error: 'لقد استنفدت عدد النقرات المسموح بها لهذا الإعلان' };
+                    }
+
+                    // إضافة الرصيد
+                    const result = this.updateBalance(userId, ad.price, `نقرة على إعلان: ${ad.title}`, 'ad_click');
+                    if (!result.success) {
+                        return result;
+                    }
+
+                    // تسجيل النقرة
+                    this.recordAdClick(userId, adId, ad.price);
+
+                    // إضافة إشعار
+                    this.addNotification(
                         userId,
-                        campaign.cpc,
-                        `ربح من إعلان: ${campaign.title}`,
-                        'ad_reward'
+                        '💰 ربح من إعلان',
+                        `لقد ربحت ${Utils.formatUSD(ad.price)} من النقر على إعلان "${ad.title}"`,
+                        'success'
                     );
-                    if (!balanceResult.success) {
-                        // إذا فشل تحديث الرصيد، نحذف النقرة
-                        this.state.clicks = this.state.clicks.filter(c => c.id !== click.id);
-                        this.saveClicks();
-                        return { success: false, error: balanceResult.error };
-                    }
 
-                    // 10. تحديث مصروفات الحملة
-                    campaign.spent += campaign.cpc;
-                    if (campaign.spent >= campaign.budget) {
-                        campaign.status = 'ended'; // تنتهي الحملة تلقائياً
-                    }
-                    this.saveCampaigns();
-
-                    // 11. تحديث إحصائيات المستخدم
-                    user.totalEarnedFromAds = (user.totalEarnedFromAds || 0) + campaign.cpc;
-                    user.totalClicks = (user.totalClicks || 0) + 1;
-                    this.updateUser(userId, user);
-
-                    return { success: true, earned: campaign.cpc, campaignTitle: campaign.title };
+                    return { success: true, amount: ad.price, ad };
                 }
 
-                getCampaignStats(campaignId) {
-                    const campaign = this.state.campaigns.find(c => c.id === campaignId);
-                    if (!campaign) return null;
-
-                    const clicks = this.state.clicks.filter(c => c.campaignId === campaignId);
-                    const uniqueUsers = new Set(clicks.map(c => c.userId)).size;
-
-                    return {
-                        totalClicks: clicks.length,
-                        uniqueUsers,
-                        spent: campaign.spent,
-                        remaining: campaign.budget - campaign.spent,
-                        performance: clicks.length > 0 ? (uniqueUsers / clicks.length * 100).toFixed(1) : 0
-                    };
-                }
-
-                getAllCampaignsStats() {
-                    return this.state.campaigns.map(c => ({
-                        ...c,
-                        stats: this.getCampaignStats(c.id)
-                    }));
+                // إحصائيات الإعلانات
+                getAdsStats() {
+                    const totalClicks = this.state.adClicks.length;
+                    const totalPaid = this.state.adClicks.reduce((sum, c) => sum + (c.amount || 0), 0);
+                    const activeAdsCount = this.state.ads.filter(ad => ad.active).length;
+                    return { totalClicks, totalPaid, activeAdsCount };
                 }
             }
 
@@ -1986,6 +1799,7 @@
                     const { key, value } = e.detail;
                     if (key === 'currentUser') {
                         this.updateBalanceDisplays(value?.balance);
+                        // إذا كان المستخدم محظوراً، نعرض رسالة
                         if (value?.blocked) {
                             this.toast.warning('هذا الحساب محظور. لا يمكنك إجراء أي عمليات.');
                         }
@@ -2096,10 +1910,6 @@
                     const unreadChatCount = this.data.getUnreadChatCount(user.id);
                     const balanceLevel = Utils.calculateBalanceLevel(userData.balance);
                     
-                    // جديد: جلب الإعلانات النشطة لعرض بطاقة إعلانية
-                    const activeCampaigns = this.data.getActiveCampaigns();
-                    const firstAd = activeCampaigns.length > 0 ? activeCampaigns[0] : null;
-                    
                     this.app.innerHTML = `
                         <div class="space-y-4 md:space-y-5 animate-slide-up pb-10">
                             <!-- User Card -->
@@ -2172,7 +1982,7 @@
                                 </div>
                             </div>
 
-                            <!-- Quick Actions (محدثة: إضافة زر الإعلانات) -->
+                            <!-- Quick Actions (تم إضافة زر الإعلانات) -->
                             <div class="grid grid-cols-4 gap-2 mt-2 md:mt-4">
                                 <button class="glass-card p-2 md:p-3 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-blue-500/10 transition-all quick-action" data-action="wallet">
                                     <div class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-1">
@@ -2197,35 +2007,11 @@
                                 </button>
                                 <button class="glass-card p-2 md:p-3 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-yellow-500/10 transition-all quick-action" data-action="ads">
                                     <div class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-yellow-500/10 text-yellow-400 flex items-center justify-center mb-1">
-                                        <i class="fa-solid fa-bullhorn text-xs md:text-sm"></i>
+                                        <i class="fa-solid fa-ad text-xs md:text-sm"></i>
                                     </div>
                                     <span class="text-gray-400 text-[9px] md:text-[10px]">إعلانات</span>
                                 </button>
                             </div>
-
-                            <!-- بطاقة إعلانية (إذا وجد إعلان نشط) -->
-                            ${firstAd ? `
-                                <div class="glass-card p-3 rounded-2xl cursor-pointer hover:bg-white/5 transition" id="featuredAd" data-campaign-id="${firstAd.id}">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-12 h-12 rounded-xl overflow-hidden bg-slate-700 flex-shrink-0">
-                                            ${firstAd.imageUrl ? 
-                                                `<img src="${firstAd.imageUrl}" class="w-full h-full object-cover">` : 
-                                                `<div class="w-full h-full flex items-center justify-center text-blue-400"><i class="fa-solid fa-ad"></i></div>`
-                                            }
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="font-bold text-sm">${firstAd.title}</div>
-                                            <div class="text-xs text-gray-400">${firstAd.description || ''}</div>
-                                            <div class="flex items-center gap-2 mt-1">
-                                                <span class="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
-                                                    <i class="fa-solid fa-dollar-sign"></i> ${Utils.formatUSD(firstAd.cpc)}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <i class="fa-solid fa-arrow-left text-gray-400"></i>
-                                    </div>
-                                </div>
-                            ` : ''}
 
                             <!-- FAQ Section -->
                             <div class="glass-card p-3 md:p-4 rounded-2xl">
@@ -2279,6 +2065,7 @@
                     const pendingCount = this.data.getPendingRequestsCount();
                     const unreadChatCount = this.data.getUnreadChatCount(); // جميع الرسائل غير المقروءة للأدمن
                     const openTickets = this.state.supportTickets.filter(t => t.status !== 'closed').length;
+                    const adsStats = this.data.getAdsStats(); // إحصائيات الإعلانات
                     const balanceLevel = Utils.calculateBalanceLevel(userData.balance);
                     
                     this.app.innerHTML = `
@@ -2350,7 +2137,7 @@
                             </div>
 
                             <!-- Stats -->
-                            <div class="grid grid-cols-4 gap-1 mt-2 md:mt-4">
+                            <div class="grid grid-cols-5 gap-1 mt-2 md:mt-4">
                                 <div class="glass-card p-1 md:p-2 rounded-2xl text-center">
                                     <div class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-1">
                                         <i class="fa-solid fa-users text-xs"></i>
@@ -2379,9 +2166,16 @@
                                     <span class="text-gray-400 text-[7px] md:text-[8px]">اليوم</span>
                                     <span class="text-white font-bold text-xs md:text-sm">${this.state.stats.dailyOps || 0}</span>
                                 </div>
+                                <div class="glass-card p-1 md:p-2 rounded-2xl text-center">
+                                    <div class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-yellow-500/10 text-yellow-400 flex items-center justify-center mx-auto mb-1">
+                                        <i class="fa-solid fa-ad text-xs"></i>
+                                    </div>
+                                    <span class="text-gray-400 text-[7px] md:text-[8px]">إعلانات</span>
+                                    <span class="text-white font-bold text-xs md:text-sm">${adsStats.activeAdsCount}</span>
+                                </div>
                             </div>
 
-                            <!-- Admin Actions (محدثة: إضافة زر إدارة الإعلانات) -->
+                            <!-- Admin Actions (تم إضافة زر إدارة الإعلانات) -->
                             <div class="grid grid-cols-2 gap-2 mt-2">
                                 <button id="openAdminPanelBtn" class="glass-card p-2 md:p-3 rounded-2xl flex items-center gap-2 md:gap-3 hover:bg-yellow-500/10 transition-all">
                                     <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center">
@@ -2428,15 +2222,15 @@
                                         <div class="text-[9px] md:text-xs text-gray-400">إدارة الأسئلة الشائعة</div>
                                     </div>
                                 </button>
-                                <!-- زر إدارة الإعلانات -->
                                 <button id="manageAdsBtn" class="glass-card p-2 md:p-3 rounded-2xl flex items-center gap-2 md:gap-3 hover:bg-yellow-500/10 transition-all">
                                     <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-bullhorn text-sm md:text-base"></i>
+                                        <i class="fa-solid fa-ad text-sm md:text-base"></i>
                                     </div>
                                     <div class="text-right">
                                         <div class="font-bold text-xs md:text-sm">الإعلانات</div>
-                                        <div class="text-[9px] md:text-xs text-gray-400">إدارة الحملات</div>
+                                        <div class="text-[9px] md:text-xs text-gray-400">إدارة الإعلانات</div>
                                     </div>
+                                    <span class="bg-blue-500 text-white text-[9px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded-full mr-auto">${adsStats.activeAdsCount}</span>
                                 </button>
                             </div>
 
@@ -2494,10 +2288,9 @@
                         manageFAQBtn.addEventListener('click', () => this.openFAQManagement());
                     }
 
-                    // جديد: زر إدارة الإعلانات للمشرف
                     const manageAdsBtn = document.getElementById('manageAdsBtn');
                     if (manageAdsBtn) {
-                        manageAdsBtn.addEventListener('click', () => this.openAdminAdsPanel());
+                        manageAdsBtn.addEventListener('click', () => this.openAdsManagement());
                     }
 
                     const notificationBell = document.getElementById('notificationBell');
@@ -2519,7 +2312,7 @@
                             } else if (action === 'tickets') {
                                 this.openUserTickets();
                             } else if (action === 'ads') {
-                                this.openAdsModal();
+                                this.openAdsModal(); // فتح نافذة الإعلانات للمستخدم
                             }
                         });
                     });
@@ -2530,15 +2323,922 @@
                             this.openFAQModal();
                         });
                     }
+                }
 
-                    // جديد: بطاقة الإعلان المميز
-                    const featuredAd = document.getElementById('featuredAd');
-                    if (featuredAd) {
-                        featuredAd.addEventListener('click', () => this.handleAdClick(featuredAd.dataset.campaignId));
+                // فتح قائمة المحادثات للأدمن
+                openAdminChatList() {
+                    const modal = document.getElementById('supportChatModalOverlay');
+                    const content = document.getElementById('supportChatModalContent');
+                    content.innerHTML = this.renderAdminChatList();
+                    modal.classList.add('open');
+                    this.bindAdminChatListEvents();
+                }
+
+                renderAdminChatList() {
+                    const usersWithChats = this.data.getUsersWithChats();
+                    
+                    return `
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">
+                                <i class="fa-solid fa-headset ml-2 text-green-400"></i>
+                                قائمة المحادثات
+                            </h2>
+                            <button id="closeSupportChat" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-2 max-h-96 overflow-y-auto hide-scrollbar">
+                            ${usersWithChats.map(user => `
+                                <div class="chat-list-item ${user.unread ? 'unread' : ''}" data-userid="${user.userId}">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-bold text-sm">${user.userName}</div>
+                                            <div class="text-xs text-gray-400">${Utils.truncate(user.lastMessage, 30)}</div>
+                                        </div>
+                                        <div class="text-left">
+                                            <div class="text-[10px] text-gray-500">${Utils.formatTime(user.lastMessageTime)}</div>
+                                            ${user.unread ? `<span class="bg-red-500 text-white text-[9px] px-1 rounded-full">${user.unread}</span>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('') || '<p class="text-center text-gray-400 py-4">لا توجد محادثات بعد</p>'}
+                        </div>
+                    `;
+                }
+
+                bindAdminChatListEvents() {
+                    const modal = document.getElementById('supportChatModalOverlay');
+                    
+                    document.getElementById('closeSupportChat').addEventListener('click', () => {
+                        modal.classList.remove('open');
+                    });
+
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) modal.classList.remove('open');
+                    });
+
+                    document.querySelectorAll('.chat-list-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            const userId = parseInt(item.dataset.userid);
+                            this.openSupportChatForUser(userId);
+                        });
+                    });
+                }
+
+                // فتح الدردشة مع مستخدم معين (للأدمن)
+                openSupportChatForUser(targetUserId) {
+                    const modal = document.getElementById('supportChatModalOverlay');
+                    const content = document.getElementById('supportChatModalContent');
+                    content.innerHTML = this.renderSupportChat(targetUserId);
+                    modal.classList.add('open');
+                    
+                    this.loadEmojiPicker();
+                    
+                    this.bindChatEventsForUser(targetUserId);
+                    
+                    // تحديد قراءة رسائل هذا المستخدم
+                    this.data.markChatAsRead(targetUserId, CONFIG.SUPPORT_ID);
+                }
+
+                // فتح الدردشة للمستخدم العادي
+                openSupportChat() {
+                    const modal = document.getElementById('supportChatModalOverlay');
+                    const content = document.getElementById('supportChatModalContent');
+                    content.innerHTML = this.renderSupportChat(); // بدون targetUserId
+                    modal.classList.add('open');
+                    
+                    this.loadEmojiPicker();
+                    
+                    this.bindChatEventsForUser(null); // للمستخدم العادي
+                    
+                    if (this.state.user) {
+                        this.data.markChatAsRead(this.state.user.id);
                     }
                 }
 
-                // ========== دوال الإعلانات ==========
+                renderSupportChat(targetUserId = null) {
+                    const isAdmin = this.state.isAdmin;
+                    let messages = [];
+                    if (isAdmin && targetUserId) {
+                        messages = this.data.getChatMessages(targetUserId, CONFIG.SUPPORT_ID);
+                    } else if (!isAdmin && this.state.user) {
+                        messages = this.data.getChatMessages(this.state.user.id, CONFIG.SUPPORT_ID);
+                    } else {
+                        messages = [];
+                    }
+                    
+                    const messagesHtml = messages.map(msg => {
+                        const isOutgoing = isAdmin ? (msg.isSupport) : (msg.userId === this.state.user?.id && !msg.isSupport);
+                        return `
+                            <div class="chat-message ${isOutgoing ? 'outgoing' : 'incoming'}">
+                                <div class="message-bubble">
+                                    <div class="text-xs md:text-sm">${msg.message}</div>
+                                    <div class="message-info text-[9px] md:text-xs">
+                                        <span>${Utils.formatTime(msg.date)}</span>
+                                        ${msg.isSupport ? `<span>${msg.supportName || 'فريق الدعم'}</span>` : ''}
+                                        ${isOutgoing ? `
+                                            <span class="message-status">
+                                                <i class="fa-regular fa-circle-check"></i>
+                                            </span>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    const quickReplies = isAdmin ? CONFIG.QUICK_REPLIES.admin : CONFIG.QUICK_REPLIES.user;
+
+                    return `
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">
+                                <i class="fa-solid fa-headset ml-2 text-green-400"></i>
+                                ${isAdmin ? (targetUserId ? `محادثة مع مستخدم` : 'دردشة الدعم') : 'التواصل مع فريق الدعم'}
+                            </h2>
+                            <button id="closeSupportChat" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
+                            </button>
+                        </div>
+
+                        <div class="chat-container glass-card p-2 md:p-3 rounded-2xl">
+                            <div class="chat-messages hide-scrollbar" id="chatMessages">
+                                ${messagesHtml || '<p class="text-center text-gray-400 py-4 text-sm">لا توجد رسائل بعد... ابدأ المحادثة الآن</p>'}
+                            </div>
+
+                            <div id="typingIndicator" class="typing-indicator hidden">
+                                <span></span><span></span><span></span>
+                                <span class="text-xs text-gray-400 mr-2">يكتب...</span>
+                            </div>
+
+                            <div class="quick-replies hide-scrollbar" id="quickReplies">
+                                ${quickReplies.map(reply => `
+                                    <button class="quick-reply-btn text-[9px] md:text-xs">${reply}</button>
+                                `).join('')}
+                            </div>
+
+                            <div class="flex gap-2 mt-2 relative">
+                                <button id="emojiPickerBtn" class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors flex-shrink-0">
+                                    <i class="fa-regular fa-face-smile text-sm md:text-base"></i>
+                                </button>
+                                <input type="text" id="chatMessageInput" placeholder="اكتب رسالتك..." class="flex-1 bg-slate-800 border border-white/10 rounded-full px-3 md:px-4 py-1.5 md:py-2 text-white text-sm md:text-base">
+                                <button id="sendChatMessage" class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors flex-shrink-0">
+                                    <i class="fa-solid fa-paper-plane text-sm md:text-base"></i>
+                                </button>
+                            </div>
+
+                            ${isAdmin ? `
+                                <div class="mt-2 text-[9px] md:text-xs text-gray-400">
+                                    <i class="fa-regular fa-circle-info ml-1"></i>
+                                    أنت تتحدث كفريق الدعم
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+
+                bindChatEventsForUser(targetUserId = null) {
+                    const modal = document.getElementById('supportChatModalOverlay');
+                    const messagesContainer = document.getElementById('chatMessages');
+                    const input = document.getElementById('chatMessageInput');
+                    const sendBtn = document.getElementById('sendChatMessage');
+                    const emojiBtn = document.getElementById('emojiPickerBtn');
+                    const emojiContainer = document.getElementById('emojiPickerContainer');
+                    
+                    document.getElementById('closeSupportChat').addEventListener('click', () => {
+                        modal.classList.remove('open');
+                    });
+
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) modal.classList.remove('open');
+                    });
+
+                    const sendMessage = () => {
+                        const message = input.value.trim();
+                        if (!message) return;
+
+                        // تحديد المستلم: إذا كان الأدمن و targetUserId موجود، يرسل لذلك المستخدم
+                        // إذا كان المستخدم العادي، يرسل للدعم (recipientUserId = CONFIG.SUPPORT_ID)
+                        const recipient = this.state.isAdmin ? targetUserId : CONFIG.SUPPORT_ID;
+                        
+                        this.data.addChatMessage(message, this.state.user?.id, this.state.isAdmin, recipient);
+                        
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = 'chat-message outgoing';
+                        msgDiv.innerHTML = `
+                            <div class="message-bubble">
+                                <div class="text-xs md:text-sm">${Utils.escapeHtml(message)}</div>
+                                <div class="message-info text-[9px] md:text-xs">
+                                    <span>${Utils.formatTime(new Date().toISOString())}</span>
+                                    <span class="message-status"><i class="fa-regular fa-circle-check"></i></span>
+                                </div>
+                            </div>
+                        `;
+                        messagesContainer.appendChild(msgDiv);
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                        
+                        input.value = '';
+                        
+                        // لا يوجد محاكاة لردود تلقائية - الردود يدوية فقط
+                    };
+
+                    sendBtn.addEventListener('click', sendMessage);
+                    
+                    input.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') sendMessage();
+                    });
+
+                    if (emojiBtn) {
+                        emojiBtn.addEventListener('click', () => {
+                            emojiContainer.classList.toggle('open');
+                        });
+                    }
+
+                    document.querySelectorAll('.quick-reply-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            input.value = btn.textContent;
+                            sendMessage();
+                        });
+                    });
+
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
+
+                loadEmojiPicker() {
+                    import('https://cdn.jsdelivr.net/npm/emoji-picker-element@1.14.0/dist/emoji-picker-element.min.js')
+                        .then(() => {
+                            const picker = document.querySelector('emoji-picker');
+                            if (picker) {
+                                picker.addEventListener('emoji-click', (event) => {
+                                    const input = document.getElementById('chatMessageInput');
+                                    if (input) {
+                                        input.value += event.detail.unicode;
+                                        document.getElementById('emojiPickerContainer').classList.remove('open');
+                                    }
+                                });
+                            }
+                        })
+                        .catch(err => console.log('Emoji picker not loaded', err));
+                }
+
+                openUserTickets() {
+                    const modal = document.getElementById('ticketModalOverlay');
+                    const content = document.getElementById('ticketModalContent');
+                    content.innerHTML = this.renderUserTickets();
+                    modal.classList.add('open');
+                    this.bindTicketEvents();
+                }
+
+                renderUserTickets() {
+                    const tickets = this.data.getUserTickets(this.state.user.id);
+                    
+                    return `
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">
+                                <i class="fa-solid fa-ticket ml-2 text-purple-400"></i>
+                                تذاكري
+                            </h2>
+                            <button id="closeTicketModal" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
+                            </button>
+                        </div>
+
+                        <button id="createNewTicket" class="w-full btn-primary py-2 md:py-3 mb-3 md:mb-4 flex items-center justify-center gap-2 text-sm md:text-base">
+                            <i class="fa-solid fa-plus"></i>
+                            إنشاء تذكرة جديدة
+                        </button>
+
+                        <div id="ticketList" class="space-y-2 max-h-80 md:max-h-96 overflow-y-auto hide-scrollbar">
+                            ${tickets.map(ticket => `
+                                <div class="ticket-item ${ticket.status === 'closed' ? 'closed' : ''}" data-id="${ticket.id}">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="font-bold text-sm md:text-base">${ticket.title}</div>
+                                            <div class="text-[10px] md:text-xs text-gray-400 mt-1">${Utils.truncate(ticket.description, 50)}</div>
+                                            <div class="flex items-center gap-2 mt-1 md:mt-2">
+                                                <span class="ticket-status ${ticket.status} text-[8px] md:text-xs">
+                                                    ${ticket.status === 'open' ? 'مفتوحة' : (ticket.status === 'closed' ? 'مغلقة' : 'معلقة')}
+                                                </span>
+                                                <span class="text-[9px] md:text-xs text-gray-400">
+                                                    ${Utils.formatDate(ticket.updatedAt)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-left text-gray-400 text-sm"></i>
+                                    </div>
+                                </div>
+                            `).join('') || '<p class="text-center text-gray-400 py-4 text-sm">لا توجد تذاكر بعد</p>'}
+                        </div>
+
+                        <div id="createTicketForm" class="hidden mt-3 md:mt-4">
+                            <h3 class="font-bold mb-2 md:mb-3 text-sm md:text-base">إنشاء تذكرة جديدة</h3>
+                            <input type="text" id="ticketTitle" placeholder="عنوان التذكرة" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white text-sm">
+                            <textarea id="ticketDescription" placeholder="وصف المشكلة بالتفصيل" rows="3" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white text-sm"></textarea>
+                            <select id="ticketPriority" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-3 text-white text-sm">
+                                <option value="low">منخفضة</option>
+                                <option value="medium" selected>متوسطة</option>
+                                <option value="high">عالية</option>
+                            </select>
+                            <div class="flex gap-2">
+                                <button id="submitTicket" class="flex-1 btn-success py-2 text-sm">إرسال</button>
+                                <button id="cancelCreateTicket" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold hover:bg-gray-700 transition-colors text-sm">إلغاء</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                bindTicketEvents() {
+                    const modal = document.getElementById('ticketModalOverlay');
+                    
+                    document.getElementById('closeTicketModal').addEventListener('click', () => {
+                        modal.classList.remove('open');
+                    });
+
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) modal.classList.remove('open');
+                    });
+
+                    const createBtn = document.getElementById('createNewTicket');
+                    const form = document.getElementById('createTicketForm');
+                    const list = document.getElementById('ticketList');
+
+                    createBtn.addEventListener('click', () => {
+                        form.classList.remove('hidden');
+                        list.classList.add('hidden');
+                        createBtn.classList.add('hidden');
+                    });
+
+                    document.getElementById('cancelCreateTicket')?.addEventListener('click', () => {
+                        form.classList.add('hidden');
+                        list.classList.remove('hidden');
+                        createBtn.classList.remove('hidden');
+                    });
+
+                    document.getElementById('submitTicket')?.addEventListener('click', () => {
+                        const title = document.getElementById('ticketTitle').value.trim();
+                        const description = document.getElementById('ticketDescription').value.trim();
+                        const priority = document.getElementById('ticketPriority').value;
+
+                        if (!title || !description) {
+                            this.toast.error('يرجى ملء جميع الحقول');
+                            return;
+                        }
+
+                        const ticket = this.data.createSupportTicket(title, description, priority);
+                        if (ticket) {
+                            this.toast.success('✅ تم إنشاء التذكرة بنجاح');
+                            form.classList.add('hidden');
+                            list.classList.remove('hidden');
+                            createBtn.classList.remove('hidden');
+                            this.openUserTickets();
+                        }
+                    });
+
+                    document.querySelectorAll('.ticket-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            const ticketId = item.dataset.id;
+                            this.openTicketDetails(ticketId);
+                        });
+                    });
+                }
+
+                openTicketDetails(ticketId) {
+                    const modal = document.getElementById('ticketModalOverlay');
+                    const content = document.getElementById('ticketModalContent');
+                    const ticket = this.state.supportTickets.find(t => t.id === ticketId);
+                    
+                    if (!ticket) return;
+
+                    const messagesHtml = ticket.messages.map(msg => `
+                        <div class="chat-message ${msg.sender === 'user' ? 'outgoing' : 'incoming'}">
+                            <div class="message-bubble">
+                                <div class="text-xs md:text-sm">${Utils.escapeHtml(msg.message)}</div>
+                                <div class="message-info text-[9px] md:text-xs">
+                                    <span>${Utils.formatTime(msg.date)}</span>
+                                    <span>${msg.sender === 'user' ? 'أنت' : 'فريق الدعم'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    content.innerHTML = `
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">تفاصيل التذكرة</h2>
+                            <button id="closeTicketDetails" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
+                            </button>
+                        </div>
+
+                        <div class="glass-card p-3 md:p-4 rounded-2xl mb-3 md:mb-4">
+                            <div class="font-bold text-sm md:text-base">${ticket.title}</div>
+                            <div class="text-xs md:text-sm text-gray-300 mt-1">${ticket.description}</div>
+                            <div class="flex items-center gap-2 mt-1 md:mt-2">
+                                <span class="ticket-status ${ticket.status} text-[8px] md:text-xs">
+                                    ${ticket.status === 'open' ? 'مفتوحة' : (ticket.status === 'closed' ? 'مغلقة' : 'معلقة')}
+                                </span>
+                                <span class="text-[9px] md:text-xs text-gray-400">الأولوية: ${ticket.priority === 'high' ? 'عالية' : (ticket.priority === 'medium' ? 'متوسطة' : 'منخفضة')}</span>
+                            </div>
+                        </div>
+
+                        <div class="chat-container glass-card p-2 md:p-3 rounded-2xl" style="height: 250px; max-height: 300px;">
+                            <div class="chat-messages hide-scrollbar" id="ticketMessages">
+                                ${messagesHtml}
+                            </div>
+
+                            ${ticket.status !== 'closed' ? `
+                                <div class="flex gap-2 mt-2">
+                                    <input type="text" id="ticketReply" placeholder="اكتب ردك..." class="flex-1 bg-slate-800 border border-white/10 rounded-full px-3 md:px-4 py-1.5 md:py-2 text-white text-sm">
+                                    <button id="sendTicketReply" class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors flex-shrink-0">
+                                        <i class="fa-solid fa-paper-plane text-sm md:text-base"></i>
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        ${ticket.status !== 'closed' && !this.state.isAdmin ? `
+                            <button id="closeTicketBtn" class="w-full btn-danger py-2 mt-2 md:mt-3 text-sm">
+                                <i class="fa-solid fa-lock ml-2"></i>
+                                إغلاق التذكرة
+                            </button>
+                        ` : ''}
+                    `;
+
+                    modal.classList.add('open');
+
+                    document.getElementById('closeTicketDetails').addEventListener('click', () => {
+                        modal.classList.remove('open');
+                    });
+
+                    const sendReply = document.getElementById('sendTicketReply');
+                    if (sendReply) {
+                        sendReply.addEventListener('click', () => {
+                            const reply = document.getElementById('ticketReply').value.trim();
+                            if (!reply) return;
+
+                            this.data.addTicketMessage(ticketId, reply, this.state.isAdmin ? 'support' : 'user');
+                            this.openTicketDetails(ticketId);
+                        });
+                    }
+
+                    const closeTicketBtn = document.getElementById('closeTicketBtn');
+                    if (closeTicketBtn) {
+                        closeTicketBtn.addEventListener('click', () => {
+                            if (confirm('هل أنت متأكد من إغلاق هذه التذكرة؟')) {
+                                this.data.updateTicketStatus(ticketId, 'closed');
+                                this.toast.info('تم إغلاق التذكرة');
+                                modal.classList.remove('open');
+                            }
+                        });
+                    }
+
+                    const messagesContainer = document.getElementById('ticketMessages');
+                    if (messagesContainer) {
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }
+                }
+
+                openTicketManagement() {
+                    const modal = document.getElementById('ticketModalOverlay');
+                    const content = document.getElementById('ticketModalContent');
+                    const tickets = this.data.getAllTickets();
+
+                    content.innerHTML = `
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">
+                                <i class="fa-solid fa-ticket ml-2 text-purple-400"></i>
+                                إدارة تذاكر الدعم
+                            </h2>
+                            <button id="closeTicketModal" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-2 max-h-80 md:max-h-96 overflow-y-auto hide-scrollbar">
+                            ${tickets.map(ticket => `
+                                <div class="ticket-item ${ticket.status === 'closed' ? 'closed' : ''}" data-id="${ticket.id}">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="font-bold text-sm md:text-base">${ticket.title}</div>
+                                            <div class="text-[10px] md:text-xs text-gray-400">من: ${ticket.userName}</div>
+                                            <div class="flex items-center gap-2 mt-1 md:mt-2">
+                                                <span class="ticket-status ${ticket.status} text-[8px] md:text-xs">
+                                                    ${ticket.status === 'open' ? 'مفتوحة' : (ticket.status === 'closed' ? 'مغلقة' : 'معلقة')}
+                                                </span>
+                                                <span class="text-[9px] md:text-xs text-gray-400">
+                                                    ${Utils.formatDate(ticket.updatedAt)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-left text-gray-400 text-sm"></i>
+                                    </div>
+                                </div>
+                            `).join('') || '<p class="text-center text-gray-400 py-4 text-sm">لا توجد تذاكر</p>'}
+                        </div>
+                    `;
+
+                    modal.classList.add('open');
+
+                    document.getElementById('closeTicketModal').addEventListener('click', () => {
+                        modal.classList.remove('open');
+                    });
+
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) modal.classList.remove('open');
+                    });
+
+                    document.querySelectorAll('.ticket-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            this.openTicketDetails(item.dataset.id);
+                        });
+                    });
+                }
+
+                openFAQManagement() {
+                    const modal = document.getElementById('walletModalOverlay');
+                    const content = document.getElementById('walletModalContent');
+
+                    content.innerHTML = `
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">
+                                <i class="fa-solid fa-circle-question ml-2 text-blue-400"></i>
+                                إدارة الأسئلة الشائعة
+                            </h2>
+                            <button id="closeFAQModal" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
+                            </button>
+                        </div>
+
+                        <button id="addFAQBtn" class="w-full btn-primary py-2 mb-3 md:mb-4 flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-plus"></i>
+                            إضافة سؤال جديد
+                        </button>
+
+                        <div id="faqList" class="space-y-2 max-h-80 md:max-h-96 overflow-y-auto hide-scrollbar">
+                            ${this.state.faqItems.map(faq => `
+                                <div class="glass-card p-2 md:p-3 rounded-2xl" data-id="${faq.id}">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="font-bold text-sm md:text-base">${faq.question}</div>
+                                            <div class="text-[10px] md:text-xs text-gray-400 mt-1">${Utils.truncate(faq.answer, 100)}</div>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <button class="edit-faq text-blue-400 hover:text-blue-300" data-id="${faq.id}">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </button>
+                                            <button class="delete-faq text-red-400 hover:text-red-300" data-id="${faq.id}">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div id="faqForm" class="hidden mt-3 md:mt-4">
+                            <h3 class="font-bold mb-2 md:mb-3 text-sm md:text-base" id="faqFormTitle">إضافة سؤال جديد</h3>
+                            <input type="hidden" id="faqId">
+                            <input type="text" id="faqQuestion" placeholder="السؤال" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white text-sm">
+                            <textarea id="faqAnswer" placeholder="الإجابة" rows="3" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white text-sm"></textarea>
+                            <div class="flex gap-2">
+                                <button id="saveFAQ" class="flex-1 btn-success py-2 text-sm">حفظ</button>
+                                <button id="cancelFAQ" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold hover:bg-gray-700 transition-colors text-sm">إلغاء</button>
+                            </div>
+                        </div>
+                    `;
+
+                    modal.classList.add('open');
+
+                    document.getElementById('closeFAQModal').addEventListener('click', () => {
+                        modal.classList.remove('open');
+                    });
+
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) modal.classList.remove('open');
+                    });
+
+                    document.getElementById('addFAQBtn').addEventListener('click', () => {
+                        document.getElementById('faqList').classList.add('hidden');
+                        document.getElementById('addFAQBtn').classList.add('hidden');
+                        document.getElementById('faqForm').classList.remove('hidden');
+                        document.getElementById('faqFormTitle').textContent = 'إضافة سؤال جديد';
+                        document.getElementById('faqId').value = '';
+                        document.getElementById('faqQuestion').value = '';
+                        document.getElementById('faqAnswer').value = '';
+                    });
+
+                    document.getElementById('cancelFAQ').addEventListener('click', () => {
+                        document.getElementById('faqForm').classList.add('hidden');
+                        document.getElementById('faqList').classList.remove('hidden');
+                        document.getElementById('addFAQBtn').classList.remove('hidden');
+                    });
+
+                    document.getElementById('saveFAQ').addEventListener('click', () => {
+                        const id = document.getElementById('faqId').value;
+                        const question = document.getElementById('faqQuestion').value.trim();
+                        const answer = document.getElementById('faqAnswer').value.trim();
+
+                        if (!question || !answer) {
+                            this.toast.error('يرجى ملء جميع الحقول');
+                            return;
+                        }
+
+                        if (id) {
+                            this.data.updateFAQItem(id, question, answer);
+                            this.toast.success('✅ تم تحديث السؤال');
+                        } else {
+                            this.data.addFAQItem(question, answer);
+                            this.toast.success('✅ تم إضافة السؤال');
+                        }
+
+                        this.openFAQManagement();
+                    });
+
+                    document.querySelectorAll('.edit-faq').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const id = btn.dataset.id;
+                            const faq = this.state.faqItems.find(f => f.id === id);
+                            
+                            document.getElementById('faqList').classList.add('hidden');
+                            document.getElementById('addFAQBtn').classList.add('hidden');
+                            document.getElementById('faqForm').classList.remove('hidden');
+                            document.getElementById('faqFormTitle').textContent = 'تعديل السؤال';
+                            document.getElementById('faqId').value = id;
+                            document.getElementById('faqQuestion').value = faq.question;
+                            document.getElementById('faqAnswer').value = faq.answer;
+                        });
+                    });
+
+                    document.querySelectorAll('.delete-faq').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const id = btn.dataset.id;
+                            if (confirm('هل أنت متأكد من الحذف؟')) {
+                                this.data.deleteFAQItem(id);
+                                this.toast.success('تم الحذف');
+                                this.openFAQManagement();
+                            }
+                        });
+                    });
+                }
+
+                openFAQModal() {
+                    const modal = document.getElementById('walletModalOverlay');
+                    const content = document.getElementById('walletModalContent');
+
+                    content.innerHTML = `
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">
+                                <i class="fa-regular fa-circle-question ml-2 text-blue-400"></i>
+                                الأسئلة الشائعة
+                            </h2>
+                            <button id="closeFAQModal" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-2 md:space-y-3 max-h-80 md:max-h-96 overflow-y-auto hide-scrollbar">
+                            ${this.state.faqItems.map(faq => `
+                                <div class="faq-item">
+                                    <div class="faq-question font-bold text-sm md:text-base">
+                                        ${faq.question}
+                                        <i class="fa-solid fa-chevron-down text-gray-400 text-xs transition-transform"></i>
+                                    </div>
+                                    <div class="faq-answer text-xs md:text-sm text-gray-300">${faq.answer}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+
+                    modal.classList.add('open');
+
+                    document.getElementById('closeFAQModal').addEventListener('click', () => {
+                        modal.classList.remove('open');
+                    });
+
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) modal.classList.remove('open');
+                    });
+
+                    document.querySelectorAll('.faq-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            item.classList.toggle('open');
+                            const icon = item.querySelector('.fa-chevron-down');
+                            if (icon) {
+                                icon.style.transform = item.classList.contains('open') ? 'rotate(180deg)' : '';
+                            }
+                        });
+                    });
+                }
+
+                openWalletModal() {
+                    const modal = document.getElementById('walletModalOverlay');
+                    const content = document.getElementById('walletModalContent');
+                    content.innerHTML = this.renderWalletModal();
+                    modal.classList.add('open');
+                    this.bindWalletModalEvents();
+                }
+
+                renderWalletModal() {
+                    const userData = this.state.currentUser || { balance: 0, transactions: [] };
+                    const paymentMethods = this.state.paymentMethods;
+                    
+                    const transactionsHtml = userData.transactions?.length ? 
+                        userData.transactions.map(tx => `
+                            <div class="transaction-item">
+                                <div>
+                                    <div class="font-medium text-xs md:text-sm">${tx.note || tx.type}</div>
+                                    <div class="text-[9px] md:text-xs text-gray-400">${Utils.formatDateTime(tx.date)}</div>
+                                </div>
+                                <div class="transaction-amount ${tx.amount > 0 ? 'positive' : 'negative'} font-bold text-sm md:text-base">
+                                    ${tx.amount > 0 ? '+' : ''}${Utils.formatUSD(tx.amount)}
+                                </div>
+                            </div>
+                        `).join('') :
+                        '<p class="text-center text-gray-400 py-4 text-sm">لا توجد معاملات بعد</p>';
+                    
+                    const paymentMethodsHtml = paymentMethods.map(m => `
+                        <div class="payment-method" data-method-id="${m.id}">
+                            <div class="payment-icon">
+                                ${m.iconType === 'image' ? 
+                                    `<img src="${m.icon}" alt="${m.name}" class="w-full h-full object-cover rounded-full">` : 
+                                    `<i class="${m.icon} text-sm md:text-base"></i>`
+                                }
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-bold text-xs md:text-sm">${m.name}</div>
+                                <div class="text-[9px] md:text-xs text-gray-400">${m.description?.substring(0, 30) || ''}...</div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    return `
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">محفظتي</h2>
+                            <button id="closeWalletModal" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
+                            </button>
+                        </div>
+
+                        <div class="glass-card p-4 md:p-6 rounded-2xl text-center mb-3 md:mb-4">
+                            <div class="text-gray-400 text-xs md:text-sm mb-1">الرصيد الحالي</div>
+                            <div class="text-2xl md:text-3xl font-bold text-white" data-balance>${Utils.formatUSD(userData.balance)}</div>
+                        </div>
+
+                        <div class="wallet-tabs">
+                            <button class="wallet-tab active" data-tab="withdraw"><i class="fa-solid fa-arrow-up"></i> سحب</button>
+                            <button class="wallet-tab" data-tab="transfer"><i class="fa-solid fa-exchange-alt"></i> تحويل</button>
+                            <button class="wallet-tab" data-tab="history"><i class="fa-solid fa-history"></i> السجل</button>
+                        </div>
+
+                        <div id="walletTabContent">
+                            <div class="tab-pane" id="tab-withdraw">
+                                <p class="text-xs md:text-sm text-gray-300 mb-2 md:mb-3">اختر طريقة السحب:</p>
+                                <div class="payment-methods-list mb-3 md:mb-4">${paymentMethodsHtml}</div>
+                                
+                                <div class="mb-2 md:mb-3">
+                                    <input type="text" id="withdrawDetails" placeholder="أدخل التفاصيل" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
+                                </div>
+
+                                <div class="flex gap-2">
+                                    <input type="number" id="withdrawAmount" placeholder="المبلغ ($)" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
+                                    <button id="withdrawBtn" class="btn-danger px-3 md:px-4 text-sm">طلب</button>
+                                </div>
+                                <p class="text-[9px] md:text-xs text-gray-400 mt-2">سيتم مراجعة طلبك من قبل الإدارة</p>
+                            </div>
+
+                            <div class="tab-pane hidden" id="tab-transfer">
+                                <p class="text-xs md:text-sm text-gray-300 mb-2">تحويل إلى مستخدم آخر:</p>
+                                <input type="text" id="transferUserId" placeholder="معرف المستخدم" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white text-sm">
+                                <div class="flex gap-2">
+                                    <input type="number" id="transferAmount" placeholder="المبلغ ($)" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
+                                    <button id="transferBtn" class="btn-success px-3 md:px-4 text-sm">تحويل</button>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane hidden" id="tab-history">
+                                <div class="max-h-48 md:max-h-64 overflow-y-auto hide-scrollbar">${transactionsHtml}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                bindWalletModalEvents() {
+                    const overlay = document.getElementById('walletModalOverlay');
+                    
+                    document.getElementById('closeWalletModal').addEventListener('click', () => {
+                        overlay.classList.remove('open');
+                    });
+                    
+                    overlay.addEventListener('click', (e) => {
+                        if (e.target === overlay) overlay.classList.remove('open');
+                    });
+
+                    const tabs = document.querySelectorAll('.wallet-tab');
+                    tabs.forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            tabs.forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            
+                            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+                            document.getElementById(`tab-${tab.dataset.tab}`).classList.remove('hidden');
+                        });
+                    });
+
+                    document.getElementById('tab-withdraw').classList.remove('hidden');
+
+                    let selectedWithdrawMethod = null;
+                    document.querySelectorAll('#tab-withdraw .payment-method').forEach(method => {
+                        method.addEventListener('click', () => {
+                            document.querySelectorAll('#tab-withdraw .payment-method').forEach(m => m.classList.remove('selected'));
+                            method.classList.add('selected');
+                            selectedWithdrawMethod = method.dataset.methodId;
+                            
+                            const methodObj = this.state.paymentMethods.find(m => m.id === selectedWithdrawMethod);
+                            const detailsInput = document.getElementById('withdrawDetails');
+                            if (methodObj) {
+                                detailsInput.placeholder = methodObj.withdrawDetails || 'أدخل التفاصيل';
+                            }
+                        });
+                    });
+
+                    document.getElementById('withdrawBtn')?.addEventListener('click', () => {
+                        const amount = parseFloat(document.getElementById('withdrawAmount').value);
+                        const details = document.getElementById('withdrawDetails').value.trim();
+
+                        if (isNaN(amount) || amount <= 0) {
+                            this.toast.error('أدخل مبلغ صحيح');
+                            return;
+                        }
+                        if (!selectedWithdrawMethod) {
+                            this.toast.error('اختر طريقة سحب');
+                            return;
+                        }
+                        if (!details) {
+                            this.toast.error('أدخل التفاصيل');
+                            return;
+                        }
+
+                        const result = this.data.addWithdrawalRequest(amount, selectedWithdrawMethod, details);
+                        if (result.success) {
+                            this.toast.success(`✅ تم تقديم طلب السحب بمبلغ ${Utils.formatUSD(amount)}`);
+                            document.getElementById('withdrawAmount').value = '';
+                            document.getElementById('withdrawDetails').value = '';
+                            document.querySelectorAll('#tab-withdraw .payment-method').forEach(m => m.classList.remove('selected'));
+                            selectedWithdrawMethod = null;
+                        } else {
+                            this.toast.error(result.error);
+                        }
+                    });
+
+                    document.getElementById('transferBtn')?.addEventListener('click', () => {
+                        const amount = parseFloat(document.getElementById('transferAmount').value);
+                        const targetId = parseInt(document.getElementById('transferUserId').value);
+
+                        if (isNaN(amount) || amount <= 0) {
+                            this.toast.error('أدخل مبلغ صحيح');
+                            return;
+                        }
+                        if (!targetId || isNaN(targetId)) {
+                            this.toast.error('أدخل معرف المستخدم');
+                            return;
+                        }
+
+                        // التحقق من أن المستهدف غير محظور
+                        const targetUser = this.data.getUserData(targetId);
+                        if (!targetUser) {
+                            this.toast.error('المستخدم غير موجود');
+                            return;
+                        }
+                        if (targetUser.blocked) {
+                            this.toast.error('لا يمكن التحويل إلى مستخدم محظور');
+                            return;
+                        }
+
+                        if (amount > (this.state.currentUser?.balance || 0)) {
+                            this.toast.error('الرصيد غير كافٍ');
+                            return;
+                        }
+
+                        // استخدام الدالة الآمنة للتحويل
+                        const result = this.data.transferBalance(
+                            this.state.user.id,
+                            targetId,
+                            amount,
+                            'تحويل'
+                        );
+
+                        if (result.success) {
+                            this.toast.success(`✅ تم تحويل ${Utils.formatUSD(amount)} بنجاح`);
+                            document.getElementById('transferAmount').value = '';
+                            document.getElementById('transferUserId').value = '';
+                        } else {
+                            this.toast.error(result.error);
+                        }
+                    });
+                }
+
+                // ========== نظام الإعلانات - واجهات ==========
                 openAdsModal() {
                     const modal = document.getElementById('walletModalOverlay');
                     const content = document.getElementById('walletModalContent');
@@ -2548,49 +3248,47 @@
                 }
 
                 renderAdsModal() {
-                    const campaigns = this.data.getActiveCampaigns();
-                    const campaignsHtml = campaigns.map(c => `
-                        <div class="glass-card p-3 rounded-2xl mb-3 cursor-pointer hover:bg-white/5 transition ad-item" data-campaign-id="${c.id}">
-                            <div class="flex gap-3">
-                                <div class="w-16 h-16 rounded-xl overflow-hidden bg-slate-700 flex-shrink-0">
-                                    ${c.imageUrl ? 
-                                        `<img src="${c.imageUrl}" class="w-full h-full object-cover">` : 
-                                        `<div class="w-full h-full flex items-center justify-center text-blue-400 text-2xl"><i class="fa-solid fa-ad"></i></div>`
-                                    }
-                                </div>
-                                <div class="flex-1">
-                                    <div class="font-bold text-sm">${c.title}</div>
-                                    <div class="text-xs text-gray-400 mt-1">${c.description || ''}</div>
-                                    <div class="flex items-center justify-between mt-2">
-                                        <span class="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
-                                            <i class="fa-solid fa-dollar-sign"></i> ${Utils.formatUSD(c.cpc)}
-                                        </span>
-                                        <span class="text-xs text-gray-400">
-                                            متبقي: ${Utils.formatUSD(c.budget - c.spent)}
-                                        </span>
+                    const activeAds = this.data.getActiveAds();
+                    const userId = this.state.user?.id;
+                    const adsHtml = activeAds.map(ad => {
+                        const hasClicked = this.data.hasUserClickedAd(userId, ad.id);
+                        const canClick = !hasClicked || hasClicked < (ad.maxClicksPerUser || 1);
+                        return `
+                            <div class="ad-card ${!canClick ? 'disabled' : ''} glass-card p-3 rounded-xl mb-3" data-id="${ad.id}">
+                                <div class="flex items-center gap-3">
+                                    <div class="ad-icon">
+                                        ${ad.iconType === 'image' ? 
+                                            `<img src="${ad.image}" class="w-10 h-10 object-cover rounded-xl">` : 
+                                            `<i class="${ad.image || 'fa-solid fa-bullhorn'} text-white"></i>`
+                                        }
+                                    </div>
+                                    <div class="ad-info flex-1">
+                                        <div class="font-bold text-sm">${ad.title}</div>
+                                        <div class="text-xs text-gray-400">${Utils.truncate(ad.url, 30)}</div>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="ad-price text-sm">${Utils.formatUSD(ad.price)}</div>
+                                        ${!canClick ? 
+                                            '<span class="text-[10px] text-gray-500">تم النقر</span>' : 
+                                            '<button class="click-ad-btn btn-primary px-2 py-1 text-xs">عرض الإعلان</button>'
+                                        }
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    `).join('') || '<p class="text-center text-gray-400 py-6">لا توجد إعلانات متاحة حالياً</p>';
+                        `;
+                    }).join('');
 
                     return `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold">
-                                <i class="fa-solid fa-bullhorn ml-2 text-yellow-400"></i>
-                                اكسب من الإعلانات
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">
+                                <i class="fa-solid fa-ad ml-2 text-yellow-400"></i>
+                                الإعلانات المتاحة
                             </h2>
-                            <button id="closeAdsModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                                <i class="fa-solid fa-times"></i>
+                            <button id="closeAdsModal" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
                             </button>
                         </div>
-                        <div class="space-y-3 max-h-96 overflow-y-auto hide-scrollbar">
-                            ${campaignsHtml}
-                        </div>
-                        <div class="mt-4 text-xs text-gray-400 bg-blue-500/10 p-3 rounded-xl">
-                            <i class="fa-solid fa-circle-info ml-1"></i>
-                            اضغط على أي إعلان للمشاهدة وكسب الرصيد. يُضاف الرصيد فوراً بعد التحقق.
-                        </div>
+                        ${adsHtml || '<p class="text-center text-gray-400 py-4">لا توجد إعلانات نشطة حالياً</p>'}
                     `;
                 }
 
@@ -2605,118 +3303,134 @@
                         if (e.target === modal) modal.classList.remove('open');
                     });
 
-                    document.querySelectorAll('.ad-item').forEach(item => {
-                        item.addEventListener('click', () => {
-                            const campaignId = item.dataset.campaignId;
-                            this.handleAdClick(campaignId);
+                    document.querySelectorAll('.click-ad-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            const adCard = e.target.closest('.ad-card');
+                            if (!adCard) return;
+                            const adId = adCard.dataset.id;
+                            
+                            // منع النقر المزدوج
+                            btn.disabled = true;
+                            
+                            // معالجة النقرة
+                            const result = this.data.clickAd(adId, this.state.user.id);
+                            if (result.success) {
+                                this.toast.success(`✅ تمت إضافة ${Utils.formatUSD(result.amount)} إلى رصيدك`);
+                                // فتح الرابط في نافذة جديدة
+                                const ad = result.ad;
+                                window.open(ad.url, '_blank');
+                                // تحديث الواجهة (إخفاء الزر)
+                                adCard.classList.add('disabled');
+                                btn.remove();
+                                adCard.querySelector('.ad-price').insertAdjacentHTML('afterend', '<span class="text-[10px] text-gray-500">تم النقر</span>');
+                            } else {
+                                this.toast.error(result.error);
+                                btn.disabled = false;
+                            }
                         });
                     });
                 }
 
-                handleAdClick(campaignId) {
-                    if (!this.state.user) return;
-
-                    if (!confirm('سيتم توجيهك إلى الرابط الإعلاني. بعد الضغط على الرابط، ستحصل على الرصيد. هل أنت متأكد؟')) {
-                        return;
-                    }
-
-                    const result = this.data.recordClick(campaignId, this.state.user.id);
-                    
-                    if (result.success) {
-                        this.toast.success(`✅ ربحت ${Utils.formatUSD(result.earned)} من إعلان "${result.campaignTitle}"`);
-                        
-                        const userData = this.data.getUserData(this.state.user.id);
-                        this.state.set('currentUser', userData);
-                        
-                        const modal = document.getElementById('walletModalOverlay');
-                        modal.classList.remove('open');
-                        
-                        const campaign = this.state.campaigns.find(c => c.id === campaignId);
-                        if (campaign && campaign.targetUrl) {
-                            window.open(campaign.targetUrl, '_blank');
-                        }
-                    } else {
-                        this.toast.error(result.error);
-                    }
-                }
-
-                openAdminAdsPanel() {
-                    const modal = document.getElementById('adminPanelOverlay');
-                    const content = document.getElementById('adminPanelContent');
-                    content.innerHTML = this.renderAdminAdsPanel();
+                // إدارة الإعلانات للأدمن
+                openAdsManagement() {
+                    const modal = document.getElementById('walletModalOverlay');
+                    const content = document.getElementById('walletModalContent');
+                    content.innerHTML = this.renderAdsManagement();
                     modal.classList.add('open');
-                    this.bindAdminAdsPanelEvents();
+                    this.bindAdsManagementEvents();
                 }
 
-                renderAdminAdsPanel() {
-                    const campaigns = this.data.getAllCampaignsStats();
+                renderAdsManagement() {
+                    const ads = this.state.ads || [];
+                    const adsHtml = ads.map(ad => `
+                        <div class="ad-card glass-card p-3 rounded-xl mb-3" data-id="${ad.id}">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="ad-icon">
+                                        ${ad.iconType === 'image' ? 
+                                            `<img src="${ad.image}" class="w-10 h-10 object-cover rounded-xl">` : 
+                                            `<i class="${ad.image || 'fa-solid fa-bullhorn'} text-white"></i>`
+                                        }
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm">${ad.title}</div>
+                                        <div class="text-xs text-gray-400">${Utils.truncate(ad.url, 30)}</div>
+                                        <div class="text-xs mt-1">السعر: ${Utils.formatUSD(ad.price)} | النقرات: ${ad.totalClicks || 0}</div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="edit-ad text-blue-400 hover:text-blue-300" data-id="${ad.id}">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button class="toggle-ad-status ${ad.active ? 'text-green-400' : 'text-yellow-400'}" data-id="${ad.id}">
+                                        <i class="fa-solid ${ad.active ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                                    </button>
+                                    <button class="delete-ad text-red-400 hover:text-red-300" data-id="${ad.id}">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
 
                     return `
-                        <div class="flex justify-between items-center mb-3">
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
                             <h2 class="text-lg md:text-xl font-bold">
-                                <i class="fa-solid fa-bullhorn ml-2 text-yellow-400"></i>
-                                إدارة الحملات الإعلانية
+                                <i class="fa-solid fa-ad ml-2 text-yellow-400"></i>
+                                إدارة الإعلانات
                             </h2>
-                            <button id="closeAdminAdsPanel" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                            <button id="closeAdsManagement" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
                                 <i class="fa-solid fa-times text-sm md:text-base"></i>
                             </button>
                         </div>
 
-                        <div class="flex justify-end mb-3">
-                            <button id="addCampaignBtn" class="btn-primary px-3 py-1 text-sm">
-                                <i class="fa-solid fa-plus ml-1"></i> حملة جديدة
-                            </button>
+                        <button id="addAdBtn" class="w-full btn-primary py-2 mb-3 flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-plus"></i>
+                            إضافة إعلان جديد
+                        </button>
+
+                        <div id="adsList" class="max-h-80 md:max-h-96 overflow-y-auto hide-scrollbar">
+                            ${adsHtml || '<p class="text-center text-gray-400 py-4">لا توجد إعلانات</p>'}
                         </div>
 
-                        <div class="space-y-3 max-h-96 overflow-y-auto hide-scrollbar">
-                            ${campaigns.map(c => `
-                                <div class="glass-card p-3 rounded-2xl">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-12 h-12 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
-                                            ${c.imageUrl ? 
-                                                `<img src="${c.imageUrl}" class="w-full h-full object-cover">` : 
-                                                `<div class="w-full h-full flex items-center justify-center"><i class="fa-solid fa-ad"></i></div>`
-                                            }
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="flex justify-between">
-                                                <div class="font-bold text-sm">${c.title}</div>
-                                                <div class="flex gap-2">
-                                                    <button class="edit-campaign text-blue-400 hover:text-blue-300" data-id="${c.id}">
-                                                        <i class="fa-solid fa-pen-to-square"></i>
-                                                    </button>
-                                                    <button class="delete-campaign text-red-400 hover:text-red-300" data-id="${c.id}">
-                                                        <i class="fa-solid fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="text-xs text-gray-400">سعر النقرة: ${Utils.formatUSD(c.cpc)}</div>
-                                            <div class="text-xs text-gray-400">الميزانية: ${Utils.formatUSD(c.budget)} | المصروف: ${Utils.formatUSD(c.spent)}</div>
-                                            <div class="flex items-center gap-2 mt-2">
-                                                <span class="text-xs ${c.status === 'active' ? 'text-green-400' : 'text-red-400'}">
-                                                    ${c.status === 'active' ? 'نشط' : (c.status === 'paused' ? 'متوقف' : 'منتهي')}
-                                                </span>
-                                                <span class="text-xs text-gray-400">نقرات: ${c.stats?.totalClicks || 0}</span>
-                                                <span class="text-xs text-gray-400">مستخدمو: ${c.stats?.uniqueUsers || 0}</span>
-                                            </div>
-                                            <div class="w-full h-1 bg-gray-700 rounded-full mt-2">
-                                                <div class="h-1 bg-blue-500 rounded-full" style="width: ${(c.spent / c.budget * 100) || 0}%"></div>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div id="adForm" class="hidden mt-3">
+                            <h3 class="font-bold mb-2 text-sm md:text-base" id="adFormTitle">إضافة إعلان</h3>
+                            <input type="hidden" id="adId">
+                            <input type="text" id="adTitle" placeholder="عنوان الإعلان" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white text-sm">
+                            <input type="url" id="adUrl" placeholder="رابط الإعلان (https://...)" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white text-sm">
+                            
+                            <div class="image-upload-area p-3 border border-dashed border-blue-500/50 rounded-lg text-center cursor-pointer mb-2" id="adImageUploadArea">
+                                <input type="file" id="adImageInput" accept="image/*" class="hidden">
+                                <div id="adImagePreviewContainer" class="flex flex-col items-center">
+                                    <i class="fa-solid fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
+                                    <p class="text-xs text-gray-400">انقر أو اسحب صورة (اختياري)</p>
                                 </div>
-                            `).join('') || '<p class="text-center text-gray-400 py-6">لا توجد حملات بعد</p>'}
-                        </div>
+                            </div>
 
-                        <!-- نموذج إضافة/تعديل الحملة (مخفي في البداية) -->
-                        <div id="campaignFormContainer" class="hidden mt-4"></div>
+                            <input type="text" id="adIcon" placeholder="أو أيقونة FontAwesome (مثل: fa-solid fa-gem)" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white text-sm">
+                            
+                            <div class="flex gap-2 mb-2">
+                                <input type="number" id="adPrice" placeholder="سعر النقرة ($)" step="0.01" min="0.01" value="${CONFIG.ADS_DEFAULT_PRICE}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
+                                <input type="number" id="adMaxClicks" placeholder="الحد الأقصى للنقرات لكل مستخدم" min="1" value="1" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
+                            </div>
+
+                            <div class="flex items-center gap-2 mb-3">
+                                <label class="text-xs">نشط:</label>
+                                <input type="checkbox" id="adActive" checked class="form-checkbox">
+                            </div>
+
+                            <div class="flex gap-2">
+                                <button id="saveAd" class="flex-1 btn-success py-2 text-sm">حفظ</button>
+                                <button id="cancelAd" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold hover:bg-gray-700 transition-colors text-sm">إلغاء</button>
+                            </div>
+                        </div>
                     `;
                 }
 
-                bindAdminAdsPanelEvents() {
-                    const modal = document.getElementById('adminPanelOverlay');
+                bindAdsManagementEvents() {
+                    const modal = document.getElementById('walletModalOverlay');
                     
-                    document.getElementById('closeAdminAdsPanel').addEventListener('click', () => {
+                    document.getElementById('closeAdsManagement').addEventListener('click', () => {
                         modal.classList.remove('open');
                     });
 
@@ -2724,150 +3438,751 @@
                         if (e.target === modal) modal.classList.remove('open');
                     });
 
-                    document.getElementById('addCampaignBtn').addEventListener('click', () => {
-                        this.openCampaignModal();
+                    const addBtn = document.getElementById('addAdBtn');
+                    const adForm = document.getElementById('adForm');
+                    const adsList = document.getElementById('adsList');
+                    const cancelBtn = document.getElementById('cancelAd');
+
+                    addBtn.addEventListener('click', () => {
+                        adsList.classList.add('hidden');
+                        addBtn.classList.add('hidden');
+                        adForm.classList.remove('hidden');
+                        document.getElementById('adFormTitle').textContent = 'إضافة إعلان';
+                        document.getElementById('adId').value = '';
+                        document.getElementById('adTitle').value = '';
+                        document.getElementById('adUrl').value = '';
+                        document.getElementById('adIcon').value = '';
+                        document.getElementById('adPrice').value = CONFIG.ADS_DEFAULT_PRICE;
+                        document.getElementById('adMaxClicks').value = '1';
+                        document.getElementById('adActive').checked = true;
+                        // reset image preview
+                        document.getElementById('adImagePreviewContainer').innerHTML = `
+                            <i class="fa-solid fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
+                            <p class="text-xs text-gray-400">انقر أو اسحب صورة (اختياري)</p>
+                        `;
+                        delete document.getElementById('adImageUploadArea').dataset.imageBase64;
                     });
 
-                    document.querySelectorAll('.edit-campaign').forEach(btn => {
+                    cancelBtn.addEventListener('click', () => {
+                        adForm.classList.add('hidden');
+                        adsList.classList.remove('hidden');
+                        addBtn.classList.remove('hidden');
+                    });
+
+                    // Image upload for ad
+                    const adImageInput = document.getElementById('adImageInput');
+                    const adImageUploadArea = document.getElementById('adImageUploadArea');
+                    const adImagePreviewContainer = document.getElementById('adImagePreviewContainer');
+
+                    adImageUploadArea.addEventListener('click', () => adImageInput.click());
+
+                    adImageUploadArea.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        adImageUploadArea.style.borderColor = '#3b82f6';
+                    });
+
+                    adImageUploadArea.addEventListener('dragleave', () => {
+                        adImageUploadArea.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+                    });
+
+                    adImageUploadArea.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        adImageUploadArea.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+                        const file = e.dataTransfer.files[0];
+                        if (file) handleAdImage(file);
+                    });
+
+                    adImageInput.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) handleAdImage(file);
+                    });
+
+                    const handleAdImage = async (file) => {
+                        const validation = Utils.validateImage(file);
+                        if (!validation.valid) {
+                            this.toast.error(validation.error);
+                            return;
+                        }
+                        try {
+                            const compressedImage = await Utils.compressImage(file);
+                            adImagePreviewContainer.innerHTML = `<img src="${compressedImage}" class="image-preview max-h-20 rounded-lg mb-2">`;
+                            adImageUploadArea.dataset.imageBase64 = compressedImage;
+                        } catch (error) {
+                            this.toast.error('فشل ضغط الصورة');
+                        }
+                    };
+
+                    document.getElementById('saveAd').addEventListener('click', () => {
+                        const id = document.getElementById('adId').value;
+                        const title = document.getElementById('adTitle').value.trim();
+                        const url = document.getElementById('adUrl').value.trim();
+                        const price = parseFloat(document.getElementById('adPrice').value);
+                        const maxClicks = parseInt(document.getElementById('adMaxClicks').value);
+                        const active = document.getElementById('adActive').checked;
+                        const iconType = adImageUploadArea.dataset.imageBase64 ? 'image' : 'fa';
+                        const image = adImageUploadArea.dataset.imageBase64 || document.getElementById('adIcon').value.trim() || 'fa-solid fa-bullhorn';
+
+                        if (!title || !url) {
+                            this.toast.error('يرجى ملء جميع الحقول');
+                            return;
+                        }
+                        if (isNaN(price) || price <= 0) {
+                            this.toast.error('سعر النقرة غير صالح');
+                            return;
+                        }
+                        if (isNaN(maxClicks) || maxClicks < 1) {
+                            this.toast.error('الحد الأقصى للنقرات غير صالح');
+                            return;
+                        }
+
+                        const adData = { title, url, price, maxClicksPerUser: maxClicks, active, iconType, image };
+
+                        if (id) {
+                            this.data.updateAd(id, adData);
+                            this.toast.success('✅ تم تحديث الإعلان');
+                        } else {
+                            this.data.addAd(adData);
+                            this.toast.success('✅ تم إضافة الإعلان');
+                        }
+
+                        // إعادة تحميل الصفحة
+                        this.openAdsManagement();
+                    });
+
+                    // Edit, toggle, delete
+                    document.querySelectorAll('.edit-ad').forEach(btn => {
                         btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            this.openCampaignModal(btn.dataset.id);
+                            const adCard = e.target.closest('.ad-card');
+                            const adId = adCard.dataset.id;
+                            const ad = this.state.ads.find(a => a.id === adId);
+                            if (!ad) return;
+
+                            adsList.classList.add('hidden');
+                            addBtn.classList.add('hidden');
+                            adForm.classList.remove('hidden');
+                            document.getElementById('adFormTitle').textContent = 'تعديل الإعلان';
+                            document.getElementById('adId').value = ad.id;
+                            document.getElementById('adTitle').value = ad.title;
+                            document.getElementById('adUrl').value = ad.url;
+                            document.getElementById('adIcon').value = ad.iconType === 'fa' ? ad.image : '';
+                            document.getElementById('adPrice').value = ad.price;
+                            document.getElementById('adMaxClicks').value = ad.maxClicksPerUser || 1;
+                            document.getElementById('adActive').checked = ad.active;
+
+                            if (ad.iconType === 'image' && ad.image) {
+                                adImagePreviewContainer.innerHTML = `<img src="${ad.image}" class="image-preview max-h-20 rounded-lg mb-2">`;
+                                adImageUploadArea.dataset.imageBase64 = ad.image;
+                            } else {
+                                adImagePreviewContainer.innerHTML = `
+                                    <i class="fa-solid fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
+                                    <p class="text-xs text-gray-400">انقر أو اسحب صورة (اختياري)</p>
+                                `;
+                                delete adImageUploadArea.dataset.imageBase64;
+                            }
                         });
                     });
 
-                    document.querySelectorAll('.delete-campaign').forEach(btn => {
+                    document.querySelectorAll('.toggle-ad-status').forEach(btn => {
                         btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            if (confirm('هل أنت متأكد من حذف هذه الحملة؟')) {
-                                this.data.deleteCampaign(btn.dataset.id);
-                                this.toast.success('تم الحذف');
-                                this.openAdminAdsPanel();
+                            const adCard = e.target.closest('.ad-card');
+                            const adId = adCard.dataset.id;
+                            const ad = this.state.ads.find(a => a.id === adId);
+                            if (ad) {
+                                ad.active = !ad.active;
+                                this.data.updateAd(adId, { active: ad.active });
+                                this.toast.info(ad.active ? 'تم تفعيل الإعلان' : 'تم تعطيل الإعلان');
+                                this.openAdsManagement();
+                            }
+                        });
+                    });
+
+                    document.querySelectorAll('.delete-ad').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            if (confirm('هل أنت متأكد من الحذف؟')) {
+                                const adCard = e.target.closest('.ad-card');
+                                const adId = adCard.dataset.id;
+                                this.data.deleteAd(adId);
+                                this.toast.success('تم حذف الإعلان');
+                                this.openAdsManagement();
                             }
                         });
                     });
                 }
 
-                openCampaignModal(editingId = null) {
-                    const container = document.getElementById('campaignFormContainer');
-                    const campaign = editingId ? this.state.campaigns.find(c => c.id === editingId) : null;
+                // باقي الدوال (openAdminPanel, renderAdminPanel, openEditBalanceModal, openPaymentMethodModal, openNotificationsModal, ...) كما هي مع إضافة زر الإعلانات في admin panel
+                openAdminPanel() {
+                    const modal = document.getElementById('adminPanelOverlay');
+                    const content = document.getElementById('adminPanelContent');
+                    content.innerHTML = this.renderAdminPanel();
+                    modal.classList.add('open');
+                    this.bindAdminPanelEvents();
+                }
 
-                    container.innerHTML = `
-                        <div class="glass-card p-4 rounded-2xl">
-                            <h4 class="font-bold mb-3 text-base">${campaign ? 'تعديل الحملة' : 'إضافة حملة جديدة'}</h4>
-                            <form id="campaignForm" class="space-y-3">
-                                <input type="hidden" id="campaignId" value="${campaign?.id || ''}">
-                                
+                renderAdminPanel() {
+                    const pendingWithdrawals = this.state.withdrawalRequests.filter(r => r.status === 'pending');
+                    const users = this.data.getAllUsers();
+
+                    return `
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">لوحة الإدارة</h2>
+                            <button id="closeAdminPanel" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
+                            </button>
+                        </div>
+
+                        <div class="wallet-tabs mb-2 md:mb-3">
+                            <button class="wallet-tab active" data-admin-tab="requests">الطلبات</button>
+                            <button class="wallet-tab" data-admin-tab="users">المستخدمين</button>
+                            <button class="wallet-tab" data-admin-tab="payment">طرق الدفع</button>
+                            <button class="wallet-tab" data-admin-tab="ads">الإعلانات</button>
+                        </div>
+
+                        <div id="adminRequestsTab" class="admin-tab">
+                            <div class="space-y-4 md:space-y-6">
                                 <div>
-                                    <label class="text-xs text-gray-400">عنوان الإعلان</label>
-                                    <input type="text" id="campaignTitle" value="${campaign?.title || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm" required>
+                                    <h3 class="text-base md:text-lg font-bold mb-2 flex items-center gap-2">
+                                        <i class="fa-solid fa-arrow-up text-red-400"></i>
+                                        طلبات السحب (${pendingWithdrawals.length})
+                                    </h3>
+                                    ${pendingWithdrawals.map(req => `
+                                        <div class="glass-card p-2 md:p-3 mb-2" data-id="${req.id}" data-type="withdrawal">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <div class="font-bold text-xs md:text-sm">${req.userName}</div>
+                                                    <div class="text-[10px] md:text-xs">المبلغ: <span class="text-red-400">${Utils.formatUSD(req.amount)}</span></div>
+                                                    <div class="text-[9px] md:text-xs text-gray-400">الطريقة: ${req.method}</div>
+                                                    <div class="text-[9px] md:text-xs text-gray-400">التفاصيل: ${req.details}</div>
+                                                </div>
+                                                <div class="flex gap-1 md:gap-2">
+                                                    <button class="accept-request btn-success px-2 md:px-3 py-0.5 md:py-1 text-[9px] md:text-xs">قبول</button>
+                                                    <button class="reject-request btn-danger px-2 md:px-3 py-0.5 md:py-1 text-[9px] md:text-xs">رفض</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('') || '<p class="text-gray-400 text-center py-2 text-sm">لا توجد طلبات معلقة</p>'}
                                 </div>
+                            </div>
+                        </div>
 
-                                <div>
-                                    <label class="text-xs text-gray-400">الوصف</label>
-                                    <input type="text" id="campaignDescription" value="${campaign?.description || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
-                                </div>
+                        <div id="adminUsersTab" class="admin-tab hidden">
+                            <h3 class="text-base md:text-lg font-bold mb-2">المستخدمين (${users.length})</h3>
+                            <div class="space-y-2 max-h-80 md:max-h-96 overflow-y-auto hide-scrollbar">
+                                ${users.map(u => `
+                                    <div class="user-item ${u.blocked ? 'blocked' : ''} glass-card p-2 md:p-3">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <div class="font-bold text-xs md:text-sm">${u.name}</div>
+                                                <div class="text-[9px] md:text-xs text-gray-400">ID: ${u.id}</div>
+                                                <div class="text-[10px] md:text-xs">الرصيد: ${Utils.formatUSD(u.balance)}</div>
+                                            </div>
+                                            <div class="flex gap-1 md:gap-2">
+                                                <button class="edit-user-balance text-blue-400 hover:text-blue-300" data-id="${u.id}" title="تعديل الرصيد">
+                                                    <i class="fa-solid fa-pen-to-square text-sm"></i>
+                                                </button>
+                                                <button class="toggle-user-block ${u.blocked ? 'text-green-400' : 'text-red-400'} hover:opacity-75" data-id="${u.id}" title="${u.blocked ? 'رفع الحظر' : 'حظر'}">
+                                                    <i class="fa-solid ${u.blocked ? 'fa-lock-open' : 'fa-lock'} text-sm"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        ${u.blocked ? '<span class="badge-blocked mt-1 inline-block text-[8px] md:text-xs bg-red-500/20 text-red-400 px-1 py-0.5 rounded">محظور</span>' : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
 
-                                <div>
-                                    <label class="text-xs text-gray-400">رابط الصورة (اختياري)</label>
-                                    <input type="url" id="campaignImage" value="${campaign?.imageUrl || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm" placeholder="https://...">
-                                </div>
+                        <div id="adminPaymentTab" class="admin-tab hidden">
+                            <div class="flex justify-between items-center mb-2 md:mb-3">
+                                <h3 class="text-base md:text-lg font-bold">طرق الدفع</h3>
+                                <button id="addPaymentMethodBtn" class="btn-primary px-2 md:px-3 py-1 text-xs md:text-sm">
+                                    <i class="fa-solid fa-plus ml-1"></i> إضافة
+                                </button>
+                            </div>
+                            <div class="space-y-2 max-h-80 md:max-h-96 overflow-y-auto hide-scrollbar">
+                                ${this.state.paymentMethods.map(m => `
+                                    <div class="payment-method-admin glass-card p-2 md:p-3">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-2 md:gap-3">
+                                                <div class="payment-icon w-8 h-8 md:w-10 md:h-10">
+                                                    ${m.iconType === 'image' ? 
+                                                        `<img src="${m.icon}" alt="${m.name}" class="w-full h-full object-cover rounded-full">` : 
+                                                        `<i class="${m.icon} text-sm md:text-base"></i>`
+                                                    }
+                                                </div>
+                                                <div>
+                                                    <div class="font-bold text-xs md:text-sm">${m.name}</div>
+                                                    <div class="text-[9px] md:text-xs text-gray-400">${m.description || ''}</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex gap-1 md:gap-2">
+                                                <button class="edit-payment-method text-blue-400 hover:text-blue-300" data-id="${m.id}" title="تعديل">
+                                                    <i class="fa-solid fa-pen-to-square text-sm"></i>
+                                                </button>
+                                                <button class="delete-payment-method text-red-400 hover:text-red-300" data-id="${m.id}" title="حذف">
+                                                    <i class="fa-solid fa-trash text-sm"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
 
-                                <div>
-                                    <label class="text-xs text-gray-400">رابط الوجهة (عند النقر)</label>
-                                    <input type="url" id="campaignTargetUrl" value="${campaign?.targetUrl || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm" required>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-2">
+                        <div id="adminAdsTab" class="admin-tab hidden">
+                            <div class="flex justify-between items-center mb-2 md:mb-3">
+                                <h3 class="text-base md:text-lg font-bold">الإعلانات</h3>
+                                <button id="manageAdsFromPanelBtn" class="btn-primary px-2 md:px-3 py-1 text-xs md:text-sm">
+                                    <i class="fa-solid fa-gear ml-1"></i> إدارة
+                                </button>
+                            </div>
+                            <div class="ad-stats glass-card p-3 mb-3">
+                                <div class="grid grid-cols-2 gap-2 text-center">
                                     <div>
-                                        <label class="text-xs text-gray-400">سعر النقرة ($)</label>
-                                        <input type="number" step="0.01" min="0.01" id="campaignCpc" value="${campaign?.cpc || CONFIG.CAMPAIGNS.DEFAULT_CPC}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm" required>
+                                        <div class="text-xs text-gray-400">إجمالي النقرات</div>
+                                        <div class="font-bold text-sm">${this.data.getAdsStats().totalClicks}</div>
                                     </div>
                                     <div>
-                                        <label class="text-xs text-gray-400">الميزانية ($)</label>
-                                        <input type="number" step="0.01" min="1" id="campaignBudget" value="${campaign?.budget || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm" required>
+                                        <div class="text-xs text-gray-400">إجمالي المدفوع</div>
+                                        <div class="font-bold text-sm">${Utils.formatUSD(this.data.getAdsStats().totalPaid)}</div>
                                     </div>
                                 </div>
-
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label class="text-xs text-gray-400">حد النقرات لكل مستخدم</label>
-                                        <input type="number" min="1" id="campaignMaxClicks" value="${campaign?.maxClicksPerUser || CONFIG.CAMPAIGNS.MAX_CLICKS_PER_USER_PER_CAMPAIGN}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
+                            </div>
+                            <div class="space-y-2 max-h-60 md:max-h-80 overflow-y-auto hide-scrollbar">
+                                ${this.state.ads.map(ad => `
+                                    <div class="glass-card p-2 text-xs">
+                                        <div class="flex justify-between">
+                                            <span class="font-bold">${ad.title}</span>
+                                            <span class="${ad.active ? 'text-green-400' : 'text-red-400'}">${ad.active ? 'نشط' : 'غير نشط'}</span>
+                                        </div>
+                                        <div class="flex justify-between text-gray-400 mt-1">
+                                            <span>النقرات: ${ad.totalClicks || 0}</span>
+                                            <span>السعر: ${Utils.formatUSD(ad.price)}</span>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label class="text-xs text-gray-400">فترة التهدئة (ساعات)</label>
-                                        <input type="number" min="0" id="campaignCooldown" value="${campaign?.cooldownHours || CONFIG.CAMPAIGNS.COOLDOWN_HOURS}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label class="text-xs text-gray-400">تاريخ البداية</label>
-                                        <input type="datetime-local" id="campaignStartDate" value="${campaign?.startDate ? campaign.startDate.slice(0,16) : ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
-                                    </div>
-                                    <div>
-                                        <label class="text-xs text-gray-400">تاريخ النهاية</label>
-                                        <input type="datetime-local" id="campaignEndDate" value="${campaign?.endDate ? campaign.endDate.slice(0,16) : ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label class="text-xs text-gray-400">الحالة</label>
-                                    <select id="campaignStatus" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
-                                        <option value="active" ${campaign?.status === 'active' ? 'selected' : ''}>نشط</option>
-                                        <option value="paused" ${campaign?.status === 'paused' ? 'selected' : ''}>متوقف</option>
-                                        <option value="ended" ${campaign?.status === 'ended' ? 'selected' : ''}>منتهي</option>
-                                    </select>
-                                </div>
-
-                                <div class="flex gap-2 pt-2">
-                                    <button type="submit" class="flex-1 btn-primary py-2 text-sm">حفظ</button>
-                                    <button type="button" id="cancelCampaignForm" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold hover:bg-gray-700 transition-colors text-sm">إلغاء</button>
-                                </div>
-                            </form>
+                                `).join('') || '<p class="text-center text-gray-400 py-2">لا توجد إعلانات</p>'}
+                            </div>
                         </div>
                     `;
+                }
 
-                    container.classList.remove('hidden');
+                bindAdminPanelEvents() {
+                    const overlay = document.getElementById('adminPanelOverlay');
                     
-                    document.getElementById('cancelCampaignForm').addEventListener('click', () => {
-                        container.classList.add('hidden');
+                    document.getElementById('closeAdminPanel').addEventListener('click', () => {
+                        overlay.classList.remove('open');
+                    });
+                    
+                    overlay.addEventListener('click', (e) => {
+                        if (e.target === overlay) overlay.classList.remove('open');
                     });
 
-                    document.getElementById('campaignForm').addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        
-                        const formData = {
-                            title: document.getElementById('campaignTitle').value,
-                            description: document.getElementById('campaignDescription').value,
-                            imageUrl: document.getElementById('campaignImage').value,
-                            targetUrl: document.getElementById('campaignTargetUrl').value,
-                            cpc: parseFloat(document.getElementById('campaignCpc').value),
-                            budget: parseFloat(document.getElementById('campaignBudget').value),
-                            maxClicksPerUser: parseInt(document.getElementById('campaignMaxClicks').value),
-                            cooldownHours: parseInt(document.getElementById('campaignCooldown').value),
-                            startDate: document.getElementById('campaignStartDate').value || null,
-                            endDate: document.getElementById('campaignEndDate').value || null,
-                            status: document.getElementById('campaignStatus').value
-                        };
+                    const tabs = document.querySelectorAll('[data-admin-tab]');
+                    tabs.forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            tabs.forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            
+                            document.getElementById('adminRequestsTab').classList.add('hidden');
+                            document.getElementById('adminUsersTab').classList.add('hidden');
+                            document.getElementById('adminPaymentTab').classList.add('hidden');
+                            document.getElementById('adminAdsTab').classList.add('hidden');
+                            
+                            if (tab.dataset.adminTab === 'requests') {
+                                document.getElementById('adminRequestsTab').classList.remove('hidden');
+                            } else if (tab.dataset.adminTab === 'users') {
+                                document.getElementById('adminUsersTab').classList.remove('hidden');
+                            } else if (tab.dataset.adminTab === 'payment') {
+                                document.getElementById('adminPaymentTab').classList.remove('hidden');
+                            } else if (tab.dataset.adminTab === 'ads') {
+                                document.getElementById('adminAdsTab').classList.remove('hidden');
+                            }
+                        });
+                    });
 
-                        if (editingId) {
-                            this.data.updateCampaign(editingId, formData);
-                            this.toast.success('تم تحديث الحملة');
-                        } else {
-                            this.data.addCampaign(formData);
-                            this.toast.success('تمت إضافة الحملة');
-                        }
+                    document.querySelectorAll('.accept-request').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const item = e.target.closest('[data-id]');
+                            const id = item.dataset.id;
+                            const type = item.dataset.type;
+                            
+                            if (this.data.acceptRequest(id, type)) {
+                                this.toast.success('تم قبول الطلب');
+                                this.openAdminPanel();
+                            } else {
+                                this.toast.error('حدث خطأ');
+                            }
+                        });
+                    });
 
-                        container.classList.add('hidden');
-                        this.openAdminAdsPanel(); // إعادة تحميل لوحة الإعلانات
+                    document.querySelectorAll('.reject-request').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const item = e.target.closest('[data-id]');
+                            const id = item.dataset.id;
+                            const type = item.dataset.type;
+                            
+                            if (this.data.rejectRequest(id, type)) {
+                                this.toast.info('تم رفض الطلب');
+                                this.openAdminPanel();
+                            }
+                        });
+                    });
+
+                    document.querySelectorAll('.edit-user-balance').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const userId = btn.dataset.id;
+                            this.openEditBalanceModal(userId);
+                        });
+                    });
+
+                    document.querySelectorAll('.toggle-user-block').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const userId = btn.dataset.id;
+                            const user = this.data.getUserData(parseInt(userId));
+                            user.blocked = !user.blocked;
+                            this.data.updateUser(parseInt(userId), user);
+                            this.toast.success(user.blocked ? 'تم حظر المستخدم' : 'تم رفع الحظر');
+                            // تحديث واجهة المستخدم إذا كان المحظور هو المستخدم الحالي
+                            if (this.state.user && this.state.user.id == userId) {
+                                this.state.set('currentUser', user);
+                            }
+                            this.openAdminPanel();
+                        });
+                    });
+
+                    document.getElementById('addPaymentMethodBtn')?.addEventListener('click', () => {
+                        this.openPaymentMethodModal();
+                    });
+
+                    document.querySelectorAll('.edit-payment-method').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            this.openPaymentMethodModal(id);
+                        });
+                    });
+
+                    document.querySelectorAll('.delete-payment-method').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            if (confirm('هل أنت متأكد من الحذف؟')) {
+                                this.data.deletePaymentMethod(id);
+                                this.toast.success('تم الحذف بنجاح');
+                                this.openAdminPanel();
+                            }
+                        });
+                    });
+
+                    document.getElementById('manageAdsFromPanelBtn')?.addEventListener('click', () => {
+                        overlay.classList.remove('open');
+                        this.openAdsManagement();
                     });
                 }
 
-                // باقي الدوال الموجودة سابقاً (مثل openWalletModal, openAdminPanel, openSupportChat, ...)
-                // سأقوم بتضمينها بشكل مختصر هنا لأنها طويلة جداً. في الكود الفعلي يجب تضمين كل الدوال السابقة.
-                // لكن للاختصار سأكتب توابع لهذه الدوال لأنها موجودة في الكود الأصلي وسأفترض أنها ما زالت كما هي.
-                // ملاحظة: في التطبيق الفعلي، يجب نسخ جميع الدوال الأخرى (openWalletModal, bindWalletModalEvents, openAdminPanel, ...) من الكود السابق هنا.
-                // لتوفير المساحة، لم أكررها، ولكن يجب تضمينها بالكامل.
+                openEditBalanceModal(userId) {
+                    const overlay = document.getElementById('editBalanceModalOverlay');
+                    const content = document.getElementById('editBalanceModalContent');
+                    const user = this.data.getUserData(parseInt(userId));
+                    
+                    content.innerHTML = `
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">تعديل رصيد المستخدم ${userId}</h2>
+                            <button id="closeEditBalanceModal" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-2 md:space-y-3">
+                            <div class="text-center">
+                                <span class="text-xs md:text-sm text-gray-400">الرصيد الحالي:</span>
+                                <span class="text-lg md:text-xl font-bold text-white">${Utils.formatUSD(user.balance)}</span>
+                            </div>
+                            <div>
+                                <select id="balanceOperation" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
+                                    <option value="add">إضافة</option>
+                                    <option value="subtract">خصم</option>
+                                    <option value="set">تعيين</option>
+                                </select>
+                            </div>
+                            <div>
+                                <input type="number" id="balanceAmount" placeholder="المبلغ ($)" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
+                            </div>
+                            <div>
+                                <input type="text" id="balanceReason" placeholder="السبب (اختياري)" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
+                            </div>
+                            <button id="applyBalanceChange" class="w-full btn-primary py-2 mt-2 text-sm">تطبيق</button>
+                        </div>
+                    `;
+                    
+                    overlay.classList.add('open');
+                    
+                    document.getElementById('closeEditBalanceModal').addEventListener('click', () => {
+                        overlay.classList.remove('open');
+                    });
+                    
+                    document.getElementById('applyBalanceChange').addEventListener('click', () => {
+                        const operation = document.getElementById('balanceOperation').value;
+                        const amount = parseFloat(document.getElementById('balanceAmount').value);
+                        const reason = document.getElementById('balanceReason').value || 'تعديل يدوي';
+                        
+                        if (isNaN(amount) || amount < 0) {
+                            this.toast.error('أدخل مبلغ صحيح');
+                            return;
+                        }
+                        
+                        let delta = 0;
+                        if (operation === 'add') delta = amount;
+                        else if (operation === 'subtract') delta = -amount;
+                        else delta = amount - user.balance;
+                        
+                        const result = this.data.updateBalance(parseInt(userId), delta, reason, 'admin');
+                        if (result.success) {
+                            this.toast.success(`✅ تم تعديل الرصيد بنجاح`);
+                            overlay.classList.remove('open');
+                            this.openAdminPanel();
+                        }
+                    });
+                }
+
+                openPaymentMethodModal(editingId = null) {
+                    const overlay = document.getElementById('paymentMethodModalOverlay');
+                    const content = document.getElementById('paymentMethodModalContent');
+                    const method = editingId ? this.state.paymentMethods.find(m => m.id === editingId) : null;
+                    
+                    content.innerHTML = `
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">${method ? 'تعديل طريقة دفع' : 'إضافة طريقة دفع'}</h2>
+                            <button id="closePaymentMethodModal" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
+                            </button>
+                        </div>
+                        <form id="paymentMethodForm" class="space-y-2 md:space-y-3">
+                            <input type="hidden" id="methodId" value="${method?.id || ''}">
+                            
+                            <div>
+                                <label class="text-xs md:text-sm text-gray-400">صورة الطريقة</label>
+                                <div class="image-upload-area p-3 md:p-4 border border-dashed border-blue-500/50 rounded-lg text-center cursor-pointer" id="imageUploadArea">
+                                    <input type="file" id="imageInput" accept="image/*" class="hidden">
+                                    <div id="imagePreviewContainer" class="flex flex-col items-center">
+                                        ${method && method.iconType === 'image' && method.icon ? 
+                                            `<img src="${method.icon}" class="image-preview max-h-20 md:max-h-24 mb-2 rounded-lg">` : 
+                                            `<i class="fa-solid fa-cloud-upload-alt text-2xl md:text-3xl text-gray-400 mb-2"></i>
+                                             <p class="text-xs md:text-sm text-gray-400">انقر أو اسحب صورة</p>`
+                                        }
+                                    </div>
+                                </div>
+                                ${method && method.iconType === 'image' && method.icon ? 
+                                    `<button type="button" id="deleteImageBtn" class="delete-image-btn mt-1 text-red-400 text-xs"><i class="fa-solid fa-trash"></i> حذف الصورة</button>` : ''
+                                }
+                            </div>
+
+                            <div>
+                                <input type="text" id="methodName" placeholder="اسم الطريقة" value="${method?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm" required>
+                            </div>
+                            <div>
+                                <input type="text" id="methodIcon" placeholder="أيقونة FontAwesome" value="${method?.iconType !== 'image' ? (method?.icon || '') : ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
+                            </div>
+                            <div>
+                                <input type="text" id="methodDescription" placeholder="وصف مختصر" value="${method?.description || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
+                            </div>
+                            <div>
+                                <input type="text" id="methodWithdrawDetails" placeholder="تفاصيل السحب" value="${method?.withdrawDetails || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white text-sm">
+                            </div>
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" class="flex-1 btn-primary py-2 text-sm">حفظ</button>
+                                <button type="button" id="cancelPaymentMethod" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold hover:bg-gray-700 transition-colors text-sm">إلغاء</button>
+                            </div>
+                        </form>
+                    `;
+                    
+                    overlay.classList.add('open');
+                    
+                    const imageInput = document.getElementById('imageInput');
+                    const imageUploadArea = document.getElementById('imageUploadArea');
+                    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+                    
+                    imageUploadArea.addEventListener('click', () => imageInput.click());
+                    
+                    imageUploadArea.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        imageUploadArea.style.borderColor = '#3b82f6';
+                    });
+                    
+                    imageUploadArea.addEventListener('dragleave', () => {
+                        imageUploadArea.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+                    });
+                    
+                    imageUploadArea.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        imageUploadArea.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+                        const file = e.dataTransfer.files[0];
+                        if (file) handleImageFile(file);
+                    });
+                    
+                    imageInput.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) handleImageFile(file);
+                    });
+
+                    const handleImageFile = async (file) => {
+                        const validation = Utils.validateImage(file);
+                        if (!validation.valid) {
+                            this.toast.error(validation.error);
+                            return;
+                        }
+
+                        try {
+                            const compressedImage = await Utils.compressImage(file);
+                            imagePreviewContainer.innerHTML = `<img src="${compressedImage}" class="image-preview max-h-20 md:max-h-24 mb-2 rounded-lg">`;
+                            imageUploadArea.dataset.imageBase64 = compressedImage;
+                            
+                            if (!document.getElementById('deleteImageBtn')) {
+                                const deleteBtn = document.createElement('button');
+                                deleteBtn.type = 'button';
+                                deleteBtn.id = 'deleteImageBtn';
+                                deleteBtn.className = 'delete-image-btn mt-1 text-red-400 text-xs';
+                                deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i> حذف الصورة';
+                                deleteBtn.addEventListener('click', () => {
+                                    delete imageUploadArea.dataset.imageBase64;
+                                    imageInput.value = '';
+                                    imagePreviewContainer.innerHTML = `
+                                        <i class="fa-solid fa-cloud-upload-alt text-2xl md:text-3xl text-gray-400 mb-2"></i>
+                                        <p class="text-xs md:text-sm text-gray-400">انقر أو اسحب صورة</p>
+                                    `;
+                                    deleteBtn.remove();
+                                });
+                                imageUploadArea.parentNode.appendChild(deleteBtn);
+                            }
+                        } catch (error) {
+                            this.toast.error('فشل ضغط الصورة');
+                        }
+                    };
+
+                    const deleteImageBtn = document.getElementById('deleteImageBtn');
+                    if (deleteImageBtn) {
+                        deleteImageBtn.addEventListener('click', () => {
+                            delete imageUploadArea.dataset.imageBase64;
+                            imageInput.value = '';
+                            imagePreviewContainer.innerHTML = `
+                                <i class="fa-solid fa-cloud-upload-alt text-2xl md:text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-xs md:text-sm text-gray-400">انقر أو اسحب صورة</p>
+                            `;
+                            deleteImageBtn.remove();
+                        });
+                    }
+
+                    document.getElementById('closePaymentMethodModal').addEventListener('click', () => {
+                        overlay.classList.remove('open');
+                    });
+                    
+                    document.getElementById('cancelPaymentMethod').addEventListener('click', () => {
+                        overlay.classList.remove('open');
+                    });
+                    
+                    overlay.addEventListener('click', (e) => {
+                        if (e.target === overlay) overlay.classList.remove('open');
+                    });
+
+                    document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        
+                        const imageBase64 = imageUploadArea.dataset.imageBase64;
+                        const iconType = imageBase64 ? 'image' : 'fa';
+                        const icon = imageBase64 ? imageBase64 : document.getElementById('methodIcon').value;
+                        
+                        const formData = {
+                            name: document.getElementById('methodName').value,
+                            icon: icon,
+                            iconType: iconType,
+                            description: document.getElementById('methodDescription').value,
+                            withdrawDetails: document.getElementById('methodWithdrawDetails').value
+                        };
+                        
+                        const id = document.getElementById('methodId').value;
+                        
+                        if (id) {
+                            this.data.updatePaymentMethod(id, formData);
+                            this.toast.success('تم التحديث بنجاح');
+                        } else {
+                            this.data.addPaymentMethod(formData);
+                            this.toast.success('تمت الإضافة بنجاح');
+                        }
+                        
+                        overlay.classList.remove('open');
+                        this.openAdminPanel();
+                    });
+                }
+
+                openNotificationsModal() {
+                    const modal = document.getElementById('walletModalOverlay');
+                    const content = document.getElementById('walletModalContent');
+                    content.innerHTML = this.renderNotificationsModal();
+                    modal.classList.add('open');
+                    this.bindNotificationsModalEvents();
+                }
+
+                renderNotificationsModal() {
+                    const userId = this.state.user.id;
+                    const notifications = this.data.getUserNotifications(userId);
+                    
+                    const notificationsHtml = notifications.length ? 
+                        notifications.map(n => `
+                            <div class="transaction-item ${n.read ? 'opacity-60' : ''}" data-id="${n.id}">
+                                <div class="flex-1">
+                                    <div class="font-bold flex items-center gap-2 text-xs md:text-sm">
+                                        ${!n.read ? '<span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>' : ''}
+                                        ${n.title}
+                                    </div>
+                                    <div class="text-[10px] md:text-xs">${n.message}</div>
+                                    <div class="text-[8px] md:text-[10px] text-gray-400 mt-1">${Utils.formatDateTime(n.date)}</div>
+                                </div>
+                                ${!n.read ? `
+                                    <button class="mark-read text-blue-400 hover:text-blue-300 text-[10px] md:text-xs" data-id="${n.id}">
+                                        <i class="fa-regular fa-circle-check"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        `).join('') :
+                        '<p class="text-center text-gray-400 py-6 md:py-8 text-sm">لا توجد إشعارات</p>';
+                    
+                    return `
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">الإشعارات</h2>
+                            <button id="closeNotificationsModal" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
+                            </button>
+                        </div>
+                        <div class="flex justify-end mb-2 md:mb-3">
+                            <button id="markAllRead" class="btn-primary px-2 md:px-3 py-1 text-xs md:text-sm">
+                                <i class="fa-regular fa-bell-slash ml-1"></i> تحديد الكل كمقروء
+                            </button>
+                        </div>
+                        <div class="max-h-72 md:max-h-96 overflow-y-auto hide-scrollbar space-y-1 md:space-y-2">${notificationsHtml}</div>
+                    `;
+                }
+
+                bindNotificationsModalEvents() {
+                    const overlay = document.getElementById('walletModalOverlay');
+                    
+                    document.getElementById('closeNotificationsModal').addEventListener('click', () => {
+                        overlay.classList.remove('open');
+                    });
+                    
+                    document.getElementById('markAllRead')?.addEventListener('click', () => {
+                        this.data.markAllAsRead(this.state.user.id);
+                        this.toast.success('تم تحديد الكل كمقروء');
+                        this.openNotificationsModal();
+                    });
+                    
+                    document.querySelectorAll('.mark-read').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const id = btn.dataset.id;
+                            this.data.markNotificationAsRead(id);
+                            this.openNotificationsModal();
+                        });
+                    });
+                    
+                    overlay.addEventListener('click', (e) => {
+                        if (e.target === overlay) overlay.classList.remove('open');
+                    });
+                }
             }
 
             // ==================== App Class ====================
@@ -2888,8 +4203,8 @@
                         chatMessages: [],
                         supportTickets: [],
                         faqItems: [],
-                        campaigns: [], // جديد
-                        clicks: [], // جديد
+                        ads: [], // إضافة
+                        adClicks: [], // إضافة
                         unreadNotifications: 0,
                         settings: {
                             language: 'ar',
@@ -3047,8 +4362,284 @@
                 app.toast.info(`تم تغيير السمة إلى ${newTheme === 'dark' ? 'الداكنة' : 'الفاتحة'}`);
             });
 
-            console.log('✅ App initialized successfully with ads system');
+            console.log('✅ App initialized successfully with all fixes and ads system');
         })();
     </script>
+
+    <style>
+        /* Additional responsive styles for modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 10px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+            width: min(95%, 500px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease;
+        }
+
+        @media (min-width: 768px) {
+            .modal-content {
+                padding: 24px;
+                width: min(90%, 600px);
+            }
+        }
+
+        /* Payment method selection */
+        .payment-method.selected {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+        }
+
+        /* Transaction amounts */
+        .transaction-amount.positive {
+            color: var(--success);
+        }
+
+        .transaction-amount.negative {
+            color: var(--danger);
+        }
+
+        /* Hide scrollbar but keep functionality */
+        .hide-scrollbar {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Auto update indicator */
+        .auto-update-indicator {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            font-size: clamp(12px, 3vw, 14px);
+        }
+
+        .auto-update-indicator.hidden {
+            display: none;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border-radius: 12px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Image upload area */
+        .image-upload-area {
+            border: 2px dashed rgba(59, 130, 246, 0.5);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .image-upload-area:hover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        /* Emoji picker */
+        .emoji-picker-container {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: none;
+        }
+
+        .emoji-picker-container.open {
+            display: block;
+        }
+
+        emoji-picker {
+            width: min(300px, 90vw);
+            height: 400px;
+            --background: rgba(20, 30, 40, 0.95);
+            --border-color: var(--glass-border);
+        }
+
+        /* Chat styles */
+        .chat-message {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        .chat-message.outgoing {
+            justify-content: flex-end;
+        }
+        .chat-message.incoming {
+            justify-content: flex-start;
+        }
+        .message-bubble {
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .outgoing .message-bubble {
+            background: #3b82f6;
+        }
+        .message-info {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+            font-size: 10px;
+            opacity: 0.7;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+        }
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            margin: 0 2px;
+            background: #888;
+            border-radius: 50%;
+            display: inline-block;
+            animation: typing 1.4s infinite both;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.4; transform: scale(1); }
+        }
+        .quick-replies {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 8px 0;
+        }
+        .quick-reply-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 16px;
+            padding: 6px 12px;
+            color: white;
+            white-space: nowrap;
+        }
+        .chat-list-item {
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            transition: background 0.2s;
+        }
+        .chat-list-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .chat-list-item.unread {
+            background: rgba(59,130,246,0.15);
+        }
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .faq-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-answer {
+            margin-top: 8px;
+            color: #aaa;
+            display: none;
+        }
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+    </style>
 </body>
 </html>
