@@ -403,6 +403,20 @@
             z-index: 1000;
             font-size: clamp(12px, 3vw, 14px);
         }
+
+        /* Chat list items */
+        .chat-list-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .chat-list-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .chat-list-item.unread {
+            background: rgba(59,130,246,0.1);
+        }
     </style>
 </head>
 <body>
@@ -1084,7 +1098,7 @@
                     return this.state.notifications.filter(n => n.userId === userId && !n.read).length;
                 }
 
-                // Chat Messages
+                // Chat Messages - مع تحديث لدعم المحادثات الخاصة
                 loadChatMessages() {
                     this.state.chatMessages = StorageService.get(CONFIG.STORAGE_KEYS.CHAT_MESSAGES, []);
                 }
@@ -1093,7 +1107,8 @@
                     StorageService.set(CONFIG.STORAGE_KEYS.CHAT_MESSAGES, this.state.chatMessages);
                 }
 
-                addChatMessage(message, userId = null, isSupport = false) {
+                // إضافة رسالة دردشة مع recipientUserId (المستقبل)
+                addChatMessage(message, userId = null, isSupport = false, recipientUserId = null) {
                     const msg = {
                         id: Utils.generateId('chat_'),
                         userId: userId || this.state.user?.id,
@@ -1102,6 +1117,7 @@
                         isSupport: isSupport,
                         supportId: isSupport ? CONFIG.SUPPORT_TEAM[Math.floor(Math.random() * CONFIG.SUPPORT_TEAM.length)].id : null,
                         supportName: isSupport ? CONFIG.SUPPORT_TEAM[Math.floor(Math.random() * CONFIG.SUPPORT_TEAM.length)].name : null,
+                        recipientUserId: recipientUserId, // المستخدم المستهدف (إذا كان من الدعم)
                         read: false,
                         date: new Date().toISOString(),
                         status: 'sent'
@@ -1110,6 +1126,7 @@
                     this.state.chatMessages.push(msg);
                     this.saveChatMessages();
                     
+                    // إشعار للأدمن إذا كانت رسالة من مستخدم
                     if (!isSupport && this.state.user && !this.state.isAdmin) {
                         this.addNotification(
                             CONFIG.ADMIN_ID,
@@ -1122,30 +1139,122 @@
                     return msg;
                 }
 
-                getChatMessages(userId = null, limit = 50) {
+                // جلب الرسائل بين مستخدم وآخر (أو مع الدعم)
+                // إذا كان recipientUserId محددًا، نأخذ المحادثة بين userId و recipientUserId
+                // إذا لم يكن محددًا (للمستخدم العادي)، نأخذ الرسائل التي userId == currentUserId أو recipientUserId == currentUserId (مع اعتبار أن الدعم ليس له userId)
+                getChatMessages(userId = null, otherUserId = null) {
                     let messages = this.state.chatMessages;
                     
-                    if (userId) {
-                        messages = messages.filter(m => m.userId === userId || m.isSupport);
+                    if (userId && otherUserId) {
+                        // محادثة بين مستخدمين محددين (أحدهما قد يكون الدعم)
+                        messages = messages.filter(m => 
+                            (m.userId === userId && m.recipientUserId === otherUserId) ||
+                            (m.userId === otherUserId && m.recipientUserId === userId) ||
+                            // إذا كان الدعم ليس لديه userId (isSupport true) وكانت الرسالة من أو إلى الدعم
+                            (m.isSupport && m.userId === userId && m.recipientUserId === null) || // دعم يرسل إلى مستخدم (هنا recipientUserId=null يعني الدعم يرسل)
+                            (m.isSupport && m.recipientUserId === userId) || // دعم يرسل لمستخدم
+                            (m.userId === userId && m.isSupport) // مستخدم يرسل للدعم
+                        );
+                    } else if (userId) {
+                        // لمستخدم عادي: كل الرسائل التي تخصه (أرسلها هو أو أرسلت له)
+                        messages = messages.filter(m => 
+                            m.userId === userId || 
+                            m.recipientUserId === userId ||
+                            (m.isSupport && m.userId === userId) ||
+                            (m.isSupport && m.recipientUserId === userId)
+                        );
                     }
                     
                     return messages
                         .sort((a, b) => new Date(a.date) - new Date(b.date))
-                        .slice(-limit);
+                        .slice(-50); // آخر 50 رسالة
                 }
 
-                markChatAsRead(userId) {
+                // تحديد قراءة رسائل محادثة مع مستخدم معين
+                markChatAsRead(userId, otherUserId = null) {
                     this.state.chatMessages.forEach(m => {
-                        if (m.userId === userId && !m.read) m.read = true;
+                        if (otherUserId) {
+                            // رسائل بين userId و otherUserId
+                            if ((m.userId === userId && m.recipientUserId === otherUserId) ||
+                                (m.userId === otherUserId && m.recipientUserId === userId)) {
+                                m.read = true;
+                            }
+                        } else {
+                            // كل الرسائل التي تخص userId
+                            if (m.userId === userId || m.recipientUserId === userId) {
+                                m.read = true;
+                            }
+                        }
                     });
                     this.saveChatMessages();
                 }
 
-                getUnreadChatCount(userId = null) {
-                    if (userId) {
-                        return this.state.chatMessages.filter(m => m.userId === userId && !m.read).length;
+                // عدد الرسائل غير المقروءة لمستخدم (أو بين مستخدمين)
+                getUnreadChatCount(userId = null, otherUserId = null) {
+                    let messages = this.state.chatMessages.filter(m => !m.read);
+                    if (userId && otherUserId) {
+                        messages = messages.filter(m => 
+                            (m.userId === userId && m.recipientUserId === otherUserId) ||
+                            (m.userId === otherUserId && m.recipientUserId === userId)
+                        );
+                    } else if (userId) {
+                        messages = messages.filter(m => 
+                            m.userId === userId || m.recipientUserId === userId
+                        );
                     }
-                    return this.state.chatMessages.filter(m => !m.read).length;
+                    return messages.length;
+                }
+
+                // الحصول على قائمة المستخدمين الذين لديهم محادثات مع الدعم (للأدمن)
+                getUsersWithChats() {
+                    const usersMap = new Map();
+                    this.state.chatMessages.forEach(msg => {
+                        // المستخدم الذي أرسل الرسالة
+                        if (msg.userId && msg.userId !== CONFIG.ADMIN_ID) {
+                            if (!usersMap.has(msg.userId)) {
+                                usersMap.set(msg.userId, {
+                                    userId: msg.userId,
+                                    userName: msg.userName,
+                                    lastMessage: msg.message,
+                                    lastMessageTime: msg.date,
+                                    unread: !msg.read && msg.recipientUserId === CONFIG.ADMIN_ID // غير مقروءة للأدمن
+                                });
+                            } else {
+                                const existing = usersMap.get(msg.userId);
+                                if (new Date(msg.date) > new Date(existing.lastMessageTime)) {
+                                    existing.lastMessage = msg.message;
+                                    existing.lastMessageTime = msg.date;
+                                }
+                                if (!msg.read && msg.recipientUserId === CONFIG.ADMIN_ID) {
+                                    existing.unread = (existing.unread || 0) + 1;
+                                }
+                            }
+                        }
+                        // المستلم للرسالة (إذا كان مستخدم)
+                        if (msg.recipientUserId && msg.recipientUserId !== CONFIG.ADMIN_ID) {
+                            if (!usersMap.has(msg.recipientUserId)) {
+                                // نحتاج لاسم المستخدم من بيانات المستخدمين
+                                const userData = this.getUserData(msg.recipientUserId);
+                                usersMap.set(msg.recipientUserId, {
+                                    userId: msg.recipientUserId,
+                                    userName: userData.name || `مستخدم ${msg.recipientUserId}`,
+                                    lastMessage: msg.message,
+                                    lastMessageTime: msg.date,
+                                    unread: !msg.read && msg.isSupport // غير مقروءة للمستخدم؟ لكننا هنا للأدمن، نعد غير مقروءة إذا كانت من المستخدم ولم تقرأ
+                                });
+                            } else {
+                                const existing = usersMap.get(msg.recipientUserId);
+                                if (new Date(msg.date) > new Date(existing.lastMessageTime)) {
+                                    existing.lastMessage = msg.message;
+                                    existing.lastMessageTime = msg.date;
+                                }
+                                if (!msg.read && msg.isSupport) {
+                                    existing.unread = (existing.unread || 0) + 1;
+                                }
+                            }
+                        }
+                    });
+                    return Array.from(usersMap.values()).sort((a,b) => new Date(b.lastMessageTime) - new Date(a.lastMessageTime));
                 }
 
                 // Support Tickets
@@ -1474,7 +1583,7 @@
                     const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
                     const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
                     const unreadCount = this.data.getUnreadCount(user.id);
-                    const unreadChatCount = this.data.getUnreadChatCount(user.id);
+                    const unreadChatCount = this.data.getUnreadChatCount(user.id); // عدد الرسائل غير المقروءة للمستخدم من الدعم
                     const balanceLevel = Utils.calculateBalanceLevel(userData.balance);
                     
                     this.app.innerHTML = `
@@ -1617,7 +1726,7 @@
                     const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
                     const unreadCount = this.data.getUnreadCount(user.id);
                     const pendingCount = this.data.getPendingRequestsCount();
-                    const unreadChatCount = this.data.getUnreadChatCount();
+                    const unreadChatCount = this.data.getUnreadChatCount(); // جميع الرسائل غير المقروءة للأدمن
                     const openTickets = this.state.supportTickets.filter(t => t.status !== 'closed').length;
                     const balanceLevel = Utils.calculateBalanceLevel(userData.balance);
                     
@@ -1735,12 +1844,12 @@
                                         <span class="bg-red-500 text-white text-[9px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded-full mr-auto">${pendingCount}</span>
                                     ` : ''}
                                 </button>
-                                <button id="openSupportChatBtn" class="glass-card p-2 md:p-3 rounded-2xl flex items-center gap-2 md:gap-3 hover:bg-green-500/10 transition-all">
+                                <button id="openAdminChatListBtn" class="glass-card p-2 md:p-3 rounded-2xl flex items-center gap-2 md:gap-3 hover:bg-green-500/10 transition-all">
                                     <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center">
                                         <i class="fa-solid fa-headset text-sm md:text-base"></i>
                                     </div>
                                     <div class="text-right">
-                                        <div class="font-bold text-xs md:text-sm">الدردشة</div>
+                                        <div class="font-bold text-xs md:text-sm">المحادثات</div>
                                         <div class="text-[9px] md:text-xs text-gray-400">رد على المستخدمين</div>
                                     </div>
                                     ${unreadChatCount > 0 ? `
@@ -1800,12 +1909,18 @@
 
                     const supportChatBell = document.getElementById('supportChatBell');
                     if (supportChatBell) {
-                        supportChatBell.addEventListener('click', () => this.openSupportChat());
+                        supportChatBell.addEventListener('click', () => {
+                            if (this.state.isAdmin) {
+                                this.openAdminChatList();
+                            } else {
+                                this.openSupportChat(); // للمستخدم العادي
+                            }
+                        });
                     }
 
-                    const openSupportChatBtn = document.getElementById('openSupportChatBtn');
-                    if (openSupportChatBtn) {
-                        openSupportChatBtn.addEventListener('click', () => this.openSupportChat());
+                    const openAdminChatListBtn = document.getElementById('openAdminChatListBtn');
+                    if (openAdminChatListBtn) {
+                        openAdminChatListBtn.addEventListener('click', () => this.openAdminChatList());
                     }
 
                     const manageTicketsBtn = document.getElementById('manageTicketsBtn');
@@ -1829,7 +1944,11 @@
                             if (action === 'wallet') {
                                 this.openWalletModal();
                             } else if (action === 'support') {
-                                this.openSupportChat();
+                                if (this.state.isAdmin) {
+                                    this.openAdminChatList();
+                                } else {
+                                    this.openSupportChat();
+                                }
                             } else if (action === 'tickets') {
                                 this.openUserTickets();
                             }
@@ -1844,27 +1963,111 @@
                     }
                 }
 
-                openSupportChat() {
+                // فتح قائمة المحادثات للأدمن
+                openAdminChatList() {
                     const modal = document.getElementById('supportChatModalOverlay');
                     const content = document.getElementById('supportChatModalContent');
-                    content.innerHTML = this.renderSupportChat();
+                    content.innerHTML = this.renderAdminChatList();
+                    modal.classList.add('open');
+                    this.bindAdminChatListEvents();
+                }
+
+                renderAdminChatList() {
+                    const usersWithChats = this.data.getUsersWithChats();
+                    
+                    return `
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <h2 class="text-lg md:text-xl font-bold">
+                                <i class="fa-solid fa-headset ml-2 text-green-400"></i>
+                                قائمة المحادثات
+                            </h2>
+                            <button id="closeSupportChat" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <i class="fa-solid fa-times text-sm md:text-base"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-2 max-h-96 overflow-y-auto hide-scrollbar">
+                            ${usersWithChats.map(user => `
+                                <div class="chat-list-item ${user.unread ? 'unread' : ''}" data-userid="${user.userId}">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-bold text-sm">${user.userName}</div>
+                                            <div class="text-xs text-gray-400">${Utils.truncate(user.lastMessage, 30)}</div>
+                                        </div>
+                                        <div class="text-left">
+                                            <div class="text-[10px] text-gray-500">${Utils.formatTime(user.lastMessageTime)}</div>
+                                            ${user.unread ? `<span class="bg-red-500 text-white text-[9px] px-1 rounded-full">${user.unread}</span>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('') || '<p class="text-center text-gray-400 py-4">لا توجد محادثات بعد</p>'}
+                        </div>
+                    `;
+                }
+
+                bindAdminChatListEvents() {
+                    const modal = document.getElementById('supportChatModalOverlay');
+                    
+                    document.getElementById('closeSupportChat').addEventListener('click', () => {
+                        modal.classList.remove('open');
+                    });
+
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) modal.classList.remove('open');
+                    });
+
+                    document.querySelectorAll('.chat-list-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            const userId = parseInt(item.dataset.userid);
+                            this.openSupportChatForUser(userId);
+                        });
+                    });
+                }
+
+                // فتح الدردشة مع مستخدم معين (للأدمن)
+                openSupportChatForUser(targetUserId) {
+                    const modal = document.getElementById('supportChatModalOverlay');
+                    const content = document.getElementById('supportChatModalContent');
+                    content.innerHTML = this.renderSupportChat(targetUserId);
                     modal.classList.add('open');
                     
                     this.loadEmojiPicker();
                     
-                    this.bindChatEvents();
+                    this.bindChatEventsForUser(targetUserId);
+                    
+                    // تحديد قراءة رسائل هذا المستخدم
+                    this.data.markChatAsRead(targetUserId, CONFIG.ADMIN_ID);
+                }
+
+                // فتح الدردشة للمستخدم العادي
+                openSupportChat() {
+                    const modal = document.getElementById('supportChatModalOverlay');
+                    const content = document.getElementById('supportChatModalContent');
+                    content.innerHTML = this.renderSupportChat(); // بدون targetUserId
+                    modal.classList.add('open');
+                    
+                    this.loadEmojiPicker();
+                    
+                    this.bindChatEventsForUser(null); // للمستخدم العادي
                     
                     if (this.state.user) {
                         this.data.markChatAsRead(this.state.user.id);
                     }
                 }
 
-                renderSupportChat() {
+                renderSupportChat(targetUserId = null) {
                     const isAdmin = this.state.isAdmin;
-                    const messages = this.data.getChatMessages(isAdmin ? null : this.state.user?.id, 50);
+                    let messages = [];
+                    if (isAdmin && targetUserId) {
+                        messages = this.data.getChatMessages(targetUserId, CONFIG.ADMIN_ID);
+                    } else if (!isAdmin && this.state.user) {
+                        messages = this.data.getChatMessages(this.state.user.id);
+                    } else {
+                        messages = [];
+                    }
                     
                     const messagesHtml = messages.map(msg => {
-                        const isOutgoing = isAdmin ? !msg.isSupport : (msg.userId === this.state.user?.id && !msg.isSupport);
+                        const isOutgoing = isAdmin ? (msg.isSupport) : (msg.userId === this.state.user?.id && !msg.isSupport);
                         return `
                             <div class="chat-message ${isOutgoing ? 'outgoing' : 'incoming'}">
                                 <div class="message-bubble">
@@ -1889,7 +2092,7 @@
                         <div class="flex justify-between items-center mb-3 md:mb-4">
                             <h2 class="text-lg md:text-xl font-bold">
                                 <i class="fa-solid fa-headset ml-2 text-green-400"></i>
-                                ${isAdmin ? 'دردشة الدعم - جميع المستخدمين' : 'التواصل مع فريق الدعم'}
+                                ${isAdmin ? (targetUserId ? `محادثة مع مستخدم` : 'دردشة الدعم') : 'التواصل مع فريق الدعم'}
                             </h2>
                             <button id="closeSupportChat" class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
                                 <i class="fa-solid fa-times text-sm md:text-base"></i>
@@ -1932,7 +2135,7 @@
                     `;
                 }
 
-                bindChatEvents() {
+                bindChatEventsForUser(targetUserId = null) {
                     const modal = document.getElementById('supportChatModalOverlay');
                     const messagesContainer = document.getElementById('chatMessages');
                     const input = document.getElementById('chatMessageInput');
@@ -1952,7 +2155,11 @@
                         const message = input.value.trim();
                         if (!message) return;
 
-                        this.data.addChatMessage(message, this.state.user?.id, this.state.isAdmin);
+                        // تحديد المستلم: إذا كان الأدمن و targetUserId موجود، يرسل لذلك المستخدم
+                        // إذا كان المستخدم العادي، يرسل للدعم (recipientUserId = null)
+                        const recipient = this.state.isAdmin ? targetUserId : null;
+                        
+                        this.data.addChatMessage(message, this.state.user?.id, this.state.isAdmin, recipient);
                         
                         const msgDiv = document.createElement('div');
                         msgDiv.className = 'chat-message outgoing';
@@ -1970,6 +2177,7 @@
                         
                         input.value = '';
                         
+                        // إذا كان المستخدم العادي، محاكاة رد الدعم بعد فترة
                         if (!this.state.isAdmin) {
                             setTimeout(() => {
                                 this.simulateSupportReply(message);
@@ -2019,7 +2227,8 @@
                             reply = 'التحويل بين المستخدمين سهل!只需 أدخل معرف المستخدم المستهدف والمبلغ من قسم التحويل في المحفظة.';
                         }
                         
-                        this.data.addChatMessage(reply, null, true);
+                        // إرسال الرد كمستخدم دعم إلى المستخدم الحالي
+                        this.data.addChatMessage(reply, null, true, this.state.user.id);
                         
                         const msgDiv = document.createElement('div');
                         msgDiv.className = 'chat-message incoming';
@@ -3412,7 +3621,7 @@
                 app.toast.info(`تم تغيير السمة إلى ${newTheme === 'dark' ? 'الداكنة' : 'الفاتحة'}`);
             });
 
-            console.log('✅ App initialized successfully with responsive design and only withdrawal feature');
+            console.log('✅ App initialized successfully with private chats per user');
         })();
     </script>
 
@@ -3571,6 +3780,124 @@
             height: 400px;
             --background: rgba(20, 30, 40, 0.95);
             --border-color: var(--glass-border);
+        }
+
+        /* Chat styles */
+        .chat-message {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        .chat-message.outgoing {
+            justify-content: flex-end;
+        }
+        .chat-message.incoming {
+            justify-content: flex-start;
+        }
+        .message-bubble {
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .outgoing .message-bubble {
+            background: #3b82f6;
+        }
+        .message-info {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+            font-size: 10px;
+            opacity: 0.7;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+        }
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            margin: 0 2px;
+            background: #888;
+            border-radius: 50%;
+            display: inline-block;
+            animation: typing 1.4s infinite both;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.4; transform: scale(1); }
+        }
+        .quick-replies {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 8px 0;
+        }
+        .quick-reply-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 16px;
+            padding: 6px 12px;
+            color: white;
+            white-space: nowrap;
+        }
+        .chat-list-item {
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            transition: background 0.2s;
+        }
+        .chat-list-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .chat-list-item.unread {
+            background: rgba(59,130,246,0.15);
+        }
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .faq-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-answer {
+            margin-top: 8px;
+            color: #aaa;
+            display: none;
+        }
+        .faq-item.open .faq-answer {
+            display: block;
         }
     </style>
 </body>
