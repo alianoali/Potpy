@@ -17,9 +17,6 @@
     <!-- Google Fonts - Cairo & Tajawal -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
-    <!-- Chart.js للرسوم البيانية -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
     <style>
         * {
             margin: 0;
@@ -29,8 +26,8 @@
 
         body {
             font-family: 'Tajawal', 'Cairo', sans-serif;
-            background: linear-gradient(135deg, var(--tg-theme-bg-color, #0a0f1f) 0%, #1a1f35 100%);
-            color: var(--tg-theme-text-color, #ffffff);
+            background: linear-gradient(135deg, #0a0f1f 0%, #1a1f35 100%);
+            color: #ffffff;
             overflow-x: hidden;
             min-height: 100vh;
             -webkit-tap-highlight-color: transparent;
@@ -147,6 +144,7 @@
             overflow: hidden;
             transition: all 0.4s ease;
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            cursor: pointer;
         }
 
         .btn-gradient::before {
@@ -301,6 +299,39 @@
             box-shadow: 0 4px 10px rgba(245,158,11,0.3);
         }
 
+        /* شارة VIP */
+        .vip-badge {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 2px 10px rgba(245,158,11,0.3);
+        }
+
+        /* شارة الحالة */
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-warning {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
         /* نظام النقاط والشارات */
         .badge-achievement {
             width: 50px;
@@ -346,21 +377,6 @@
             color: white;
         }
 
-        /* أنيميشن النجاح */
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: #3b82f6;
-            position: absolute;
-            animation: confetti 5s ease-in-out infinite;
-        }
-
-        @keyframes confetti {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-
         /* شريط التقدم */
         .progress-bar-advanced {
             width: 100%;
@@ -396,6 +412,29 @@
         }
 
         /* مودال متطور */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
         .modal-advanced {
             background: linear-gradient(145deg, #1e293b, #0f172a);
             border-radius: 40px;
@@ -403,7 +442,7 @@
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
             max-width: 450px;
-            width: 90%;
+            width: 100%;
             max-height: 80vh;
             overflow-y: auto;
             transform: scale(0.9);
@@ -434,18 +473,65 @@
             transform: rotate(90deg);
         }
 
-        /* شارة VIP */
-        .vip-badge {
-            background: linear-gradient(135deg, #f59e0b, #fbbf24);
-            color: #000;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 12px;
-            font-weight: 900;
-            display: inline-flex;
+        /* Toast متطور */
+        .toast-advanced {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border-radius: 60px;
+            padding: 14px 24px;
+            color: white;
+            font-weight: 600;
+            display: flex;
             align-items: center;
-            gap: 4px;
-            box-shadow: 0 2px 10px rgba(245,158,11,0.3);
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 10px;
+            animation: toastSlide 0.4s ease;
+            max-width: 350px;
+            width: 100%;
+        }
+
+        @keyframes toastSlide {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* شاشة التحميل */
+        .loader-advanced {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(59,130,246,0.1);
+            border-top-color: #3b82f6;
+            border-right-color: #8b5cf6;
+            border-bottom-color: #ec4899;
+            border-left-color: #f59e0b;
+            border-radius: 50%;
+            animation: spinLoader 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+
+        @keyframes spinLoader {
+            to { transform: rotate(720deg); }
+        }
+
+        /* لوحة الإعدادات */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 90%;
+            max-width: 350px;
+            height: 100vh;
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border-left: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            transition: right 0.4s ease;
+            z-index: 10000;
+            overflow-y: auto;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+        }
+
+        .settings-panel.open {
+            right: 0;
         }
 
         /* تأثير الكتابة */
@@ -478,72 +564,34 @@
             transform: translateY(-2px);
         }
 
-        /* عداد تنازلي */
-        .countdown-timer {
-            background: rgba(0,0,0,0.3);
-            border-radius: 30px;
-            padding: 8px 16px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 20px;
-            font-weight: 900;
-            color: #fbbf24;
+        /* تدرجات نصية */
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        /* بطاقة المهمة */
-        .task-card-advanced {
-            background: linear-gradient(145deg, #1e293b, #0f172a);
-            border-radius: 28px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 1px solid rgba(255,255,255,0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .task-card-advanced.completed {
-            opacity: 0.7;
-            filter: grayscale(0.5);
-        }
-
-        .task-card-advanced.completed::after {
-            content: '\f00c';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
+        /* شريط الحالة */
+        .notification-badge {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            color: #10b981;
-            font-size: 24px;
-            opacity: 0.3;
-        }
-
-        /* Toast متطور */
-        .toast-advanced {
-            background: linear-gradient(145deg, #1e293b, #0f172a);
-            border-radius: 60px;
-            padding: 14px 24px;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
             color: white;
-            font-weight: 600;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 10px;
-            animation: toastSlide 0.4s ease, toastFade 0.4s ease 4.6s forwards;
-            max-width: 350px;
-            width: 100%;
+            justify-content: center;
+            padding: 0 4px;
         }
 
-        @keyframes toastSlide {
-            from { transform: translateX(100px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes toastFade {
-            to { opacity: 0; transform: translateY(-20px); }
+        .notification-badge.hidden {
+            display: none;
         }
 
         /* Scrollbar مخصص */
@@ -558,74 +606,6 @@
         ::-webkit-scrollbar-thumb {
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             border-radius: 10px;
-        }
-
-        /* تأثيرات hover على الروابط */
-        .hover-link {
-            position: relative;
-            display: inline-block;
-        }
-
-        .hover-link::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            transition: width 0.3s ease;
-        }
-
-        .hover-link:hover::after {
-            width: 100%;
-        }
-
-        /* شاشة التحميل */
-        .loader-advanced {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(59,130,246,0.1);
-            border-top-color: #3b82f6;
-            border-right-color: #8b5cf6;
-            border-bottom-color: #ec4899;
-            border-left-color: #f59e0b;
-            border-radius: 50%;
-            animation: spinLoader 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-        }
-
-        @keyframes spinLoader {
-            to { transform: rotate(720deg); }
-        }
-
-        /* الشبكة الترويجية */
-        .promo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-            margin: 20px 0;
-        }
-
-        .promo-item {
-            background: rgba(255,255,255,0.02);
-            border-radius: 24px;
-            padding: 16px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.03);
-            transition: all 0.3s ease;
-        }
-
-        .promo-item:hover {
-            background: rgba(59,130,246,0.1);
-            transform: translateY(-5px);
-        }
-
-        /* تدرجات نصية */
-        .gradient-text {
-            background: linear-gradient(135deg, #60a5fa, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
     </style>
 </head>
@@ -647,6 +627,9 @@
                 <i class="fa-regular fa-bell"></i>
                 <span class="notification-badge hidden" id="notificationBadge">0</span>
             </button>
+            <button id="openSettingsAdvanced" class="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all">
+                <i class="fa-solid fa-gear"></i>
+            </button>
         </div>
     </div>
 
@@ -654,7 +637,6 @@
     <div id="app" class="w-full max-w-md mx-auto p-5 pt-24 pb-10 relative"></div>
 
     <!-- لوحة الإعدادات المتقدمة -->
-    <div class="settings-overlay" id="settingsOverlayAdvanced"></div>
     <div class="settings-panel" id="settingsPanelAdvanced">
         <div class="flex justify-between items-center mb-6">
             <h3 class="text-xl font-bold gradient-text">الإعدادات المتقدمة</h3>
@@ -704,19 +686,6 @@
                     <div class="w-12 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600 transition-all"></div>
                 </label>
             </div>
-            <div class="p-3 glass-card">
-                <span class="flex items-center gap-2 mb-3">
-                    <i class="fa-solid fa-palette text-pink-400"></i>
-                    الألوان المخصصة
-                </span>
-                <div class="grid grid-cols-5 gap-2">
-                    <div class="w-8 h-8 rounded-full bg-blue-600 cursor-pointer border-2 border-transparent hover:border-white"></div>
-                    <div class="w-8 h-8 rounded-full bg-purple-600 cursor-pointer border-2 border-transparent hover:border-white"></div>
-                    <div class="w-8 h-8 rounded-full bg-green-600 cursor-pointer border-2 border-transparent hover:border-white"></div>
-                    <div class="w-8 h-8 rounded-full bg-red-600 cursor-pointer border-2 border-transparent hover:border-white"></div>
-                    <div class="w-8 h-8 rounded-full bg-yellow-600 cursor-pointer border-2 border-transparent hover:border-white"></div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -753,6 +722,11 @@
         <div class="modal-advanced" id="referralModalContentAdvanced"></div>
     </div>
 
+    <!-- مودال إدارة الإعلانات -->
+    <div class="modal-overlay" id="manageAdsModalOverlayAdvanced">
+        <div class="modal-advanced" id="manageAdsModalContentAdvanced"></div>
+    </div>
+
     <script>
         (function() {
             'use strict';
@@ -766,11 +740,11 @@
                 MAX_ADS_PER_DAY: 10,
                 TASKS_LIMIT: 20,
                 LEVELS: {
-                    BRONZE: { min: 0, max: 1000, multiplier: 1 },
-                    SILVER: { min: 1000, max: 5000, multiplier: 1.2 },
-                    GOLD: { min: 5000, max: 10000, multiplier: 1.5 },
-                    PLATINUM: { min: 10000, max: 50000, multiplier: 2 },
-                    DIAMOND: { min: 50000, max: Infinity, multiplier: 3 }
+                    BRONZE: { min: 0, max: 1000, multiplier: 1, name: 'برونزي' },
+                    SILVER: { min: 1000, max: 5000, multiplier: 1.2, name: 'فضي' },
+                    GOLD: { min: 5000, max: 10000, multiplier: 1.5, name: 'ذهبي' },
+                    PLATINUM: { min: 10000, max: 50000, multiplier: 2, name: 'بلاتيني' },
+                    DIAMOND: { min: 50000, max: Infinity, multiplier: 3, name: 'ألماسي' }
                 },
                 ACHIEVEMENTS: {
                     FIRST_LOGIN: { name: 'أول خطوة', reward: 50 },
@@ -784,13 +758,13 @@
 
             // ======================== مولد معرفات متقدم ========================
             class AdvancedIdGenerator {
-                static generate(prefix = '', length = 16) {
+                static generate(prefix = '', length = 8) {
                     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
                     let result = prefix;
                     for (let i = 0; i < length; i++) {
                         result += chars.charAt(Math.floor(Math.random() * chars.length));
                     }
-                    return result + '_' + Date.now();
+                    return result + '_' + Date.now().toString(36);
                 }
             }
 
@@ -856,7 +830,8 @@
                         this.saveUserAchievements(userId, userAchievements);
                         
                         // إضافة المكافأة
-                        this.state.balance += achievement.reward;
+                        this.state.updateBalance(this.state.balance + achievement.reward);
+                        this.state.addTransaction('achievement', achievement.reward, `إنجاز: ${achievement.name}`);
                         
                         // عرض إشعار
                         this.toast.show(`🏆 إنجاز جديد: ${achievement.name}\n+${achievement.reward} مكافأة`, 'success');
@@ -887,21 +862,22 @@
                     const balance = this.state.balance;
                     for (const [level, data] of Object.entries(ADVANCED_CONFIG.LEVELS)) {
                         if (balance >= data.min && balance < data.max) {
-                            return { name: level, multiplier: data.multiplier, data };
+                            return { key: level, name: data.name, multiplier: data.multiplier, data };
                         }
                     }
-                    return { name: 'BRONZE', multiplier: 1, data: ADVANCED_CONFIG.LEVELS.BRONZE };
+                    return { key: 'BRONZE', name: 'برونزي', multiplier: 1, data: ADVANCED_CONFIG.LEVELS.BRONZE };
                 }
 
                 getNextLevel() {
                     const current = this.getCurrentLevel();
                     const levels = Object.keys(ADVANCED_CONFIG.LEVELS);
-                    const currentIndex = levels.indexOf(current.name);
+                    const currentIndex = levels.indexOf(current.key);
                     
                     if (currentIndex < levels.length - 1) {
-                        const nextLevel = levels[currentIndex + 1];
-                        const needed = ADVANCED_CONFIG.LEVELS[nextLevel].min - this.state.balance;
-                        return { name: nextLevel, needed };
+                        const nextLevelKey = levels[currentIndex + 1];
+                        const nextLevel = ADVANCED_CONFIG.LEVELS[nextLevelKey];
+                        const needed = nextLevel.min - this.state.balance;
+                        return { key: nextLevelKey, name: nextLevel.name, needed };
                     }
                     return null;
                 }
@@ -912,8 +888,9 @@
                     
                     if (!next) return 100;
                     
-                    const total = next.needed + (this.state.balance - current.data.min);
-                    const progress = ((this.state.balance - current.data.min) / total) * 100;
+                    const totalNeeded = ADVANCED_CONFIG.LEVELS[next.key].min - current.data.min;
+                    const currentProgress = this.state.balance - current.data.min;
+                    const progress = (currentProgress / totalNeeded) * 100;
                     
                     return Math.min(progress, 100);
                 }
@@ -927,7 +904,7 @@
                 }
 
                 generateReferralCode(userId) {
-                    return btoa(userId.toString()).replace(/=/g, '') + AdvancedIdGenerator.generate('', 4);
+                    return btoa(userId.toString()).replace(/=/g, '') + Math.random().toString(36).substring(2, 6);
                 }
 
                 addReferral(userId, referredId) {
@@ -938,7 +915,8 @@
                         this.saveReferrals(userId, referrals);
                         
                         // إضافة مكافأة الإحالة
-                        this.state.balance += ADVANCED_CONFIG.REFERRAL_BONUS;
+                        this.state.updateBalance(this.state.balance + ADVANCED_CONFIG.REFERRAL_BONUS);
+                        this.state.addTransaction('referral', ADVANCED_CONFIG.REFERRAL_BONUS, 'مكافأة إحالة');
                         
                         this.toast.show(`🎉 تمت إضافة إحالة جديدة!\n+${ADVANCED_CONFIG.REFERRAL_BONUS} مكافأة`, 'success');
                         
@@ -982,7 +960,7 @@
                     const saved = AdvancedStorage.get(this.ADS_KEY, []);
                     
                     if (saved.length === 0) {
-                        this.state.ads = [
+                        const initialAds = [
                             {
                                 id: AdvancedIdGenerator.generate('ad_'),
                                 title: 'تطبيق أرباحي',
@@ -1023,6 +1001,7 @@
                                 active: true
                             }
                         ];
+                        this.state.ads = initialAds;
                         this.saveAds();
                     } else {
                         this.state.ads = saved;
@@ -1128,7 +1107,8 @@
                     this.saveAds();
 
                     // إضافة الرصيد
-                    this.state.balance += finalReward;
+                    this.state.updateBalance(this.state.balance + finalReward);
+                    this.state.addTransaction('ad', finalReward, `مشاهدة إعلان: ${ad.title}`);
                     
                     // التحقق من الإنجازات
                     if (stats.totalWatched === 1) {
@@ -1183,7 +1163,7 @@
                     const saved = AdvancedStorage.get(this.TASKS_KEY, []);
                     
                     if (saved.length === 0) {
-                        this.state.tasks = [
+                        const initialTasks = [
                             {
                                 id: AdvancedIdGenerator.generate('task_'),
                                 title: 'اشترك في القناة',
@@ -1236,6 +1216,7 @@
                                 active: true
                             }
                         ];
+                        this.state.tasks = initialTasks;
                         this.saveTasks();
                     } else {
                         this.state.tasks = saved;
@@ -1342,7 +1323,8 @@
                         userTask.status = 'completed';
                         userTask.completedAt = new Date().toISOString();
                         
-                        this.state.balance += finalReward;
+                        this.state.updateBalance(this.state.balance + finalReward);
+                        this.state.addTransaction('task', finalReward, `إكمال مهمة: ${task.title}`);
                         
                         this.saveUserTasks(userId, userTasks);
                         
@@ -1375,12 +1357,12 @@
 
                 verifyTask(userId, taskId, approved) {
                     const task = this.state.tasks.find(t => t.id === taskId);
-                    if (!task) return false;
+                    if (!task) return { success: false };
 
                     const userTasks = this.getUserTasks(userId);
                     const userTask = userTasks.find(t => t.taskId === taskId);
 
-                    if (!userTask || userTask.status !== 'pending') return false;
+                    if (!userTask || userTask.status !== 'pending') return { success: false };
 
                     if (approved) {
                         userTask.status = 'completed';
@@ -1390,7 +1372,8 @@
                         const multiplier = levelSystem.getCurrentLevel().multiplier;
                         const finalReward = Math.floor(task.reward * multiplier);
                         
-                        this.state.balance += finalReward;
+                        this.state.updateBalance(this.state.balance + finalReward);
+                        this.state.addTransaction('task', finalReward, `إكمال مهمة (مراجعة): ${task.title}`);
                         
                         this.saveUserTasks(userId, userTasks);
                         
@@ -1472,7 +1455,8 @@
                     const streak = this.getStreak(userId);
                     const bonus = Math.floor(ADVANCED_CONFIG.DAILY_BONUS * (1 + streak * 0.1));
                     
-                    this.state.balance += bonus;
+                    this.state.updateBalance(this.state.balance + bonus);
+                    this.state.addTransaction('daily', bonus, 'مكافأة يومية');
                     
                     AdvancedStorage.set(key, today);
                     
@@ -1531,6 +1515,17 @@
                             balance: userData.balance || 0,
                             level: userData.level || 'برونزي',
                             avatar: userData.avatar || null
+                        });
+                    }
+                    
+                    // إضافة المستخدم الحالي إذا لم يكن في القائمة
+                    if (this.state.user && !userBalances.find(u => u.userId === this.state.user.id.toString())) {
+                        userBalances.push({
+                            userId: this.state.user.id.toString(),
+                            name: this.state.user.first_name || 'مستخدم',
+                            balance: this.state.balance,
+                            level: new LevelSystem(this.state).getCurrentLevel().name,
+                            avatar: null
                         });
                     }
                     
@@ -1594,27 +1589,7 @@
                 }
 
                 shareToStory(media, text) {
-                    this.tg?.shareToStory(media, text);
-                }
-
-                setHeaderColor(color) {
-                    this.tg?.setHeaderColor(color);
-                }
-
-                setBackgroundColor(color) {
-                    this.tg?.setBackgroundColor(color);
-                }
-
-                isVersionAtLeast(version) {
-                    return this.tg?.isVersionAtLeast(version) || false;
-                }
-
-                getPlatform() {
-                    return this.tg?.platform || 'unknown';
-                }
-
-                getVersion() {
-                    return this.tg?.version || '0.0';
+                    this.tg?.shareToStory?.(media, text);
                 }
             }
 
@@ -1696,8 +1671,6 @@
                         this.container.className = 'fixed bottom-5 left-5 right-5 z-[9999] flex flex-col items-end gap-2 pointer-events-none';
                         document.body.appendChild(this.container);
                     }
-                    this.soundEnabled = true;
-                    this.vibrateEnabled = true;
                 }
 
                 show(message, type = 'info', duration = 5000) {
@@ -1721,16 +1694,6 @@
                     
                     this.container.appendChild(toast);
                     
-                    // تشغيل الصوت
-                    if (this.soundEnabled) {
-                        this.playSound(type);
-                    }
-                    
-                    // الاهتزاز
-                    if (this.vibrateEnabled && navigator.vibrate) {
-                        navigator.vibrate(200);
-                    }
-                    
                     // زر الإغلاق
                     const closeBtn = toast.querySelector('.toast-close');
                     closeBtn.addEventListener('click', () => {
@@ -1747,23 +1710,6 @@
                     }, duration);
                 }
 
-                playSound(type) {
-                    try {
-                        const audio = new Audio();
-                        audio.volume = 0.1;
-                        
-                        const sounds = {
-                            success: 'data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVQAAACAgICAf39/f39/f3+AgICAf39/f39/f3+AgICAf39/f39/f3+AgICAf39/f39/f3+AgICAf39/f39/f3+AgICAf39/f38=',
-                            error: 'data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVQAAACAgICAf39/f39/f3+AgICAf39/f39/f3+AgICAf39/f39/f3+AgICAf39/f39/f3+AgICAf39/f39/f3+AgICAf39/f38='
-                        };
-                        
-                        audio.src = sounds[type] || sounds.info;
-                        audio.play().catch(() => {});
-                    } catch (e) {
-                        console.log('Audio not supported');
-                    }
-                }
-
                 success(message) { this.show(message, 'success'); }
                 error(message) { this.show(message, 'error'); }
                 warning(message) { this.show(message, 'warning'); }
@@ -1771,15 +1717,14 @@
             }
 
             // ======================== الحالة المركزية المتطورة ========================
-            class AdvancedAppState extends EventTarget {
+            class AdvancedAppState {
                 constructor() {
-                    super();
                     this.user = null;
                     this.isAdmin = false;
                     this.loading = true;
                     this.accessDenied = false;
                     this.telegramMissing = false;
-                    this.balance = ADVANCED_CONFIG.DEFAULT_BALANCE;
+                    this._balance = ADVANCED_CONFIG.DEFAULT_BALANCE;
                     this.theme = 'dark';
                     this.settings = {
                         language: 'ar',
@@ -1792,31 +1737,34 @@
                     this.ads = [];
                     this.tasks = [];
                     this.transactions = [];
-                    this.notifications = [];
-                    this.paymentMethods = [];
                     this.depositRequests = [];
                     this.withdrawalRequests = [];
                     
                     // إحصائيات
                     this.stats = {
-                        users: 0,
+                        users: 1,
                         totalEarnings: 0,
                         totalAds: 0,
                         totalTasks: 0,
-                        activeNow: 0
+                        activeNow: 1
                     };
+                    
+                    // مستمعي الأحداث
+                    this.listeners = {};
                 }
 
-                set(key, value) {
-                    if (this[key] !== undefined) {
-                        this[key] = value;
-                        this.dispatchEvent(new CustomEvent('stateChanged', { detail: { key, value } }));
-                    }
+                get balance() {
+                    return this._balance;
                 }
 
-                updateBalance(amount) {
-                    this.balance = amount;
-                    this.dispatchEvent(new CustomEvent('balanceUpdated', { detail: amount }));
+                set balance(value) {
+                    this._balance = value;
+                    this.emit('balanceChanged', value);
+                }
+
+                updateBalance(newBalance) {
+                    this._balance = newBalance;
+                    this.emit('balanceChanged', newBalance);
                 }
 
                 addTransaction(type, amount, note) {
@@ -1828,8 +1776,21 @@
                         date: new Date().toISOString()
                     };
                     this.transactions.unshift(transaction);
-                    this.dispatchEvent(new CustomEvent('transactionAdded', { detail: transaction }));
+                    this.emit('transactionAdded', transaction);
                     return transaction;
+                }
+
+                on(event, callback) {
+                    if (!this.listeners[event]) {
+                        this.listeners[event] = [];
+                    }
+                    this.listeners[event].push(callback);
+                }
+
+                emit(event, data) {
+                    if (this.listeners[event]) {
+                        this.listeners[event].forEach(callback => callback(data));
+                    }
                 }
             }
 
@@ -1857,13 +1818,11 @@
                 }
 
                 bindGlobalEvents() {
-                    this.state.addEventListener('balanceUpdated', () => this.updateBalanceDisplay());
+                    this.state.on('balanceChanged', () => this.updateBalanceDisplay());
                     
+                    // مستمع لأحداث النافذة
                     window.addEventListener('newNotification', (e) => {
                         this.updateNotificationBadge();
-                        if (this.state.settings.notifications) {
-                            this.toast.show(e.detail.message, e.detail.type);
-                        }
                     });
                 }
 
@@ -1950,7 +1909,7 @@
                     const today = new Date();
                     
                     return `
-                        <div class="space-y-5 animate__animated animate__fadeInUp">
+                        <div class="space-y-5">
                             <!-- بطاقة الترحيب المتطورة -->
                             <div class="balance-card">
                                 <div class="flex items-start justify-between mb-4">
@@ -2042,26 +2001,26 @@
                             </div>
 
                             <!-- الشبكة الترويجية -->
-                            <div class="promo-grid">
-                                <div class="promo-item">
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="glass-card p-3 text-center">
                                     <i class="fa-solid fa-gift text-2xl text-blue-400 mb-2"></i>
-                                    <div class="font-bold">المكافأة اليومية</div>
-                                    <button id="dailyRewardBtn" class="mt-2 text-xs bg-blue-600 px-3 py-1 rounded-full">
+                                    <div class="font-bold text-sm">المكافأة اليومية</div>
+                                    <button id="dailyRewardBtn" class="mt-2 text-xs bg-blue-600 px-3 py-1 rounded-full w-full">
                                         استلام
                                     </button>
                                 </div>
-                                <div class="promo-item">
+                                <div class="glass-card p-3 text-center">
                                     <i class="fa-solid fa-ranking-star text-2xl text-purple-400 mb-2"></i>
-                                    <div class="font-bold">المتصدرين</div>
-                                    <button id="leaderboardBtn" class="mt-2 text-xs bg-purple-600 px-3 py-1 rounded-full">
+                                    <div class="font-bold text-sm">المتصدرين</div>
+                                    <button id="leaderboardBtn" class="mt-2 text-xs bg-purple-600 px-3 py-1 rounded-full w-full">
                                         عرض
                                     </button>
                                 </div>
-                                <div class="promo-item">
+                                <div class="glass-card p-3 text-center">
                                     <i class="fa-solid fa-users text-2xl text-green-400 mb-2"></i>
-                                    <div class="font-bold">الإحالة</div>
-                                    <button id="referralBtn" class="mt-2 text-xs bg-green-600 px-3 py-1 rounded-full">
-                                        ادعو أصدقاء
+                                    <div class="font-bold text-sm">الإحالة</div>
+                                    <button id="referralBtn" class="mt-2 text-xs bg-green-600 px-3 py-1 rounded-full w-full">
+                                        ادعو
                                     </button>
                                 </div>
                             </div>
@@ -2086,22 +2045,6 @@
                                 </h3>
                                 <div class="space-y-2 max-h-40 overflow-y-auto">
                                     ${this.renderLatestAds()}
-                                </div>
-                            </div>
-
-                            <!-- شريط الإنجازات -->
-                            <div class="flex justify-between items-center p-3 glass-card">
-                                <span class="text-sm">الإنجازات</span>
-                                <div class="flex gap-1">
-                                    <div class="badge-achievement">
-                                        <i class="fa-solid fa-trophy"></i>
-                                    </div>
-                                    <div class="badge-achievement" style="background: linear-gradient(135deg, #3b82f6, #60a5fa)">
-                                        <i class="fa-solid fa-medal"></i>
-                                    </div>
-                                    <div class="badge-achievement" style="background: linear-gradient(135deg, #10b981, #34d399)">
-                                        <i class="fa-solid fa-star"></i>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2191,7 +2134,11 @@
                                             <span class="badge-pending">قيد المراجعة</span>
                                         </div>
                                         <div class="text-sm mt-1">المهمة: ${v.taskTitle}</div>
-                                        <div class="text-xs text-gray-400 mt-1">${v.verificationData}</div>
+                                        <div class="text-xs text-gray-400 mt-1">${v.verificationData || 'لا يوجد بيانات'}</div>
+                                        <div class="flex gap-2 mt-2">
+                                            <button class="accept-task-verify btn-gradient py-1 px-3 text-sm" data-user-id="${v.userId}" data-task-id="${v.taskId}">قبول</button>
+                                            <button class="reject-task-verify bg-red-600 py-1 px-3 rounded-full text-sm" data-user-id="${v.userId}" data-task-id="${v.taskId}">رفض</button>
+                                        </div>
                                     </div>
                                 `).join('') : 
                                 '<p class="text-gray-400 text-center py-4">لا توجد طلبات معلقة</p>'}
@@ -2234,6 +2181,8 @@
 
                 initializeParticles() {
                     const particles = document.getElementById('particles');
+                    if (!particles) return;
+                    
                     particles.innerHTML = '';
                     
                     for (let i = 0; i < 10; i++) {
@@ -2368,9 +2317,12 @@
                 bindWalletModalEvents() {
                     const modalOverlay = document.getElementById('walletModalOverlayAdvanced');
                     
-                    document.getElementById('closeWalletModal').addEventListener('click', () => {
-                        modalOverlay.classList.remove('open');
-                    });
+                    const closeBtn = document.getElementById('closeWalletModal');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', () => {
+                            modalOverlay.classList.remove('open');
+                        });
+                    }
 
                     modalOverlay.addEventListener('click', (e) => {
                         if (e.target === modalOverlay) {
@@ -2378,29 +2330,35 @@
                         }
                     });
 
-                    document.getElementById('depositBtn').addEventListener('click', () => {
-                        const amount = parseFloat(prompt('أدخل المبلغ للإيداع:'));
-                        if (amount && amount > 0) {
-                            this.state.balance += amount;
-                            this.state.addTransaction('deposit', amount, 'إيداع');
-                            this.toast.success(`تم إيداع ${amount} بنجاح`);
-                            this.openWalletModal();
-                        }
-                    });
-
-                    document.getElementById('withdrawBtn').addEventListener('click', () => {
-                        const amount = parseFloat(prompt('أدخل المبلغ للسحب:'));
-                        if (amount && amount > 0) {
-                            if (amount <= this.state.balance) {
-                                this.state.balance -= amount;
-                                this.state.addTransaction('withdraw', -amount, 'سحب');
-                                this.toast.success(`تم سحب ${amount} بنجاح`);
+                    const depositBtn = document.getElementById('depositBtn');
+                    if (depositBtn) {
+                        depositBtn.addEventListener('click', () => {
+                            const amount = parseFloat(prompt('أدخل المبلغ للإيداع:'));
+                            if (amount && amount > 0) {
+                                this.state.updateBalance(this.state.balance + amount);
+                                this.state.addTransaction('deposit', amount, 'إيداع');
+                                this.toast.success(`تم إيداع ${amount} بنجاح`);
                                 this.openWalletModal();
-                            } else {
-                                this.toast.error('الرصيد غير كافٍ');
                             }
-                        }
-                    });
+                        });
+                    }
+
+                    const withdrawBtn = document.getElementById('withdrawBtn');
+                    if (withdrawBtn) {
+                        withdrawBtn.addEventListener('click', () => {
+                            const amount = parseFloat(prompt('أدخل المبلغ للسحب:'));
+                            if (amount && amount > 0) {
+                                if (amount <= this.state.balance) {
+                                    this.state.updateBalance(this.state.balance - amount);
+                                    this.state.addTransaction('withdraw', -amount, 'سحب');
+                                    this.toast.success(`تم سحب ${amount} بنجاح`);
+                                    this.openWalletModal();
+                                } else {
+                                    this.toast.error('الرصيد غير كافٍ');
+                                }
+                            }
+                        });
+                    }
                 }
 
                 openAdsModal() {
@@ -2471,9 +2429,12 @@
                 bindAdsModalEvents() {
                     const modalOverlay = document.getElementById('adModalOverlayAdvanced');
                     
-                    document.getElementById('closeAdsModal').addEventListener('click', () => {
-                        modalOverlay.classList.remove('open');
-                    });
+                    const closeBtn = document.getElementById('closeAdsModal');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', () => {
+                            modalOverlay.classList.remove('open');
+                        });
+                    }
 
                     modalOverlay.addEventListener('click', (e) => {
                         if (e.target === modalOverlay) {
@@ -2526,20 +2487,24 @@
                                 
                                 let buttonHtml = '';
                                 let statusClass = '';
+                                let statusText = '';
                                 
                                 if (status === 'new') {
                                     buttonHtml = `<button class="btn-gradient w-full start-task-btn" data-task-id="${task.id}">بدء المهمة</button>`;
                                     statusClass = 'badge-pending';
+                                    statusText = 'جديد';
                                 } else if (status === 'started') {
                                     buttonHtml = `<button class="btn-gradient w-full complete-task-btn" data-task-id="${task.id}" style="background: linear-gradient(135deg, #f59e0b, #fbbf24)">إكمال المهمة</button>`;
                                     statusClass = 'badge-warning';
+                                    statusText = 'قيد التنفيذ';
                                 } else if (status === 'pending') {
                                     buttonHtml = `<button class="btn-gradient w-full opacity-50" disabled>قيد المراجعة</button>`;
-                                    statusClass = 'badge-warning';
+                                    statusClass = 'badge-pending';
+                                    statusText = 'قيد المراجعة';
                                 }
                                 
                                 return `
-                                    <div class="task-card-advanced ${status === 'completed' ? 'completed' : ''}">
+                                    <div class="task-card-advanced">
                                         <div class="flex justify-between items-start mb-3">
                                             <div>
                                                 <h3 class="font-bold">${task.title}</h3>
@@ -2554,7 +2519,7 @@
                                                     <i class="fa-solid fa-coins"></i>
                                                     ${task.reward}
                                                 </div>
-                                                <span class="${statusClass}">${status === 'new' ? 'جديد' : status === 'started' ? 'قيد التنفيذ' : 'قيد المراجعة'}</span>
+                                                <span class="${statusClass}">${statusText}</span>
                                             </div>
                                         </div>
                                         ${buttonHtml}
@@ -2569,9 +2534,12 @@
                 bindTasksModalEvents() {
                     const modalOverlay = document.getElementById('taskModalOverlayAdvanced');
                     
-                    document.getElementById('closeTasksModal').addEventListener('click', () => {
-                        modalOverlay.classList.remove('open');
-                    });
+                    const closeBtn = document.getElementById('closeTasksModal');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', () => {
+                            modalOverlay.classList.remove('open');
+                        });
+                    }
 
                     modalOverlay.addEventListener('click', (e) => {
                         if (e.target === modalOverlay) {
@@ -2651,9 +2619,12 @@
                     
                     modalOverlay.classList.add('open');
                     
-                    document.getElementById('closeLeaderboardModal').addEventListener('click', () => {
-                        modalOverlay.classList.remove('open');
-                    });
+                    const closeBtn = document.getElementById('closeLeaderboardModal');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', () => {
+                            modalOverlay.classList.remove('open');
+                        });
+                    }
 
                     modalOverlay.addEventListener('click', (e) => {
                         if (e.target === modalOverlay) {
@@ -2701,7 +2672,7 @@
                         <div class="glass-card p-4 mb-4">
                             <label class="text-sm text-gray-400 block mb-2">رابط الإحالة الخاص بك</label>
                             <div class="flex gap-2">
-                                <input type="text" value="https://t.me/your_bot?start=${referralCode}" class="flex-1 bg-white/5 rounded-xl p-3 text-sm border border-white/10" readonly>
+                                <input type="text" value="https://t.me/your_bot?start=${referralCode}" class="flex-1 bg-white/5 rounded-xl p-3 text-sm border border-white/10" readonly id="referralLinkInput">
                                 <button id="copyReferralLink" class="btn-gradient px-4">
                                     <i class="fa-regular fa-copy"></i>
                                 </button>
@@ -2716,16 +2687,22 @@
                     
                     modalOverlay.classList.add('open');
                     
-                    document.getElementById('closeReferralModal').addEventListener('click', () => {
-                        modalOverlay.classList.remove('open');
-                    });
+                    const closeBtn = document.getElementById('closeReferralModal');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', () => {
+                            modalOverlay.classList.remove('open');
+                        });
+                    }
 
-                    document.getElementById('copyReferralLink').addEventListener('click', () => {
-                        const link = document.querySelector('#referralModalContentAdvanced input');
-                        link.select();
-                        document.execCommand('copy');
-                        this.toast.success('تم نسخ الرابط');
-                    });
+                    const copyBtn = document.getElementById('copyReferralLink');
+                    if (copyBtn) {
+                        copyBtn.addEventListener('click', () => {
+                            const link = document.getElementById('referralLinkInput');
+                            link.select();
+                            document.execCommand('copy');
+                            this.toast.success('تم نسخ الرابط');
+                        });
+                    }
 
                     modalOverlay.addEventListener('click', (e) => {
                         if (e.target === modalOverlay) {
@@ -2807,84 +2784,43 @@
                             <!-- طلبات التحقق من المهام -->
                             <div class="glass-card p-4">
                                 <h3 class="font-bold mb-3 flex items-center gap-2">
-                                                                               <i class="fa-solid fa-check-circle text-green-400 ml-1"></i>
-                                            طلبات التحقق من المهام (${pendingVerifications.length})
-                                        </h3>
-                                        ${pendingVerifications.length > 0 ? pendingVerifications.map(req => `
-                                            <div class="bg-white/5 rounded-2xl p-3 mb-2">
-                                                <div class="flex justify-between">
-                                                    <span class="font-bold">المستخدم: ${req.userId}</span>
-                                                    <span class="badge-pending">مراجعة</span>
-                                                </div>
-                                                <div class="text-sm mt-1">المهمة: ${req.taskTitle}</div>
-                                                <div class="text-xs text-gray-400 truncate">البيان: ${req.verificationData || 'لا يوجد'}</div>
-                                                <div class="flex gap-2 mt-2">
-                                                    <button class="accept-task-verify btn-gradient py-1 px-3 text-sm" data-user-id="${req.userId}" data-task-id="${req.taskId}">قبول</button>
-                                                    <button class="reject-task-verify bg-red-600 py-1 px-3 rounded-full text-sm" data-user-id="${req.userId}" data-task-id="${req.taskId}">رفض</button>
-                                                </div>
-                                            </div>
-                                        `).join('') : 
-                                        '<p class="text-gray-400 text-center py-2">لا توجد طلبات مراجعة</p>'}
+                                    <i class="fa-solid fa-check-circle text-green-400"></i>
+                                    طلبات التحقق من المهام (${pendingVerifications.length})
+                                </h3>
+                                ${pendingVerifications.length > 0 ? pendingVerifications.map(req => `
+                                    <div class="bg-white/5 rounded-2xl p-3 mb-2">
+                                        <div class="flex justify-between">
+                                            <span class="font-bold">المستخدم: ${req.userId}</span>
+                                            <span class="badge-pending">مراجعة</span>
+                                        </div>
+                                        <div class="text-sm mt-1">المهمة: ${req.taskTitle}</div>
+                                        <div class="text-xs text-gray-400 truncate">البيان: ${req.verificationData || 'لا يوجد'}</div>
+                                        <div class="flex gap-2 mt-2">
+                                            <button class="accept-task-verify btn-gradient py-1 px-3 text-sm" data-user-id="${req.userId}" data-task-id="${req.taskId}">قبول</button>
+                                            <button class="reject-task-verify bg-red-600 py-1 px-3 rounded-full text-sm" data-user-id="${req.userId}" data-task-id="${req.taskId}">رفض</button>
+                                        </div>
                                     </div>
-                                </div>
-                            `;
+                                `).join('') : 
+                                '<p class="text-gray-400 text-center py-2">لا توجد طلبات مراجعة</p>'}
+                            </div>
+                        </div>
+                    `;
                 }
 
                 bindAdminPanelEvents() {
                     const modalOverlay = document.getElementById('adminPanelOverlayAdvanced');
 
-                    document.getElementById('closeAdminPanel').addEventListener('click', () => {
-                        modalOverlay.classList.remove('open');
-                    });
+                    const closeBtn = document.getElementById('closeAdminPanel');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', () => {
+                            modalOverlay.classList.remove('open');
+                        });
+                    }
 
                     modalOverlay.addEventListener('click', (e) => {
                         if (e.target === modalOverlay) {
                             modalOverlay.classList.remove('open');
                         }
-                    });
-
-                    // الموافقة على طلب إيداع (مثال توضيحي - يجب ربطه بمنطق حقيقي)
-                    document.querySelectorAll('.accept-deposit').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const requestId = btn.dataset.id;
-                            this.toast.success(`تم قبول طلب الإيداع: ${requestId} (مثال توضيحي)`);
-                            // TODO: تنفيذ منطق الموافقة على الإيداع (تحديث حالة الطلب، إضافة الرصيد للمستخدم...)
-                            this.openAdminPanel(); // إعادة فتح اللوحة لتحديث القائمة
-                        });
-                    });
-
-                    // رفض طلب إيداع
-                    document.querySelectorAll('.reject-deposit').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const requestId = btn.dataset.id;
-                            this.toast.error(`تم رفض طلب الإيداع: ${requestId} (مثال توضيحي)`);
-                            // TODO: تنفيذ منطق الرفض
-                            this.openAdminPanel();
-                        });
-                    });
-
-                    // الموافقة على طلب سحب
-                    document.querySelectorAll('.accept-withdraw').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const requestId = btn.dataset.id;
-                            this.toast.success(`تم قبول طلب السحب: ${requestId} (مثال توضيحي)`);
-                            // TODO: تنفيذ منطق الموافقة على السحب (خصم الرصيد، تحديث الحالة...)
-                            this.openAdminPanel();
-                        });
-                    });
-
-                    // رفض طلب سحب
-                    document.querySelectorAll('.reject-withdraw').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const requestId = btn.dataset.id;
-                            this.toast.error(`تم رفض طلب السحب: ${requestId} (مثال توضيحي)`);
-                            // TODO: تنفيذ منطق الرفض
-                            this.openAdminPanel();
-                        });
                     });
 
                     // قبول التحقق من مهمة
@@ -2896,6 +2832,7 @@
                             const result = this.taskSystem.verifyTask(userId, taskId, true);
                             if (result && result.success) {
                                 this.toast.success(`تم قبول المهمة وإضافة ${result.reward} للمستخدم`);
+                                this.leaderboardSystem.updateUserData(userId, { balance: this.state.balance });
                             } else {
                                 this.toast.error('حدث خطأ في قبول المهمة');
                             }
@@ -2911,7 +2848,7 @@
                             const taskId = btn.dataset.taskId;
                             const result = this.taskSystem.verifyTask(userId, taskId, false);
                             if (result) {
-                                this.toast.warning(`تم رفض المهمة.`);
+                                this.toast.warning(`تم رفض المهمة`);
                             } else {
                                 this.toast.error('حدث خطأ في رفض المهمة');
                             }
@@ -2921,8 +2858,132 @@
                 }
 
                 openAdsManagementModal() {
-                    // TODO: Implement modal to manage ads (add, edit, delete)
-                    this.toast.info('واجهة إدارة الإعلانات قيد التطوير (مثال توضيحي)');
+                    const modalOverlay = document.getElementById('manageAdsModalOverlayAdvanced');
+                    const modalContent = document.getElementById('manageAdsModalContentAdvanced');
+                    
+                    modalContent.innerHTML = this.renderAdsManagementModal();
+                    modalOverlay.classList.add('open');
+                    
+                    this.bindAdsManagementEvents();
+                }
+
+                renderAdsManagementModal() {
+                    return `
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold gradient-text">إدارة الإعلانات</h2>
+                            <button class="close-button" id="closeManageAdsModal">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="mb-4">
+                            <button id="addAdBtn" class="btn-gradient w-full">
+                                <i class="fa-solid fa-plus ml-2"></i>
+                                إضافة إعلان جديد
+                            </button>
+                        </div>
+
+                        <div class="space-y-3 max-h-96 overflow-y-auto">
+                            ${this.state.ads.map(ad => `
+                                <div class="glass-card p-3">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-bold">${ad.title}</h3>
+                                            <p class="text-xs text-gray-400">${ad.description}</p>
+                                            <div class="flex gap-2 mt-1 text-xs">
+                                                <span>المكافأة: ${ad.reward}</span>
+                                                <span>المشاهدات: ${ad.views}</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <button class="edit-ad-btn text-blue-400" data-ad-id="${ad.id}">
+                                                <i class="fa-solid fa-edit"></i>
+                                            </button>
+                                            <button class="delete-ad-btn text-red-400" data-ad-id="${ad.id}">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
+                bindAdsManagementEvents() {
+                    const modalOverlay = document.getElementById('manageAdsModalOverlayAdvanced');
+                    
+                    const closeBtn = document.getElementById('closeManageAdsModal');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', () => {
+                            modalOverlay.classList.remove('open');
+                        });
+                    }
+
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay) {
+                            modalOverlay.classList.remove('open');
+                        }
+                    });
+
+                    const addBtn = document.getElementById('addAdBtn');
+                    if (addBtn) {
+                        addBtn.addEventListener('click', () => {
+                            const title = prompt('أدخل عنوان الإعلان:');
+                            if (!title) return;
+                            
+                            const description = prompt('أدخل وصف الإعلان:');
+                            if (!description) return;
+                            
+                            const reward = parseInt(prompt('أدخل مكافأة الإعلان:'));
+                            if (isNaN(reward)) return;
+                            
+                            const newAd = {
+                                title,
+                                description,
+                                reward,
+                                image: 'fa-solid fa-ad',
+                                link: 'https://example.com',
+                                duration: 30,
+                                category: 'عام',
+                                maxViews: 1000
+                            };
+                            
+                            this.adSystem.addAd(newAd);
+                            this.toast.success('تم إضافة الإعلان بنجاح');
+                            this.openAdsManagementModal();
+                        });
+                    }
+
+                    document.querySelectorAll('.edit-ad-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const adId = btn.dataset.adId;
+                            const ad = this.state.ads.find(a => a.id === adId);
+                            
+                            if (ad) {
+                                const newReward = parseInt(prompt('أدخل المكافأة الجديدة:', ad.reward));
+                                if (!isNaN(newReward)) {
+                                    this.adSystem.updateAd(adId, { reward: newReward });
+                                    this.toast.success('تم تحديث الإعلان');
+                                    this.openAdsManagementModal();
+                                }
+                            }
+                        });
+                    });
+
+                    document.querySelectorAll('.delete-ad-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const adId = btn.dataset.adId;
+                            
+                            if (confirm('هل أنت متأكد من حذف هذا الإعلان؟')) {
+                                this.adSystem.deleteAd(adId);
+                                this.toast.success('تم حذف الإعلان');
+                                this.openAdsManagementModal();
+                            }
+                        });
+                    });
                 }
 
                 claimDailyReward() {
@@ -2938,7 +2999,7 @@
                     const shareText = `🎉 انضموا إلي على منصة أرباحي المتطورة!\n👤 المستوى: ${level.name}\n💰 الرصيد: ${this.state.balance}\n📲 حمل التطبيق الآن وابدأ الربح!`;
                     
                     if (this.telegram.isAvailable) {
-                        this.telegram.tg.shareToStory?.(shareText) || this.telegram.openTelegramLink?.(`https://t.me/share/url?url=${encodeURIComponent('https://t.me/your_bot')}&text=${encodeURIComponent(shareText)}`);
+                        this.telegram.openTelegramLink?.(`https://t.me/share/url?url=${encodeURIComponent('https://t.me/your_bot')}&text=${encodeURIComponent(shareText)}`);
                     } else {
                         navigator.clipboard?.writeText(shareText).then(() => {
                             this.toast.success('تم نسخ النص للمشاركة');
@@ -2971,7 +3032,7 @@
                         state.user = user;
                         state.isAdmin = (user.id.toString() === ADVANCED_CONFIG.ADMIN_ID.toString());
 
-                        // تحميل البيانات المحفوظة (مثال للرصيد)
+                        // تحميل البيانات المحفوظة
                         const savedBalance = AdvancedStorage.get(`user_balance_${user.id}`);
                         if (savedBalance !== null) {
                             state.balance = savedBalance;
@@ -2980,11 +3041,35 @@
                             AdvancedStorage.set(`user_balance_${user.id}`, state.balance);
                         }
 
+                        // تحديث بيانات المستخدم في نظام المتصدرين
+                        const levelSystem = new LevelSystem(state);
+                        new LeaderboardSystem(state).updateUserData(user.id.toString(), {
+                            name: user.first_name,
+                            balance: state.balance,
+                            level: levelSystem.getCurrentLevel().name
+                        });
+
+                        // التحقق من أول دخول
+                        const firstLogin = AdvancedStorage.get(`first_login_${user.id}`);
+                        if (!firstLogin) {
+                            const achievementSystem = new AchievementSystem(state, toast);
+                            achievementSystem.checkAndAward(user.id, 'FIRST_LOGIN');
+                            AdvancedStorage.set(`first_login_${user.id}`, true);
+                        }
+
                         // التحقق من Referral Code إذا كان موجوداً
                         const startParam = telegram.getStartParam();
                         if (startParam) {
-                            // TODO: فك تشفير startParam لمعرفة من قام بالإحالة
-                            toast.info(`تم الدخول عبر رابط إحالة: ${startParam} (مثال توضيحي)`);
+                            // محاولة فك التشفير
+                            try {
+                                const referralSystem = new ReferralSystem(state, toast);
+                                const referredBy = atob(startParam.replace(/[^A-Za-z0-9]/g, ''));
+                                if (referredBy && referredBy !== user.id.toString()) {
+                                    referralSystem.addReferral(referredBy, user.id.toString());
+                                }
+                            } catch (e) {
+                                console.log('Invalid referral code');
+                            }
                         }
 
                     } else {
@@ -2996,9 +3081,14 @@
                 const uiManager = new AdvancedUIManager(state, telegram, toast, notificationSystem);
 
                 // ربط حدث تغيير الرصيد لحفظه تلقائياً
-                state.addEventListener('balanceUpdated', () => {
+                state.on('balanceChanged', (newBalance) => {
                     if (state.user) {
-                        AdvancedStorage.set(`user_balance_${state.user.id}`, state.balance);
+                        AdvancedStorage.set(`user_balance_${state.user.id}`, newBalance);
+                        // تحديث بيانات المستخدم في نظام المتصدرين
+                        uiManager.leaderboardSystem.updateUserData(state.user.id.toString(), {
+                            balance: newBalance,
+                            level: uiManager.levelSystem.getCurrentLevel().name
+                        });
                     }
                 });
 
@@ -3008,26 +3098,81 @@
                     uiManager.render();
                 }, 1500);
 
-                // ربط أزرار الواجهة العامة (شريط الحالة)
-                document.getElementById('themeToggleAdvanced').addEventListener('click', () => {
-                    // TODO: Implement theme switching logic
-                    toast.info('وضع الظل قيد التطوير');
-                });
+                // ربط أزرار الواجهة العامة
+                const themeToggle = document.getElementById('themeToggleAdvanced');
+                if (themeToggle) {
+                    themeToggle.addEventListener('click', () => {
+                        toast.info('وضع الظل قيد التطوير');
+                    });
+                }
 
-                document.getElementById('notificationBellAdvanced').addEventListener('click', () => {
-                    if (state.user) {
-                        const count = notificationSystem.getUnreadCount(state.user.id);
-                        toast.info(`لديك ${count} إشعار غير مقروء`);
-                        // TODO: Open notifications modal
-                    }
-                });
+                const notificationBell = document.getElementById('notificationBellAdvanced');
+                if (notificationBell) {
+                    notificationBell.addEventListener('click', () => {
+                        if (state.user) {
+                            const count = notificationSystem.getUnreadCount(state.user.id);
+                            toast.info(`لديك ${count} إشعار غير مقروء`);
+                            // تعليم الكل كمقروء
+                            notificationSystem.markAllAsRead(state.user.id);
+                            uiManager.updateNotificationBadge();
+                        }
+                    });
+                }
 
-                // Settings Panel
-                document.getElementById('closeSettingsAdvanced').addEventListener('click', () => {
-                    document.getElementById('settingsPanelAdvanced').classList.remove('open');
-                });
+                // فتح وإغلاق لوحة الإعدادات
+                const openSettings = document.getElementById('openSettingsAdvanced');
+                const settingsPanel = document.getElementById('settingsPanelAdvanced');
+                const closeSettings = document.getElementById('closeSettingsAdvanced');
 
-                // يمكن إضافة المزيد من أحداث الإعدادات هنا...
+                if (openSettings) {
+                    openSettings.addEventListener('click', () => {
+                        settingsPanel.classList.add('open');
+                    });
+                }
+
+                if (closeSettings) {
+                    closeSettings.addEventListener('click', () => {
+                        settingsPanel.classList.remove('open');
+                    });
+                }
+
+                // إعدادات اللغة
+                const languageSelect = document.getElementById('languageSelectAdvanced');
+                if (languageSelect) {
+                    languageSelect.addEventListener('change', (e) => {
+                        const lang = e.target.value;
+                        state.settings.language = lang;
+                        toast.info(`تم تغيير اللغة إلى: ${lang === 'ar' ? 'العربية' : lang === 'en' ? 'English' : 'Français'}`);
+                        // TODO: تنفيذ تغيير اللغة الفعلي
+                    });
+                }
+
+                // إعدادات الإشعارات
+                const notificationsToggle = document.getElementById('notificationsToggleAdvanced');
+                if (notificationsToggle) {
+                    notificationsToggle.addEventListener('change', (e) => {
+                        state.settings.notifications = e.target.checked;
+                        toast.info(`الإشعارات: ${e.target.checked ? 'مفعلة' : 'معطلة'}`);
+                    });
+                }
+
+                // إعدادات الصوت
+                const soundToggle = document.getElementById('soundToggleAdvanced');
+                if (soundToggle) {
+                    soundToggle.addEventListener('change', (e) => {
+                        state.settings.sound = e.target.checked;
+                        toast.info(`المؤثرات الصوتية: ${e.target.checked ? 'مفعلة' : 'معطلة'}`);
+                    });
+                }
+
+                // إعدادات الاهتزاز
+                const vibrateToggle = document.getElementById('vibrateToggleAdvanced');
+                if (vibrateToggle) {
+                    vibrateToggle.addEventListener('change', (e) => {
+                        state.settings.vibrate = e.target.checked;
+                        toast.info(`الاهتزاز: ${e.target.checked ? 'مفعل' : 'معطل'}`);
+                    });
+                }
             })();
         })();
     </script>
