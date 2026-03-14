@@ -1758,6 +1758,45 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* أنماط جديدة لعد التنازلي للإعلانات */
+        .ad-close-timer {
+            position: absolute;
+            top: -18px;
+            left: 20px;
+            background: var(--antique-gold);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #000;
+            font-size: 14px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.4);
+            z-index: 10001;
+            border: 2px solid #fff;
+        }
+        
+        .ad-link-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 25px;
+            background: var(--gold-gradient);
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .ad-link-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(197,160,89,0.5);
+        }
     </style>
 </head>
 <body>
@@ -2532,6 +2571,9 @@
         let popupShown = false;
         let rewardedAdActive = false;
         let rewardTimer = null;
+        
+        // متغيرات عد التنازل للإعلانات
+        let adCloseTimers = {};
 
         // فتح قاعدة البيانات
         function openDB() {
@@ -2953,7 +2995,59 @@
             }
         }
 
-        // ==================== نظام الإعلانات المتقدم ====================
+        // ==================== نظام الإعلانات المتقدم مع فتح الرابط التلقائي ====================
+        
+        // دالة جديدة لفتح الرابط تلقائياً في نافذة منبثقة
+        function openAdLink(url, adType) {
+            if (!url) return;
+            
+            // فتح الرابط في نافذة منبثقة
+            const adWindow = window.open(url, '_blank', 'width=800,height=600,left=200,top=100,resizable=yes,scrollbars=yes');
+            
+            // تتبع النقرة
+            trackAdClick(adType);
+            
+            // بدء عد تنازلي لإغلاق النافذة بعد 5 ثوانٍ
+            setTimeout(() => {
+                if (adWindow && !adWindow.closed) {
+                    adWindow.close();
+                }
+            }, 5000);
+        }
+        
+        // دالة لإنشاء زر الرابط مع عد تنازلي
+        function createAdWithLink(adCode, adType, linkUrl) {
+            if (!linkUrl) return adCode;
+            
+            const timerId = 'adTimer_' + Date.now();
+            
+            return `
+                <div style="position: relative; padding: 10px;">
+                    ${adCode}
+                    <div class="ad-close-timer" id="${timerId}">5</div>
+                    <button class="ad-link-button" onclick="openAdLink('${linkUrl}', '${adType}')">
+                        اضغط لفتح الإعلان (سيغلق بعد 5 ثوانٍ)
+                    </button>
+                </div>
+                <script>
+                    (function() {
+                        let seconds = 5;
+                        const timerEl = document.getElementById('${timerId}');
+                        const interval = setInterval(() => {
+                            seconds--;
+                            if (timerEl) timerEl.textContent = seconds;
+                            if (seconds <= 0) {
+                                clearInterval(interval);
+                                if (timerEl) timerEl.style.display = 'none';
+                                // فتح الرابط تلقائياً بعد 5 ثوانٍ
+                                window.parent.openAdLink('${linkUrl}', '${adType}');
+                            }
+                        }, 1000);
+                    })();
+                <\/script>
+            `;
+        }
+
         function getRandomAd(position, adsArray) {
             if (!adsArray || adsArray.length === 0) return null;
             const randomIndex = Math.floor(Math.random() * adsArray.length);
@@ -3082,7 +3176,12 @@
             const adCode = siteSettings.ads?.floating || '';
             
             if (adCode) {
-                displayAd('floatingAdContent', adCode, 'floating');
+                // تعديل: إضافة الرابط التلقائي للإعلان العائم
+                const adWithLink = createAdWithLink(adCode, 'floating', 'https://example.com/ad-link');
+                floatingDiv.innerHTML = `
+                    <button class="close-floating-ad" onclick="closeFloatingAd()">✕</button>
+                    <div id="floatingAdContent">${adWithLink}</div>
+                `;
                 floatingDiv.style.display = 'block';
             } else {
                 floatingDiv.style.display = 'none';
@@ -3113,7 +3212,9 @@
                 }
                 
                 if (embedCode) {
-                    document.getElementById('videoAdContent').innerHTML = embedCode;
+                    // تعديل: إضافة الرابط التلقائي لإعلان الفيديو
+                    const videoWithLink = createAdWithLink(embedCode, 'video', 'https://example.com/video-ad');
+                    document.getElementById('videoAdContent').innerHTML = videoWithLink;
                 }
             }
         }
@@ -3158,10 +3259,12 @@
         }
 
         function showSmartPopup() {
-            const adCode = siteSettings.ads?.popup;
+            let adCode = siteSettings.ads?.popup;
             if (!adCode) return;
             
-            document.getElementById('smartPopupContent').innerHTML = adCode;
+            // تعديل: إضافة الرابط التلقائي للإعلان الذكي
+            const adWithLink = createAdWithLink(adCode, 'popup', 'https://example.com/smart-popup');
+            document.getElementById('smartPopupContent').innerHTML = adWithLink;
             document.getElementById('smartPopup').classList.add('active');
             trackAdImpression('popup');
         }
@@ -3172,11 +3275,15 @@
 
         // إعلان المكافأة
         function showRewardedAd() {
-            const adCode = siteSettings.ads?.rewarded;
+            let adCode = siteSettings.ads?.rewarded;
             if (!adCode || rewardedAdActive) return;
             
             rewardedAdActive = true;
-            document.getElementById('rewardedAdContent').innerHTML = adCode;
+            
+            // تعديل: إضافة الرابط التلقائي لإعلان المكافأة
+            const adWithLink = createAdWithLink(adCode, 'rewarded', 'https://example.com/rewarded-ad');
+            document.getElementById('rewardedAdContent').innerHTML = adWithLink;
+            
             document.getElementById('rewardedAd').classList.add('active');
             trackAdImpression('rewarded');
             
@@ -3194,6 +3301,8 @@
                     clearInterval(rewardTimer);
                     claimBtn.disabled = false;
                     claimBtn.style.opacity = '1';
+                    // فتح الرابط تلقائياً بعد انتهاء العد التنازلي
+                    openAdLink('https://example.com/rewarded-ad', 'rewarded');
                 }
             }, 1000);
         }
@@ -3486,11 +3595,14 @@
                     const adDiv = document.createElement('div');
                     adDiv.className = 'luxury-card ad-card';
                     
+                    // تعديل: إضافة الرابط التلقائي للإعلان بين المقالات
+                    const adWithLink = createAdWithLink(adCode, 'infeed', 'https://example.com/infeed-ad');
+                    
                     const iframe = document.createElement('iframe');
                     iframe.srcdoc = `
                         <html>
                             <body style="margin:0; padding:0; background:transparent; display:flex; align-items:center; justify-content:center; min-height:280px;">
-                                ${adCode}
+                                ${adWithLink}
                                 <script>
                                     document.addEventListener('click', function() {
                                         window.parent.postMessage({ type: 'adClick', position: 'infeed' }, '*');
@@ -3619,12 +3731,15 @@
             if (seasonalAd) adCode = seasonalAd;
             
             if (adCode) {
+                // تعديل: إضافة الرابط التلقائي للإعلان داخل المقال
+                const adWithLink = createAdWithLink(adCode, 'inArticle', 'https://example.com/inarticle-ad');
+                
                 const iframeAd = `
                     <div class="ad-in-article">
                         <iframe srcdoc='
                             <html>
                                 <body style="margin:0; padding:0; background:transparent;">
-                                    ${adCode.replace(/'/g, "\\'")}
+                                    ${adWithLink.replace(/'/g, "\\'")}
                                     <script>
                                         document.addEventListener("click", function() {
                                             window.parent.postMessage({ type: "adClick", position: "inArticle" }, "*");
@@ -4276,7 +4391,7 @@
 
             document.getElementById('copyrightYear').innerText = new Date().getFullYear();
             
-            // الاستماع لتتبع النقرات من iframe            // الاستماع لتتبع النقرات من iframe
+            // الاستماع لتتبع النقرات من iframe
             window.addEventListener('message', function(event) {
                 if (event.data && event.data.type === 'adClick' && event.data.position) {
                     trackAdClick(event.data.position);
@@ -4315,10 +4430,8 @@
             }
         };
 
-        // إغلاق الدوال الرئيسية والأحداث
-        window.onload = function() {
-            // ... محتوى onload السابق ...
-        }; // نهاية onload
+        // إضافة الدوال الجديدة للنطاق العام
+        window.openAdLink = openAdLink;
 
         // أي أحداث إضافية للصفحة
         document.addEventListener('DOMContentLoaded', function() {
