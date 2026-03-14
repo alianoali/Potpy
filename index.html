@@ -1841,7 +1841,7 @@
     </header>
 
     <!-- إعلان أعلى الصفحة (Header Ad) -->
-    <div id="adHeaderContainer" class="ad-container" style="display: none;"></div>
+    <div id="adHeaderContainer" class="ad-container"></div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -1870,7 +1870,7 @@
     </section>
 
     <!-- إعلان جانبي (Sidebar Ad) -->
-    <div id="sidebarAdContainer" class="ad-container" style="display: none;"></div>
+    <div id="sidebarAdContainer" class="ad-container"></div>
 
     <!-- News Section -->
     <section class="section">
@@ -2514,17 +2514,17 @@
             ],
             socialLinks: { facebook: "", twitter: "", instagram: "", youtube: "", linkedin: "" },
             adminPassword: "Ali1992@li",
-            // إعلانات
+            // إعلانات - وضعنا إعلانات تجريبية لتظهر تلقائياً
             ads: {
-                header: "",
-                infeed: "",
-                inArticle: "",
-                sidebar: "",
-                floating: "",
+                header: "<div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px;'><h3>إعلان ممول</h3><p>هذا إعلان تجريبي يظهر تلقائياً</p><button onclick='window.parent.openAdLink(\"https://example.com\", \"header\")' style='background: gold; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;'>اضغط هنا</button></div>",
+                infeed: "<div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px;'><h3>إعلان بين المقالات</h3><p>عرض خاص لفترة محدودة</p><button onclick='window.parent.openAdLink(\"https://example.com\", \"infeed\")' style='background: gold; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;'>اكتشف العرض</button></div>",
+                inArticle: "<div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px;'><h3>إعلان داخل المقال</h3><p>عرض حصري لقرائنا</p><button onclick='window.parent.openAdLink(\"https://example.com\", \"inarticle\")' style='background: gold; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;'>استفد الآن</button></div>",
+                sidebar: "<div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px;'><h3>إعلان جانبي</h3><p>خصم 50%</p><button onclick='window.parent.openAdLink(\"https://example.com\", \"sidebar\")' style='background: gold; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;'>تسوق الآن</button></div>",
+                floating: "<div style='display: flex; align-items: center; justify-content: space-between;'><span>🔥 عرض خاص: 50% خصم!</span><button onclick='window.parent.openAdLink(\"https://example.com\", \"floating\")' style='background: gold; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;'>اضغط هنا</button></div>",
                 videoUrl: "",
                 videoCode: "",
-                rewarded: "",
-                popup: "",
+                rewarded: "<div><h4>شاهد الفيديو واحصل على مكافأة</h4><video width='100%' controls><source src='https://www.w3schools.com/html/mov_bbb.mp4' type='video/mp4'></video></div>",
+                popup: "<div><h3>عرض خاص لك!</h3><p>اشترك الآن واحصل على خصم 30%</p><button onclick='window.parent.openAdLink(\"https://example.com\", \"popup\")' style='background: gold; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;'>اشترك الآن</button></div>",
                 amazon: {
                     tech: "",
                     books: "",
@@ -2627,9 +2627,18 @@
                 const settingsRequest = settingsStore.get('siteSettings');
                 settingsRequest.onsuccess = () => {
                     if (settingsRequest.result) siteSettings = settingsRequest.result.value;
-                    else { siteSettings = defaultSettings; saveSettingsToDB(); }
+                    else { siteSettings = { ...defaultSettings }; saveSettingsToDB(); }
                     applySettings();
-                    updateAllAds();
+                    
+                    // تحديث جميع الإعلانات فوراً
+                    setTimeout(() => {
+                        updateAllAds();
+                        // عرض الإعلان العائم بعد ثانية
+                        setTimeout(() => {
+                            showFloatingAd();
+                        }, 1000);
+                    }, 500);
+                    
                     loadAdStats();
                 };
 
@@ -2805,6 +2814,7 @@
             adStats.history.push(historyEntry);
             
             saveAdStats();
+            console.log('تم تسجيل ظهور إعلان في:', position);
         }
 
         function trackAdClick(position) {
@@ -2823,6 +2833,7 @@
             
             saveAdStats();
             updateAdAnalytics();
+            console.log('تم تسجيل نقرة إعلان في:', position);
         }
 
         function getCTR(position) {
@@ -3013,38 +3024,44 @@
                     adWindow.close();
                 }
             }, 5000);
+            
+            return false;
         }
         
         // دالة لإنشاء زر الرابط مع عد تنازلي
         function createAdWithLink(adCode, adType, linkUrl) {
             if (!linkUrl) return adCode;
             
-            const timerId = 'adTimer_' + Date.now();
+            const timerId = 'adTimer_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             
             return `
-                <div style="position: relative; padding: 10px;">
+                <div style="position: relative; padding: 10px; text-align: center;">
                     ${adCode}
                     <div class="ad-close-timer" id="${timerId}">5</div>
-                    <button class="ad-link-button" onclick="openAdLink('${linkUrl}', '${adType}')">
+                    <button class="ad-link-button" onclick="window.parent.openAdLink('${linkUrl}', '${adType}'); return false;">
                         اضغط لفتح الإعلان (سيغلق بعد 5 ثوانٍ)
                     </button>
+                    <script>
+                        (function() {
+                            let seconds = 5;
+                            const timerEl = document.getElementById('${timerId}');
+                            if (!timerEl) return;
+                            
+                            const interval = setInterval(function() {
+                                seconds--;
+                                if (timerEl) timerEl.textContent = seconds;
+                                if (seconds <= 0) {
+                                    clearInterval(interval);
+                                    if (timerEl) timerEl.style.display = 'none';
+                                    // فتح الرابط تلقائياً بعد 5 ثوانٍ
+                                    if (window.parent && window.parent.openAdLink) {
+                                        window.parent.openAdLink('${linkUrl}', '${adType}');
+                                    }
+                                }
+                            }, 1000);
+                        })();
+                    <\/script>
                 </div>
-                <script>
-                    (function() {
-                        let seconds = 5;
-                        const timerEl = document.getElementById('${timerId}');
-                        const interval = setInterval(() => {
-                            seconds--;
-                            if (timerEl) timerEl.textContent = seconds;
-                            if (seconds <= 0) {
-                                clearInterval(interval);
-                                if (timerEl) timerEl.style.display = 'none';
-                                // فتح الرابط تلقائياً بعد 5 ثوانٍ
-                                window.parent.openAdLink('${linkUrl}', '${adType}');
-                            }
-                        }, 1000);
-                    })();
-                <\/script>
             `;
         }
 
@@ -3100,7 +3117,15 @@
 
         function displayAd(containerId, adCode, position) {
             const container = document.getElementById(containerId);
-            if (!container || !adCode) return;
+            if (!container) {
+                console.warn('حاوية الإعلان غير موجودة:', containerId);
+                return;
+            }
+            
+            if (!adCode) {
+                container.style.display = 'none';
+                return;
+            }
             
             // تتبع الظهور
             if (position) trackAdImpression(position);
@@ -3108,12 +3133,21 @@
             const iframe = document.createElement('iframe');
             iframe.srcdoc = `
                 <html>
-                    <body style="margin:0; padding:0; background:transparent; font-family: 'Tajawal', sans-serif;">
+                    <head>
+                        <style>
+                            body { margin: 0; padding: 0; background: transparent; font-family: 'Tajawal', sans-serif; }
+                            button { cursor: pointer; }
+                        </style>
+                    </head>
+                    <body style="margin:0; padding:0; background:transparent;">
                         ${adCode}
                         <script>
                             // تتبع النقرات
-                            document.addEventListener('click', function() {
-                                window.parent.postMessage({ type: 'adClick', position: '${position}' }, '*');
+                            document.addEventListener('click', function(e) {
+                                // التحقق إذا كان النقر على زر الفتح
+                                if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+                                    window.parent.postMessage({ type: 'adClick', position: '${position}' }, '*');
+                                }
                             });
                         <\/script>
                     </body>
@@ -3128,19 +3162,15 @@
             container.appendChild(iframe);
             container.style.display = 'block';
             
-            // الاستماع لتتبع النقرات
-            window.addEventListener('message', (event) => {
-                if (event.data.type === 'adClick' && event.data.position) {
-                    trackAdClick(event.data.position);
-                }
-            });
+            console.log('تم عرض إعلان في:', containerId, 'بموقع:', position);
         }
 
         // تحديث الإعلانات
         function updateAllAds() {
+            console.log('جاري تحديث جميع الإعلانات...');
             updateHeaderAd();
             updateSidebarAd();
-            updateFloatingAd();
+            // لا نقوم بتحديث الإعلان العائم هنا لأننا نريد عرضه بشكل منفصل
             updateVideoAd();
         }
 
@@ -3171,21 +3201,31 @@
             displayAd('sidebarAdContainer', adCode, 'sidebar');
         }
 
-        function updateFloatingAd() {
+        function showFloatingAd() {
             const floatingDiv = document.getElementById('floatingAd');
             const adCode = siteSettings.ads?.floating || '';
             
             if (adCode) {
                 // تعديل: إضافة الرابط التلقائي للإعلان العائم
                 const adWithLink = createAdWithLink(adCode, 'floating', 'https://example.com/ad-link');
-                floatingDiv.innerHTML = `
-                    <button class="close-floating-ad" onclick="closeFloatingAd()">✕</button>
-                    <div id="floatingAdContent">${adWithLink}</div>
-                `;
+                
+                // تحديث محتوى الإعلان العائم
+                const floatingContent = document.getElementById('floatingAdContent');
+                if (floatingContent) {
+                    floatingContent.innerHTML = adWithLink;
+                }
+                
                 floatingDiv.style.display = 'block';
+                trackAdImpression('floating');
+                console.log('تم عرض الإعلان العائم');
             } else {
                 floatingDiv.style.display = 'none';
             }
+        }
+
+        function updateFloatingAd() {
+            // هذه الدالة تترك للعرض اليدوي
+            // نستخدم showFloatingAd() بدلاً منها للعرض التلقائي
         }
 
         function closeFloatingAd() {
@@ -3292,15 +3332,19 @@
             const progressBar = document.getElementById('rewardProgressBar');
             const claimBtn = document.getElementById('claimRewardBtn');
             
+            if (rewardTimer) clearInterval(rewardTimer);
+            
             rewardTimer = setInterval(() => {
                 timeLeft--;
-                timerElement.textContent = timeLeft;
-                progressBar.style.width = ((30 - timeLeft) / 30 * 100) + '%';
+                if (timerElement) timerElement.textContent = timeLeft;
+                if (progressBar) progressBar.style.width = ((30 - timeLeft) / 30 * 100) + '%';
                 
                 if (timeLeft <= 0) {
                     clearInterval(rewardTimer);
-                    claimBtn.disabled = false;
-                    claimBtn.style.opacity = '1';
+                    if (claimBtn) {
+                        claimBtn.disabled = false;
+                        claimBtn.style.opacity = '1';
+                    }
                     // فتح الرابط تلقائياً بعد انتهاء العد التنازلي
                     openAdLink('https://example.com/rewarded-ad', 'rewarded');
                 }
@@ -3314,8 +3358,6 @@
             
             // هنا يمكن إضافة المكافأة (مثلاً: فتح ميزة حصرية، نقاط، الخ)
             showToast('تهانينا! لقد حصلت على المكافأة 🎁', 'success');
-            
-            // مثال: فتح مقال حصري أو إلغاء قفل محتوى
         }
 
         function closeRewardedAd() {
@@ -3445,7 +3487,6 @@
 
             updateBreakingNewsBar();
             updateSocialIcons();
-            updateAllAds();
         }
 
         function toggleTheme() {
@@ -3512,6 +3553,12 @@
             
             saveData();
             showToast('تم حفظ إعدادات الإعلانات بنجاح', 'success');
+            
+            // تحديث الإعلانات بعد الحفظ
+            setTimeout(() => {
+                updateAllAds();
+                showFloatingAd();
+            }, 500);
         }
 
         // ==================== وضع التركيز ====================
@@ -3543,7 +3590,7 @@
                 newsBar.style.display = 'block';
                 adminBtn.style.display = 'flex';
                 backToTop.style.display = 'flex';
-                if (siteSettings.ads?.floating) floatingAd.style.display = 'block';
+                if (siteSettings.ads?.floating) showFloatingAd();
                 showToast('تم تعطيل وضع التركيز', 'info');
             }
         }
@@ -3601,11 +3648,18 @@
                     const iframe = document.createElement('iframe');
                     iframe.srcdoc = `
                         <html>
-                            <body style="margin:0; padding:0; background:transparent; display:flex; align-items:center; justify-content:center; min-height:280px;">
+                            <head>
+                                <style>
+                                    body { margin: 0; padding: 0; background: transparent; display: flex; align-items: center; justify-content: center; min-height: 280px; }
+                                </style>
+                            </head>
+                            <body>
                                 ${adWithLink}
                                 <script>
-                                    document.addEventListener('click', function() {
-                                        window.parent.postMessage({ type: 'adClick', position: 'infeed' }, '*');
+                                    document.addEventListener('click', function(e) {
+                                        if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+                                            window.parent.postMessage({ type: 'adClick', position: 'infeed' }, '*');
+                                        }
                                     });
                                 <\/script>
                             </body>
@@ -3738,11 +3792,14 @@
                     <div class="ad-in-article">
                         <iframe srcdoc='
                             <html>
+                                <head><style>body{margin:0;padding:0;background:transparent;}</style></head>
                                 <body style="margin:0; padding:0; background:transparent;">
                                     ${adWithLink.replace(/'/g, "\\'")}
                                     <script>
-                                        document.addEventListener("click", function() {
-                                            window.parent.postMessage({ type: "adClick", position: "inArticle" }, "*");
+                                        document.addEventListener("click", function(e) {
+                                            if (e.target.tagName === "BUTTON" || e.target.closest("button")) {
+                                                window.parent.postMessage({ type: "adClick", position: "inArticle" }, "*");
+                                            }
                                         });
                                     <\/script>
                                 </body>
@@ -4397,6 +4454,11 @@
                     trackAdClick(event.data.position);
                 }
             });
+            
+            // عرض الإعلان العائم بعد تحميل الصفحة
+            setTimeout(() => {
+                showFloatingAd();
+            }, 2000);
         }
 
         // دالة تحميل إحصائيات الإعلانات من التخزين (إذا لم تكن موجودة)
@@ -4432,12 +4494,10 @@
 
         // إضافة الدوال الجديدة للنطاق العام
         window.openAdLink = openAdLink;
-
-        // أي أحداث إضافية للصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            // تهيئة مؤقتة
-            console.log('تم تحميل الصفحة بالكامل');
-        });
+        window.closeFloatingAd = closeFloatingAd;
+        window.closeVideoAd = closeVideoAd;
+        window.closeSmartPopup = closeSmartPopup;
+        window.claimReward = claimReward;
 
     </script>
 </body>
