@@ -43,6 +43,10 @@
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
     <!-- Chart.js for analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+    <!-- Lazy loading with Intersection Observer -->
+    <script src="https://cdn.jsdelivr.net/npm/intersection-observer@0.12.2/intersection-observer.js"></script>
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
         /* الأنماط المحسنة مع إضافات التصميم المتجاوب والأداء */
         :root {
@@ -61,6 +65,8 @@
             --header-height-mobile: 70px;
             --container-padding: 5%;
             --container-padding-mobile: 15px;
+            --safe-area-top: env(safe-area-inset-top);
+            --safe-area-bottom: env(safe-area-inset-bottom);
         }
 
         [data-theme="light"] {
@@ -85,6 +91,10 @@
             min-height: 100vh;
             width: 100%;
             position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding-top: var(--safe-area-top);
+            padding-bottom: var(--safe-area-bottom);
         }
 
         /* تحسينات للشاشات الصغيرة */
@@ -219,7 +229,7 @@
 
         @media (max-width: 480px) {
             .logo span {
-                display: none; /* إخفاء النص في الشاشات الصغيرة جداً */
+                display: none;
             }
             .logo i {
                 margin-left: 0;
@@ -333,7 +343,7 @@
             }
             
             .header-actions button span {
-                display: none; /* إخفاء نص "بحث" في الجوال */
+                display: none;
             }
             
             .header-actions button i {
@@ -782,6 +792,7 @@
             cursor: pointer;
             display: flex;
             flex-direction: column;
+            will-change: transform;
         }
 
         .luxury-card:hover {
@@ -2742,7 +2753,7 @@
             .btn-premium,
             .action-btn-small,
             .read-more-btn {
-                min-height: 44px; /* Apple's recommended minimum touch target size */
+                min-height: 44px;
             }
             
             .action-icon {
@@ -2802,6 +2813,123 @@
             #newsTableBody tr td:nth-child(6)::before {
                 content: "الإجراءات";
             }
+        }
+
+        /* تحسينات متقدمة للجوال */
+        @media (max-width: 768px) {
+            .hero {
+                margin-top: calc(var(--header-height) + 5px);
+            }
+            
+            .feature-overlay p {
+                font-size: 0.9rem;
+            }
+            
+            .side-card {
+                min-height: 150px;
+            }
+            
+            .card-meta span {
+                font-size: 0.7rem;
+            }
+            
+            .footer-content {
+                gap: 20px;
+            }
+            
+            .footer-brand p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .feature-overlay {
+                padding: 10px;
+            }
+            
+            .badge-premium {
+                font-size: 0.5rem;
+                padding: 3px 6px;
+            }
+            
+            .feature-title {
+                font-size: 1.2rem;
+                margin-bottom: 5px;
+            }
+            
+            .feature-overlay p {
+                font-size: 0.8rem;
+                -webkit-line-clamp: 1;
+            }
+            
+            .side-card h3 {
+                font-size: 0.9rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .card-content {
+                padding: 12px;
+            }
+            
+            .card-title {
+                font-size: 1rem;
+            }
+            
+            .card-excerpt {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* تحسينات الشاشات الكبيرة */
+        @media (min-width: 1400px) {
+            .hero, .section, footer {
+                max-width: 1400px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        /* تحسينات الوصول */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            border: 0;
+        }
+
+        /* تحسينات التحميل */
+        .loading-spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(197,160,89,0.3);
+            border-radius: 50%;
+            border-top-color: var(--antique-gold);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* تحسينات الصور */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* تحسينات النصوص الطويلة */
+        .text-ellipsis {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
