@@ -1189,6 +1189,11 @@
                     this.toast = toast;
                     this.appContainer = document.getElementById('app');
                     this.currentModal = null;
+                    
+                    // متغيرات لتتبع حالة المودالات المفتوحة
+                    this.isWalletModalOpen = false;
+                    this.isAdminPanelOpen = false;
+                    this.isPaymentMethodModalOpen = false;
 
                     this.state.addEventListener('balanceUpdated', () => this.updateBalanceDisplay());
                     this.state.addEventListener('statsUpdated', () => this.updateStatsDisplay());
@@ -1502,11 +1507,17 @@
 
                 // ========== النوافذ المنبثقة ==========
                 openWalletModal() {
+                    this.isWalletModalOpen = true;
                     const modalOverlay = document.getElementById('walletModalOverlay');
                     const modalContent = document.getElementById('walletModalContent');
                     modalContent.innerHTML = this.renderWalletModal();
                     modalOverlay.classList.add('open');
                     this.bindWalletModalEvents();
+                }
+
+                closeWalletModal() {
+                    this.isWalletModalOpen = false;
+                    document.getElementById('walletModalOverlay').classList.remove('open');
                 }
 
                 renderWalletModal() {
@@ -1620,8 +1631,8 @@
 
                 bindWalletModalEvents() {
                     const modalOverlay = document.getElementById('walletModalOverlay');
-                    document.getElementById('closeWalletModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
-                    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); });
+                    document.getElementById('closeWalletModal').addEventListener('click', () => this.closeWalletModal());
+                    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) this.closeWalletModal(); });
 
                     const tabs = document.querySelectorAll('.wallet-tab');
                     tabs.forEach(tab => {
@@ -1735,11 +1746,17 @@
                 }
 
                 openAdminPanel() {
+                    this.isAdminPanelOpen = true;
                     const modalOverlay = document.getElementById('adminPanelOverlay');
                     const modalContent = document.getElementById('adminPanelContent');
                     modalContent.innerHTML = this.renderAdminPanel();
                     modalOverlay.classList.add('open');
                     this.bindAdminPanelEvents();
+                }
+
+                closeAdminPanel() {
+                    this.isAdminPanelOpen = false;
+                    document.getElementById('adminPanelOverlay').classList.remove('open');
                 }
 
                 renderAdminPanel() {
@@ -1844,8 +1861,8 @@
 
                 bindAdminPanelEvents() {
                     const modalOverlay = document.getElementById('adminPanelOverlay');
-                    document.getElementById('closeAdminPanel').addEventListener('click', () => modalOverlay.classList.remove('open'));
-                    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); });
+                    document.getElementById('closeAdminPanel').addEventListener('click', () => this.closeAdminPanel());
+                    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) this.closeAdminPanel(); });
 
                     const adminTabs = document.querySelectorAll('[data-admin-tab]');
                     adminTabs.forEach(tab => {
@@ -1879,6 +1896,7 @@
                                         • الطريقة: ${request.method}
                                         ${type === 'deposit' ? `• رقم العملية: ${request.transactionId}` : `• التفاصيل: ${request.details}`}
                                         • رقم الطلب: ${request.id}`);
+                                    // تحديث محتوى لوحة الإدارة بعد القبول
                                     this.openAdminPanel();
                                 } else {
                                     this.toast.error('❌ حدث خطأ');
@@ -1926,6 +1944,7 @@
                 }
 
                 openPaymentMethodModal(editingId = null) {
+                    this.isPaymentMethodModalOpen = true;
                     const modalOverlay = document.getElementById('paymentMethodModalOverlay');
                     const modalContent = document.getElementById('paymentMethodModalContent');
                     const method = editingId ? this.state.paymentMethods.find(m => m.id === editingId) : null;
@@ -1968,11 +1987,16 @@
                     this.bindPaymentMethodModalEvents();
                 }
 
+                closePaymentMethodModal() {
+                    this.isPaymentMethodModalOpen = false;
+                    document.getElementById('paymentMethodModalOverlay').classList.remove('open');
+                }
+
                 bindPaymentMethodModalEvents() {
                     const modalOverlay = document.getElementById('paymentMethodModalOverlay');
-                    document.getElementById('closePaymentMethodModal').addEventListener('click', () => modalOverlay.classList.remove('open'));
-                    document.getElementById('cancelPaymentMethod').addEventListener('click', () => modalOverlay.classList.remove('open'));
-                    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); });
+                    document.getElementById('closePaymentMethodModal').addEventListener('click', () => this.closePaymentMethodModal());
+                    document.getElementById('cancelPaymentMethod').addEventListener('click', () => this.closePaymentMethodModal());
+                    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) this.closePaymentMethodModal(); });
 
                     document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
                         e.preventDefault();
@@ -1991,7 +2015,7 @@
                             this.data.addPaymentMethod(formData);
                             this.toast.success('تمت الإضافة بنجاح');
                         }
-                        modalOverlay.classList.remove('open');
+                        this.closePaymentMethodModal();
                         this.openAdminPanel();
                     });
                 }
@@ -2060,6 +2084,51 @@
                         });
                     });
                     modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); });
+                }
+
+                // ========== التحديث التلقائي ==========
+                startAutoRefresh(interval = 5000) {
+                    this.refreshInterval = setInterval(() => this.refreshData(), interval);
+                }
+
+                stopAutoRefresh() {
+                    if (this.refreshInterval) {
+                        clearInterval(this.refreshInterval);
+                        this.refreshInterval = null;
+                    }
+                }
+
+                refreshData() {
+                    // إعادة تحميل البيانات من localStorage
+                    this.data.loadWallet();
+                    this.data.loadRequests();
+                    this.data.loadStats();
+                    this.data.notificationService.loadNotifications();
+
+                    // تحديث العناصر المرئية
+                    this.updateBalanceDisplay();
+                    this.updateStatsDisplay();
+                    this.updatePendingBadge();
+                    this.updateNotificationBadge();
+
+                    // إذا كان أي مودال مفتوح، نقوم بتحديث محتواه
+                    if (this.isWalletModalOpen) {
+                        const modalContent = document.getElementById('walletModalContent');
+                        if (modalContent) {
+                            modalContent.innerHTML = this.renderWalletModal();
+                            this.bindWalletModalEvents();
+                        }
+                    }
+                    if (this.isAdminPanelOpen) {
+                        const modalContent = document.getElementById('adminPanelContent');
+                        if (modalContent) {
+                            modalContent.innerHTML = this.renderAdminPanel();
+                            this.bindAdminPanelEvents();
+                        }
+                    }
+                    if (this.isPaymentMethodModalOpen) {
+                        // لا نقوم بتحديث هذا المودال تلقائياً لأنه نموذج إدخال، يمكن تركه
+                    }
                 }
             }
 
@@ -2132,6 +2201,10 @@
                         );
 
                         this.toast.success(`مرحباً ${user.first_name}، أهلاً بك في المحفظة المتطورة`);
+
+                        // بدء التحديث التلقائي
+                        this.ui.startAutoRefresh(5000); // كل 5 ثوانٍ
+
                     } catch (error) {
                         console.error(error);
                         this.toast.error('حدث خطأ أثناء تحميل البيانات');
