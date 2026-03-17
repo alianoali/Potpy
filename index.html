@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>محفظة تيليجرام المتطورة</title>
+    <title>محفظة تيليجرام المتطورة مع الاستثمار</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -535,6 +535,61 @@
         .payment-method-admin .actions button:hover { color: white; }
         .payment-method-admin .actions button.delete:hover { color: #ef4444; }
         .payment-method-admin .actions button.edit:hover { color: #3b82f6; }
+
+        /* أنماط خطط الاستثمار */
+        .plan-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .plan-card:hover {
+            background: rgba(59,130,246,0.1);
+            border-color: rgba(59,130,246,0.3);
+            transform: translateY(-2px);
+        }
+        .plan-card.selected {
+            background: rgba(59,130,246,0.15);
+            border-color: #3b82f6;
+        }
+        .profit-badge {
+            background: rgba(16,185,129,0.2);
+            color: #10b981;
+            padding: 2px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .duration-badge {
+            background: rgba(139,92,246,0.2);
+            color: #a78bfa;
+            padding: 2px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .investment-item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .investment-progress {
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin-top: 8px;
+        }
+        .investment-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 2px;
+        }
     </style>
 </head>
 <body>
@@ -600,6 +655,10 @@
     <div class="wallet-modal-overlay" id="paymentMethodModalOverlay">
         <div class="wallet-modal" id="paymentMethodModalContent" style="max-width: 450px;"></div>
     </div>
+    <!-- مودال جديد لإدارة خطط الاستثمار -->
+    <div class="wallet-modal-overlay" id="investmentPlanModalOverlay">
+        <div class="wallet-modal" id="investmentPlanModalContent" style="max-width: 450px;"></div>
+    </div>
 
     <script>
         (function() {
@@ -618,7 +677,10 @@
                     WITHDRAWAL_REQUESTS: 'withdrawal_requests',
                     THEME: 'theme',
                     SETTINGS_PREFIX: 'settings_', // لكل مستخدم: settings_<user_id>
-                    NOTIFICATIONS_PREFIX: 'notifications_' // لكل مستخدم: notifications_<user_id>
+                    NOTIFICATIONS_PREFIX: 'notifications_', // لكل مستخدم: notifications_<user_id>
+                    INVESTMENT_PLANS: 'investment_plans', // خطط الاستثمار (عامة)
+                    USER_INVESTMENTS: 'user_investments', // استثمارات المستخدمين
+                    APP_SETTINGS: 'app_settings' // إعدادات عامة (أقل شحن، أقل سحب)
                 }
             };
 
@@ -659,6 +721,11 @@
                 static getTodayDate() { return new Date().toISOString().split('T')[0]; }
                 static formatDateTime(isoString) { return new Date(isoString).toLocaleString('ar-EG'); }
                 static formatDate(isoString) { return new Date(isoString).toLocaleDateString('ar-EG'); }
+                static daysBetween(date1, date2) {
+                    const d1 = new Date(date1).setHours(0,0,0,0);
+                    const d2 = new Date(date2).setHours(0,0,0,0);
+                    return Math.floor((d2 - d1) / (1000 * 60 * 60 * 24));
+                }
             }
 
             class IdGenerator {
@@ -828,6 +895,10 @@
                     this.withdrawalRequests = [];   // عامة لجميع المستخدمين
                     this.paymentMethods = [];
                     this.notifications = [];         // خاصة بالمستخدم الحالي
+                    // إضافات الاستثمار
+                    this.investmentPlans = [];       // خطط الاستثمار (عامة)
+                    this.userInvestments = [];       // استثمارات المستخدم الحالي
+                    this.appSettings = { minDeposit: 10, minWithdrawal: 20 }; // إعدادات عامة
                 }
 
                 set(key, value) {
@@ -865,6 +936,7 @@
                 // مفاتيح التخزين الخاصة بالمستخدم
                 getWalletKey() { return CONFIG.STORAGE_KEYS.WALLET_PREFIX + this.state.userId; }
                 getSettingsKey() { return CONFIG.STORAGE_KEYS.SETTINGS_PREFIX + this.state.userId; }
+                getUserInvestmentsKey() { return CONFIG.STORAGE_KEYS.USER_INVESTMENTS + '_' + this.state.userId; }
 
                 loadInitialData() {
                     this.loadWallet();
@@ -873,6 +945,9 @@
                     this.loadSettings();       // تحميل إعدادات المستخدم
                     this.loadStats();           // تحميل الإحصائيات العامة
                     this.notificationService.loadNotifications();
+                    this.loadInvestmentPlans(); // تحميل خطط الاستثمار
+                    this.loadUserInvestments(); // تحميل استثمارات المستخدم
+                    this.loadAppSettings();     // تحميل الإعدادات العامة
                 }
 
                 // المحفظة الخاصة بالمستخدم
@@ -970,6 +1045,10 @@
                 }
 
                 addWithdrawalRequest(amount, methodId, details, user) {
+                    // التحقق من أقل مبلغ للسحب
+                    if (amount < this.state.appSettings.minWithdrawal) {
+                        return { success: false, message: `أقل مبلغ للسحب هو ${this.state.appSettings.minWithdrawal}`, request: null };
+                    }
                     if (amount > this.state.balance) {
                         return { success: false, message: 'الرصيد غير كافٍ', request: null };
                     }
@@ -997,8 +1076,7 @@
                         const req = this.state.depositRequests.find(r => r.id === request.id);
                         if (req && req.status === 'pending') {
                             req.status = 'approved';
-                            // هنا يجب إضافة الرصيد للمستخدم صاحب الطلب (وليس للمشرف)
-                            // لكننا لا نملك كائن state للمستخدم المستهدف. سنقوم بتحديث رصيده مباشرة في localStorage.
+                            // هنا يجب إضافة الرصيد للمستخدم صاحب الطلب
                             this.addBalanceToUser(req.userId, req.amount, `شحن عبر ${req.method} (رقم العملية: ${req.transactionId || 'غير محدد'})`);
                             this.saveRequests();
                             // إضافة إشعار للمستخدم
@@ -1093,7 +1171,6 @@
 
                 // الحصول على خدمة الإشعارات لمستخدم معين (لإرسال إشعار)
                 notificationServiceForUser(userId) {
-                    // هذه دالة مساعدة، لكننا لا نخزن كل خدمات الإشعارات. سنقوم بإنشاء كائن مؤقت.
                     const notifKey = CONFIG.STORAGE_KEYS.NOTIFICATIONS_PREFIX + userId;
                     const notifications = StorageService.get(notifKey, []);
                     const tempService = {
@@ -1178,6 +1255,155 @@
                     StorageService.set(CONFIG.STORAGE_KEYS.THEME, theme);
                     this.state.theme = theme;
                 }
+
+                // ========== نظام الاستثمار ==========
+                loadInvestmentPlans() {
+                    const saved = StorageService.get(CONFIG.STORAGE_KEYS.INVESTMENT_PLANS, []);
+                    if (saved.length === 0) {
+                        // خطط افتراضية
+                        this.state.investmentPlans = [
+                            { id: IdGenerator.generate('plan_'), name: 'خطة مبتدئ', minAmount: 100, maxAmount: 1000, dailyProfitPercent: 1.5, durationDays: 30, isActive: true },
+                            { id: IdGenerator.generate('plan_'), name: 'خطة متقدم', minAmount: 1000, maxAmount: 5000, dailyProfitPercent: 2.0, durationDays: 60, isActive: true },
+                            { id: IdGenerator.generate('plan_'), name: 'خطة خبير', minAmount: 5000, maxAmount: 50000, dailyProfitPercent: 2.5, durationDays: 90, isActive: true },
+                            { id: IdGenerator.generate('plan_'), name: 'خطة غير محدودة', minAmount: 500, maxAmount: 10000, dailyProfitPercent: 1.8, durationDays: null, isActive: true }
+                        ];
+                    } else {
+                        this.state.investmentPlans = saved;
+                    }
+                }
+
+                saveInvestmentPlans() {
+                    StorageService.set(CONFIG.STORAGE_KEYS.INVESTMENT_PLANS, this.state.investmentPlans);
+                }
+
+                addInvestmentPlan(planData) {
+                    const newPlan = { id: IdGenerator.generate('plan_'), ...planData };
+                    this.state.investmentPlans.push(newPlan);
+                    this.saveInvestmentPlans();
+                    return newPlan;
+                }
+
+                updateInvestmentPlan(id, newData) {
+                    const index = this.state.investmentPlans.findIndex(p => p.id === id);
+                    if (index !== -1) {
+                        this.state.investmentPlans[index] = { ...this.state.investmentPlans[index], ...newData };
+                        this.saveInvestmentPlans();
+                        return true;
+                    }
+                    return false;
+                }
+
+                deleteInvestmentPlan(id) {
+                    this.state.investmentPlans = this.state.investmentPlans.filter(p => p.id !== id);
+                    this.saveInvestmentPlans();
+                }
+
+                // استثمارات المستخدم
+                loadUserInvestments() {
+                    const saved = StorageService.get(this.getUserInvestmentsKey(), []);
+                    this.state.userInvestments = saved;
+                    // معالجة الأرباح اليومية عند التحميل
+                    this.processDailyProfits();
+                }
+
+                saveUserInvestments() {
+                    StorageService.set(this.getUserInvestmentsKey(), this.state.userInvestments);
+                }
+
+                // معالجة الأرباح اليومية
+                processDailyProfits() {
+                    const today = new Date().toISOString().split('T')[0];
+                    let updated = false;
+                    for (let inv of this.state.userInvestments) {
+                        if (inv.status !== 'active') continue;
+                        // التحقق من المدة إذا كانت محدودة
+                        if (inv.durationDays) {
+                            const start = new Date(inv.startDate).setHours(0,0,0,0);
+                            const now = new Date().setHours(0,0,0,0);
+                            const daysPassed = Math.floor((now - start) / (86400000));
+                            if (daysPassed >= inv.durationDays) {
+                                inv.status = 'completed';
+                                updated = true;
+                                continue;
+                            }
+                        }
+                        const lastProfit = inv.lastProfitDate || inv.startDate;
+                        const daysSinceLastProfit = DateUtils.daysBetween(lastProfit, today);
+                        if (daysSinceLastProfit > 0) {
+                            const profitAmount = inv.amount * (inv.dailyProfitPercent / 100) * daysSinceLastProfit;
+                            // إضافة الربح إلى الرصيد
+                            this.state.balance += profitAmount;
+                            // تسجيل المعاملة
+                            this.state.wallet.transactions.unshift({
+                                id: IdGenerator.generate('tx_'),
+                                type: 'profit',
+                                amount: profitAmount,
+                                note: `أرباح استثمار (${inv.planName}) عن ${daysSinceLastProfit} يوم`,
+                                date: new Date().toISOString()
+                            });
+                            inv.totalProfit = (inv.totalProfit || 0) + profitAmount;
+                            inv.lastProfitDate = today;
+                            updated = true;
+                        }
+                    }
+                    if (updated) {
+                        this.saveWallet();
+                        this.saveUserInvestments();
+                    }
+                }
+
+                // إنشاء استثمار جديد
+                createInvestment(planId, amount) {
+                    const plan = this.state.investmentPlans.find(p => p.id === planId);
+                    if (!plan) return { success: false, message: 'الخطة غير موجودة' };
+                    if (!plan.isActive) return { success: false, message: 'الخطة غير نشطة حالياً' };
+                    if (amount < plan.minAmount || amount > plan.maxAmount) 
+                        return { success: false, message: `المبلغ يجب أن يكون بين ${plan.minAmount} و ${plan.maxAmount}` };
+                    if (amount > this.state.balance) 
+                        return { success: false, message: 'الرصيد غير كافٍ' };
+
+                    // خصم المبلغ
+                    this.state.balance -= amount;
+                    this.state.wallet.transactions.unshift({
+                        id: IdGenerator.generate('tx_'),
+                        type: 'investment',
+                        amount: -amount,
+                        note: `استثمار في ${plan.name}`,
+                        date: new Date().toISOString()
+                    });
+
+                    const investment = {
+                        id: IdGenerator.generate('inv_'),
+                        userId: this.state.userId,
+                        planId: plan.id,
+                        planName: plan.name,
+                        amount: amount,
+                        dailyProfitPercent: plan.dailyProfitPercent,
+                        durationDays: plan.durationDays,
+                        startDate: new Date().toISOString(),
+                        lastProfitDate: new Date().toISOString().split('T')[0], // نبدأ من اليوم
+                        status: 'active',
+                        totalProfit: 0
+                    };
+                    this.state.userInvestments.push(investment);
+                    this.saveWallet();
+                    this.saveUserInvestments();
+                    return { success: true, investment };
+                }
+
+                // إعدادات عامة (أقل شحن/سحب)
+                loadAppSettings() {
+                    const saved = StorageService.get(CONFIG.STORAGE_KEYS.APP_SETTINGS, null);
+                    if (saved) {
+                        this.state.appSettings = saved;
+                    } else {
+                        this.state.appSettings = { minDeposit: 10, minWithdrawal: 20 };
+                    }
+                }
+
+                saveAppSettings() {
+                    StorageService.set(CONFIG.STORAGE_KEYS.APP_SETTINGS, this.state.appSettings);
+                }
             }
 
             // ======================== مدير واجهة المستخدم (UI Manager) ========================
@@ -1194,6 +1420,7 @@
                     this.isWalletModalOpen = false;
                     this.isAdminPanelOpen = false;
                     this.isPaymentMethodModalOpen = false;
+                    this.isInvestmentPlanModalOpen = false;
 
                     this.state.addEventListener('balanceUpdated', () => this.updateBalanceDisplay());
                     this.state.addEventListener('statsUpdated', () => this.updateStatsDisplay());
@@ -1465,7 +1692,7 @@
                             </div>
 
                             <button id="openAdminPanelBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2 mt-2">
-                                <i class="fa-solid fa-gears"></i> لوحة الإدارة (الطلبات وطرق الدفع)
+                                <i class="fa-solid fa-gears"></i> لوحة الإدارة (الطلبات وطرق الدفع والاستثمار)
                                 ${pendingCount > 0 ? `<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">${pendingCount}</span>` : ''}
                             </button>
 
@@ -1577,6 +1804,7 @@
                         <div class="wallet-tabs">
                             <button class="wallet-tab active" data-tab="deposit"><i class="fa-solid fa-arrow-down"></i> شحن</button>
                             <button class="wallet-tab" data-tab="withdraw"><i class="fa-solid fa-arrow-up"></i> سحب</button>
+                            <button class="wallet-tab" data-tab="invest"><i class="fa-solid fa-chart-line"></i> استثمار</button>
                             <button class="wallet-tab" data-tab="transfer"><i class="fa-solid fa-exchange-alt"></i> تحويل</button>
                             <button class="wallet-tab" data-tab="history"><i class="fa-solid fa-history"></i> السجل</button>
                         </div>
@@ -1613,6 +1841,20 @@
                                 <p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلب السحب من قبل الإدارة.</p>
                             </div>
 
+                            <div class="tab-pane hidden" id="tab-invest">
+                                <p class="text-sm text-gray-300 mb-3">اختر خطة استثمار:</p>
+                                <div id="investmentPlansList" class="mb-4"></div>
+                                <div id="selectedPlanDetails" class="payment-details hidden"></div>
+                                <div class="mb-3">
+                                    <input type="number" id="investAmount" placeholder="المبلغ" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                </div>
+                                <div class="flex gap-2">
+                                    <button id="investBtn" class="bg-green-600 flex-1 px-4 rounded-lg font-bold">استثمر الآن</button>
+                                    <button id="viewMyInvestmentsBtn" class="bg-purple-600 px-4 rounded-lg font-bold"><i class="fa-solid fa-briefcase"></i></button>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-2">سيتم خصم المبلغ من رصيدك فوراً.</p>
+                            </div>
+
                             <div class="tab-pane hidden" id="tab-transfer">
                                 <p class="text-sm text-gray-300 mb-2">تحويل إلى مستخدم آخر:</p>
                                 <input type="text" id="transferUserId" placeholder="معرف المستخدم" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white">
@@ -1642,9 +1884,11 @@
                             const tabId = tab.dataset.tab;
                             document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
                             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+                            if (tabId === 'invest') this.renderInvestmentPlansList();
                         });
                     });
 
+                    // شحن
                     const paymentMethods = document.querySelectorAll('.payment-methods-list .payment-method');
                     let selectedMethod = null;
                     const detailsDisplay = document.getElementById('depositDetailsDisplay');
@@ -1669,6 +1913,10 @@
                         const amount = parseFloat(document.getElementById('depositAmount').value);
                         const transactionId = document.getElementById('depositTransactionId').value.trim();
                         if (isNaN(amount) || amount <= 0) { this.toast.error('أدخل مبلغ صحيح'); return; }
+                        if (amount < this.state.appSettings.minDeposit) { 
+                            this.toast.error(`أقل مبلغ للشحن هو ${this.state.appSettings.minDeposit}`); 
+                            return; 
+                        }
                         if (!selectedMethod) { this.toast.error('اختر طريقة دفع أولاً'); return; }
                         if (!transactionId) { this.toast.error('يرجى إدخال رقم العملية'); return; }
                         const request = this.data.addDepositRequest(amount, selectedMethod, transactionId, this.state.user);
@@ -1688,6 +1936,7 @@
                         detailsDisplay.classList.add('hidden');
                     });
 
+                    // سحب
                     const withdrawMethods = document.querySelectorAll('#withdrawMethodsList .payment-method');
                     let selectedWithdrawMethod = null;
                     withdrawMethods.forEach(method => {
@@ -1728,6 +1977,33 @@
                         }
                     });
 
+                    // استثمار
+                    this.renderInvestmentPlansList();
+                    document.getElementById('investBtn')?.addEventListener('click', () => {
+                        const amount = parseFloat(document.getElementById('investAmount').value);
+                        const selectedPlanCard = document.querySelector('.plan-card.selected');
+                        if (!selectedPlanCard) { this.toast.error('اختر خطة استثمار أولاً'); return; }
+                        const planId = selectedPlanCard.dataset.planId;
+                        if (isNaN(amount) || amount <= 0) { this.toast.error('أدخل مبلغ صحيح'); return; }
+                        const result = this.data.createInvestment(planId, amount);
+                        if (result.success) {
+                            this.toast.success(`✅ تم الاستثمار بنجاح في خطة ${result.investment.planName}
+                                • المبلغ: ${amount}
+                                • نسبة الربح اليومي: ${result.investment.dailyProfitPercent}%
+                                • تاريخ البدء: ${DateUtils.formatDate(result.investment.startDate)}
+                                • سيتم إضافة الأرباح يومياً إلى رصيدك.`);
+                            document.getElementById('investAmount').value = '';
+                            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+                            document.getElementById('selectedPlanDetails').classList.add('hidden');
+                            this.updateBalanceDisplay();
+                        } else {
+                            this.toast.error(result.message);
+                        }
+                    });
+
+                    document.getElementById('viewMyInvestmentsBtn')?.addEventListener('click', () => this.openMyInvestmentsModal());
+
+                    // تحويل
                     document.getElementById('transferBtn')?.addEventListener('click', () => {
                         const amount = parseFloat(document.getElementById('transferAmount').value);
                         const targetId = document.getElementById('transferUserId').value.trim();
@@ -1743,6 +2019,151 @@
                         this.updateBalanceDisplay();
                         this.openWalletModal();
                     });
+                }
+
+                renderInvestmentPlansList() {
+                    const container = document.getElementById('investmentPlansList');
+                    if (!container) return;
+                    const plans = this.state.investmentPlans.filter(p => p.isActive);
+                    if (plans.length === 0) {
+                        container.innerHTML = '<p class="text-gray-400 text-center py-4">لا توجد خطط استثمار متاحة حالياً</p>';
+                        return;
+                    }
+                    let html = '';
+                    plans.forEach(plan => {
+                        const durationText = plan.durationDays ? `${plan.durationDays} يوم` : 'غير محدود';
+                        html += `
+                            <div class="plan-card" data-plan-id="${plan.id}">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h3 class="font-bold text-lg">${plan.name}</h3>
+                                    <span class="profit-badge">${plan.dailyProfitPercent}% يومياً</span>
+                                </div>
+                                <div class="text-sm text-gray-300 mb-2">المبلغ: ${plan.minAmount} - ${plan.maxAmount}</div>
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="duration-badge"><i class="fa-regular fa-clock ml-1"></i>${durationText}</span>
+                                    <span class="text-gray-400">الحد الأدنى: ${plan.minAmount}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                    const planCards = container.querySelectorAll('.plan-card');
+                    const detailsDiv = document.getElementById('selectedPlanDetails');
+                    planCards.forEach(card => {
+                        card.addEventListener('click', () => {
+                            planCards.forEach(c => c.classList.remove('selected'));
+                            card.classList.add('selected');
+                            const planId = card.dataset.planId;
+                            const plan = this.state.investmentPlans.find(p => p.id === planId);
+                            if (plan) {
+                                detailsDiv.innerHTML = `
+                                    <strong>تفاصيل الخطة:</strong>
+                                    <div class="mt-2 text-sm">
+                                        <div>الاسم: ${plan.name}</div>
+                                        <div>نسبة الربح: ${plan.dailyProfitPercent}% يومياً</div>
+                                        <div>المدة: ${plan.durationDays ? plan.durationDays + ' يوم' : 'غير محدودة'}</div>
+                                        <div>الحد الأدنى: ${plan.minAmount}</div>
+                                        <div>الحد الأقصى: ${plan.maxAmount}</div>
+                                    </div>
+                                `;
+                                detailsDiv.classList.remove('hidden');
+                            }
+                        });
+                    });
+                }
+
+                openMyInvestmentsModal() {
+                    this.isWalletModalOpen = true;
+                    const modalOverlay = document.getElementById('walletModalOverlay');
+                    const modalContent = document.getElementById('walletModalContent');
+                    modalContent.innerHTML = this.renderMyInvestmentsModal();
+                    modalOverlay.classList.add('open');
+                    this.bindMyInvestmentsModalEvents();
+                }
+
+                renderMyInvestmentsModal() {
+                    const investments = this.state.userInvestments;
+                    const activeInvestments = investments.filter(inv => inv.status === 'active');
+                    const completedInvestments = investments.filter(inv => inv.status === 'completed');
+
+                    const activeHtml = activeInvestments.length === 0 
+                        ? '<p class="text-gray-400 text-center py-2">لا توجد استثمارات نشطة</p>'
+                        : activeInvestments.map(inv => {
+                            const start = new Date(inv.startDate);
+                            const today = new Date();
+                            const daysPassed = Math.floor((today - start) / (86400000));
+                            const totalDays = inv.durationDays || 0;
+                            const progress = totalDays > 0 ? Math.min(100, (daysPassed / totalDays) * 100) : 0;
+                            const expectedProfit = inv.amount * (inv.dailyProfitPercent / 100) * (totalDays || 1);
+                            return `
+                                <div class="investment-item">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-bold">${inv.planName}</span>
+                                        <span class="text-green-400">${inv.totalProfit.toFixed(2)} ربح</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm mt-1">
+                                        <span>المبلغ: ${inv.amount}</span>
+                                        <span>${inv.dailyProfitPercent}% يومياً</span>
+                                    </div>
+                                    <div class="text-xs text-gray-400 mt-1">
+                                        بدأ: ${DateUtils.formatDate(inv.startDate)}
+                                        ${inv.durationDays ? ` | ينتهي: ${DateUtils.formatDate(new Date(new Date(inv.startDate).getTime() + inv.durationDays * 86400000))}` : ''}
+                                    </div>
+                                    ${inv.durationDays ? `
+                                        <div class="investment-progress">
+                                            <div class="investment-progress-fill" style="width: ${progress}%"></div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }).join('');
+
+                    const completedHtml = completedInvestments.length === 0 
+                        ? '<p class="text-gray-400 text-center py-2">لا توجد استثمارات منتهية</p>'
+                        : completedInvestments.map(inv => `
+                            <div class="investment-item opacity-60">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold">${inv.planName}</span>
+                                    <span class="text-blue-400">${inv.totalProfit.toFixed(2)} ربح</span>
+                                </div>
+                                <div class="flex justify-between text-sm mt-1">
+                                    <span>المبلغ: ${inv.amount}</span>
+                                    <span>${inv.dailyProfitPercent}% يومياً</span>
+                                </div>
+                                <div class="text-xs text-gray-400 mt-1">
+                                    بدأ: ${DateUtils.formatDate(inv.startDate)} | انتهى
+                                </div>
+                            </div>
+                        `).join('');
+
+                    return `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">محفظة الاستثمارات</h2>
+                            <button id="closeInvestmentsModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-line text-green-400"></i> استثمارات نشطة
+                                </h3>
+                                ${activeHtml}
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+                                    <i class="fa-solid fa-clock text-gray-400"></i> استثمارات منتهية
+                                </h3>
+                                ${completedHtml}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                bindMyInvestmentsModalEvents() {
+                    const modalOverlay = document.getElementById('walletModalOverlay');
+                    document.getElementById('closeInvestmentsModal').addEventListener('click', () => this.closeWalletModal());
+                    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) this.closeWalletModal(); });
                 }
 
                 openAdminPanel() {
@@ -1762,6 +2183,8 @@
                 renderAdminPanel() {
                     const pendingDeposits = this.data.getPendingDeposits();
                     const pendingWithdrawals = this.data.getPendingWithdrawals();
+                    const investmentPlans = this.state.investmentPlans;
+                    const appSettings = this.state.appSettings;
 
                     const depositsHtml = pendingDeposits.length === 0 
                         ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات شحن معلقة</p>'
@@ -1817,6 +2240,21 @@
                         </div>
                     `).join('');
 
+                    const investmentPlansHtml = investmentPlans.map(p => `
+                        <div class="payment-method-admin">
+                            <div class="flex items-center gap-3">
+                                <div>
+                                    <div class="font-bold">${p.name}</div>
+                                    <div class="text-xs text-gray-400">${p.dailyProfitPercent}% يومياً | ${p.minAmount}-${p.maxAmount} | ${p.durationDays ? p.durationDays+' يوم' : 'غير محدود'}</div>
+                                </div>
+                            </div>
+                            <div class="actions">
+                                <button class="edit-investment-plan" data-id="${p.id}" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="delete-investment-plan" data-id="${p.id}" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `).join('');
+
                     return `
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-bold">لوحة الإدارة</h2>
@@ -1828,6 +2266,8 @@
                         <div class="wallet-tabs mb-3">
                             <button class="wallet-tab active" data-admin-tab="requests">الطلبات</button>
                             <button class="wallet-tab" data-admin-tab="payment-methods">طرق الدفع</button>
+                            <button class="wallet-tab" data-admin-tab="investment-plans">خطط الاستثمار</button>
+                            <button class="wallet-tab" data-admin-tab="settings">الإعدادات</button>
                         </div>
 
                         <div id="adminRequestsTab" class="admin-tab-content">
@@ -1856,6 +2296,29 @@
                             </div>
                             <div class="space-y-2 max-h-96 overflow-y-auto">${paymentMethodsHtml}</div>
                         </div>
+
+                        <div id="adminInvestmentPlansTab" class="admin-tab-content hidden">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-lg font-bold">خطط الاستثمار</h3>
+                                <button id="addInvestmentPlanBtn" class="bg-green-600 px-3 py-1 rounded-lg text-sm"><i class="fa-solid fa-plus"></i> إضافة</button>
+                            </div>
+                            <div class="space-y-2 max-h-96 overflow-y-auto">${investmentPlansHtml}</div>
+                        </div>
+
+                        <div id="adminSettingsTab" class="admin-tab-content hidden">
+                            <h3 class="text-lg font-bold mb-3">الإعدادات العامة</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-sm text-gray-400">أقل مبلغ للشحن</label>
+                                    <input type="number" id="minDeposit" value="${appSettings.minDeposit}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                </div>
+                                <div>
+                                    <label class="text-sm text-gray-400">أقل مبلغ للسحب</label>
+                                    <input type="number" id="minWithdrawal" value="${appSettings.minWithdrawal}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                                </div>
+                                <button id="saveAppSettings" class="bg-blue-600 w-full py-2 rounded-lg font-bold">حفظ الإعدادات</button>
+                            </div>
+                        </div>
                     `;
                 }
 
@@ -1870,16 +2333,15 @@
                             adminTabs.forEach(t => t.classList.remove('active'));
                             tab.classList.add('active');
                             const tabName = tab.dataset.adminTab;
-                            if (tabName === 'requests') {
-                                document.getElementById('adminRequestsTab').classList.remove('hidden');
-                                document.getElementById('adminPaymentMethodsTab').classList.add('hidden');
-                            } else {
-                                document.getElementById('adminRequestsTab').classList.add('hidden');
-                                document.getElementById('adminPaymentMethodsTab').classList.remove('hidden');
-                            }
+                            document.querySelectorAll('.admin-tab-content').forEach(content => content.classList.add('hidden'));
+                            if (tabName === 'requests') document.getElementById('adminRequestsTab').classList.remove('hidden');
+                            else if (tabName === 'payment-methods') document.getElementById('adminPaymentMethodsTab').classList.remove('hidden');
+                            else if (tabName === 'investment-plans') document.getElementById('adminInvestmentPlansTab').classList.remove('hidden');
+                            else if (tabName === 'settings') document.getElementById('adminSettingsTab').classList.remove('hidden');
                         });
                     });
 
+                    // الطلبات
                     document.querySelectorAll('.accept-request').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const id = btn.dataset.id;
@@ -1896,7 +2358,6 @@
                                         • الطريقة: ${request.method}
                                         ${type === 'deposit' ? `• رقم العملية: ${request.transactionId}` : `• التفاصيل: ${request.details}`}
                                         • رقم الطلب: ${request.id}`);
-                                    // تحديث محتوى لوحة الإدارة بعد القبول
                                     this.openAdminPanel();
                                 } else {
                                     this.toast.error('❌ حدث خطأ');
@@ -1925,6 +2386,7 @@
                         });
                     });
 
+                    // طرق الدفع
                     document.getElementById('addPaymentMethodBtn')?.addEventListener('click', () => this.openPaymentMethodModal());
 
                     document.querySelectorAll('.edit-payment-method').forEach(btn => {
@@ -1940,6 +2402,37 @@
                                 this.openAdminPanel();
                             }
                         });
+                    });
+
+                    // خطط الاستثمار
+                    document.getElementById('addInvestmentPlanBtn')?.addEventListener('click', () => this.openInvestmentPlanModal());
+
+                    document.querySelectorAll('.edit-investment-plan').forEach(btn => {
+                        btn.addEventListener('click', () => this.openInvestmentPlanModal(btn.dataset.id));
+                    });
+
+                    document.querySelectorAll('.delete-investment-plan').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            if (confirm('هل أنت متأكد من حذف خطة الاستثمار هذه؟')) {
+                                this.data.deleteInvestmentPlan(id);
+                                this.toast.success('تم الحذف بنجاح');
+                                this.openAdminPanel();
+                            }
+                        });
+                    });
+
+                    // الإعدادات العامة
+                    document.getElementById('saveAppSettings')?.addEventListener('click', () => {
+                        const minDeposit = parseFloat(document.getElementById('minDeposit').value);
+                        const minWithdrawal = parseFloat(document.getElementById('minWithdrawal').value);
+                        if (isNaN(minDeposit) || minDeposit < 0) { this.toast.error('أدخل قيمة صحيحة لأقل شحن'); return; }
+                        if (isNaN(minWithdrawal) || minWithdrawal < 0) { this.toast.error('أدخل قيمة صحيحة لأقل سحب'); return; }
+                        this.state.appSettings.minDeposit = minDeposit;
+                        this.state.appSettings.minWithdrawal = minWithdrawal;
+                        this.data.saveAppSettings();
+                        this.toast.success('تم حفظ الإعدادات');
+                        this.openAdminPanel();
                     });
                 }
 
@@ -2020,7 +2513,90 @@
                     });
                 }
 
+                openInvestmentPlanModal(editingId = null) {
+                    this.isInvestmentPlanModalOpen = true;
+                    const modalOverlay = document.getElementById('investmentPlanModalOverlay');
+                    const modalContent = document.getElementById('investmentPlanModalContent');
+                    const plan = editingId ? this.state.investmentPlans.find(p => p.id === editingId) : null;
+                    modalContent.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">${plan ? 'تعديل خطة استثمار' : 'إضافة خطة استثمار جديدة'}</h2>
+                            <button id="closeInvestmentPlanModal" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                        <form id="investmentPlanForm" class="space-y-3">
+                            <input type="hidden" id="planId" value="${plan?.id || ''}">
+                            <div>
+                                <label class="text-sm text-gray-400">اسم الخطة</label>
+                                <input type="text" id="planName" required value="${plan?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-400">الحد الأدنى للمبلغ</label>
+                                <input type="number" id="planMinAmount" required value="${plan?.minAmount || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-400">الحد الأقصى للمبلغ</label>
+                                <input type="number" id="planMaxAmount" required value="${plan?.maxAmount || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-400">نسبة الربح اليومي (%)</label>
+                                <input type="number" step="0.1" id="planDailyProfit" required value="${plan?.dailyProfitPercent || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-400">المدة (أيام) - اترك فارغاً للمدة غير محدودة</label>
+                                <input type="number" id="planDuration" value="${plan?.durationDays || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-white">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="planIsActive" ${plan?.isActive ? 'checked' : ''} class="w-4 h-4">
+                                <label class="text-sm text-gray-400">الخطة نشطة</label>
+                            </div>
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" class="flex-1 bg-green-600 py-2 rounded-lg font-bold">حفظ</button>
+                                <button type="button" id="cancelInvestmentPlan" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button>
+                            </div>
+                        </form>
+                    `;
+                    modalOverlay.classList.add('open');
+                    this.bindInvestmentPlanModalEvents();
+                }
+
+                closeInvestmentPlanModal() {
+                    this.isInvestmentPlanModalOpen = false;
+                    document.getElementById('investmentPlanModalOverlay').classList.remove('open');
+                }
+
+                bindInvestmentPlanModalEvents() {
+                    const modalOverlay = document.getElementById('investmentPlanModalOverlay');
+                    document.getElementById('closeInvestmentPlanModal').addEventListener('click', () => this.closeInvestmentPlanModal());
+                    document.getElementById('cancelInvestmentPlan').addEventListener('click', () => this.closeInvestmentPlanModal());
+                    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) this.closeInvestmentPlanModal(); });
+
+                    document.getElementById('investmentPlanForm').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const formData = {
+                            name: document.getElementById('planName').value,
+                            minAmount: parseFloat(document.getElementById('planMinAmount').value),
+                            maxAmount: parseFloat(document.getElementById('planMaxAmount').value),
+                            dailyProfitPercent: parseFloat(document.getElementById('planDailyProfit').value),
+                            durationDays: document.getElementById('planDuration').value ? parseInt(document.getElementById('planDuration').value) : null,
+                            isActive: document.getElementById('planIsActive').checked
+                        };
+                        const id = document.getElementById('planId').value;
+                        if (id) {
+                            this.data.updateInvestmentPlan(id, formData);
+                            this.toast.success('تم التحديث بنجاح');
+                        } else {
+                            this.data.addInvestmentPlan(formData);
+                            this.toast.success('تمت الإضافة بنجاح');
+                        }
+                        this.closeInvestmentPlanModal();
+                        this.openAdminPanel();
+                    });
+                }
+
                 openNotificationsModal() {
+                    this.isWalletModalOpen = true;
                     const modalOverlay = document.getElementById('walletModalOverlay');
                     const modalContent = document.getElementById('walletModalContent');
                     modalContent.innerHTML = this.renderNotificationsModal();
@@ -2104,6 +2680,7 @@
                     this.data.loadRequests();
                     this.data.loadStats();
                     this.data.notificationService.loadNotifications();
+                    this.data.loadUserInvestments(); // هذا سيؤدي إلى معالجة الأرباح اليومية
 
                     // تحديث العناصر المرئية
                     this.updateBalanceDisplay();
@@ -2125,9 +2702,6 @@
                             modalContent.innerHTML = this.renderAdminPanel();
                             this.bindAdminPanelEvents();
                         }
-                    }
-                    if (this.isPaymentMethodModalOpen) {
-                        // لا نقوم بتحديث هذا المودال تلقائياً لأنه نموذج إدخال، يمكن تركه
                     }
                 }
             }
