@@ -675,11 +675,11 @@
             // ======================== الإعدادات الثابتة ========================
             const CONFIG = {
                 ADMIN_ID: 7609492965, // <--- غيّر هذا إلى معرف حسابك على تيليجرام
-                SECRET_KEY: "v3ryS3cr3tK3y!@#2025", // مفتاح سري للتوقيع
+                SECRET_KEY: "v3ryS3cr3tK3y!@#2025",
                 DEFAULT_BALANCE: 0,
                 MAX_TRANSACTIONS: 50,
                 DAILY_BONUS_AMOUNT: 10,
-                REFERRAL_BONUS_PERCENT: 10, // 10% من أرباح المُحال
+                REFERRAL_BONUS_PERCENT: 10,
                 STORAGE_KEYS: {
                     USERS: 'app_users',
                     BOTS: 'app_bots',
@@ -849,7 +849,7 @@
                 hideMainButton() { this.tg?.MainButton.hide(); }
             }
 
-            // ======================== إدارة الحالة المركزية مع التشفير ========================
+            // ======================== إدارة الحالة المركزية ========================
             class AppState extends EventTarget {
                 constructor(userId) {
                     super();
@@ -896,7 +896,7 @@
                 }
             }
 
-            // ======================== إدارة البيانات المتقدمة ========================
+            // ======================== إدارة البيانات ========================
             class DataService {
                 constructor(state) {
                     this.state = state;
@@ -923,7 +923,7 @@
 
                 async loadWallet() {
                     const data = StorageService.get(this.getWalletKey(), null);
-                    // التحقق من وجود البيانات وتنسيقها الصحيح
+                    // التصحيح: التحقق من وجود البيانات بالتنسيق الصحيح { data: {...}, signature }
                     if (data && data.data && data.data.balance !== undefined && data.signature) {
                         const isValid = await Security.verify(data.data, data.signature, CONFIG.SECRET_KEY);
                         if (isValid) {
@@ -1125,7 +1125,6 @@
                     if (!users.includes(userId)) {
                         users.push(userId);
                         StorageService.set(CONFIG.STORAGE_KEYS.USERS, users);
-                        // تسجيل الإحالة
                         if (referredBy && referredBy !== userId) {
                             const refData = StorageService.get(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX + referredBy, { count: 0, totalEarned: 0 });
                             refData.count = (refData.count || 0) + 1;
@@ -1223,7 +1222,7 @@
                         status: 'مكتمل',
                         date: new Date().toISOString()
                     });
-                    // مكافأة الإحالة (10% للمُحيل)
+                    // مكافأة الإحالة
                     if (this.state.referrals.referredBy) {
                         const referrerId = this.state.referrals.referredBy;
                         const referrerWalletKey = CONFIG.STORAGE_KEYS.WALLET_PREFIX + referrerId;
@@ -1245,7 +1244,6 @@
                                 StorageService.set(referrerWalletKey, { data: referrerWallet.data, signature: newSig });
                                 refData.totalEarned = (refData.totalEarned || 0) + bonus;
                                 StorageService.set(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX + referrerId, refData);
-                                // إشعار للمُحيل
                                 this.notificationServiceForUser(referrerId).addNotification('🎁 مكافأة إحالة', `حصلت على ${bonus} ر.س من إحالة ${this.state.user.first_name}`, 'success');
                             }
                         }
@@ -1470,7 +1468,6 @@
                     const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
                     const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
                     const dailyBonusAvailable = !this.state.dailyBonus.claimed;
-                    const referralLink = `https://t.me/your_bot?start=${this.state.referrals.code}`;
                     return `
                         <div class="space-y-5 animate-enter pb-10">
                             <div class="glass-card p-5 rounded-3xl relative overflow-hidden">
@@ -1828,16 +1825,34 @@
                     });
                 }
 
-                // =========== بدء العد التنازلي بعد فتح الرابط ===========
+                // =========== بدء العد التنازلي بعد فتح الرابط تلقائياً ===========
                 startAdCountdown(ad) {
+                    // فتح الرابط في نافذة جديدة
+                    window.open(ad.link, '_blank');
+                    
                     const modal = document.getElementById('countdownModalOverlay');
                     let remaining = ad.duration;
                     let interval = null;
-                    let countdownStarted = false;
-
-                    const startTimer = () => {
-                        if (countdownStarted) return;
-                        countdownStarted = true;
+                    
+                    const renderModal = () => {
+                        document.getElementById('countdownModalContent').innerHTML = `
+                            <div class="countdown-modal">
+                                <h3 class="text-xl font-bold mb-2">مشاهدة الإعلان</h3>
+                                <p class="text-gray-300 mb-3">${ad.title}</p>
+                                <div class="countdown-timer" id="countdownTimer">${remaining}</div>
+                                <button id="cancelCountdown" class="mt-4 bg-red-600 px-4 py-2 rounded-lg text-sm">إلغاء</button>
+                                <p class="text-xs text-gray-400 mt-3">⚠️ انتظر حتى انتهاء المدة للحصول على المكافأة.</p>
+                                <p class="text-xs text-gray-400">تم فتح رابط الإعلان في نافذة جديدة. أغلقه بعد الانتهاء.</p>
+                            </div>
+                        `;
+                        
+                        const cancelBtn = document.getElementById('cancelCountdown');
+                        cancelBtn.addEventListener('click', () => {
+                            if (interval) clearInterval(interval);
+                            modal.classList.remove('open');
+                            this.toast.info('تم إلغاء مشاهدة الإعلان');
+                        });
+                        
                         interval = setInterval(() => {
                             remaining--;
                             const timerDiv = document.getElementById('countdownTimer');
@@ -1849,48 +1864,7 @@
                             }
                         }, 1000);
                     };
-
-                    const renderModal = () => {
-                        document.getElementById('countdownModalContent').innerHTML = `
-                            <div class="countdown-modal">
-                                <h3 class="text-xl font-bold mb-2">مشاهدة الإعلان</h3>
-                                <p class="text-gray-300 mb-3">${ad.title}</p>
-                                <a href="${ad.link}" target="_blank" class="ad-link-btn" id="adLinkBtn" rel="noopener noreferrer"><i class="fa-solid fa-eye"></i> اضغط لفتح الإعلان</a>
-                                <div class="countdown-timer" id="countdownTimer">${remaining}</div>
-                                <button id="startCountdownBtn" class="mt-4 bg-blue-600 px-4 py-2 rounded-lg text-sm" disabled>لم يتم فتح الإعلان بعد</button>
-                                <button id="cancelCountdown" class="mt-2 bg-red-600 px-4 py-2 rounded-lg text-sm">إلغاء</button>
-                                <p class="text-xs text-gray-400 mt-3">⚠️ يجب فتح الإعلان أولاً ثم الضغط على "بدأت المشاهدة" لبدء العد.</p>
-                            </div>
-                        `;
-
-                        const startBtn = document.getElementById('startCountdownBtn');
-                        const cancelBtn = document.getElementById('cancelCountdown');
-                        const adLink = document.getElementById('adLinkBtn');
-
-                        adLink.addEventListener('click', () => {
-                            startBtn.disabled = false;
-                            startBtn.textContent = 'بدأت المشاهدة';
-                            startBtn.classList.remove('bg-gray-600');
-                            startBtn.classList.add('bg-blue-600');
-                        });
-
-                        startBtn.addEventListener('click', () => {
-                            if (!countdownStarted && !startBtn.disabled) {
-                                startTimer();
-                                startBtn.disabled = true;
-                                startBtn.textContent = 'جاري العد...';
-                                startBtn.classList.remove('bg-blue-600');
-                                startBtn.classList.add('bg-gray-600');
-                            }
-                        });
-
-                        cancelBtn.addEventListener('click', () => {
-                            if (interval) clearInterval(interval);
-                            modal.classList.remove('open');
-                            this.toast.info('تم إلغاء مشاهدة الإعلان');
-                        });
-                    };
-
+                    
                     modal.classList.add('open');
                     renderModal();
                     modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('open'); });
@@ -1905,9 +1879,7 @@
                     await this.data.addBalance(ad.reward, `مشاهدة إعلان: ${ad.title}`);
                     this.toast.success(`🎉 تمت إضافة ${ad.reward} ر.س إلى رصيدك لمشاهدة الإعلان!`);
                     this.updateBalanceDisplay();
-                    // إرسال إشعار للمستخدم
                     this.data.addNotification('تم إضافة رصيد', `حصلت على ${ad.reward} ر.س من مشاهدة إعلان "${ad.title}"`, 'success');
-                    // تحديث القائمة إذا كانت مفتوحة
                     if (this.isAdsModalOpen) this.openAdsModal();
                 }
 
