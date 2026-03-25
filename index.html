@@ -1801,7 +1801,7 @@
                                         <div class="ad-reward"><i class="fa-solid fa-coins"></i> ${ad.reward} ر.س</div>
                                         <div class="ad-duration"><i class="fa-regular fa-clock"></i> ${ad.duration} ثانية</div>
                                     </div>
-                                    <button class="ad-go-btn" data-ad-id="${ad.id}">Go <i class="fa-solid fa-arrow-left"></i></button>
+                                    <button class="ad-go-btn" data-ad-id="${ad.id}"><i class="fa-solid fa-eye"></i> شاهد الإعلان</button>
                                 </div>
                             `).join('')}
                         </div>
@@ -1827,18 +1827,16 @@
                     });
                 }
 
-                // =========== تعديل دالة startAdCountdown لبدء العد بعد فتح الإعلان ===========
+                // =========== بدء العد التنازلي فوراً مع فتح الرابط ===========
                 startAdCountdown(ad) {
                     const modal = document.getElementById('countdownModalOverlay');
                     let remaining = ad.duration;
                     let interval = null;
-                    let countdownStarted = false;
 
-                    const showCountdown = () => {
-                        const timerDiv = document.getElementById('countdownTimer');
-                        if (timerDiv) timerDiv.innerText = remaining;
+                    const startTimer = () => {
                         interval = setInterval(() => {
                             remaining--;
+                            const timerDiv = document.getElementById('countdownTimer');
                             if (timerDiv) timerDiv.innerText = remaining;
                             if (remaining <= 0) {
                                 clearInterval(interval);
@@ -1853,32 +1851,22 @@
                             <div class="countdown-modal">
                                 <h3 class="text-xl font-bold mb-2">مشاهدة الإعلان</h3>
                                 <p class="text-gray-300 mb-3">${ad.title}</p>
-                                <a href="${ad.link}" target="_blank" class="ad-link-btn" id="adLinkBtn" rel="noopener noreferrer"><i class="fa-solid fa-eye"></i> فتح الإعلان</a>
-                                <div class="countdown-timer" id="countdownTimer">--</div>
-                                <button id="startCountdownBtn" class="mt-4 bg-blue-600 px-4 py-2 rounded-lg text-sm">بدأت المشاهدة</button>
-                                <button id="cancelCountdown" class="mt-2 bg-red-600 px-4 py-2 rounded-lg text-sm">إلغاء</button>
-                                <p class="text-xs text-gray-400 mt-3">يرجى فتح الإعلان أولاً ثم الضغط على "بدأت المشاهدة" لبدء العد التنازلي.</p>
+                                <a href="${ad.link}" target="_blank" class="ad-link-btn" id="adLinkBtn" rel="noopener noreferrer"><i class="fa-solid fa-eye"></i> اضغط لفتح الإعلان</a>
+                                <div class="countdown-timer" id="countdownTimer">${remaining}</div>
+                                <button id="cancelCountdown" class="mt-4 bg-red-600 px-4 py-2 rounded-lg text-sm">إلغاء</button>
+                                <p class="text-xs text-gray-400 mt-3">سيتم احتساب الثواني تلقائياً بعد فتح الرابط. انتظر حتى انتهاء المدة للحصول على المكافأة.</p>
                             </div>
                         `;
 
-                        const startBtn = document.getElementById('startCountdownBtn');
                         const cancelBtn = document.getElementById('cancelCountdown');
-                        const adLink = document.getElementById('adLinkBtn');
-
-                        startBtn.addEventListener('click', () => {
-                            if (!countdownStarted) {
-                                countdownStarted = true;
-                                startBtn.disabled = true;
-                                startBtn.textContent = 'جاري العد...';
-                                showCountdown();
-                            }
-                        });
-
                         cancelBtn.addEventListener('click', () => {
                             if (interval) clearInterval(interval);
                             modal.classList.remove('open');
                             this.toast.info('تم إلغاء مشاهدة الإعلان');
                         });
+
+                        // بدء العد التنازلي مباشرة
+                        startTimer();
                     };
 
                     modal.classList.add('open');
