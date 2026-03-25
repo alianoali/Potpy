@@ -1374,7 +1374,7 @@
                 }
             }
 
-            // ======================== مدير واجهة المستخدم (مختصر) ========================
+            // ======================== مدير واجهة المستخدم ========================
             class UIManager {
                 constructor(state, dataService, telegramService, toast) {
                     this.state = state;
@@ -1827,22 +1827,17 @@
                     });
                 }
 
+                // =========== تعديل دالة startAdCountdown لبدء العد بعد فتح الإعلان ===========
                 startAdCountdown(ad) {
                     const modal = document.getElementById('countdownModalOverlay');
                     let remaining = ad.duration;
-                    const updateContent = () => {
-                        document.getElementById('countdownModalContent').innerHTML = `
-                            <div class="countdown-modal">
-                                <h3 class="text-xl font-bold mb-2">مشاهدة الإعلان</h3>
-                                <p class="text-gray-300 mb-3">${ad.title}</p>
-                                <a href="${ad.link}" target="_blank" class="ad-link-btn" rel="noopener noreferrer"><i class="fa-solid fa-eye"></i> اضغط لفتح الإعلان</a>
-                                <div class="countdown-timer" id="countdownTimer">${remaining}</div>
-                                <p class="text-sm text-gray-400">انتظر حتى انتهاء العداد للحصول على المكافأة</p>
-                                <button id="cancelCountdown" class="mt-4 bg-red-600 px-4 py-2 rounded-lg text-sm">إلغاء</button>
-                            </div>
-                        `;
+                    let interval = null;
+                    let countdownStarted = false;
+
+                    const showCountdown = () => {
                         const timerDiv = document.getElementById('countdownTimer');
-                        const interval = setInterval(() => {
+                        if (timerDiv) timerDiv.innerText = remaining;
+                        interval = setInterval(() => {
                             remaining--;
                             if (timerDiv) timerDiv.innerText = remaining;
                             if (remaining <= 0) {
@@ -1851,14 +1846,43 @@
                                 modal.classList.remove('open');
                             }
                         }, 1000);
-                        document.getElementById('cancelCountdown').addEventListener('click', () => {
-                            clearInterval(interval);
+                    };
+
+                    const renderModal = () => {
+                        document.getElementById('countdownModalContent').innerHTML = `
+                            <div class="countdown-modal">
+                                <h3 class="text-xl font-bold mb-2">مشاهدة الإعلان</h3>
+                                <p class="text-gray-300 mb-3">${ad.title}</p>
+                                <a href="${ad.link}" target="_blank" class="ad-link-btn" id="adLinkBtn" rel="noopener noreferrer"><i class="fa-solid fa-eye"></i> فتح الإعلان</a>
+                                <div class="countdown-timer" id="countdownTimer">--</div>
+                                <button id="startCountdownBtn" class="mt-4 bg-blue-600 px-4 py-2 rounded-lg text-sm">بدأت المشاهدة</button>
+                                <button id="cancelCountdown" class="mt-2 bg-red-600 px-4 py-2 rounded-lg text-sm">إلغاء</button>
+                                <p class="text-xs text-gray-400 mt-3">يرجى فتح الإعلان أولاً ثم الضغط على "بدأت المشاهدة" لبدء العد التنازلي.</p>
+                            </div>
+                        `;
+
+                        const startBtn = document.getElementById('startCountdownBtn');
+                        const cancelBtn = document.getElementById('cancelCountdown');
+                        const adLink = document.getElementById('adLinkBtn');
+
+                        startBtn.addEventListener('click', () => {
+                            if (!countdownStarted) {
+                                countdownStarted = true;
+                                startBtn.disabled = true;
+                                startBtn.textContent = 'جاري العد...';
+                                showCountdown();
+                            }
+                        });
+
+                        cancelBtn.addEventListener('click', () => {
+                            if (interval) clearInterval(interval);
                             modal.classList.remove('open');
                             this.toast.info('تم إلغاء مشاهدة الإعلان');
                         });
                     };
+
                     modal.classList.add('open');
-                    updateContent();
+                    renderModal();
                     modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('open'); });
                 }
 
@@ -2028,4 +2052,4 @@
         })();
     </script>
 </body>
-</html> 
+</html>
