@@ -923,7 +923,8 @@
 
                 async loadWallet() {
                     const data = StorageService.get(this.getWalletKey(), null);
-                    if (data && data.balance !== undefined && data.signature) {
+                    // التحقق من وجود البيانات وتنسيقها الصحيح
+                    if (data && data.data && data.data.balance !== undefined && data.signature) {
                         const isValid = await Security.verify(data.data, data.signature, CONFIG.SECRET_KEY);
                         if (isValid) {
                             this.state.balance = data.data.balance;
@@ -1827,7 +1828,7 @@
                     });
                 }
 
-                // =========== بدء العد التنازلي بعد فتح الرابط وبدء العد ===========
+                // =========== بدء العد التنازلي بعد فتح الرابط ===========
                 startAdCountdown(ad) {
                     const modal = document.getElementById('countdownModalOverlay');
                     let remaining = ad.duration;
@@ -1866,7 +1867,6 @@
                         const cancelBtn = document.getElementById('cancelCountdown');
                         const adLink = document.getElementById('adLinkBtn');
 
-                        // تمكين زر البدء عند النقر على رابط الإعلان
                         adLink.addEventListener('click', () => {
                             startBtn.disabled = false;
                             startBtn.textContent = 'بدأت المشاهدة';
