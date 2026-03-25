@@ -2,21 +2,23 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <!-- إعدادات viewport الاحترافية لدعم جميع الشاشات ومناطق الأمان -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>بوابة تيليجرام الذكية</title>
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Telegram Web App Script -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Font Awesome -->
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts (Cairo) -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 
+    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -81,15 +83,17 @@
             -webkit-tap-highlight-color: transparent;
             transition: background-color 0.3s ease, color 0.3s ease;
             min-height: 100vh;
+            /* دعم مناطق الأمان للهواتف الحديثة */
             padding-bottom: env(safe-area-inset-bottom);
+            padding-top: env(safe-area-inset-top);
         }
 
-        /* Custom Scrollbar */
+        /* تخصيص شريط التمرير */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 
-        /* Glassmorphism Enhanced */
+        /* تأثير الزجاج المتقدم */
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
@@ -109,7 +113,7 @@
             background: rgba(255, 255, 255, 0.08);
         }
 
-        /* Ambient Background */
+        /* الخلفية المتحركة */
         .ambient-glow {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -127,7 +131,7 @@
         .glow-1 { top: -10%; right: -10%; width: 300px; height: 300px; background: var(--tg-theme-button-color, #3b82f6); }
         .glow-2 { bottom: -10%; left: -10%; width: 250px; height: 250px; background: #8b5cf6; animation-delay: -5s; }
 
-        /* Loader */
+        /* شاشة التحميل */
         .loader-ring {
             display: inline-block;
             width: 50px;
@@ -149,10 +153,10 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Toast Notification */
+        /* نظام الإشعارات (Toasts) */
         .toast-container {
             position: fixed;
-            top: 20px;
+            top: calc(20px + env(safe-area-inset-top));
             left: 50%;
             transform: translateX(-50%);
             z-index: 9999;
@@ -189,7 +193,7 @@
         .hidden-view { display: none !important; }
         .fade-in { animation: scale-in 0.4s ease-out forwards; }
         
-        /* Gradient Text */
+        /* نص متدرج */
         .text-gradient {
             background: linear-gradient(to right, var(--tg-theme-button-color), #8b5cf6);
             -webkit-background-clip: text;
@@ -199,23 +203,23 @@
 </head>
 <body class="flex flex-col items-center justify-start p-4 relative selection:bg-blue-500/30">
 
-    <!-- Background -->
+    <!-- خلفية متحركة -->
     <div class="ambient-glow">
         <div class="glow-orb glow-1"></div>
         <div class="glow-orb glow-2"></div>
     </div>
 
-    <!-- Toast Container -->
+    <!-- حاوية الإشعارات -->
     <div id="toastContainer" class="toast-container"></div>
 
-    <!-- VIEW 1: LOADING -->
+    <!-- المشهد 1: التحميل -->
     <div id="loadingView" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[var(--tg-theme-bg-color)] transition-opacity duration-500">
         <div class="loader-ring mb-6"></div>
         <h2 class="text-lg font-bold text-white animate-pulse tracking-wide">جاري تأمين الاتصال...</h2>
         <p class="text-xs text-gray-500 mt-2 font-mono opacity-70">Telegram Web App Protocol v3.0</p>
     </div>
 
-    <!-- VIEW 2: ACCESS DENIED -->
+    <!-- المشهد 2: رفض الوصول -->
     <div id="accessDeniedView" class="hidden-view w-full max-w-md flex flex-col items-center justify-center min-h-[80vh] fade-in">
         <div class="glass-panel p-8 rounded-3xl text-center w-full border-red-500/20 shadow-2xl shadow-red-900/20">
             <div class="w-24 h-24 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-inner animate-bounce">
@@ -232,10 +236,10 @@
         </div>
     </div>
 
-    <!-- VIEW 3: DASHBOARD -->
+    <!-- المشهد 3: لوحة التحكم الرئيسية -->
     <div id="dashboardView" class="hidden-view w-full max-w-md space-y-5 pb-24 fade-in">
         
-        <!-- Header Section -->
+        <!-- الرأس -->
         <header class="flex items-center justify-between mb-4 pt-2">
             <div>
                 <h1 class="text-2xl font-bold text-white tracking-tight">مرحباً، <span id="headerUserName" class="text-gradient">...</span></h1>
@@ -249,12 +253,12 @@
             </div>
         </header>
 
-        <!-- Main Profile Card -->
+        <!-- بطاقة الملف الشخصي -->
         <div class="glass-panel p-5 rounded-3xl relative overflow-hidden group">
             <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
             
             <div class="flex items-center gap-4 relative z-10">
-                <!-- Avatar with Ring -->
+                <!-- الصورة الشخصية -->
                 <div class="relative">
                     <div class="absolute inset-0 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-2xl blur opacity-40 group-hover:opacity-70 transition-opacity duration-500"></div>
                     <div id="avatarContainer" class="w-20 h-20 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 relative z-10 shadow-lg">
@@ -266,7 +270,7 @@
                     <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-[var(--tg-theme-bg-color)] rounded-full z-20 shadow-sm"></div>
                 </div>
 
-                <!-- Info -->
+                <!-- المعلومات -->
                 <div class="flex-1 min-w-0">
                     <h2 class="text-lg font-bold text-white truncate" id="userName">مستخدم</h2>
                     <div class="flex items-center gap-2 mt-1.5">
@@ -277,7 +281,7 @@
                     </div>
                 </div>
 
-                <!-- Balance Mini Card -->
+                <!-- الرصيد -->
                 <div class="bg-slate-900/60 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/5 flex flex-col items-center min-w-[80px] shadow-lg">
                     <span class="text-[10px] text-gray-400 mb-1 font-medium">الرصيد</span>
                     <div class="flex items-center gap-1.5 text-yellow-400 drop-shadow-md">
@@ -288,7 +292,7 @@
             </div>
         </div>
 
-        <!-- Stats Grid -->
+        <!-- إحصائيات سريعة -->
         <div class="grid grid-cols-2 gap-3">
             <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default">
                 <div class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2.5">
@@ -306,7 +310,7 @@
             </div>
         </div>
 
-        <!-- Actions Menu -->
+        <!-- قائمة الإجراءات -->
         <div class="glass-panel p-5 rounded-3xl">
             <div class="flex items-center justify-between mb-5">
                 <h3 class="font-bold text-white text-base">القائمة السريعة</h3>
@@ -314,7 +318,7 @@
             </div>
             
             <div class="space-y-2.5">
-                <!-- Action Item 1 -->
+                <!-- زر تحديث -->
                 <button onclick="handleAction('refresh')" class="w-full p-3.5 rounded-xl flex items-center justify-between glass-card hover:bg-white/5 group">
                     <div class="flex items-center gap-3.5">
                         <div class="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
@@ -325,7 +329,7 @@
                     <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] transition-transform duration-300"></i>
                 </button>
 
-                <!-- Action Item 2 -->
+                <!-- زر الدعم -->
                 <button onclick="handleAction('support')" class="w-full p-3.5 rounded-xl flex items-center justify-between glass-card hover:bg-white/5 group">
                     <div class="flex items-center gap-3.5">
                         <div class="w-10 h-10 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-all duration-300">
@@ -339,7 +343,7 @@
                     </div>
                 </button>
 
-                <!-- Action Item 3 (Locked) -->
+                <!-- زر مغلق -->
                 <button disabled class="w-full p-3.5 rounded-xl flex items-center justify-between opacity-60 cursor-not-allowed border border-dashed border-gray-700 bg-transparent">
                     <div class="flex items-center gap-3.5">
                         <div class="w-10 h-10 rounded-lg bg-gray-700/30 text-gray-500 flex items-center justify-center">
@@ -351,7 +355,7 @@
             </div>
         </div>
 
-        <!-- Footer / Logout -->
+        <!-- زر الخروج -->
         <button onclick="confirmLogout()" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2.5 group mt-2">
             <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
             إنهاء الجلسة الآمنة
@@ -361,14 +365,14 @@
     <script>
         const tg = window.Telegram.WebApp;
         
-        // State Management
+        // إدارة الحالات (Views)
         const views = {
             loading: document.getElementById('loadingView'),
             denied: document.getElementById('accessDeniedView'),
             dashboard: document.getElementById('dashboardView')
         };
 
-        // Elements
+        // عناصر DOM
         const els = {
             userName: document.getElementById('userName'),
             headerName: document.getElementById('headerUserName'),
@@ -380,17 +384,17 @@
             date: document.getElementById('currentDate')
         };
 
-        // Initialize
+        // تهيئة التطبيق
         function init() {
-            tg.expand();
+            tg.expand(); // توسيع التطبيق لملء الشاشة
             tg.ready();
-            tg.setHeaderColor('transparent'); // Make header blend with bg
+            tg.setHeaderColor('transparent'); // دمج الهيدر مع الخلفية
             
-            // Set Date
+            // تعيين التاريخ الحالي
             const now = new Date();
             els.date.textContent = now.toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' });
 
-            // Security Check with slight delay for effect
+            // فحص الأمان مع تأخير بسيط للتأثير البصري
             setTimeout(() => {
                 if (!tg.initData || !tg.initDataUnsafe.user) {
                     switchView('denied');
@@ -403,6 +407,7 @@
             }, 1200);
         }
 
+        // التبديل بين الشاشات
         function switchView(viewName) {
             Object.values(views).forEach(el => el.classList.add('hidden-view'));
             views[viewName].classList.remove('hidden-view');
@@ -416,13 +421,14 @@
             }
         }
 
+        // تحميل بيانات المستخدم
         function loadUserData(user) {
             const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
             els.userName.textContent = fullName;
             els.headerName.textContent = user.first_name;
             els.userId.textContent = `ID: ${user.id}`;
             
-            // Avatar Logic
+            // معالجة الصورة الشخصية
             if (user.photo_url) {
                 els.photo.src = user.photo_url;
                 els.photo.classList.remove('hidden');
@@ -434,10 +440,11 @@
                 els.initials.textContent = initials || "U";
             }
 
-            // Animate Balance
+            // تحريك عداد الرصيد
             animateValue(els.balance, 0, 1250, 1500);
         }
 
+        // دالة تحريك الأرقام
         function animateValue(obj, start, end, duration) {
             let startTimestamp = null;
             const step = (timestamp) => {
@@ -451,6 +458,7 @@
             window.requestAnimationFrame(step);
         }
 
+        // إعداد الزر الرئيسي (Main Button)
         function setupMainButton() {
             tg.MainButton.setText("تحديث الحالة");
             tg.MainButton.setTextColor("#ffffff");
@@ -464,7 +472,7 @@
             });
         }
 
-        // Utilities
+        // وظائف مساعدة
         function copyId() {
             const id = els.userId.textContent.replace('ID: ', '');
             navigator.clipboard.writeText(id).then(() => {
@@ -493,6 +501,7 @@
             });
         }
 
+        // نظام الإشعارات المخصص
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -513,7 +522,7 @@
             }, 3000);
         }
 
-        // Start
+        // بدء التطبيق
         init();
     </script>
 </body>
