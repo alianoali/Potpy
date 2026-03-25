@@ -1827,13 +1827,16 @@
                     });
                 }
 
-                // =========== بدء العد التنازلي فوراً مع فتح الرابط ===========
+                // =========== بدء العد التنازلي بعد فتح الرابط وبدء العد ===========
                 startAdCountdown(ad) {
                     const modal = document.getElementById('countdownModalOverlay');
                     let remaining = ad.duration;
                     let interval = null;
+                    let countdownStarted = false;
 
                     const startTimer = () => {
+                        if (countdownStarted) return;
+                        countdownStarted = true;
                         interval = setInterval(() => {
                             remaining--;
                             const timerDiv = document.getElementById('countdownTimer');
@@ -1853,20 +1856,39 @@
                                 <p class="text-gray-300 mb-3">${ad.title}</p>
                                 <a href="${ad.link}" target="_blank" class="ad-link-btn" id="adLinkBtn" rel="noopener noreferrer"><i class="fa-solid fa-eye"></i> اضغط لفتح الإعلان</a>
                                 <div class="countdown-timer" id="countdownTimer">${remaining}</div>
-                                <button id="cancelCountdown" class="mt-4 bg-red-600 px-4 py-2 rounded-lg text-sm">إلغاء</button>
-                                <p class="text-xs text-gray-400 mt-3">سيتم احتساب الثواني تلقائياً بعد فتح الرابط. انتظر حتى انتهاء المدة للحصول على المكافأة.</p>
+                                <button id="startCountdownBtn" class="mt-4 bg-blue-600 px-4 py-2 rounded-lg text-sm" disabled>لم يتم فتح الإعلان بعد</button>
+                                <button id="cancelCountdown" class="mt-2 bg-red-600 px-4 py-2 rounded-lg text-sm">إلغاء</button>
+                                <p class="text-xs text-gray-400 mt-3">⚠️ يجب فتح الإعلان أولاً ثم الضغط على "بدأت المشاهدة" لبدء العد.</p>
                             </div>
                         `;
 
+                        const startBtn = document.getElementById('startCountdownBtn');
                         const cancelBtn = document.getElementById('cancelCountdown');
+                        const adLink = document.getElementById('adLinkBtn');
+
+                        // تمكين زر البدء عند النقر على رابط الإعلان
+                        adLink.addEventListener('click', () => {
+                            startBtn.disabled = false;
+                            startBtn.textContent = 'بدأت المشاهدة';
+                            startBtn.classList.remove('bg-gray-600');
+                            startBtn.classList.add('bg-blue-600');
+                        });
+
+                        startBtn.addEventListener('click', () => {
+                            if (!countdownStarted && !startBtn.disabled) {
+                                startTimer();
+                                startBtn.disabled = true;
+                                startBtn.textContent = 'جاري العد...';
+                                startBtn.classList.remove('bg-blue-600');
+                                startBtn.classList.add('bg-gray-600');
+                            }
+                        });
+
                         cancelBtn.addEventListener('click', () => {
                             if (interval) clearInterval(interval);
                             modal.classList.remove('open');
                             this.toast.info('تم إلغاء مشاهدة الإعلان');
                         });
-
-                        // بدء العد التنازلي مباشرة
-                        startTimer();
                     };
 
                     modal.classList.add('open');
