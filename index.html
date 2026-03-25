@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>محفظة تيليجرام المتطورة | جميع الأوامر متضمنة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>بوابة تيليجرام الذكية</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,920 +11,510 @@
     <!-- Telegram Web App Script -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Font Awesome 6 -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <style>
-        /* ========== التصميم المتطور ========== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: var(--tg-theme-bg-color, #0a0c15);
-            color: var(--tg-theme-text-color, #ffffff);
-            transition: all 0.3s;
-            overflow-x: hidden;
-        }
-        .glass-card {
-            background: rgba(15, 25, 35, 0.65);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 2rem;
-            transition: all 0.3s;
-        }
-        .glass-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(59,130,246,0.4);
-        }
-        .wallet-icon {
-            width: 90px; height: 90px;
-            background: linear-gradient(145deg, #3b82f6, #8b5cf6);
-            border-radius: 35% 65% 70% 30% / 30% 40% 60% 70%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; animation: float 3s infinite;
-            box-shadow: 0 15px 35px rgba(59,130,246,0.3);
-        }
-        @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0); } }
-        .spinner { width: 48px; height: 48px; border: 4px solid rgba(59,130,246,0.2); border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 380px; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); border-radius: 60px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.15); animation: slideUp 0.3s, fadeOut 0.3s 4.7s forwards; pointer-events: auto; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
-        .badge-notify { position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
-        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
-        .modal-open { overflow: hidden; }
-    </style>
-</head>
-<body>
-
-    <div id="app" class="w-full max-w-md mx-auto p-4 relative z-10"></div>
-
-    <!-- نافذة منبثقة عامة (مودال) -->
-    <div id="modalOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all duration-300 opacity-0 pointer-events-none">
-        <div id="modalContent" class="w-full max-w-lg bg-slate-900/90 backdrop-blur-xl rounded-3xl border border-white/10 p-5 max-h-[85vh] overflow-y-auto transform scale-95 transition-all duration-300"></div>
-    </div>
-
-    <div class="toast-container" id="toastContainer"></div>
+    <!-- Google Fonts (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 
     <script>
-        (function(){
-            // ======================== الإعدادات الأساسية ========================
-            const CONFIG = {
-                ADMIN_ID: 7609492965,          // ضع معرف المسؤول هنا
-                SECRET_KEY: "UltraSecureKey@2025!",
-                DEFAULT_BALANCE: 0,
-                MAX_TRANSACTIONS: 50,
-                DAILY_BONUS_AMOUNT: 15,
-                REFERRAL_BONUS_PERCENT: 10,
-                STORAGE_KEYS: {
-                    USERS: 'app_users',
-                    WALLET_PREFIX: 'wallet_',
-                    PAYMENT_METHODS: 'payment_methods',
-                    WITHDRAWAL_REQUESTS: 'withdrawal_requests',
-                    SETTINGS_PREFIX: 'settings_',
-                    NOTIFICATIONS_PREFIX: 'notifications_',
-                    ADS: 'ads_list',
-                    USER_AD_VIEWS_PREFIX: 'user_ads_views_',
-                    REFERRAL_PREFIX: 'ref_',
-                    DAILY_BONUS_PREFIX: 'daily_bonus_',
-                    THEME: 'theme',
-                    DAILY_OPS: 'daily_ops'
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        tg: {
+                            bg: 'var(--tg-theme-bg-color, #0f172a)',
+                            secondary: 'var(--tg-theme-secondary-bg-color, #1e293b)',
+                            text: 'var(--tg-theme-text-color, #ffffff)',
+                            hint: 'var(--tg-theme-hint-color, #94a3b8)',
+                            link: 'var(--tg-theme-link-color, #3b82f6)',
+                            button: 'var(--tg-theme-button-color, #3b82f6)',
+                            buttonText: 'var(--tg-theme-button-text-color, #ffffff)',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-up': 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'scale-in': 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'shimmer': 'shimmer 2s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        scaleIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.95)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' },
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-1000px 0' },
+                            '100%': { backgroundPosition: '1000px 0' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --glass-bg: rgba(30, 41, 59, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--tg-theme-bg-color, #0f172a);
+            color: var(--tg-theme-text-color, #ffffff);
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        /* Glassmorphism Enhanced */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-card:active {
+            transform: scale(0.96);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Ambient Background */
+        .ambient-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 10s infinite ease-in-out;
+        }
+        .glow-1 { top: -10%; right: -10%; width: 300px; height: 300px; background: var(--tg-theme-button-color, #3b82f6); }
+        .glow-2 { bottom: -10%; left: -10%; width: 250px; height: 250px; background: #8b5cf6; animation-delay: -5s; }
+
+        /* Loader */
+        .loader-ring {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+        }
+        .loader-ring:after {
+            content: " ";
+            display: block;
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            border-radius: 50%;
+            border: 4px solid var(--tg-theme-button-color, #3b82f6);
+            border-color: var(--tg-theme-button-color, #3b82f6) transparent var(--tg-theme-button-color, #3b82f6) transparent;
+            animation: ring 1.2s linear infinite;
+        }
+        @keyframes ring {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            width: 90%;
+            max-width: 350px;
+            pointer-events: none;
+        }
+        .toast {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 14px 16px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            pointer-events: auto;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .toast.hide {
+            animation: slideUp 0.3s ease forwards;
+        }
+        @keyframes slideUp {
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .hidden-view { display: none !important; }
+        .fade-in { animation: scale-in 0.4s ease-out forwards; }
+        
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, var(--tg-theme-button-color), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-start p-4 relative selection:bg-blue-500/30">
+
+    <!-- Background -->
+    <div class="ambient-glow">
+        <div class="glow-orb glow-1"></div>
+        <div class="glow-orb glow-2"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- VIEW 1: LOADING -->
+    <div id="loadingView" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[var(--tg-theme-bg-color)] transition-opacity duration-500">
+        <div class="loader-ring mb-6"></div>
+        <h2 class="text-lg font-bold text-white animate-pulse tracking-wide">جاري تأمين الاتصال...</h2>
+        <p class="text-xs text-gray-500 mt-2 font-mono opacity-70">Telegram Web App Protocol v3.0</p>
+    </div>
+
+    <!-- VIEW 2: ACCESS DENIED -->
+    <div id="accessDeniedView" class="hidden-view w-full max-w-md flex flex-col items-center justify-center min-h-[80vh] fade-in">
+        <div class="glass-panel p-8 rounded-3xl text-center w-full border-red-500/20 shadow-2xl shadow-red-900/20">
+            <div class="w-24 h-24 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-inner animate-bounce">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-3 text-white">دخول غير مصرح به</h2>
+            <p class="text-gray-400 mb-8 text-sm leading-relaxed px-4">
+                يجب تشغيل هذا التطبيق حصراً من داخل عميل تيليجرام الرسمي لضمان تشفير البيانات وحماية الخصوصية.
+            </p>
+            <button onclick="window.location.href='https://telegram.org'" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-red-600 to-red-500 hover:shadow-lg hover:shadow-red-500/30 transition-all transform hover:-translate-y-1 active:scale-95">
+                <i class="fa-brands fa-telegram ml-2"></i>
+                فتح تيليجرام
+            </button>
+        </div>
+    </div>
+
+    <!-- VIEW 3: DASHBOARD -->
+    <div id="dashboardView" class="hidden-view w-full max-w-md space-y-5 pb-24 fade-in">
+        
+        <!-- Header Section -->
+        <header class="flex items-center justify-between mb-4 pt-2">
+            <div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">مرحباً، <span id="headerUserName" class="text-gradient">...</span></h1>
+                <p class="text-xs text-gray-400 mt-1 font-medium" id="currentDate">...</p>
+            </div>
+            <div class="relative group cursor-pointer" onclick="showToast('لا توجد إشعارات جديدة', 'info')">
+                <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center shadow-lg shadow-blue-500/20 transition-transform group-hover:scale-110">
+                    <i class="fa-solid fa-bell text-white text-sm"></i>
+                </div>
+                <span class="absolute top-0 right-0 w-3 h-3 bg-red-500 border-2 border-[var(--tg-theme-bg-color)] rounded-full animate-pulse"></span>
+            </div>
+        </header>
+
+        <!-- Main Profile Card -->
+        <div class="glass-panel p-5 rounded-3xl relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+            
+            <div class="flex items-center gap-4 relative z-10">
+                <!-- Avatar with Ring -->
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-2xl blur opacity-40 group-hover:opacity-70 transition-opacity duration-500"></div>
+                    <div id="avatarContainer" class="w-20 h-20 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 relative z-10 shadow-lg">
+                        <img id="userPhoto" src="" alt="User" class="w-full h-full object-cover hidden">
+                        <div id="defaultAvatar" class="w-full h-full flex items-center justify-center text-2xl font-bold text-white bg-slate-700">
+                            <span id="avatarInitials">U</span>
+                        </div>
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-[var(--tg-theme-bg-color)] rounded-full z-20 shadow-sm"></div>
+                </div>
+
+                <!-- Info -->
+                <div class="flex-1 min-w-0">
+                    <h2 class="text-lg font-bold text-white truncate" id="userName">مستخدم</h2>
+                    <div class="flex items-center gap-2 mt-1.5">
+                        <span class="text-xs text-gray-400 font-mono bg-white/5 px-2.5 py-1 rounded-lg select-all border border-white/5" id="userId">ID: 00000</span>
+                        <button onclick="copyId()" class="text-gray-400 hover:text-white hover:bg-white/10 p-1.5 rounded-lg transition-colors" title="نسخ المعرف">
+                            <i class="fa-regular fa-copy text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Balance Mini Card -->
+                <div class="bg-slate-900/60 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/5 flex flex-col items-center min-w-[80px] shadow-lg">
+                    <span class="text-[10px] text-gray-400 mb-1 font-medium">الرصيد</span>
+                    <div class="flex items-center gap-1.5 text-yellow-400 drop-shadow-md">
+                        <i class="fa-solid fa-coins text-xs"></i>
+                        <span class="font-bold text-white text-base tracking-tight" id="userBalance">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 gap-3">
+            <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default">
+                <div class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2.5">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <span class="text-gray-400 text-xs mb-1 font-medium">الأداء العام</span>
+                <span class="text-white font-bold text-lg">ممتاز</span>
+            </div>
+            <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default">
+                <div class="w-10 h-10 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2.5">
+                    <i class="fa-solid fa-medal"></i>
+                </div>
+                <span class="text-gray-400 text-xs mb-1 font-medium">المستوى الحالي</span>
+                <span class="text-white font-bold text-lg">ذهبي</span>
+            </div>
+        </div>
+
+        <!-- Actions Menu -->
+        <div class="glass-panel p-5 rounded-3xl">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="font-bold text-white text-base">القائمة السريعة</h3>
+                <span class="text-[10px] text-gray-500 bg-white/5 px-2 py-1 rounded-md border border-white/5">v3.1 Pro</span>
+            </div>
+            
+            <div class="space-y-2.5">
+                <!-- Action Item 1 -->
+                <button onclick="handleAction('refresh')" class="w-full p-3.5 rounded-xl flex items-center justify-between glass-card hover:bg-white/5 group">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                            <i class="fa-solid fa-sync"></i>
+                        </div>
+                        <span class="text-gray-200 text-sm font-medium">تحديث البيانات</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] transition-transform duration-300"></i>
+                </button>
+
+                <!-- Action Item 2 -->
+                <button onclick="handleAction('support')" class="w-full p-3.5 rounded-xl flex items-center justify-between glass-card hover:bg-white/5 group">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-all duration-300">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <span class="text-gray-200 text-sm font-medium">رسائل الدعم</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]"></span>
+                        <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] transition-transform duration-300"></i>
+                    </div>
+                </button>
+
+                <!-- Action Item 3 (Locked) -->
+                <button disabled class="w-full p-3.5 rounded-xl flex items-center justify-between opacity-60 cursor-not-allowed border border-dashed border-gray-700 bg-transparent">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-lg bg-gray-700/30 text-gray-500 flex items-center justify-center">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <span class="text-gray-500 text-sm font-medium">الميزات المتقدمة (قريباً)</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer / Logout -->
+        <button onclick="confirmLogout()" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2.5 group mt-2">
+            <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
+            إنهاء الجلسة الآمنة
+        </button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        
+        // State Management
+        const views = {
+            loading: document.getElementById('loadingView'),
+            denied: document.getElementById('accessDeniedView'),
+            dashboard: document.getElementById('dashboardView')
+        };
+
+        // Elements
+        const els = {
+            userName: document.getElementById('userName'),
+            headerName: document.getElementById('headerUserName'),
+            userId: document.getElementById('userId'),
+            photo: document.getElementById('userPhoto'),
+            defaultAvatar: document.getElementById('defaultAvatar'),
+            initials: document.getElementById('avatarInitials'),
+            balance: document.getElementById('userBalance'),
+            date: document.getElementById('currentDate')
+        };
+
+        // Initialize
+        function init() {
+            tg.expand();
+            tg.ready();
+            tg.setHeaderColor('transparent'); // Make header blend with bg
+            
+            // Set Date
+            const now = new Date();
+            els.date.textContent = now.toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' });
+
+            // Security Check with slight delay for effect
+            setTimeout(() => {
+                if (!tg.initData || !tg.initDataUnsafe.user) {
+                    switchView('denied');
+                    try { tg.setHeaderColor('#ef4444'); } catch(e){}
+                } else {
+                    loadUserData(tg.initDataUnsafe.user);
+                    switchView('dashboard');
+                    setupMainButton();
+                }
+            }, 1200);
+        }
+
+        function switchView(viewName) {
+            Object.values(views).forEach(el => el.classList.add('hidden-view'));
+            views[viewName].classList.remove('hidden-view');
+            
+            if(viewName === 'loading') {
+                views.loading.classList.remove('hidden-view');
+                views.loading.style.opacity = '1';
+            } else {
+                views.loading.style.opacity = '0';
+                setTimeout(() => views.loading.classList.add('hidden-view'), 500);
+            }
+        }
+
+        function loadUserData(user) {
+            const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
+            els.userName.textContent = fullName;
+            els.headerName.textContent = user.first_name;
+            els.userId.textContent = `ID: ${user.id}`;
+            
+            // Avatar Logic
+            if (user.photo_url) {
+                els.photo.src = user.photo_url;
+                els.photo.classList.remove('hidden');
+                els.defaultAvatar.classList.add('hidden');
+            } else {
+                els.photo.classList.add('hidden');
+                els.defaultAvatar.classList.remove('hidden');
+                const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
+                els.initials.textContent = initials || "U";
+            }
+
+            // Animate Balance
+            animateValue(els.balance, 0, 1250, 1500);
+        }
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString('en-US');
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
                 }
             };
+            window.requestAnimationFrame(step);
+        }
 
-            // ======================== أدوات التشفير ========================
-            class CryptoHelper {
-                static async hmacSign(data, secret) {
-                    const encoder = new TextEncoder();
-                    const key = await crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
-                    const sig = await crypto.subtle.sign("HMAC", key, encoder.encode(JSON.stringify(data)));
-                    return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2,'0')).join('');
-                }
-                static async verify(data, signature, secret) {
-                    const computed = await this.hmacSign(data, secret);
-                    return computed === signature;
-                }
+        function setupMainButton() {
+            tg.MainButton.setText("تحديث الحالة");
+            tg.MainButton.setTextColor("#ffffff");
+            tg.MainButton.setColor(getComputedStyle(document.documentElement).getPropertyValue('--tg-theme-button-color').trim() || "#3b82f6");
+            tg.MainButton.show();
+            
+            tg.MainButton.onClick(() => {
+                tg.HapticFeedback.notificationOccurred('success');
+                showToast('تم مزامنة البيانات مع الخادم بنجاح', 'success');
+                animateValue(els.balance, parseInt(els.balance.innerText.replace(/,/g,'')), parseInt(els.balance.innerText.replace(/,/g,'')) + 50, 1000);
+            });
+        }
+
+        // Utilities
+        function copyId() {
+            const id = els.userId.textContent.replace('ID: ', '');
+            navigator.clipboard.writeText(id).then(() => {
+                tg.HapticFeedback.selectionChanged();
+                showToast('تم نسخ المعرف ID للحافظة', 'info');
+            });
+        }
+
+        function handleAction(type) {
+            tg.HapticFeedback.impactOccurred('light');
+            if (type === 'refresh') {
+                showToast('جارٍ تحديث البيانات...', 'info');
+                setTimeout(() => showToast('تم التحديث بنجاح', 'success'), 1000);
+            } else if (type === 'support') {
+                showToast('جارٍ فتح قناة الدعم...', 'info');
+                setTimeout(() => tg.openLink('https://telegram.org'), 800);
             }
+        }
 
-            // ======================== التخزين المحلي ========================
-            class Storage {
-                static get(key, def=null) { try { const val = localStorage.getItem(key); return val ? JSON.parse(val) : def; } catch(e) { return def; } }
-                static set(key, val) { localStorage.setItem(key, JSON.stringify(val)); return true; }
-                static remove(key) { localStorage.removeItem(key); }
-            }
+        function confirmLogout() {
+            tg.HapticFeedback.notificationOccurred('warning');
+            tg.showConfirm("هل أنت متأكد من رغبتك في إنهاء الجلسة؟", (confirmed) => {
+                if (confirmed) {
+                    tg.close();
+                }
+            });
+        }
 
-            // ======================== إدارة الإشعارات المنبثقة ========================
-            class ToastManager {
-                constructor(containerId) {
-                    this.container = document.getElementById(containerId);
-                }
-                show(msg, type='info', duration=5000) {
-                    const toast = document.createElement('div');
-                    toast.className = `toast ${type}`;
-                    const icons = { success:'fa-check-circle', error:'fa-exclamation-circle', warning:'fa-exclamation-triangle', info:'fa-info-circle' };
-                    toast.innerHTML = `<i class="fas ${icons[type]} ml-2 text-xl"></i><span>${msg}</span>`;
-                    this.container.appendChild(toast);
-                    setTimeout(() => toast.remove(), duration);
-                }
-                success(m) { this.show(m,'success'); }
-                error(m) { this.show(m,'error'); }
-                warning(m) { this.show(m,'warning'); }
-                info(m) { this.show(m,'info'); }
-            }
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            
+            let icon = '<i class="fa-solid fa-circle-info text-blue-400 text-lg"></i>';
+            if (type === 'success') icon = '<i class="fa-solid fa-check-circle text-green-400 text-lg"></i>';
+            if (type === 'error') icon = '<i class="fa-solid fa-triangle-exclamation text-red-400 text-lg"></i>';
 
-            // ======================== خدمة تيليجرام ========================
-            class TelegramService {
-                constructor() {
-                    this.tg = window.Telegram?.WebApp;
-                    this.available = !!this.tg;
-                }
-                init() { if(this.available) { this.tg.expand(); this.tg.ready(); } }
-                getUser() { return this.tg?.initDataUnsafe?.user || null; }
-                isValid() { return this.available && !!this.tg?.initData; }
-                close() { this.tg?.close(); }
-                setMainButton(text, color='#3b82f6', textColor='#fff', show=true, cb=null) {
-                    if(!this.tg) return;
-                    const btn = this.tg.MainButton;
-                    btn.setText(text);
-                    btn.setColor(color);
-                    btn.setTextColor(textColor);
-                    show ? btn.show() : btn.hide();
-                    if(cb) btn.onClick(cb);
-                }
-                openLink(url) { if(this.tg) this.tg.openLink(url); else window.open(url, '_blank'); }
-            }
+            toast.innerHTML = `${icon}<span class="text-sm font-medium flex-1">${message}</span>`;
+            
+            container.appendChild(toast);
+            tg.HapticFeedback.impactOccurred('light');
 
-            // ======================== إدارة الحالة العامة ========================
-            class AppState {
-                constructor(userId) {
-                    this.userId = userId;
-                    this.user = null;
-                    this.isAdmin = false;
-                    this.loading = true;
-                    this.accessDenied = false;
-                    this.telegramMissing = false;
-                    this.balance = 0;
-                    this.transactions = [];
-                    this.paymentMethods = [];
-                    this.withdrawalRequests = [];
-                    this.notifications = [];
-                    this.ads = [];
-                    this.referral = { code: null, referredBy: null, count: 0, totalEarned: 0 };
-                    this.dailyBonus = { lastClaim: null, claimed: false };
-                    this.stats = { users: 0, dailyOps: 0 };
-                    this.settings = { language: 'ar', notifications: true, sound: true, vibrate: true };
-                    this.theme = 'dark';
-                    this.listeners = {};
-                }
-                on(event, cb) { if(!this.listeners[event]) this.listeners[event]=[]; this.listeners[event].push(cb); }
-                emit(event, data) { if(this.listeners[event]) this.listeners[event].forEach(cb=>cb(data)); }
-                updateBalance(amount) { this.balance = amount; this.emit('balance-updated'); }
-                addTransaction(tx) { this.transactions.unshift(tx); if(this.transactions.length>CONFIG.MAX_TRANSACTIONS) this.transactions.pop(); this.emit('tx-updated'); }
-            }
+            setTimeout(() => {
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
 
-            // ======================== خدمة البيانات ========================
-            class DataService {
-                constructor(state, toast) {
-                    this.state = state;
-                    this.toast = toast;
-                }
-                getWalletKey() { return CONFIG.STORAGE_KEYS.WALLET_PREFIX+this.state.userId; }
-                getSettingsKey() { return CONFIG.STORAGE_KEYS.SETTINGS_PREFIX+this.state.userId; }
-                getNotifKey() { return CONFIG.STORAGE_KEYS.NOTIFICATIONS_PREFIX+this.state.userId; }
-                getUserAdKey() { return CONFIG.STORAGE_KEYS.USER_AD_VIEWS_PREFIX+this.state.userId; }
-                getReferralKey() { return CONFIG.STORAGE_KEYS.REFERRAL_PREFIX+this.state.userId; }
-                getDailyKey() { return CONFIG.STORAGE_KEYS.DAILY_BONUS_PREFIX+this.state.userId; }
-
-                async loadAll() {
-                    await this.loadWallet();
-                    this.loadPaymentMethods();
-                    await this.loadRequests();
-                    this.loadNotifications();
-                    this.loadAds();
-                    await this.loadReferral();
-                    await this.loadDailyBonus();
-                    this.loadSettings();
-                    await this.loadStats();
-                }
-
-                // ========== المحفظة ==========
-                async loadWallet() {
-                    const data = Storage.get(this.getWalletKey(), null);
-                    if(data && data.data && data.signature) {
-                        const valid = await CryptoHelper.verify(data.data, data.signature, CONFIG.SECRET_KEY);
-                        if(valid) {
-                            this.state.balance = data.data.balance;
-                            this.state.transactions = data.data.transactions || [];
-                            return;
-                        }
-                    }
-                    this.state.balance = CONFIG.DEFAULT_BALANCE;
-                    this.state.transactions = [];
-                    await this.saveWallet();
-                }
-                async saveWallet() {
-                    const payload = { balance: this.state.balance, transactions: this.state.transactions };
-                    const sig = await CryptoHelper.hmacSign(payload, CONFIG.SECRET_KEY);
-                    Storage.set(this.getWalletKey(), { data: payload, signature: sig });
-                }
-                async addBalance(amount, note) {
-                    this.state.balance += amount;
-                    this.state.addTransaction({ id: Date.now(), type: 'earning', amount, note, date: new Date().toISOString() });
-                    await this.saveWallet();
-                    
-                    // مكافأة الإحالة
-                    if(this.state.referral.referredBy && amount>0) {
-                        const bonus = amount * CONFIG.REFERRAL_BONUS_PERCENT / 100;
-                        if(bonus>0) {
-                            await this.addBalanceToUser(this.state.referral.referredBy, bonus, `مكافأة إحالة من ${this.state.user.first_name}`);
-                            // تحديث إحصائيات المحيل
-                            const refData = Storage.get(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX+this.state.referral.referredBy, { count:0, totalEarned:0 });
-                            refData.totalEarned = (refData.totalEarned || 0) + bonus;
-                            Storage.set(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX+this.state.referral.referredBy, refData);
-                        }
-                    }
-                }
-                async transferBalance(targetUserId, amount) {
-                    if(amount > this.state.balance) return false;
-                    const targetKey = CONFIG.STORAGE_KEYS.WALLET_PREFIX+targetUserId;
-                    const targetWallet = Storage.get(targetKey);
-                    if(!targetWallet || !targetWallet.data) return false;
-                    
-                    // خصم من المرسل
-                    this.state.balance -= amount;
-                    this.state.addTransaction({ id: Date.now(), type: 'transfer_out', amount: -amount, note: `تحويل إلى ${targetUserId}`, date: new Date().toISOString() });
-                    await this.saveWallet();
-                    
-                    // إضافة للمستلم
-                    targetWallet.data.balance += amount;
-                    targetWallet.data.transactions.unshift({ id: Date.now(), type: 'transfer_in', amount, note: `تحويل من ${this.state.user.id}`, date: new Date().toISOString() });
-                    if(targetWallet.data.transactions.length>CONFIG.MAX_TRANSACTIONS) targetWallet.data.transactions.pop();
-                    const newSig = await CryptoHelper.hmacSign(targetWallet.data, CONFIG.SECRET_KEY);
-                    Storage.set(targetKey, { data: targetWallet.data, signature: newSig });
-                    
-                    this.addNotificationForUser(targetUserId, '💰 استلام تحويل', `استلمت ${amount} ر.س من المستخدم ${this.state.user.id}`, 'info');
-                    return true;
-                }
-                
-                // ========== طرق الدفع ==========
-                loadPaymentMethods() {
-                    let methods = Storage.get(CONFIG.STORAGE_KEYS.PAYMENT_METHODS);
-                    if(!methods || methods.length===0) {
-                        methods = [
-                            { id: 'usdt', name: 'USDT (TRC20)', icon: 'fab fa-tether', description: 'محفظة رقمية', withdrawDetails: 'عنوان USDT' },
-                            { id: 'visa', name: 'بطاقة ائتمان', icon: 'fas fa-credit-card', description: 'Visa/Mastercard', withdrawDetails: 'رقم البطاقة' },
-                            { id: 'bank', name: 'تحويل بنكي', icon: 'fas fa-university', description: 'حوالة محلية', withdrawDetails: 'رقم IBAN' },
-                            { id: 'telegram', name: 'محفظة تيليجرام', icon: 'fab fa-telegram', description: '@wallet', withdrawDetails: 'معرف المستخدم' }
-                        ];
-                        Storage.set(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, methods);
-                    }
-                    this.state.paymentMethods = methods;
-                }
-                savePaymentMethods() { Storage.set(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, this.state.paymentMethods); }
-                addPaymentMethod(method) {
-                    method.id = Date.now().toString();
-                    this.state.paymentMethods.push(method);
-                    this.savePaymentMethods();
-                }
-                updatePaymentMethod(id, data) {
-                    const idx = this.state.paymentMethods.findIndex(m=>m.id==id);
-                    if(idx!==-1) { this.state.paymentMethods[idx] = {...this.state.paymentMethods[idx], ...data}; this.savePaymentMethods(); return true; }
-                    return false;
-                }
-                deletePaymentMethod(id) { this.state.paymentMethods = this.state.paymentMethods.filter(m=>m.id!=id); this.savePaymentMethods(); }
-
-                // ========== طلبات السحب ==========
-                async loadRequests() { this.state.withdrawalRequests = Storage.get(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, []); }
-                saveRequests() { Storage.set(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, this.state.withdrawalRequests); }
-                async addWithdrawalRequest(amount, methodId, details, user) {
-                    if(amount > this.state.balance) return { success: false, message: 'رصيد غير كافٍ' };
-                    const method = this.state.paymentMethods.find(m=>m.id===methodId);
-                    const req = {
-                        id: Date.now()+'_'+Math.random().toString(36).substr(2,6),
-                        userId: user.id,
-                        userName: user.first_name + (user.last_name ? ' '+user.last_name : ''),
-                        amount,
-                        method: method.name,
-                        methodId,
-                        details,
-                        status: 'pending',
-                        date: new Date().toISOString()
-                    };
-                    this.state.withdrawalRequests.push(req);
-                    this.saveRequests();
-                    await this.incrementDailyOps();
-                    return { success: true, request: req };
-                }
-                async acceptWithdrawal(req) {
-                    const r = this.state.withdrawalRequests.find(x=>x.id===req.id);
-                    if(r && r.status==='pending') {
-                        r.status = 'approved';
-                        await this.subtractBalance(r.userId, r.amount, `سحب عبر ${r.method}`);
-                        this.saveRequests();
-                        this.addNotificationForUser(r.userId, '✅ تم قبول السحب', `تم قبول طلب سحب بقيمة ${r.amount}`, 'success');
-                        return true;
-                    }
-                    return false;
-                }
-                async rejectWithdrawal(req) {
-                    const r = this.state.withdrawalRequests.find(x=>x.id===req.id);
-                    if(r) {
-                        r.status = 'rejected';
-                        this.saveRequests();
-                        this.addNotificationForUser(r.userId, '❌ تم رفض السحب', `تم رفض طلب السحب بقيمة ${r.amount}`, 'error');
-                        return true;
-                    }
-                    return false;
-                }
-                async subtractBalance(userId, amount, note) {
-                    const key = CONFIG.STORAGE_KEYS.WALLET_PREFIX+userId;
-                    const data = Storage.get(key);
-                    if(data && data.data && data.data.balance >= amount) {
-                        data.data.balance -= amount;
-                        data.data.transactions.unshift({ id: Date.now(), type: 'withdraw', amount: -amount, note, date: new Date().toISOString() });
-                        if(data.data.transactions.length>CONFIG.MAX_TRANSACTIONS) data.data.transactions.pop();
-                        const newSig = await CryptoHelper.hmacSign(data.data, CONFIG.SECRET_KEY);
-                        Storage.set(key, { data: data.data, signature: newSig });
-                    }
-                }
-
-                // ========== الإشعارات ==========
-                loadNotifications() { this.state.notifications = Storage.get(this.getNotifKey(), []); }
-                saveNotifications() { Storage.set(this.getNotifKey(), this.state.notifications); }
-                addNotification(title, msg, type='info') {
-                    const notif = { id: Date.now(), title, message: msg, type, read: false, date: new Date().toISOString() };
-                    this.state.notifications.unshift(notif);
-                    this.saveNotifications();
-                    this.state.emit('new-notification');
-                }
-                addNotificationForUser(userId, title, msg, type='info') {
-                    const notifKey = CONFIG.STORAGE_KEYS.NOTIFICATIONS_PREFIX+userId;
-                    let notifs = Storage.get(notifKey, []);
-                    notifs.unshift({ id: Date.now(), title, message: msg, type, read: false, date: new Date().toISOString() });
-                    Storage.set(notifKey, notifs);
-                }
-                markAllRead() { this.state.notifications.forEach(n=>n.read=true); this.saveNotifications(); }
-
-                // ========== الإعلانات ==========
-                loadAds() { this.state.ads = Storage.get(CONFIG.STORAGE_KEYS.ADS, []); }
-                saveAds() { Storage.set(CONFIG.STORAGE_KEYS.ADS, this.state.ads); }
-                addAd(ad) {
-                    const newAd = { id: Date.now()+'_'+Math.random(), ...ad, createdAt: new Date().toISOString() };
-                    this.state.ads.push(newAd);
-                    this.saveAds();
-                    return newAd;
-                }
-                updateAd(id, data) { 
-                    const idx = this.state.ads.findIndex(a=>a.id==id);
-                    if(idx!==-1) { this.state.ads[idx] = {...this.state.ads[idx], ...data}; this.saveAds(); return true; }
-                    return false;
-                }
-                deleteAd(id) { this.state.ads = this.state.ads.filter(a=>a.id!=id); this.saveAds(); }
-                hasUserViewedAd(adId) { const viewed = Storage.get(this.getUserAdKey(), []); return viewed.includes(adId); }
-                markAdViewed(adId) { let viewed = Storage.get(this.getUserAdKey(), []); if(!viewed.includes(adId)) { viewed.push(adId); Storage.set(this.getUserAdKey(), viewed); } }
-                getAvailableAds() { return this.state.ads.filter(ad=>!this.hasUserViewedAd(ad.id)); }
-
-                // ========== الإحالات ==========
-                async loadReferral() {
-                    let ref = Storage.get(this.getReferralKey(), null);
-                    if(!ref) ref = { code: this.state.userId.toString(), referredBy: null, count: 0, totalEarned: 0 };
-                    // تحميل إحصائيات الإحالات للمستخدم (عدد المحالين)
-                    const refStats = Storage.get(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX+this.state.userId, { count:0, totalEarned:0 });
-                    ref.count = refStats.count;
-                    ref.totalEarned = refStats.totalEarned;
-                    this.state.referral = ref;
-                }
-                async setReferredBy(code) {
-                    if(!this.state.referral.referredBy && code !== this.state.userId.toString()) {
-                        this.state.referral.referredBy = code;
-                        Storage.set(this.getReferralKey(), this.state.referral);
-                        // زيادة عدد الإحالات للمحيل
-                        const refData = Storage.get(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX+code, { count:0, totalEarned:0 });
-                        refData.count += 1;
-                        Storage.set(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX+code, refData);
-                        return true;
-                    }
-                    return false;
-                }
-
-                // ========== المكافأة اليومية ==========
-                async loadDailyBonus() {
-                    const data = Storage.get(this.getDailyKey(), null);
-                    const today = new Date().toISOString().split('T')[0];
-                    if(data && data.lastClaim === today) this.state.dailyBonus = { lastClaim: today, claimed: true };
-                    else this.state.dailyBonus = { lastClaim: null, claimed: false };
-                }
-                async claimDailyBonus() {
-                    const today = new Date().toISOString().split('T')[0];
-                    if(this.state.dailyBonus.claimed) return false;
-                    await this.addBalance(CONFIG.DAILY_BONUS_AMOUNT, 'المكافأة اليومية');
-                    this.state.dailyBonus = { lastClaim: today, claimed: true };
-                    Storage.set(this.getDailyKey(), this.state.dailyBonus);
-                    return true;
-                }
-
-                // ========== إحصائيات وإدارة المستخدمين ==========
-                async loadStats() {
-                    const users = Storage.get(CONFIG.STORAGE_KEYS.USERS, []);
-                    const dailyOps = Storage.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
-                    const today = new Date().toISOString().split('T')[0];
-                    this.state.stats = { users: users.length, dailyOps: dailyOps[today] || 0 };
-                }
-                async incrementDailyOps() {
-                    const today = new Date().toISOString().split('T')[0];
-                    let daily = Storage.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
-                    daily[today] = (daily[today] || 0) + 1;
-                    Storage.set(CONFIG.STORAGE_KEYS.DAILY_OPS, daily);
-                    await this.loadStats();
-                }
-                async registerUser(userId) {
-                    let users = Storage.get(CONFIG.STORAGE_KEYS.USERS, []);
-                    if(!users.includes(userId)) { users.push(userId); Storage.set(CONFIG.STORAGE_KEYS.USERS, users); await this.loadStats(); }
-                }
-                getAllUsers() {
-                    const users = Storage.get(CONFIG.STORAGE_KEYS.USERS, []);
-                    return users.map(uid => {
-                        const wallet = Storage.get(CONFIG.STORAGE_KEYS.WALLET_PREFIX+uid, { data: { balance:0 } });
-                        const ref = Storage.get(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX+uid, { count:0, totalEarned:0 });
-                        return { id: uid, balance: wallet.data.balance, referrals: ref.count, referralEarned: ref.totalEarned };
-                    });
-                }
-                async addBalanceToUser(userId, amount, note) {
-                    const key = CONFIG.STORAGE_KEYS.WALLET_PREFIX+userId;
-                    let wallet = Storage.get(key, null);
-                    if(!wallet || !wallet.data) wallet = { data: { balance:0, transactions:[] }, signature:'' };
-                    wallet.data.balance += amount;
-                    wallet.data.transactions.unshift({ id: Date.now(), type: 'admin', amount, note, date: new Date().toISOString() });
-                    if(wallet.data.transactions.length>CONFIG.MAX_TRANSACTIONS) wallet.data.transactions.pop();
-                    const sig = await CryptoHelper.hmacSign(wallet.data, CONFIG.SECRET_KEY);
-                    Storage.set(key, { data: wallet.data, signature: sig });
-                    this.addNotificationForUser(userId, '💰 تم إضافة رصيد', `${note}: ${amount}`, 'success');
-                }
-
-                // ========== الإعدادات والسمة ==========
-                loadSettings() {
-                    const s = Storage.get(this.getSettingsKey(), {});
-                    this.state.settings = { ...this.state.settings, ...s };
-                }
-                saveSettings() { Storage.set(this.getSettingsKey(), this.state.settings); }
-                loadTheme() { return Storage.get(CONFIG.STORAGE_KEYS.THEME, 'dark'); }
-                saveTheme(theme) { Storage.set(CONFIG.STORAGE_KEYS.THEME, theme); }
-            }
-
-            // ======================== واجهة المستخدم ========================
-            class UIManager {
-                constructor(state, data, tg, toast) {
-                    this.state = state;
-                    this.data = data;
-                    this.tg = tg;
-                    this.toast = toast;
-                    this.appContainer = document.getElementById('app');
-                    this.modalOverlay = document.getElementById('modalOverlay');
-                    this.modalContent = document.getElementById('modalContent');
-                    this.autoRefresh = null;
-                    this.activeTimer = null;
-                    
-                    state.on('balance-updated', () => this.updateBalanceUI());
-                    state.on('new-notification', () => this.updateNotificationBadge());
-                }
-
-                render() {
-                    if(this.state.telegramMissing) this.appContainer.innerHTML = this.renderTelegramMissing();
-                    else if(this.state.accessDenied) this.appContainer.innerHTML = this.renderAccessDenied();
-                    else if(this.state.loading) this.appContainer.innerHTML = this.renderLoading();
-                    else if(this.state.isAdmin) this.appContainer.innerHTML = this.renderAdminDashboard();
-                    else this.appContainer.innerHTML = this.renderUserDashboard();
-                    this.bindEvents();
-                    this.updateNotificationBadge();
-                    this.updateBalanceUI();
-                }
-
-                renderLoading() { return `<div class="flex flex-col items-center justify-center min-h-[60vh]"><div class="spinner"></div><p class="mt-4 text-gray-400">جاري التحميل...</p></div>`; }
-                renderAccessDenied() { return `<div class="glass-card p-8 text-center"><i class="fas fa-shield-alt text-6xl text-red-500 mb-4"></i><h2 class="text-2xl font-bold">دخول غير مصرح</h2><p class="text-gray-400 mt-2">يجب فتح التطبيق من داخل تيليجرام</p></div>`; }
-                renderTelegramMissing() { return `<div class="glass-card p-8 text-center"><i class="fab fa-telegram text-6xl text-blue-500 mb-4"></i><h2 class="text-2xl font-bold">بيئة غير مدعومة</h2><p class="text-gray-400 mt-2">يرجى فتح الرابط من تطبيق تيليجرام</p></div>`; }
-
-                renderUserDashboard() {
-                    const user = this.state.user;
-                    const name = `${user.first_name} ${user.last_name||''}`.trim();
-                    const initials = name.charAt(0)+(user.last_name?user.last_name.charAt(0):'');
-                    const dailyAvailable = !this.state.dailyBonus.claimed;
-                    return `
-                        <div class="space-y-4">
-                            <div class="glass-card p-5 flex items-center gap-4">
-                                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center text-2xl font-bold shadow-lg">${initials}</div>
-                                <div class="flex-1"><h2 class="text-xl font-bold">${name}</h2><p class="text-xs text-gray-400 font-mono">ID: ${user.id}</p></div>
-                                <div id="notificationBell" class="relative cursor-pointer text-2xl"><i class="far fa-bell"></i></div>
-                            </div>
-                            <div class="flex justify-center"><div id="walletIcon" class="wallet-icon"><i class="fas fa-wallet"></i></div></div>
-                            <div class="text-center"><div class="inline-flex items-center gap-2 glass-card px-6 py-3 rounded-full"><i class="fas fa-coins text-yellow-400"></i><span id="balanceValue" class="text-2xl font-bold">${this.state.balance.toLocaleString()}</span><span class="text-sm">ر.س</span></div></div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <button id="earnBtn" class="glass-card p-4 text-center hover:border-blue-500/50"><i class="fas fa-ad text-green-400 text-2xl mb-2 block"></i><span class="font-bold">إعلانات</span></button>
-                                <button id="dailyBtn" class="glass-card p-4 text-center ${dailyAvailable?'hover:border-yellow-500/50':'opacity-60'}" ${!dailyAvailable?'disabled':''}><i class="fas fa-gift text-yellow-400 text-2xl mb-2 block"></i><span class="font-bold">يومية ${CONFIG.DAILY_BONUS_AMOUNT}</span></button>
-                            </div>
-                            <div class="glass-card p-4">
-                                <div class="flex justify-between items-center mb-2"><span class="text-gray-400">كود الإحالة</span><i id="copyRef" class="fas fa-copy cursor-pointer hover:text-blue-400"></i></div>
-                                <div class="bg-black/30 p-2 rounded-lg text-center font-mono text-sm">${this.state.referral.code}</div>
-                                <div class="flex justify-between mt-2 text-sm"><span>المُحالين: ${this.state.referral.count}</span><span>أرباح: ${this.state.referral.totalEarned} ر.س</span></div>
-                                <div class="mt-3"><input type="text" id="refInput" placeholder="كود المُحيل" class="w-full bg-slate-800 rounded-lg p-2 text-sm"><button id="applyRefBtn" class="mt-2 w-full bg-blue-600 py-1 rounded-lg">تطبيق</button></div>
-                            </div>
-                            <button id="logoutBtn" class="w-full py-3 rounded-xl bg-red-500/20 text-red-400 font-bold">تسجيل الخروج</button>
-                        </div>
-                    `;
-                }
-
-                renderAdminDashboard() {
-                    const user = this.state.user;
-                    const name = `${user.first_name} ${user.last_name||''}`.trim();
-                    const stats = this.state.stats;
-                    const pendingCount = this.state.withdrawalRequests.filter(r=>r.status==='pending').length;
-                    return `
-                        <div class="space-y-4">
-                            <div class="glass-card p-5 flex items-center gap-4 border-yellow-500/30">
-                                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-yellow-500 to-orange-500 flex items-center justify-center text-2xl font-bold">👑</div>
-                                <div><h2 class="text-xl font-bold">${name}</h2><p class="text-xs text-yellow-400">مدير النظام</p></div>
-                                <div id="notificationBell" class="relative cursor-pointer text-2xl mr-auto"><i class="far fa-bell"></i></div>
-                            </div>
-                            <div class="grid grid-cols-3 gap-2">
-                                <div class="glass-card p-3 text-center"><i class="fas fa-users text-blue-400"></i><div class="text-xl font-bold">${stats.users}</div><div class="text-xs">مستخدم</div></div>
-                                <div class="glass-card p-3 text-center"><i class="fas fa-chart-line text-green-400"></i><div class="text-xl font-bold">${stats.dailyOps}</div><div class="text-xs">عمليات اليوم</div></div>
-                                <div class="glass-card p-3 text-center"><i class="fas fa-clock text-purple-400"></i><div class="text-xl font-bold" id="pendingCount">${pendingCount}</div><div class="text-xs">طلبات</div></div>
-                            </div>
-                            <button id="adminPanelBtn" class="w-full glass-card p-4 text-center font-bold"><i class="fas fa-cog ml-2"></i> لوحة التحكم ${pendingCount?`<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">${pendingCount}</span>`:''}</button>
-                            <button id="manageAdsBtn" class="w-full glass-card p-4 text-center font-bold text-green-400"><i class="fas fa-ad ml-2"></i> إدارة الإعلانات</button>
-                            <button id="logoutBtn" class="w-full py-3 rounded-xl bg-red-500/20 text-red-400 font-bold">تسجيل الخروج</button>
-                        </div>
-                    `;
-                }
-
-                bindEvents() {
-                    document.getElementById('logoutBtn')?.addEventListener('click', () => this.tg.close());
-                    document.getElementById('walletIcon')?.addEventListener('click', () => this.openWalletModal());
-                    document.getElementById('notificationBell')?.addEventListener('click', () => this.openNotificationsModal());
-                    if(!this.state.isAdmin) {
-                        document.getElementById('earnBtn')?.addEventListener('click', () => this.openAdsModal());
-                        document.getElementById('dailyBtn')?.addEventListener('click', async () => {
-                            if(await this.data.claimDailyBonus()) { this.toast.success(`حصلت على ${CONFIG.DAILY_BONUS_AMOUNT} ر.س`); this.render(); }
-                            else this.toast.info('استلمت المكافأة اليومية مسبقاً');
-                        });
-                        document.getElementById('copyRef')?.addEventListener('click', () => { navigator.clipboard.writeText(this.state.referral.code); this.toast.success('تم نسخ الكود'); });
-                        document.getElementById('applyRefBtn')?.addEventListener('click', async () => {
-                            const code = document.getElementById('refInput').value.trim();
-                            if(code && !this.state.referral.referredBy) {
-                                if(await this.data.setReferredBy(code)) this.toast.success('تم تطبيق كود الإحالة'); else this.toast.error('الكود غير صالح');
-                                this.render();
-                            } else this.toast.warning('لا يمكن استخدام الكود');
-                        });
-                    } else {
-                        document.getElementById('adminPanelBtn')?.addEventListener('click', () => this.openAdminPanel());
-                        document.getElementById('manageAdsBtn')?.addEventListener('click', () => this.openAdminAdsPanel());
-                    }
-                }
-
-                updateBalanceUI() { const el = document.getElementById('balanceValue'); if(el) el.innerText = this.state.balance.toLocaleString(); }
-                updateNotificationBadge() { 
-                    const unread = this.state.notifications.filter(n=>!n.read).length;
-                    const bell = document.getElementById('notificationBell');
-                    if(bell) {
-                        let badge = bell.querySelector('.badge-notify');
-                        if(unread>0) {
-                            if(!badge) { badge = document.createElement('div'); badge.className='badge-notify'; bell.appendChild(badge); }
-                            badge.innerText = unread>9?'9+':unread;
-                        } else if(badge) badge.remove();
-                    }
-                }
-
-                // ========== المودالات ==========
-                closeModal() {
-                    if(this.activeTimer) { clearInterval(this.activeTimer); this.activeTimer = null; }
-                    this.modalOverlay.classList.remove('opacity-100','pointer-events-auto');
-                    this.modalOverlay.classList.add('opacity-0','pointer-events-none');
-                    this.modalContent.classList.add('scale-95');
-                    document.body.classList.remove('modal-open');
-                }
-
-                openModal(html, onClose=null) {
-                    this.modalContent.innerHTML = html;
-                    this.modalOverlay.classList.add('opacity-100','pointer-events-auto');
-                    this.modalContent.classList.remove('scale-95');
-                    document.body.classList.add('modal-open');
-                    const closeBtn = this.modalContent.querySelector('.close-modal-btn');
-                    if(closeBtn) closeBtn.addEventListener('click', () => this.closeModal());
-                    if(onClose) this.modalOverlay.addEventListener('click', (e) => { if(e.target === this.modalOverlay) { this.closeModal(); if(onClose) onClose(); } }, { once: true });
-                }
-
-                // محفظة المستخدم
-                openWalletModal() {
-                    const methodsHtml = this.state.paymentMethods.map(m => `<div data-method="${m.id}" class="payment-method-item glass-card p-3 rounded-xl mb-2 cursor-pointer hover:border-blue-500 transition"><div class="flex items-center gap-3"><i class="${m.icon} text-2xl w-8"></i><div><div class="font-bold">${m.name}</div><div class="text-xs text-gray-400">${m.description||''}</div></div></div></div>`).join('');
-                    const txHtml = this.state.transactions.length===0?'<div class="text-center text-gray-400 py-4">لا توجد معاملات</div>':this.state.transactions.map(t=>`<div class="flex justify-between items-center border-b border-white/10 py-2"><div><div>${t.note||t.type}</div><div class="text-xs text-gray-500">${new Date(t.date).toLocaleString()}</div></div><div class="${t.amount>0?'text-green-400':'text-red-400'} font-bold">${t.amount>0?'+':''}${t.amount}</div></div>`).join('');
-                    const html = `
-                        <div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">محفظتي</h2><button class="close-modal-btn text-2xl">&times;</button></div>
-                        <div class="glass-card p-4 text-center mb-4"><div class="text-gray-400 text-sm">الرصيد الحالي</div><div class="text-3xl font-bold">${this.state.balance.toLocaleString()} ر.س</div></div>
-                        <div class="flex gap-2 border-b border-white/20 mb-4"><button data-tab="withdraw" class="tab-btn py-2 px-3 font-bold text-blue-400 border-b-2 border-blue-400">سحب</button><button data-tab="transfer" class="tab-btn py-2 px-3">تحويل</button><button data-tab="history" class="tab-btn py-2 px-3">السجل</button></div>
-                        <div id="tab-withdraw" class="tab-pane"><div class="mb-3"><div class="text-sm mb-2">طريقة السحب</div><div id="methodsList">${methodsHtml}</div></div><input type="text" id="withdrawDetails" placeholder="تفاصيل السحب" class="w-full bg-slate-800 rounded-lg p-2 my-2"><div class="flex gap-2"><input type="number" id="withdrawAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 rounded-lg p-2"><button id="withdrawSubmit" class="bg-red-600 px-4 rounded-lg">إرسال الطلب</button></div><p class="text-xs text-gray-400 mt-2">سيتم مراجعة الطلب من الإدارة</p></div>
-                        <div id="tab-transfer" class="tab-pane hidden"><input type="text" id="transferUserId" placeholder="معرف المستخدم" class="w-full bg-slate-800 rounded-lg p-2 mb-2"><div class="flex gap-2"><input type="number" id="transferAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 rounded-lg p-2"><button id="transferSubmit" class="bg-green-600 px-4 rounded-lg">تحويل</button></div></div>
-                        <div id="tab-history" class="tab-pane hidden max-h-80 overflow-auto">${txHtml}</div>
-                    `;
-                    this.openModal(html);
-                    this.bindWalletModalEvents();
-                }
-                bindWalletModalEvents() {
-                    let selectedMethod = null;
-                    document.querySelectorAll('.payment-method-item').forEach(el=>{
-                        el.addEventListener('click',()=>{
-                            document.querySelectorAll('.payment-method-item').forEach(e=>e.classList.remove('border-blue-500'));
-                            el.classList.add('border-blue-500');
-                            selectedMethod = el.dataset.method;
-                        });
-                    });
-                    document.getElementById('withdrawSubmit')?.addEventListener('click', async()=>{
-                        const amount = parseFloat(document.getElementById('withdrawAmount').value);
-                        const details = document.getElementById('withdrawDetails').value.trim();
-                        if(!selectedMethod) return this.toast.error('اختر طريقة سحب');
-                        if(isNaN(amount)||amount<=0) return this.toast.error('أدخل مبلغ صحيح');
-                        if(!details) return this.toast.error('أدخل التفاصيل');
-                        const res = await this.data.addWithdrawalRequest(amount, selectedMethod, details, this.state.user);
-                        if(res.success) { this.toast.success('تم تقديم طلب السحب'); this.closeModal(); this.render(); }
-                        else this.toast.error(res.message);
-                    });
-                    document.getElementById('transferSubmit')?.addEventListener('click', async()=>{
-                        const amount = parseFloat(document.getElementById('transferAmount').value);
-                        const targetId = document.getElementById('transferUserId').value.trim();
-                        if(isNaN(amount)||amount<=0||!targetId) return this.toast.error('بيانات غير صحيحة');
-                        if(amount>this.state.balance) return this.toast.error('رصيد غير كاف');
-                        const success = await this.data.transferBalance(targetId, amount);
-                        if(success) { this.toast.success('تم التحويل بنجاح'); this.closeModal(); this.render(); }
-                        else this.toast.error('المستخدم غير موجود');
-                    });
-                    document.querySelectorAll('.tab-btn').forEach(btn=>{
-                        btn.addEventListener('click',()=>{
-                            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('text-blue-400','border-b-2','border-blue-400'));
-                            btn.classList.add('text-blue-400','border-b-2','border-blue-400');
-                            const tab = btn.dataset.tab;
-                            document.querySelectorAll('.tab-pane').forEach(p=>p.classList.add('hidden'));
-                            document.getElementById(`tab-${tab}`).classList.remove('hidden');
-                        });
-                    });
-                }
-
-                // لوحة الإدارة
-                openAdminPanel() {
-                    const pending = this.state.withdrawalRequests.filter(r=>r.status==='pending');
-                    const pendHtml = pending.length===0?'<div class="text-gray-400">لا توجد طلبات</div>':pending.map(r=>`
-                        <div class="glass-card p-3 mb-2" data-id="${r.id}"><div class="flex justify-between"><span class="font-bold">${r.userName}</span><span class="text-yellow-400">${r.amount} ر.س</span></div><div class="text-sm">${r.method} | ${r.details}</div><div class="text-xs text-gray-500">${new Date(r.date).toLocaleString()}</div><div class="flex gap-2 mt-2"><button class="acceptReq bg-green-600 px-3 py-1 rounded-lg text-sm">قبول</button><button class="rejectReq bg-red-600 px-3 py-1 rounded-lg text-sm">رفض</button></div></div>
-                    `).join('');
-                    const methodsHtml = this.state.paymentMethods.map(m=>`<div class="flex justify-between items-center glass-card p-2 mb-1"><div><i class="${m.icon} ml-2"></i>${m.name}</div><div><button class="editMethod text-blue-400 ml-2" data-id="${m.id}"><i class="fas fa-edit"></i></button><button class="delMethod text-red-400" data-id="${m.id}"><i class="fas fa-trash"></i></button></div></div>`).join('');
-                    const users = this.data.getAllUsers();
-                    const usersHtml = users.map(u=>`<div class="flex justify-between glass-card p-2 mb-1"><div><div class="font-mono text-sm">${u.id}</div><div>الرصيد: ${u.balance} | إحالات: ${u.referrals}</div></div><div><button class="addBalance text-green-400" data-id="${u.id}"><i class="fas fa-plus-circle"></i></button></div></div>`).join('');
-                    const html = `
-                        <div class="flex justify-between mb-4"><h2 class="text-2xl font-bold">لوحة الإدارة</h2><button class="close-modal-btn text-2xl">&times;</button></div>
-                        <div class="flex gap-2 border-b mb-4"><button data-admintab="requests" class="admin-tab py-2 px-3 font-bold text-blue-400 border-b-2 border-blue-400">الطلبات</button><button data-admintab="methods" class="admin-tab py-2 px-3">طرق الدفع</button><button data-admintab="users" class="admin-tab py-2 px-3">المستخدمين</button></div>
-                        <div id="admin-requests" class="admin-pane"><h3 class="font-bold">طلبات السحب</h3>${pendHtml}</div>
-                        <div id="admin-methods" class="admin-pane hidden"><div class="flex justify-between mb-2"><h3 class="font-bold">طرق الدفع</h3><button id="addMethodBtn" class="bg-blue-600 px-3 py-1 rounded-lg text-sm"><i class="fas fa-plus"></i> إضافة</button></div>${methodsHtml}</div>
-                        <div id="admin-users" class="admin-pane hidden"><h3 class="font-bold mb-2">المستخدمين</h3>${usersHtml}</div>
-                    `;
-                    this.openModal(html);
-                    this.bindAdminPanelEvents();
-                }
-                bindAdminPanelEvents() {
-                    document.querySelectorAll('.admin-tab').forEach(btn=>{
-                        btn.addEventListener('click',()=>{
-                            const tab = btn.dataset.admintab;
-                            document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('text-blue-400','border-b-2','border-blue-400'));
-                            btn.classList.add('text-blue-400','border-b-2','border-blue-400');
-                            document.querySelectorAll('.admin-pane').forEach(p=>p.classList.add('hidden'));
-                            document.getElementById(`admin-${tab}`).classList.remove('hidden');
-                        });
-                    });
-                    document.querySelectorAll('.acceptReq').forEach(btn=>btn.addEventListener('click', async(e)=>{
-                        const id = btn.closest('[data-id]').dataset.id;
-                        const req = this.state.withdrawalRequests.find(r=>r.id==id);
-                        if(req && await this.data.acceptWithdrawal(req)) { this.toast.success('تم قبول الطلب'); this.closeModal(); this.render(); }
-                    }));
-                    document.querySelectorAll('.rejectReq').forEach(btn=>btn.addEventListener('click', async(e)=>{
-                        const id = btn.closest('[data-id]').dataset.id;
-                        const req = this.state.withdrawalRequests.find(r=>r.id==id);
-                        if(req && await this.data.rejectWithdrawal(req)) { this.toast.info('تم رفض الطلب'); this.closeModal(); this.render(); }
-                    }));
-                    document.getElementById('addMethodBtn')?.addEventListener('click',()=>this.openPaymentMethodModal());
-                    document.querySelectorAll('.editMethod').forEach(btn=>btn.addEventListener('click',()=>this.openPaymentMethodModal(btn.dataset.id)));
-                    document.querySelectorAll('.delMethod').forEach(btn=>btn.addEventListener('click',()=>{ if(confirm('حذف طريقة الدفع؟')){ this.data.deletePaymentMethod(btn.dataset.id); this.closeModal(); this.openAdminPanel(); } }));
-                    document.querySelectorAll('.addBalance').forEach(btn=>btn.addEventListener('click', async()=>{
-                        const amount = prompt('أدخل المبلغ (ر.س)');
-                        if(amount && !isNaN(parseFloat(amount))) {
-                            await this.data.addBalanceToUser(btn.dataset.id, parseFloat(amount), 'إضافة من المدير');
-                            this.toast.success('تمت الإضافة');
-                            this.closeModal();
-                            this.openAdminPanel();
-                        }
-                    }));
-                }
-
-                // إدارة الإعلانات للمسؤول
-                openAdminAdsPanel() {
-                    const adsHtml = this.state.ads.map(ad=>`<div class="flex justify-between glass-card p-2 mb-1"><div><div class="font-bold">${ad.title}</div><div class="text-xs">${ad.reward} ر.س | ${ad.duration} ث</div></div><div><button class="editAd text-blue-400" data-id="${ad.id}"><i class="fas fa-edit"></i></button><button class="delAd text-red-400" data-id="${ad.id}"><i class="fas fa-trash"></i></button></div></div>`).join('');
-                    const html = `
-                        <div class="flex justify-between mb-4"><h2 class="text-2xl font-bold">إدارة الإعلانات</h2><button class="close-modal-btn text-2xl">&times;</button></div>
-                        <div class="flex justify-between mb-2"><h3 class="font-bold">قائمة الإعلانات</h3><button id="addAdBtn" class="bg-blue-600 px-3 py-1 rounded-lg text-sm"><i class="fas fa-plus"></i> إضافة</button></div>
-                        <div id="adsList">${adsHtml || '<div class="text-gray-400">لا توجد إعلانات</div>'}</div>
-                    `;
-                    this.openModal(html);
-                    this.bindAdminAdsEvents();
-                }
-                bindAdminAdsEvents() {
-                    document.getElementById('addAdBtn')?.addEventListener('click',()=>this.openAdModal());
-                    document.querySelectorAll('.editAd').forEach(btn=>btn.addEventListener('click',()=>this.openAdModal(btn.dataset.id)));
-                    document.querySelectorAll('.delAd').forEach(btn=>btn.addEventListener('click',()=>{ if(confirm('حذف الإعلان؟')){ this.data.deleteAd(btn.dataset.id); this.closeModal(); this.openAdminAdsPanel(); } }));
-                }
-
-                // نماذج إضافة/تعديل طرق الدفع والإعلانات
-                openPaymentMethodModal(editId=null) {
-                    const method = editId ? this.state.paymentMethods.find(m=>m.id==editId) : null;
-                    const html = `
-                        <div class="flex justify-between mb-4"><h2 class="text-2xl">${method?'تعديل':'إضافة'} طريقة دفع</h2><button class="close-modal-btn text-2xl">&times;</button></div>
-                        <input type="text" id="pmName" placeholder="الاسم" class="w-full bg-slate-800 rounded-lg p-2 mb-2" value="${method?.name||''}">
-                        <input type="text" id="pmIcon" placeholder="أيقونة (مثال: fab fa-tether)" class="w-full bg-slate-800 rounded-lg p-2 mb-2" value="${method?.icon||''}">
-                        <input type="text" id="pmDesc" placeholder="وصف" class="w-full bg-slate-800 rounded-lg p-2 mb-2" value="${method?.description||''}">
-                        <input type="text" id="pmDetails" placeholder="تفاصيل السحب" class="w-full bg-slate-800 rounded-lg p-2 mb-4" value="${method?.withdrawDetails||''}">
-                        <button id="savePm" class="w-full bg-blue-600 py-2 rounded-lg">حفظ</button>
-                    `;
-                    this.openModal(html);
-                    document.getElementById('savePm').addEventListener('click',()=>{
-                        const newMethod = {
-                            id: method?.id || Date.now().toString(),
-                            name: document.getElementById('pmName').value,
-                            icon: document.getElementById('pmIcon').value,
-                            description: document.getElementById('pmDesc').value,
-                            withdrawDetails: document.getElementById('pmDetails').value
-                        };
-                        if(method) this.data.updatePaymentMethod(editId, newMethod);
-                        else this.data.addPaymentMethod(newMethod);
-                        this.toast.success('تم الحفظ');
-                        this.closeModal();
-                        this.openAdminPanel();
-                    });
-                }
-                openAdModal(editId=null) {
-                    const ad = editId ? this.state.ads.find(a=>a.id==editId) : null;
-                    const html = `
-                        <div class="flex justify-between mb-4"><h2 class="text-2xl">${ad?'تعديل':'إضافة'} إعلان</h2><button class="close-modal-btn text-2xl">&times;</button></div>
-                        <input type="text" id="adTitle" placeholder="العنوان" class="w-full bg-slate-800 rounded-lg p-2 mb-2" value="${ad?.title||''}">
-                        <textarea id="adDesc" placeholder="الوصف" class="w-full bg-slate-800 rounded-lg p-2 mb-2">${ad?.description||''}</textarea>
-                        <input type="url" id="adImage" placeholder="رابط الصورة" class="w-full bg-slate-800 rounded-lg p-2 mb-2" value="${ad?.imageUrl||''}">
-                        <input type="url" id="adLink" placeholder="رابط الإعلان" class="w-full bg-slate-800 rounded-lg p-2 mb-2" value="${ad?.link||''}">
-                        <div class="flex gap-2"><input type="number" id="adReward" placeholder="المكافأة" class="flex-1 bg-slate-800 rounded-lg p-2 mb-2" value="${ad?.reward||''}"><input type="number" id="adDuration" placeholder="المدة (ث)" class="flex-1 bg-slate-800 rounded-lg p-2 mb-2" value="${ad?.duration||''}"></div>
-                        <button id="saveAdBtn" class="w-full bg-blue-600 py-2 rounded-lg">حفظ</button>
-                    `;
-                    this.openModal(html);
-                    document.getElementById('saveAdBtn').addEventListener('click',()=>{
-                        const adData = {
-                            title: document.getElementById('adTitle').value,
-                            description: document.getElementById('adDesc').value,
-                            imageUrl: document.getElementById('adImage').value,
-                            link: document.getElementById('adLink').value,
-                            reward: parseFloat(document.getElementById('adReward').value),
-                            duration: parseInt(document.getElementById('adDuration').value)
-                        };
-                        if(editId) this.data.updateAd(editId, adData);
-                        else this.data.addAd(adData);
-                        this.toast.success('تم حفظ الإعلان');
-                        this.closeModal();
-                        this.openAdminAdsPanel();
-                    });
-                }
-
-                // إعلانات المستخدم
-                openAdsModal() {
-                    const ads = this.data.getAvailableAds();
-                    if(ads.length===0) return this.toast.info('لا توجد إعلانات متاحة حالياً');
-                    const html = `<div class="flex justify-between mb-4"><h2 class="text-2xl">إعلانات متاحة</h2><button class="close-modal-btn text-2xl">&times;</button></div><div class="space-y-3">${ads.map(ad=>`
-                        <div class="glass-card p-3 flex gap-3 items-center"><img src="${ad.imageUrl||'https://via.placeholder.com/50'}" class="w-12 h-12 rounded-xl object-cover"><div class="flex-1"><div class="font-bold">${ad.title}</div><div class="text-sm">${ad.reward} ر.س | ${ad.duration} ث</div></div><button data-ad-id="${ad.id}" class="watchAdBtn bg-blue-600 px-4 py-2 rounded-lg text-sm">شاهد</button></div>
-                    `).join('')}</div>`;
-                    this.openModal(html);
-                    document.querySelectorAll('.watchAdBtn').forEach(btn=>{
-                        btn.addEventListener('click',()=>{
-                            const adId = btn.dataset.adId;
-                            const ad = this.state.ads.find(a=>a.id==adId);
-                            if(ad && !this.data.hasUserViewedAd(adId)) {
-                                this.closeModal();
-                                this.startAdCountdown(ad);
-                            } else this.toast.warning('لقد شاهدت هذا الإعلان مسبقاً');
-                        });
-                    });
-                }
-                startAdCountdown(ad) {
-                    this.tg.openLink(ad.link);
-                    let remaining = ad.duration;
-                    const html = `<div class="text-center"><div class="text-2xl font-bold mb-2">${ad.title}</div><div class="text-6xl font-mono mb-4" id="timer">${remaining}</div><div class="text-sm text-gray-400">انتظر حتى انتهاء المدة...</div><button id="cancelAd" class="mt-4 bg-red-600 px-4 py-2 rounded-lg">إلغاء</button></div>`;
-                    this.openModal(html);
-                    const timerDiv = document.getElementById('timer');
-                    this.activeTimer = setInterval(()=>{
-                        remaining--;
-                        if(timerDiv) timerDiv.innerText = remaining;
-                        if(remaining<=0){
-                            clearInterval(this.activeTimer);
-                            this.activeTimer = null;
-                            this.completeAdView(ad);
-                        }
-                    },1000);
-                    document.getElementById('cancelAd')?.addEventListener('click',()=>{
-                        clearInterval(this.activeTimer);
-                        this.activeTimer = null;
-                        this.closeModal();
-                        this.toast.info('تم إلغاء مشاهدة الإعلان');
-                    });
-                }
-                async completeAdView(ad) {
-                    if(this.data.hasUserViewedAd(ad.id)) return;
-                    this.data.markAdViewed(ad.id);
-                    await this.data.addBalance(ad.reward, `مشاهدة إعلان: ${ad.title}`);
-                    this.toast.success(`تمت إضافة ${ad.reward} ر.س`);
-                    this.render();
-                    this.closeModal();
-                }
-
-                // الإشعارات
-                openNotificationsModal() {
-                    const notifs = this.state.notifications;
-                    const html = notifs.length===0?'<div class="text-center text-gray-400">لا توجد إشعارات</div>':notifs.map(n=>`
-                        <div class="glass-card p-3 mb-2 ${!n.read?'border-r-4 border-blue-500':''}"><div class="font-bold">${n.title}</div><div class="text-sm">${n.message}</div><div class="text-xs text-gray-500 mt-1">${new Date(n.date).toLocaleString()}</div></div>
-                    `).join('');
-                    this.openModal(`
-                        <div class="flex justify-between mb-4"><h2 class="text-2xl">الإشعارات</h2><button class="close-modal-btn text-2xl">&times;</button></div>
-                        <div class="max-h-96 overflow-auto">${html}</div>
-                        <button id="markAllReadBtn" class="mt-4 w-full bg-blue-600 py-2 rounded-lg">تحديد الكل كمقروء</button>
-                    `);
-                    document.getElementById('markAllReadBtn')?.addEventListener('click',()=>{ this.data.markAllRead(); this.openNotificationsModal(); this.updateNotificationBadge(); });
-                }
-
-                startAutoRefresh(ms) { this.autoRefresh = setInterval(()=> this.refreshData(), ms); }
-                stopAutoRefresh() { if(this.autoRefresh) clearInterval(this.autoRefresh); }
-                async refreshData() {
-                    await this.data.loadWallet();
-                    await this.data.loadRequests();
-                    await this.data.loadStats();
-                    this.data.loadNotifications();
-                    this.updateBalanceUI();
-                    this.updateNotificationBadge();
-                    // تحديث عناصر لوحة المسؤول إذا كانت مفتوحة
-                    if(this.state.isAdmin) {
-                        const pendingCountSpan = document.getElementById('pendingCount');
-                        if(pendingCountSpan) {
-                            const pending = this.state.withdrawalRequests.filter(r=>r.status==='pending').length;
-                            pendingCountSpan.innerText = pending;
-                        }
-                    }
-                }
-            }
-
-            // ======================== تشغيل التطبيق ========================
-            const telegram = new TelegramService();
-            const toast = new ToastManager('toastContainer');
-            let appState = null, dataService = null, uiManager = null;
-
-            async function bootstrap() {
-                if(!telegram.available) {
-                    appState = new AppState(null);
-                    appState.telegramMissing = true;
-                    uiManager = new UIManager(appState, null, telegram, toast);
-                    uiManager.render();
-                    return;
-                }
-                telegram.init();
-                const user = telegram.getUser();
-                if(!user) {
-                    appState = new AppState(null);
-                    appState.accessDenied = true;
-                    uiManager = new UIManager(appState, null, telegram, toast);
-                    uiManager.render();
-                    return;
-                }
-                appState = new AppState(user.id);
-                appState.user = user;
-                appState.isAdmin = (user.id === CONFIG.ADMIN_ID);
-                dataService = new DataService(appState, toast);
-                uiManager = new UIManager(appState, dataService, telegram, toast);
-                const startParam = telegram.tg?.initDataUnsafe?.start_param;
-                if(startParam && !appState.referral.referredBy) await dataService.setReferredBy(startParam);
-                await dataService.registerUser(user.id);
-                const savedTheme = Storage.get(CONFIG.STORAGE_KEYS.THEME, 'dark');
-                document.documentElement.style.setProperty('--tg-theme-bg-color', savedTheme==='light'?'#f1f5f9':'#0a0c15');
-                document.documentElement.style.setProperty('--tg-theme-text-color', savedTheme==='light'?'#0f172a':'#ffffff');
-                await dataService.loadAll();
-                appState.loading = false;
-                uiManager.render();
-                telegram.setMainButton(appState.isAdmin?'لوحة الإدارة':'تحديث', '#3b82f6', '#fff', true, 
-                    appState.isAdmin ? () => uiManager.openAdminPanel() : () => uiManager.refreshData()
-                );
-                toast.success(`مرحباً ${user.first_name}`);
-                uiManager.startAutoRefresh(5000);
-            }
-            bootstrap();
-        })();
+        // Start
+        init();
     </script>
 </body>
 </html>
