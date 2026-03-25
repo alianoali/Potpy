@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>محفظة تيليجرام المتطورة - السحب فقط</title>
+    <title>محفظة تيليجرام المتطورة | جميع الأوامر متضمنة</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,703 +11,97 @@
     <!-- Telegram Web App Script -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Font Awesome -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts (Cairo) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* ========== التصميم المتطور ========== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: var(--tg-theme-bg-color, #0f172a);
+            background-color: var(--tg-theme-bg-color, #0a0c15);
             color: var(--tg-theme-text-color, #ffffff);
+            transition: all 0.3s;
             overflow-x: hidden;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            -webkit-tap-highlight-color: transparent;
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
-
-        .ambient-light {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-            pointer-events: none;
-        }
-        
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.4;
-            animation: float 10s infinite ease-in-out;
-        }
-        
-        .orb-1 { top: -10%; right: -10%; width: 300px; height: 300px; background: #3b82f6; animation-delay: 0s; }
-        .orb-2 { bottom: -10%; left: -10%; width: 250px; height: 250px; background: #8b5cf6; animation-delay: 5s; }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(20px, 40px); }
-        }
-
         .glass-card {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(15, 25, 35, 0.65);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 2rem;
+            transition: all 0.3s;
         }
-
         .glass-card:hover {
-            background: rgba(40, 51, 69, 0.8);
-            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+            border-color: rgba(59,130,246,0.4);
         }
-
-        @keyframes slideUpFade {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-enter {
-            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: var(--tg-theme-button-color, #3b82f6);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .default-avatar {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-            font-weight: bold;
-        }
-
-        .toast-container {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 90%;
-            max-width: 350px;
-            pointer-events: none;
-        }
-
-        .toast {
-            background: rgba(20, 30, 40, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50px;
-            padding: 12px 20px;
-            color: white;
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: toastSlideUp 0.3s ease, toastFadeOut 0.3s ease 5.7s forwards;
-            pointer-events: auto;
-            direction: rtl;
-            white-space: pre-line;
-            line-height: 1.6;
-        }
-
-        .toast.success { border-right: 4px solid #10b981; }
-        .toast.error { border-right: 4px solid #ef4444; }
-        .toast.warning { border-right: 4px solid #f59e0b; }
-        .toast.info { border-right: 4px solid #3b82f6; }
-
-        .toast-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-
-        .toast.success .toast-icon { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-        .toast.error .toast-icon { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-        .toast.warning .toast-icon { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-        .toast.info .toast-icon { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
-
-        .toast-message { flex: 1; }
-
-        @keyframes toastSlideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes toastFadeOut {
-            to { opacity: 0; transform: translateY(-10px); }
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 16px;
-            left: 16px;
-            z-index: 100;
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50px;
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover { background: rgba(40, 51, 69, 0.8); }
-
-        .settings-panel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(20, 30, 40, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding: 20px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-            z-index: 1000;
-            border-radius: 30px 30px 0 0;
-        }
-
-        .settings-panel.open { transform: translateY(0); }
-
-        .settings-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .settings-overlay.open {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .wallet-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(8px);
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-
-        .wallet-modal-overlay.open {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .wallet-modal {
-            background: rgba(20, 30, 40, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 32px;
-            padding: 24px;
-            width: 100%;
-            max-width: 400px;
-            max-height: 80vh;
-            overflow-y: auto;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-        }
-
-        .wallet-modal-overlay.open .wallet-modal { transform: scale(1); }
-
-        .wallet-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 12px;
-            flex-wrap: wrap;
-        }
-
-        .wallet-tab {
-            flex: 1;
-            min-width: 70px;
-            padding: 8px 5px;
-            text-align: center;
-            border-radius: 12px;
-            background: transparent;
-            border: none;
-            color: rgba(255,255,255,0.5);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 12px;
-        }
-
-        .wallet-tab.active {
-            background: rgba(59, 130, 246, 0.2);
-            color: #3b82f6;
-        }
-
-        .wallet-tab i { margin-left: 6px; font-size: 14px; }
-
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .transaction-item:last-child { border-bottom: none; }
-        .transaction-amount.positive { color: #10b981; }
-        .transaction-amount.negative { color: #ef4444; }
-
-        .wallet-icon-large {
-            width: 80px;
-            height: 80px;
+        .wallet-icon {
+            width: 90px; height: 90px;
             background: linear-gradient(145deg, #3b82f6, #8b5cf6);
-            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5), 0 0 0 2px rgba(255,255,255,0.1) inset;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: floatWallet 3s infinite ease-in-out;
-            position: relative;
-            overflow: hidden;
+            border-radius: 35% 65% 70% 30% / 30% 40% 60% 70%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; animation: float 3s infinite;
+            box-shadow: 0 15px 35px rgba(59,130,246,0.3);
         }
-
-        .wallet-icon-large::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 70%);
-            opacity: 0.6;
-        }
-
-        .wallet-icon-large i {
-            font-size: 36px;
-            color: white;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-            animation: pulseIcon 2s infinite ease-in-out;
-            position: relative;
-            z-index: 2;
-        }
-
-        .wallet-icon-large:hover {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.8), 0 0 0 4px rgba(255,255,255,0.2) inset;
-        }
-
-        @keyframes floatWallet {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-            100% { transform: translateY(0px); }
-        }
-
-        @keyframes pulseIcon {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .balance-badge {
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 40px;
-            padding: 6px 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-top: 12px;
-        }
-
-        .balance-badge i { color: #fbbf24; }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ef4444;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
-            animation: pulse-badge 1.5s infinite;
-        }
-
-        @keyframes pulse-badge {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
-        .payment-method {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 16px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 8px;
-        }
-
-        .payment-method:hover {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: rgba(59, 130, 246, 0.3);
-        }
-
-        .payment-method.selected {
-            background: rgba(59, 130, 246, 0.2);
-            border-color: #3b82f6;
-        }
-
-        .payment-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            background: #334155;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .payment-details {
-            background: rgba(0,0,0,0.3);
-            border-radius: 12px;
-            padding: 12px;
-            margin: 10px 0 15px 0;
-            border: 1px solid rgba(255,255,255,0.1);
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .admin-requests-panel {
-            background: rgba(0,0,0,0.2);
-            border-radius: 20px;
-            padding: 16px;
-            margin-top: 16px;
-        }
-
-        .request-item {
-            background: rgba(255,255,255,0.03);
-            border-radius: 16px;
-            padding: 12px;
-            margin-bottom: 10px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .request-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .request-id { font-size: 10px; color: #94a3b8; font-family: monospace; }
-        .request-actions { display: flex; gap: 8px; margin-top: 10px; }
-
-        .btn-accept {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-accept:hover { background: rgba(16, 185, 129, 0.3); }
-
-        .btn-reject {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-reject:hover { background: rgba(239, 68, 68, 0.3); }
-
-        .badge-pending {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-            padding: 2px 10px;
-            border-radius: 30px;
-            font-size: 10px;
-            font-weight: 600;
-        }
-
-        .payment-method-admin {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(255,255,255,0.03);
-            border-radius: 16px;
-            padding: 12px;
-            margin-bottom: 10px;
-        }
-        .payment-method-admin .actions button {
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            margin: 0 4px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .payment-method-admin .actions button:hover { color: white; }
-        .payment-method-admin .actions button.delete:hover { color: #ef4444; }
-        .payment-method-admin .actions button.edit:hover { color: #3b82f6; }
-
-        .ad-item {
-            background: rgba(255,255,255,0.03);
-            border-radius: 20px;
-            padding: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            gap: 12px;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: all 0.2s;
-        }
-        .ad-item:hover { background: rgba(255,255,255,0.08); }
-        .ad-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            object-fit: cover;
-            background: #334155;
-        }
-        .ad-info { flex: 1; }
-        .ad-title { font-weight: bold; margin-bottom: 4px; }
-        .ad-description { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
-        .ad-reward { font-size: 12px; color: #fbbf24; }
-        .ad-duration { font-size: 10px; color: #6b7280; }
-        .ad-go-btn {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            padding: 6px 16px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .ad-go-btn:hover { background: #2563eb; }
-        .countdown-modal {
-            text-align: center;
-            padding: 20px;
-        }
-        .countdown-timer {
-            font-size: 48px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-        .ad-link-btn {
-            background: #10b981;
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 30px;
-            color: white;
-            text-decoration: none;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        .user-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 12px;
-            margin-bottom: 10px;
-        }
-        .inline-code {
-            background: rgba(0,0,0,0.3);
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 12px;
-        }
+        @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0); } }
+        .spinner { width: 48px; height: 48px; border: 4px solid rgba(59,130,246,0.2); border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 380px; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); border-radius: 60px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.15); animation: slideUp 0.3s, fadeOut 0.3s 4.7s forwards; pointer-events: auto; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+        .badge-notify { position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
     </style>
 </head>
 <body>
-    <div class="ambient-light">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-    </div>
 
-    <div class="theme-toggle" id="themeToggle">
-        <i class="fa-solid fa-moon" id="themeIcon"></i>
-        <span class="text-sm">السمة</span>
-    </div>
+    <div id="app" class="w-full max-w-md mx-auto p-4 relative z-10"></div>
 
-    <div id="app" class="w-full max-w-md p-5 relative"></div>
-
-    <div class="settings-overlay" id="settingsOverlay"></div>
-    <div class="settings-panel" id="settingsPanel">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold">الإعدادات</h3>
-            <button id="closeSettings" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                <i class="fa-solid fa-times"></i>
-            </button>
-        </div>
-        <div class="space-y-4">
-            <div class="flex items-center justify-between">
-                <span>اللغة</span>
-                <select class="bg-white/10 rounded-lg p-2" id="languageSelect">
-                    <option value="ar">العربية</option>
-                    <option value="en">English</option>
-                </select>
-            </div>
-            <div class="flex items-center justify-between">
-                <span>الإشعارات</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" class="sr-only peer" id="notificationsToggle">
-                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600"></div>
-                </label>
-            </div>
-            <div class="flex items-center justify-between">
-                <span>تنبيه صوتي</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" class="sr-only peer" id="soundToggle" checked>
-                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600"></div>
-                </label>
-            </div>
-            <div class="flex items-center justify-between">
-                <span>اهتزاز</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" class="sr-only peer" id="vibrateToggle" checked>
-                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600"></div>
-                </label>
-            </div>
-        </div>
+    <!-- نافذة منبثقة عامة (مودال) -->
+    <div id="modalOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all duration-300 opacity-0 pointer-events-none">
+        <div id="modalContent" class="w-full max-w-lg bg-slate-900/90 backdrop-blur-xl rounded-3xl border border-white/10 p-5 max-h-[85vh] overflow-y-auto transform scale-95 transition-all duration-300"></div>
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
-    <div class="wallet-modal-overlay" id="walletModalOverlay">
-        <div class="wallet-modal" id="walletModalContent"></div>
-    </div>
-    <div class="wallet-modal-overlay" id="adminPanelOverlay">
-        <div class="wallet-modal" id="adminPanelContent" style="max-width: 500px;"></div>
-    </div>
-    <div class="wallet-modal-overlay" id="paymentMethodModalOverlay">
-        <div class="wallet-modal" id="paymentMethodModalContent" style="max-width: 450px;"></div>
-    </div>
-    <div class="wallet-modal-overlay" id="adsModalOverlay">
-        <div class="wallet-modal" id="adsModalContent"></div>
-    </div>
-    <div class="wallet-modal-overlay" id="countdownModalOverlay">
-        <div class="wallet-modal" id="countdownModalContent" style="max-width: 350px;"></div>
-    </div>
 
     <script>
-        (function() {
-            // ======================== الإعدادات الثابتة ========================
+        (function(){
+            // ======================== الإعدادات الأساسية (تحتوي على جميع المتغيرات) ========================
             const CONFIG = {
-                ADMIN_ID: 7609492965, // <--- غيّر هذا إلى معرف حسابك على تيليجرام
-                SECRET_KEY: "v3ryS3cr3tK3y!@#2025",
+                ADMIN_ID: 7609492965,          // ضع معرف المسؤول هنا
+                SECRET_KEY: "UltraSecureKey@2025!",
                 DEFAULT_BALANCE: 0,
                 MAX_TRANSACTIONS: 50,
-                DAILY_BONUS_AMOUNT: 10,
+                DAILY_BONUS_AMOUNT: 15,
                 REFERRAL_BONUS_PERCENT: 10,
                 STORAGE_KEYS: {
                     USERS: 'app_users',
-                    BOTS: 'app_bots',
-                    DAILY_OPS: 'daily_ops',
                     WALLET_PREFIX: 'wallet_',
                     PAYMENT_METHODS: 'payment_methods',
                     WITHDRAWAL_REQUESTS: 'withdrawal_requests',
-                    THEME: 'theme',
                     SETTINGS_PREFIX: 'settings_',
                     NOTIFICATIONS_PREFIX: 'notifications_',
                     ADS: 'ads_list',
                     USER_AD_VIEWS_PREFIX: 'user_ads_views_',
                     REFERRAL_PREFIX: 'ref_',
-                    DAILY_BONUS_PREFIX: 'daily_bonus_'
+                    DAILY_BONUS_PREFIX: 'daily_bonus_',
+                    THEME: 'theme'
                 }
             };
 
-            // ======================== خدمات التشفير ========================
-            class Security {
+            // ======================== أدوات التشفير (حماية البيانات) ========================
+            class CryptoHelper {
                 static async hmacSign(data, secret) {
                     const encoder = new TextEncoder();
-                    const keyData = encoder.encode(secret);
-                    const messageData = encoder.encode(JSON.stringify(data));
-                    const cryptoKey = await crypto.subtle.importKey(
-                        "raw", keyData, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
-                    );
-                    const signature = await crypto.subtle.sign("HMAC", cryptoKey, messageData);
-                    return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
+                    const key = await crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+                    const sig = await crypto.subtle.sign("HMAC", key, encoder.encode(JSON.stringify(data)));
+                    return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2,'0')).join('');
                 }
                 static async verify(data, signature, secret) {
                     const computed = await this.hmacSign(data, secret);
@@ -715,141 +109,72 @@
                 }
             }
 
-            // ======================== خدمات مساعدة ========================
-            class StorageService {
-                static get(key, defaultValue = null) {
-                    try {
-                        const value = localStorage.getItem(key);
-                        return value !== null ? JSON.parse(value) : defaultValue;
-                    } catch (e) {
-                        console.warn(`Storage read error for key ${key}:`, e);
-                        return defaultValue;
-                    }
-                }
-                static set(key, value) {
-                    try {
-                        localStorage.setItem(key, JSON.stringify(value));
-                        return true;
-                    } catch (e) {
-                        console.warn(`Storage write error for key ${key}:`, e);
-                        return false;
-                    }
-                }
-                static remove(key) {
-                    try {
-                        localStorage.removeItem(key);
-                        return true;
-                    } catch (e) {
-                        console.warn(`Storage remove error for key ${key}:`, e);
-                        return false;
-                    }
-                }
+            // ======================== التخزين المحلي ========================
+            class Storage {
+                static get(key, def=null) { try { const val = localStorage.getItem(key); return val ? JSON.parse(val) : def; } catch(e) { return def; } }
+                static set(key, val) { localStorage.setItem(key, JSON.stringify(val)); return true; }
+                static remove(key) { localStorage.removeItem(key); }
             }
 
-            class DateUtils {
-                static getTodayDate() { return new Date().toISOString().split('T')[0]; }
-                static formatDateTime(isoString) { return new Date(isoString).toLocaleString('ar-EG'); }
-                static formatDate(isoString) { return new Date(isoString).toLocaleDateString('ar-EG'); }
-            }
-
-            class IdGenerator {
-                static generate(prefix = '') { return prefix + Date.now() + '_' + Math.random().toString(36).substr(2, 9); }
-            }
-
-            // ======================== نظام التنبيهات ========================
+            // ======================== إدارة الإشعارات المنبثقة (Toast) ========================
             class ToastManager {
                 constructor(containerId) {
                     this.container = document.getElementById(containerId);
-                    if (!this.container) {
-                        this.container = document.createElement('div');
-                        this.container.id = containerId;
-                        this.container.className = 'toast-container';
-                        document.body.appendChild(this.container);
-                    }
-                    this.activeToasts = [];
                     this.soundEnabled = true;
                     this.vibrateEnabled = true;
                 }
-
-                show(message, type = 'info', duration = 5000) {
+                show(msg, type='info', duration=5000) {
                     const toast = document.createElement('div');
                     toast.className = `toast ${type}`;
-                    const iconMap = {
-                        success: 'fa-solid fa-check',
-                        error: 'fa-solid fa-exclamation',
-                        warning: 'fa-solid fa-triangle-exclamation',
-                        info: 'fa-solid fa-info'
-                    };
-                    toast.innerHTML = `
-                        <div class="toast-icon"><i class="${iconMap[type] || iconMap.info}"></i></div>
-                        <div class="toast-message">${message}</div>
-                    `;
+                    const icons = { success:'fa-check-circle', error:'fa-exclamation-circle', warning:'fa-exclamation-triangle', info:'fa-info-circle' };
+                    toast.innerHTML = `<i class="fas ${icons[type]} ml-2 text-xl"></i><span>${msg}</span>`;
                     this.container.appendChild(toast);
-                    this.activeToasts.push(toast);
-
-                    if (this.soundEnabled && (type === 'success' || type === 'warning' || type === 'info')) {
-                        this.playSound(type);
-                    }
-                    if (this.vibrateEnabled && navigator.vibrate) navigator.vibrate(200);
-
-                    setTimeout(() => {
-                        toast.remove();
-                        this.activeToasts = this.activeToasts.filter(t => t !== toast);
-                    }, duration);
+                    if(this.soundEnabled) this.playSound(type);
+                    if(this.vibrateEnabled && navigator.vibrate) navigator.vibrate(100);
+                    setTimeout(() => toast.remove(), duration);
                 }
-
                 playSound(type) {
                     try {
-                        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                        const oscillator = audioCtx.createOscillator();
-                        const gainNode = audioCtx.createGain();
-                        oscillator.connect(gainNode);
-                        gainNode.connect(audioCtx.destination);
-                        oscillator.type = 'sine';
-                        oscillator.frequency.value = type === 'success' ? 800 : (type === 'warning' ? 600 : 400);
-                        gainNode.gain.value = 0.1;
-                        oscillator.start();
-                        oscillator.stop(audioCtx.currentTime + 0.2);
-                    } catch (e) { console.log('Web Audio not supported'); }
+                        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.type = 'sine';
+                        osc.frequency.value = type==='success' ? 800 : 500;
+                        gain.gain.value = 0.1;
+                        osc.start();
+                        osc.stop(ctx.currentTime+0.2);
+                    } catch(e) {}
                 }
-
-                success(message) { this.show(message, 'success'); }
-                error(message) { this.show(message, 'error'); }
-                warning(message) { this.show(message, 'warning'); }
-                info(message) { this.show(message, 'info'); }
+                success(m) { this.show(m,'success'); }
+                error(m) { this.show(m,'error'); }
+                warning(m) { this.show(m,'warning'); }
+                info(m) { this.show(m,'info'); }
             }
 
             // ======================== خدمة تيليجرام ========================
             class TelegramService {
                 constructor() {
-                    this.tg = window.Telegram?.WebApp || null;
-                    this.isAvailable = !!this.tg;
+                    this.tg = window.Telegram?.WebApp;
+                    this.available = !!this.tg;
                 }
-
-                init() {
-                    if (!this.isAvailable) return false;
-                    this.tg.expand();
-                    this.tg.ready();
-                    return true;
-                }
-
+                init() { if(this.available) { this.tg.expand(); this.tg.ready(); } }
                 getUser() { return this.tg?.initDataUnsafe?.user || null; }
-                isValid() { return this.isAvailable && this.tg?.initData; }
+                isValid() { return this.available && !!this.tg?.initData; }
                 close() { this.tg?.close(); }
-                showPopup(params) { this.tg?.showPopup(params); }
-                setMainButton(text, color = '#3b82f6', textColor = '#ffffff', isVisible = true, callback = null) {
-                    if (!this.tg) return;
+                setMainButton(text, color='#3b82f6', textColor='#fff', show=true, cb=null) {
+                    if(!this.tg) return;
                     const btn = this.tg.MainButton;
                     btn.setText(text);
                     btn.setColor(color);
                     btn.setTextColor(textColor);
-                    if (isVisible) btn.show(); else btn.hide();
-                    if (callback) btn.onClick(callback);
+                    show ? btn.show() : btn.hide();
+                    if(cb) btn.onClick(cb);
                 }
-                hideMainButton() { this.tg?.MainButton.hide(); }
             }
 
-            // ======================== إدارة الحالة المركزية ========================
+            // ======================== إدارة الحالة العامة ========================
             class AppState extends EventTarget {
                 constructor(userId) {
                     super();
@@ -859,1178 +184,724 @@
                     this.loading = true;
                     this.accessDenied = false;
                     this.telegramMissing = false;
-                    this.balance = CONFIG.DEFAULT_BALANCE;
-                    this.stats = { users: 0, bots: 0, dailyOps: 0 };
-                    this.theme = 'dark';
-                    this.settings = { language: 'ar', notifications: true, sound: true, vibrate: true };
-                    this.wallet = { transactions: [], address: 'T9eK3zX8qLp2mN5rV7bA1cD4fG6hJ8kQ' };
-                    this.withdrawalRequests = [];
+                    this.balance = 0;
+                    this.transactions = [];
                     this.paymentMethods = [];
+                    this.withdrawalRequests = [];
                     this.notifications = [];
                     this.ads = [];
-                    this.referrals = { code: null, referredBy: null, count: 0, totalEarned: 0 };
+                    this.referral = { code: null, referredBy: null, count: 0, totalEarned: 0 };
                     this.dailyBonus = { lastClaim: null, claimed: false };
+                    this.stats = { users: 0, dailyOps: 0 };
+                    this.settings = { language: 'ar', notifications: true, sound: true, vibrate: true };
+                    this.theme = 'dark';
                 }
-
-                set(key, value) {
-                    if (this[key] !== undefined) {
-                        this[key] = value;
-                        this.dispatchEvent(new CustomEvent('stateChanged', { detail: { key, value } }));
-                    }
-                }
-
-                updateStats(stats) {
-                    this.stats = { ...this.stats, ...stats };
-                    this.dispatchEvent(new CustomEvent('statsUpdated', { detail: this.stats }));
-                }
-
-                updateBalance(amount) {
-                    this.balance = amount;
-                    this.dispatchEvent(new CustomEvent('balanceUpdated', { detail: amount }));
-                }
-
-                addTransaction(tx) {
-                    this.wallet.transactions.unshift(tx);
-                    if (this.wallet.transactions.length > CONFIG.MAX_TRANSACTIONS) this.wallet.transactions.pop();
-                    this.dispatchEvent(new CustomEvent('transactionsUpdated', { detail: this.wallet.transactions }));
-                }
+                updateBalance(amount) { this.balance = amount; this.dispatchEvent(new CustomEvent('balance-updated')); }
+                addTransaction(tx) { this.transactions.unshift(tx); if(this.transactions.length>CONFIG.MAX_TRANSACTIONS) this.transactions.pop(); this.dispatchEvent(new CustomEvent('tx-updated')); }
             }
 
-            // ======================== إدارة البيانات ========================
+            // ======================== خدمة البيانات (جميع أوامر القراءة والكتابة) ========================
             class DataService {
                 constructor(state) {
                     this.state = state;
-                    this.loadInitialData();
+                    this.loadAll();
                 }
+                getWalletKey() { return CONFIG.STORAGE_KEYS.WALLET_PREFIX+this.state.userId; }
+                getSettingsKey() { return CONFIG.STORAGE_KEYS.SETTINGS_PREFIX+this.state.userId; }
+                getNotifKey() { return CONFIG.STORAGE_KEYS.NOTIFICATIONS_PREFIX+this.state.userId; }
+                getUserAdKey() { return CONFIG.STORAGE_KEYS.USER_AD_VIEWS_PREFIX+this.state.userId; }
+                getReferralKey() { return CONFIG.STORAGE_KEYS.REFERRAL_PREFIX+this.state.userId; }
+                getDailyKey() { return CONFIG.STORAGE_KEYS.DAILY_BONUS_PREFIX+this.state.userId; }
 
-                getWalletKey() { return CONFIG.STORAGE_KEYS.WALLET_PREFIX + this.state.userId; }
-                getSettingsKey() { return CONFIG.STORAGE_KEYS.SETTINGS_PREFIX + this.state.userId; }
-                getUserAdViewsKey() { return CONFIG.STORAGE_KEYS.USER_AD_VIEWS_PREFIX + this.state.userId; }
-                getReferralKey() { return CONFIG.STORAGE_KEYS.REFERRAL_PREFIX + this.state.userId; }
-                getDailyBonusKey() { return CONFIG.STORAGE_KEYS.DAILY_BONUS_PREFIX + this.state.userId; }
-
-                async loadInitialData() {
+                async loadAll() {
                     await this.loadWallet();
-                    await this.loadRequests();
                     this.loadPaymentMethods();
-                    this.loadSettings();
-                    this.loadStats();
-                    await this.loadNotifications();
+                    await this.loadRequests();
+                    this.loadNotifications();
                     this.loadAds();
-                    await this.loadReferralData();
+                    await this.loadReferral();
                     await this.loadDailyBonus();
+                    this.loadSettings();
+                    await this.loadStats();
                 }
 
+                // ========== أوامر المحفظة ==========
                 async loadWallet() {
-                    const data = StorageService.get(this.getWalletKey(), null);
-                    // التصحيح: التحقق من وجود البيانات بالتنسيق الصحيح { data: {...}, signature }
-                    if (data && data.data && data.data.balance !== undefined && data.signature) {
-                        const isValid = await Security.verify(data.data, data.signature, CONFIG.SECRET_KEY);
-                        if (isValid) {
+                    const data = Storage.get(this.getWalletKey(), null);
+                    if(data && data.data && data.signature) {
+                        const valid = await CryptoHelper.verify(data.data, data.signature, CONFIG.SECRET_KEY);
+                        if(valid) {
                             this.state.balance = data.data.balance;
-                            this.state.wallet.transactions = data.data.transactions || [];
-                            this.state.wallet.address = data.data.address || this.state.wallet.address;
+                            this.state.transactions = data.data.transactions || [];
                             return;
                         }
                     }
-                    // بيانات جديدة أو تالفة
                     this.state.balance = CONFIG.DEFAULT_BALANCE;
-                    this.state.wallet.transactions = [];
+                    this.state.transactions = [];
                     await this.saveWallet();
                 }
-
                 async saveWallet() {
-                    const dataToSign = {
-                        balance: this.state.balance,
-                        transactions: this.state.wallet.transactions,
-                        address: this.state.wallet.address
-                    };
-                    const signature = await Security.hmacSign(dataToSign, CONFIG.SECRET_KEY);
-                    StorageService.set(this.getWalletKey(), { data: dataToSign, signature });
+                    const payload = { balance: this.state.balance, transactions: this.state.transactions };
+                    const sig = await CryptoHelper.hmacSign(payload, CONFIG.SECRET_KEY);
+                    Storage.set(this.getWalletKey(), { data: payload, signature: sig });
+                }
+                async addBalance(amount, note) {
+                    this.state.balance += amount;
+                    await this.saveWallet();
+                    this.state.addTransaction({ id: Date.now(), type: 'earning', amount, note, date: new Date().toISOString() });
+                    // مكافأة الإحالة
+                    if(this.state.referral.referredBy && amount>0) {
+                        const bonus = amount * CONFIG.REFERRAL_BONUS_PERCENT / 100;
+                        if(bonus>0) {
+                            const refKey = CONFIG.STORAGE_KEYS.WALLET_PREFIX+this.state.referral.referredBy;
+                            const refWallet = Storage.get(refKey);
+                            if(refWallet && refWallet.data) {
+                                refWallet.data.balance += bonus;
+                                refWallet.data.transactions.unshift({ id: Date.now(), type: 'referral', amount: bonus, note: `مكافأة إحالة من ${this.state.user.first_name}`, date: new Date().toISOString() });
+                                const newSig = await CryptoHelper.hmacSign(refWallet.data, CONFIG.SECRET_KEY);
+                                Storage.set(refKey, { data: refWallet.data, signature: newSig });
+                                this.addNotificationForUser(this.state.referral.referredBy, '🎁 مكافأة إحالة', `حصلت على ${bonus} من إحالة ${this.state.user.first_name}`, 'success');
+                            }
+                        }
+                    }
+                }
+                async transferBalance(targetUserId, amount) {
+                    if(amount > this.state.balance) return false;
+                    const targetKey = CONFIG.STORAGE_KEYS.WALLET_PREFIX+targetUserId;
+                    const targetWallet = Storage.get(targetKey);
+                    if(!targetWallet || !targetWallet.data) return false;
+                    this.state.balance -= amount;
+                    await this.saveWallet();
+                    targetWallet.data.balance += amount;
+                    targetWallet.data.transactions.unshift({ id: Date.now(), type: 'transfer', amount, note: `تحويل من ${this.state.user.id}`, date: new Date().toISOString() });
+                    const newSig = await CryptoHelper.hmacSign(targetWallet.data, CONFIG.SECRET_KEY);
+                    Storage.set(targetKey, { data: targetWallet.data, signature: newSig });
+                    this.addNotificationForUser(targetUserId, '💰 استلام تحويل', `استلمت ${amount} ر.س من المستخدم ${this.state.user.id}`, 'info');
+                    return true;
                 }
 
+                // ========== أوامر طرق الدفع ==========
                 loadPaymentMethods() {
-                    const saved = StorageService.get(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, null);
-                    if (saved && Array.isArray(saved) && saved.length > 0) {
-                        this.state.paymentMethods = saved;
-                    } else {
-                        this.state.paymentMethods = [
-                            { id: IdGenerator.generate('usdt_'), name: 'USDT (TRC20)', icon: 'fa-brands fa-tether', description: 'عملة رقمية مستقرة', withdrawDetails: 'أدخل عنوان USDT الخاص بك' },
-                            { id: IdGenerator.generate('visa_'), name: 'Visa / Mastercard', icon: 'fa-regular fa-credit-card', description: 'بطاقات ائتمانية', withdrawDetails: 'أدخل بيانات بطاقتك' },
-                            { id: IdGenerator.generate('bank_'), name: 'تحويل بنكي', icon: 'fa-solid fa-building-columns', description: 'حوالة بنكية محلية', withdrawDetails: 'أدخل رقم IBAN الخاص بك' },
-                            { id: IdGenerator.generate('telegram_'), name: 'محفظة تيليجرام', icon: 'fa-brands fa-telegram', description: '@wallet_bot', withdrawDetails: 'أدخل معرف تيليجرام للمحفظة' }
+                    let methods = Storage.get(CONFIG.STORAGE_KEYS.PAYMENT_METHODS);
+                    if(!methods || methods.length===0) {
+                        methods = [
+                            { id: 'usdt', name: 'USDT (TRC20)', icon: 'fab fa-tether', description: 'محفظة رقمية', withdrawDetails: 'عنوان USDT' },
+                            { id: 'visa', name: 'بطاقة ائتمان', icon: 'fas fa-credit-card', description: 'Visa/Mastercard', withdrawDetails: 'رقم البطاقة' },
+                            { id: 'bank', name: 'تحويل بنكي', icon: 'fas fa-university', description: 'حوالة محلية', withdrawDetails: 'رقم IBAN' },
+                            { id: 'telegram', name: 'محفظة تيليجرام', icon: 'fab fa-telegram', description: '@wallet', withdrawDetails: 'معرف المستخدم' }
                         ];
+                        Storage.set(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, methods);
                     }
+                    this.state.paymentMethods = methods;
                 }
-
-                savePaymentMethods() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, this.state.paymentMethods);
-                }
-
-                addPaymentMethod(methodData) {
-                    const newMethod = { id: IdGenerator.generate('pm_'), ...methodData };
-                    this.state.paymentMethods.push(newMethod);
+                savePaymentMethods() { Storage.set(CONFIG.STORAGE_KEYS.PAYMENT_METHODS, this.state.paymentMethods); }
+                addPaymentMethod(method) {
+                    method.id = Date.now().toString();
+                    this.state.paymentMethods.push(method);
                     this.savePaymentMethods();
-                    return newMethod;
                 }
-
-                updatePaymentMethod(id, newData) {
-                    const index = this.state.paymentMethods.findIndex(m => m.id === id);
-                    if (index !== -1) {
-                        this.state.paymentMethods[index] = { ...this.state.paymentMethods[index], ...newData };
-                        this.savePaymentMethods();
-                        return true;
-                    }
+                updatePaymentMethod(id, data) {
+                    const idx = this.state.paymentMethods.findIndex(m=>m.id==id);
+                    if(idx!==-1) { this.state.paymentMethods[idx] = {...this.state.paymentMethods[idx], ...data}; this.savePaymentMethods(); return true; }
                     return false;
                 }
+                deletePaymentMethod(id) { this.state.paymentMethods = this.state.paymentMethods.filter(m=>m.id!=id); this.savePaymentMethods(); }
 
-                deletePaymentMethod(id) {
-                    this.state.paymentMethods = this.state.paymentMethods.filter(m => m.id !== id);
-                    this.savePaymentMethods();
-                }
-
-                async loadRequests() {
-                    this.state.withdrawalRequests = StorageService.get(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, []);
-                }
-
-                saveRequests() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, this.state.withdrawalRequests);
-                }
-
+                // ========== أوامر طلبات السحب ==========
+                async loadRequests() { this.state.withdrawalRequests = Storage.get(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, []); }
+                saveRequests() { Storage.set(CONFIG.STORAGE_KEYS.WITHDRAWAL_REQUESTS, this.state.withdrawalRequests); }
                 async addWithdrawalRequest(amount, methodId, details, user) {
-                    if (amount > this.state.balance) {
-                        return { success: false, message: 'الرصيد غير كافٍ', request: null };
-                    }
-                    const method = this.state.paymentMethods.find(m => m.id === methodId);
-                    const request = {
-                        id: IdGenerator.generate('with_'),
+                    if(amount > this.state.balance) return { success: false, message: 'رصيد غير كافٍ' };
+                    const method = this.state.paymentMethods.find(m=>m.id===methodId);
+                    const req = {
+                        id: Date.now()+'_'+Math.random().toString(36).substr(2,6),
                         userId: user.id,
-                        userName: `${user.first_name} ${user.last_name || ''}`.trim(),
+                        userName: user.first_name + (user.last_name ? ' '+user.last_name : ''),
                         amount,
-                        method: method ? method.name : methodId,
+                        method: method.name,
                         methodId,
                         details,
                         status: 'pending',
                         date: new Date().toISOString()
                     };
-                    this.state.withdrawalRequests.push(request);
+                    this.state.withdrawalRequests.push(req);
                     this.saveRequests();
                     await this.incrementDailyOps();
-                    window.dispatchEvent(new CustomEvent('newWithdrawalRequest', { detail: request }));
-                    return { success: true, id: request.id, request };
+                    window.dispatchEvent(new CustomEvent('new-request', { detail: req }));
+                    return { success: true, request: req };
                 }
-
-                async acceptWithdrawal(request) {
-                    const req = this.state.withdrawalRequests.find(r => r.id === request.id);
-                    if (req && req.status === 'pending') {
-                        req.status = 'approved';
-                        await this.subtractBalanceFromUser(req.userId, req.amount, `سحب عبر ${req.method} إلى ${req.details || 'محفظة'}`);
+                async acceptWithdrawal(req) {
+                    const r = this.state.withdrawalRequests.find(x=>x.id===req.id);
+                    if(r && r.status==='pending') {
+                        r.status = 'approved';
+                        await this.subtractBalance(r.userId, r.amount, `سحب عبر ${r.method}`);
                         this.saveRequests();
-                        this.notificationServiceForUser(req.userId)?.addNotification(
-                            '✅ تم قبول طلب السحب',
-                            `تم قبول طلب السحب بمبلغ ${req.amount} عبر ${req.method}. التفاصيل: ${req.details}`,
-                            'success'
-                        );
+                        this.addNotificationForUser(r.userId, '✅ تم قبول السحب', `تم قبول طلب سحب بقيمة ${r.amount}`, 'success');
                         return true;
                     }
                     return false;
                 }
-
-                async rejectWithdrawal(request) {
-                    const req = this.state.withdrawalRequests.find(r => r.id === request.id);
-                    if (req) {
-                        req.status = 'rejected';
+                async rejectWithdrawal(req) {
+                    const r = this.state.withdrawalRequests.find(x=>x.id===req.id);
+                    if(r) {
+                        r.status = 'rejected';
                         this.saveRequests();
-                        this.notificationServiceForUser(req.userId)?.addNotification(
-                            '❌ تم رفض طلب السحب',
-                            `تم رفض طلب السحب بمبلغ ${req.amount} عبر ${req.method}.`,
-                            'error'
-                        );
+                        this.addNotificationForUser(r.userId, '❌ تم رفض السحب', `تم رفض طلب السحب بقيمة ${r.amount}`, 'error');
                         return true;
                     }
                     return false;
                 }
-
-                async subtractBalanceFromUser(userId, amount, note) {
-                    const walletKey = CONFIG.STORAGE_KEYS.WALLET_PREFIX + userId;
-                    const wallet = StorageService.get(walletKey, null);
-                    if (wallet && wallet.data && wallet.signature) {
-                        const isValid = await Security.verify(wallet.data, wallet.signature, CONFIG.SECRET_KEY);
-                        if (isValid && wallet.data.balance >= amount) {
-                            wallet.data.balance -= amount;
-                            wallet.data.transactions.unshift({
-                                id: IdGenerator.generate('tx_'),
-                                type: 'withdraw',
-                                amount: -amount,
-                                note: note,
-                                status: 'مكتمل',
-                                date: new Date().toISOString()
-                            });
-                            if (wallet.data.transactions.length > CONFIG.MAX_TRANSACTIONS) wallet.data.transactions.pop();
-                            const newSignature = await Security.hmacSign(wallet.data, CONFIG.SECRET_KEY);
-                            StorageService.set(walletKey, { data: wallet.data, signature: newSignature });
-                        }
+                async subtractBalance(userId, amount, note) {
+                    const key = CONFIG.STORAGE_KEYS.WALLET_PREFIX+userId;
+                    const data = Storage.get(key);
+                    if(data && data.data && data.data.balance >= amount) {
+                        data.data.balance -= amount;
+                        data.data.transactions.unshift({ id: Date.now(), type: 'withdraw', amount: -amount, note, date: new Date().toISOString() });
+                        if(data.data.transactions.length>CONFIG.MAX_TRANSACTIONS) data.data.transactions.pop();
+                        const newSig = await CryptoHelper.hmacSign(data.data, CONFIG.SECRET_KEY);
+                        Storage.set(key, { data: data.data, signature: newSig });
                     }
                 }
 
-                notificationServiceForUser(userId) {
-                    const notifKey = CONFIG.STORAGE_KEYS.NOTIFICATIONS_PREFIX + userId;
-                    const notifications = StorageService.get(notifKey, []);
-                    return {
-                        addNotification: (title, message, type) => {
-                            const notif = {
-                                id: IdGenerator.generate('notif_'),
-                                title,
-                                message,
-                                type,
-                                read: false,
-                                date: new Date().toISOString()
-                            };
-                            notifications.push(notif);
-                            StorageService.set(notifKey, notifications);
-                        }
-                    };
+                // ========== أوامر الإشعارات ==========
+                loadNotifications() { this.state.notifications = Storage.get(this.getNotifKey(), []); }
+                saveNotifications() { Storage.set(this.getNotifKey(), this.state.notifications); }
+                addNotification(title, msg, type='info') {
+                    const notif = { id: Date.now(), title, message: msg, type, read: false, date: new Date().toISOString() };
+                    this.state.notifications.unshift(notif);
+                    this.saveNotifications();
+                    window.dispatchEvent(new CustomEvent('new-notification'));
                 }
-
-                getPendingWithdrawals() {
-                    return this.state.withdrawalRequests.filter(r => r.status === 'pending');
+                addNotificationForUser(userId, title, msg, type='info') {
+                    const notifKey = CONFIG.STORAGE_KEYS.NOTIFICATIONS_PREFIX+userId;
+                    let notifs = Storage.get(notifKey, []);
+                    notifs.unshift({ id: Date.now(), title, message: msg, type, read: false, date: new Date().toISOString() });
+                    Storage.set(notifKey, notifs);
                 }
+                markAllRead() { this.state.notifications.forEach(n=>n.read=true); this.saveNotifications(); }
 
-                getPendingRequestsCount() {
-                    return this.getPendingWithdrawals().length;
-                }
-
-                async loadStats() {
-                    const users = StorageService.get(CONFIG.STORAGE_KEYS.USERS, []);
-                    const bots = StorageService.get(CONFIG.STORAGE_KEYS.BOTS, [{ id: 123456, name: 'البوت الرسمي' }]);
-                    const dailyOpsData = StorageService.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
-                    const today = DateUtils.getTodayDate();
-                    this.state.stats = {
-                        users: users.length,
-                        bots: bots.length,
-                        dailyOps: dailyOpsData[today] || 0
-                    };
-                }
-
-                async incrementDailyOps() {
-                    const today = DateUtils.getTodayDate();
-                    const dailyOpsData = StorageService.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
-                    dailyOpsData[today] = (dailyOpsData[today] || 0) + 1;
-                    StorageService.set(CONFIG.STORAGE_KEYS.DAILY_OPS, dailyOpsData);
-                    await this.loadStats();
-                }
-
-                async registerUser(userId, referredBy = null) {
-                    let users = StorageService.get(CONFIG.STORAGE_KEYS.USERS, []);
-                    if (!users.includes(userId)) {
-                        users.push(userId);
-                        StorageService.set(CONFIG.STORAGE_KEYS.USERS, users);
-                        if (referredBy && referredBy !== userId) {
-                            const refData = StorageService.get(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX + referredBy, { count: 0, totalEarned: 0 });
-                            refData.count = (refData.count || 0) + 1;
-                            StorageService.set(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX + referredBy, refData);
-                        }
-                        await this.loadStats();
-                    }
-                }
-
-                loadSettings() {
-                    const settings = StorageService.get(this.getSettingsKey(), null);
-                    if (settings) this.state.settings = settings;
-                }
-
-                saveSettings() {
-                    StorageService.set(this.getSettingsKey(), this.state.settings);
-                }
-
-                loadTheme() {
-                    const theme = StorageService.get(CONFIG.STORAGE_KEYS.THEME, 'dark');
-                    this.state.theme = theme;
-                    return theme;
-                }
-
-                saveTheme(theme) {
-                    StorageService.set(CONFIG.STORAGE_KEYS.THEME, theme);
-                    this.state.theme = theme;
-                }
-
-                // ============= إدارة الإعلانات =============
-                loadAds() {
-                    this.state.ads = StorageService.get(CONFIG.STORAGE_KEYS.ADS, []);
-                }
-
-                saveAds() {
-                    StorageService.set(CONFIG.STORAGE_KEYS.ADS, this.state.ads);
-                }
-
-                addAd(adData) {
-                    const newAd = {
-                        id: IdGenerator.generate('ad_'),
-                        title: adData.title,
-                        description: adData.description,
-                        imageUrl: adData.imageUrl,
-                        link: adData.link,
-                        reward: parseFloat(adData.reward),
-                        duration: parseInt(adData.duration),
-                        createdAt: new Date().toISOString()
-                    };
+                // ========== أوامر الإعلانات ==========
+                loadAds() { this.state.ads = Storage.get(CONFIG.STORAGE_KEYS.ADS, []); }
+                saveAds() { Storage.set(CONFIG.STORAGE_KEYS.ADS, this.state.ads); }
+                addAd(ad) {
+                    const newAd = { id: Date.now()+'_'+Math.random(), ...ad, createdAt: new Date().toISOString() };
                     this.state.ads.push(newAd);
                     this.saveAds();
                     return newAd;
                 }
+                updateAd(id, data) { 
+                    const idx = this.state.ads.findIndex(a=>a.id==id);
+                    if(idx!==-1) { this.state.ads[idx] = {...this.state.ads[idx], ...data}; this.saveAds(); return true; }
+                    return false;
+                }
+                deleteAd(id) { this.state.ads = this.state.ads.filter(a=>a.id!=id); this.saveAds(); }
+                hasUserViewedAd(adId) { const viewed = Storage.get(this.getUserAdKey(), []); return viewed.includes(adId); }
+                markAdViewed(adId) { let viewed = Storage.get(this.getUserAdKey(), []); if(!viewed.includes(adId)) { viewed.push(adId); Storage.set(this.getUserAdKey(), viewed); } }
+                getAvailableAds() { return this.state.ads.filter(ad=>!this.hasUserViewedAd(ad.id)); }
 
-                updateAd(id, adData) {
-                    const index = this.state.ads.findIndex(ad => ad.id === id);
-                    if (index !== -1) {
-                        this.state.ads[index] = { ...this.state.ads[index], ...adData };
-                        this.saveAds();
+                // ========== أوامر الإحالات ==========
+                async loadReferral() {
+                    let ref = Storage.get(this.getReferralKey(), null);
+                    if(!ref) ref = { code: this.state.userId.toString(), referredBy: null, count: 0, totalEarned: 0 };
+                    this.state.referral = ref;
+                }
+                async setReferredBy(code) {
+                    if(!this.state.referral.referredBy && code !== this.state.userId.toString()) {
+                        this.state.referral.referredBy = code;
+                        Storage.set(this.getReferralKey(), this.state.referral);
+                        // زيادة عدد الإحالات للمحيل
+                        const refData = Storage.get(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX+code, { count:0, totalEarned:0 });
+                        refData.count += 1;
+                        Storage.set(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX+code, refData);
                         return true;
                     }
                     return false;
                 }
 
-                deleteAd(id) {
-                    this.state.ads = this.state.ads.filter(ad => ad.id !== id);
-                    this.saveAds();
-                }
-
-                hasUserViewedAd(adId) {
-                    const viewedAds = StorageService.get(this.getUserAdViewsKey(), []);
-                    return viewedAds.includes(adId);
-                }
-
-                markAdViewed(adId) {
-                    const viewedAds = StorageService.get(this.getUserAdViewsKey(), []);
-                    if (!viewedAds.includes(adId)) {
-                        viewedAds.push(adId);
-                        StorageService.set(this.getUserAdViewsKey(), viewedAds);
-                    }
-                }
-
-                getAvailableAdsForUser() {
-                    return this.state.ads.filter(ad => !this.hasUserViewedAd(ad.id));
-                }
-
-                async addBalance(amount, note) {
-                    this.state.balance += amount;
-                    await this.saveWallet();
-                    this.state.addTransaction({
-                        id: IdGenerator.generate('tx_'),
-                        type: 'earning',
-                        amount: amount,
-                        note: note,
-                        status: 'مكتمل',
-                        date: new Date().toISOString()
-                    });
-                    // مكافأة الإحالة
-                    if (this.state.referrals.referredBy) {
-                        const referrerId = this.state.referrals.referredBy;
-                        const referrerWalletKey = CONFIG.STORAGE_KEYS.WALLET_PREFIX + referrerId;
-                        const refData = StorageService.get(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX + referrerId, { count: 0, totalEarned: 0 });
-                        const bonus = amount * CONFIG.REFERRAL_BONUS_PERCENT / 100;
-                        if (bonus > 0) {
-                            const referrerWallet = StorageService.get(referrerWalletKey, null);
-                            if (referrerWallet && referrerWallet.data) {
-                                referrerWallet.data.balance += bonus;
-                                referrerWallet.data.transactions.unshift({
-                                    id: IdGenerator.generate('tx_'),
-                                    type: 'referral_bonus',
-                                    amount: bonus,
-                                    note: `مكافأة إحالة من ${this.state.user.first_name}`,
-                                    status: 'مكتمل',
-                                    date: new Date().toISOString()
-                                });
-                                const newSig = await Security.hmacSign(referrerWallet.data, CONFIG.SECRET_KEY);
-                                StorageService.set(referrerWalletKey, { data: referrerWallet.data, signature: newSig });
-                                refData.totalEarned = (refData.totalEarned || 0) + bonus;
-                                StorageService.set(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX + referrerId, refData);
-                                this.notificationServiceForUser(referrerId).addNotification('🎁 مكافأة إحالة', `حصلت على ${bonus} ر.س من إحالة ${this.state.user.first_name}`, 'success');
-                            }
-                        }
-                    }
-                }
-
-                // ============= نظام الإحالات =============
-                async loadReferralData() {
-                    const data = StorageService.get(this.getReferralKey(), null);
-                    if (data) {
-                        this.state.referrals = data;
-                    } else {
-                        this.state.referrals = { code: this.state.userId.toString(), referredBy: null, count: 0, totalEarned: 0 };
-                        await this.saveReferralData();
-                    }
-                }
-
-                async saveReferralData() {
-                    StorageService.set(this.getReferralKey(), this.state.referrals);
-                }
-
-                async setReferredBy(referrerId) {
-                    if (!this.state.referrals.referredBy && referrerId !== this.state.userId) {
-                        this.state.referrals.referredBy = referrerId;
-                        await this.saveReferralData();
-                    }
-                }
-
-                // ============= المكافأة اليومية =============
+                // ========== المكافأة اليومية ==========
                 async loadDailyBonus() {
-                    const data = StorageService.get(this.getDailyBonusKey(), null);
-                    if (data && data.lastClaim === DateUtils.getTodayDate()) {
-                        this.state.dailyBonus = { lastClaim: data.lastClaim, claimed: true };
-                    } else {
-                        this.state.dailyBonus = { lastClaim: null, claimed: false };
-                    }
+                    const data = Storage.get(this.getDailyKey(), null);
+                    const today = new Date().toISOString().split('T')[0];
+                    if(data && data.lastClaim === today) this.state.dailyBonus = { lastClaim: today, claimed: true };
+                    else this.state.dailyBonus = { lastClaim: null, claimed: false };
                 }
-
                 async claimDailyBonus() {
-                    const today = DateUtils.getTodayDate();
-                    if (this.state.dailyBonus.claimed) return false;
-                    await this.addBalance(CONFIG.DAILY_BONUS_AMOUNT, `المكافأة اليومية (${CONFIG.DAILY_BONUS_AMOUNT} ر.س)`);
+                    const today = new Date().toISOString().split('T')[0];
+                    if(this.state.dailyBonus.claimed) return false;
+                    await this.addBalance(CONFIG.DAILY_BONUS_AMOUNT, 'المكافأة اليومية');
                     this.state.dailyBonus = { lastClaim: today, claimed: true };
-                    StorageService.set(this.getDailyBonusKey(), this.state.dailyBonus);
+                    Storage.set(this.getDailyKey(), this.state.dailyBonus);
                     return true;
                 }
 
-                // ============= إدارة المستخدمين للمسؤول =============
-                getAllUsersData() {
-                    const users = StorageService.get(CONFIG.STORAGE_KEYS.USERS, []);
+                // ========== إحصائيات وإدارة المستخدمين للمسؤول ==========
+                async loadStats() {
+                    const users = Storage.get(CONFIG.STORAGE_KEYS.USERS, []);
+                    const dailyOps = Storage.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
+                    const today = new Date().toISOString().split('T')[0];
+                    this.state.stats = { users: users.length, dailyOps: dailyOps[today] || 0 };
+                }
+                async incrementDailyOps() {
+                    const today = new Date().toISOString().split('T')[0];
+                    let daily = Storage.get(CONFIG.STORAGE_KEYS.DAILY_OPS, {});
+                    daily[today] = (daily[today] || 0) + 1;
+                    Storage.set(CONFIG.STORAGE_KEYS.DAILY_OPS, daily);
+                    await this.loadStats();
+                }
+                async registerUser(userId) {
+                    let users = Storage.get(CONFIG.STORAGE_KEYS.USERS, []);
+                    if(!users.includes(userId)) { users.push(userId); Storage.set(CONFIG.STORAGE_KEYS.USERS, users); await this.loadStats(); }
+                }
+                getAllUsers() {
+                    const users = Storage.get(CONFIG.STORAGE_KEYS.USERS, []);
                     return users.map(uid => {
-                        const walletKey = CONFIG.STORAGE_KEYS.WALLET_PREFIX + uid;
-                        const wallet = StorageService.get(walletKey, { data: { balance: 0 } });
-                        const refData = StorageService.get(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX + uid, { count: 0, totalEarned: 0 });
-                        const blocked = StorageService.get(`blocked_${uid}`, false);
-                        return { id: uid, balance: wallet.data?.balance || 0, referrals: refData.count, referralEarned: refData.totalEarned, blocked };
+                        const wallet = Storage.get(CONFIG.STORAGE_KEYS.WALLET_PREFIX+uid, { data: { balance:0 } });
+                        const ref = Storage.get(CONFIG.STORAGE_KEYS.REFERRAL_PREFIX+uid, { count:0, totalEarned:0 });
+                        return { id: uid, balance: wallet.data.balance, referrals: ref.count, referralEarned: ref.totalEarned };
                     });
                 }
-
                 async addBalanceToUser(userId, amount, note) {
-                    const walletKey = CONFIG.STORAGE_KEYS.WALLET_PREFIX + userId;
-                    let wallet = StorageService.get(walletKey, null);
-                    if (!wallet || !wallet.data) {
-                        wallet = { data: { balance: 0, transactions: [] }, signature: '' };
-                    }
+                    const key = CONFIG.STORAGE_KEYS.WALLET_PREFIX+userId;
+                    let wallet = Storage.get(key, null);
+                    if(!wallet || !wallet.data) wallet = { data: { balance:0, transactions:[] }, signature:'' };
                     wallet.data.balance += amount;
-                    wallet.data.transactions.unshift({
-                        id: IdGenerator.generate('tx_'),
-                        type: 'admin_add',
-                        amount: amount,
-                        note: note,
-                        status: 'مكتمل',
-                        date: new Date().toISOString()
-                    });
-                    const newSig = await Security.hmacSign(wallet.data, CONFIG.SECRET_KEY);
-                    StorageService.set(walletKey, { data: wallet.data, signature: newSig });
-                    this.notificationServiceForUser(userId).addNotification('💰 تم إضافة رصيد', `${note}: ${amount} ر.س`, 'success');
+                    wallet.data.transactions.unshift({ id: Date.now(), type: 'admin', amount, note, date: new Date().toISOString() });
+                    if(wallet.data.transactions.length>CONFIG.MAX_TRANSACTIONS) wallet.data.transactions.pop();
+                    const sig = await CryptoHelper.hmacSign(wallet.data, CONFIG.SECRET_KEY);
+                    Storage.set(key, { data: wallet.data, signature: sig });
+                    this.addNotificationForUser(userId, '💰 تم إضافة رصيد', `${note}: ${amount}`, 'success');
                 }
 
-                async toggleBlockUser(userId) {
-                    const blocked = StorageService.get(`blocked_${userId}`, false);
-                    StorageService.set(`blocked_${userId}`, !blocked);
-                    return !blocked;
+                // ========== الإعدادات والسمة ==========
+                loadSettings() {
+                    const s = Storage.get(this.getSettingsKey(), {});
+                    this.state.settings = { ...this.state.settings, ...s };
                 }
-
-                async loadNotifications() {
-                    const notifKey = CONFIG.STORAGE_KEYS.NOTIFICATIONS_PREFIX + this.state.userId;
-                    this.state.notifications = StorageService.get(notifKey, []);
-                }
-
-                async saveNotifications() {
-                    const notifKey = CONFIG.STORAGE_KEYS.NOTIFICATIONS_PREFIX + this.state.userId;
-                    StorageService.set(notifKey, this.state.notifications);
-                }
-
-                addNotification(title, message, type = 'info') {
-                    const notification = {
-                        id: IdGenerator.generate('notif_'),
-                        title,
-                        message,
-                        type,
-                        read: false,
-                        date: new Date().toISOString()
-                    };
-                    this.state.notifications.push(notification);
-                    this.saveNotifications();
-                    window.dispatchEvent(new CustomEvent('newNotification', { detail: notification }));
-                    return notification;
-                }
-
-                markAsRead(notificationId) {
-                    const notif = this.state.notifications.find(n => n.id === notificationId);
-                    if (notif) { notif.read = true; this.saveNotifications(); }
-                }
-
-                markAllAsRead() {
-                    this.state.notifications.forEach(n => n.read = true);
-                    this.saveNotifications();
-                }
-
-                getUserNotifications() {
-                    return [...this.state.notifications].sort((a, b) => new Date(b.date) - new Date(a.date));
-                }
-
-                getUnreadCount() {
-                    return this.state.notifications.filter(n => !n.read).length;
-                }
+                saveSettings() { Storage.set(this.getSettingsKey(), this.state.settings); }
+                loadTheme() { return Storage.get(CONFIG.STORAGE_KEYS.THEME, 'dark'); }
+                saveTheme(theme) { Storage.set(CONFIG.STORAGE_KEYS.THEME, theme); }
             }
 
-            // ======================== مدير واجهة المستخدم ========================
+            // ======================== واجهة المستخدم (تحتوي على جميع الأوامر المرئية) ========================
             class UIManager {
-                constructor(state, dataService, telegramService, toast) {
+                constructor(state, data, tg, toast) {
                     this.state = state;
-                    this.data = dataService;
-                    this.tg = telegramService;
+                    this.data = data;
+                    this.tg = tg;
                     this.toast = toast;
                     this.appContainer = document.getElementById('app');
-                    this.isWalletModalOpen = false;
-                    this.isAdminPanelOpen = false;
-                    this.isPaymentMethodModalOpen = false;
-                    this.isAdsModalOpen = false;
-                    this.activeCountdown = null;
-
-                    this.state.addEventListener('balanceUpdated', () => this.updateBalanceDisplay());
-                    this.state.addEventListener('statsUpdated', () => this.updateStatsDisplay());
-                    window.addEventListener('newWithdrawalRequest', (e) => this.handleNewRequest(e.detail));
-                    window.addEventListener('newNotification', (e) => this.handleNewNotification(e.detail));
-                }
-
-                handleNewRequest(request) {
-                    if (this.state.isAdmin) {
-                        this.toast.success(`🔔 طلب سحب جديد\nالمستخدم: ${request.userName}\nالمبلغ: ${request.amount}\nالطريقة: ${request.method}\nالتفاصيل: ${request.details}\nالرجاء مراجعة الطلب في لوحة الإدارة`);
-                        this.updatePendingBadge();
-                    }
-                }
-
-                handleNewNotification(notification) {
-                    this.updateNotificationBadge();
-                    if (!this.state.isAdmin) this.render();
-                }
-
-                updatePendingBadge() {
-                    const walletIcon = document.getElementById('walletIconLarge');
-                    if (!walletIcon) return;
-                    const count = this.data.getPendingRequestsCount();
-                    let badge = walletIcon.querySelector('.notification-badge');
-                    if (count > 0) {
-                        if (!badge) {
-                            badge = document.createElement('span');
-                            badge.className = 'notification-badge';
-                            walletIcon.style.position = 'relative';
-                            walletIcon.appendChild(badge);
-                        }
-                        badge.textContent = count > 9 ? '9+' : count;
-                    } else {
-                        if (badge) badge.remove();
-                    }
-                    document.title = count > 0 ? `(${count}) محفظة تيليجرام` : 'محفظة تيليجرام المتطورة';
-                }
-
-                updateNotificationBadge() {
-                    const bell = document.getElementById('notificationBell');
-                    if (!bell) return;
-                    const unreadCount = this.data.getUnreadCount();
-                    let badge = bell.querySelector('.notification-badge');
-                    if (unreadCount > 0) {
-                        if (!badge) {
-                            badge = document.createElement('span');
-                            badge.className = 'notification-badge';
-                            bell.style.position = 'relative';
-                            bell.appendChild(badge);
-                        }
-                        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
-                    } else {
-                        if (badge) badge.remove();
-                    }
+                    this.modalOverlay = document.getElementById('modalOverlay');
+                    this.modalContent = document.getElementById('modalContent');
+                    this.autoRefresh = null;
+                    state.addEventListener('balance-updated', () => this.updateBalanceUI());
+                    window.addEventListener('new-request', e => this.onNewRequest(e.detail));
+                    window.addEventListener('new-notification', () => this.updateNotificationBadge());
                 }
 
                 render() {
-                    if (this.state.telegramMissing) {
-                        this.appContainer.innerHTML = this.renderTelegramMissing();
-                    } else if (this.state.loading) {
-                        this.appContainer.innerHTML = this.renderLoading();
-                    } else if (this.state.accessDenied) {
-                        this.appContainer.innerHTML = this.renderAccessDenied();
-                    } else if (this.state.isAdmin) {
-                        this.appContainer.innerHTML = this.renderAdminDashboard();
-                    } else {
-                        this.appContainer.innerHTML = this.renderUserDashboard();
-                    }
+                    if(this.state.telegramMissing) this.appContainer.innerHTML = this.renderTelegramMissing();
+                    else if(this.state.accessDenied) this.appContainer.innerHTML = this.renderAccessDenied();
+                    else if(this.state.loading) this.appContainer.innerHTML = this.renderLoading();
+                    else if(this.state.isAdmin) this.appContainer.innerHTML = this.renderAdminDashboard();
+                    else this.appContainer.innerHTML = this.renderUserDashboard();
                     this.bindEvents();
-                    this.updatePendingBadge();
                     this.updateNotificationBadge();
+                    this.updateBalanceUI();
                 }
 
-                renderLoading() { return `<div class="flex flex-col items-center justify-center text-center space-y-6 animate-enter"><div class="spinner"></div><div><h2 class="text-xl font-bold mb-1">جاري التحقق...</h2><p class="text-sm text-gray-400">نحن نتأكد من هويتك عبر تيليجرام</p></div></div>`; }
-                renderAccessDenied() { return `<div class="glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter border-red-500/20"><div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl"><i class="fa-solid fa-shield-halved"></i></div><h2 class="text-2xl font-bold mb-2">دخول محظور</h2><p class="text-gray-400 mb-8">يجب فتح هذا التطبيق من خلال بوت تيليجرام الرسمي.</p><a href="https://telegram.org" target="_blank" class="block w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-blue-500"><i class="fa-brands fa-telegram ml-2"></i> فتح تيليجرام</a></div>`; }
-                renderTelegramMissing() { return `<div class="glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter"><div class="w-20 h-20 bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl"><i class="fa-solid fa-exclamation-triangle"></i></div><h2 class="text-2xl font-bold mb-2">بيئة غير مدعومة</h2><p class="text-gray-400 mb-8">يرجى فتح هذا الرابط من داخل تطبيق تيليجرام.</p><a href="https://t.me/your_bot_username" target="_blank" class="block w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-orange-600 to-orange-500"><i class="fa-brands fa-telegram ml-2"></i> فتح البوت</a></div>`; }
+                renderLoading() { return `<div class="flex flex-col items-center justify-center min-h-[60vh]"><div class="spinner"></div><p class="mt-4 text-gray-400">جاري التحميل...</p></div>`; }
+                renderAccessDenied() { return `<div class="glass-card p-8 text-center"><i class="fas fa-shield-alt text-6xl text-red-500 mb-4"></i><h2 class="text-2xl font-bold">دخول غير مصرح</h2><p class="text-gray-400 mt-2">يجب فتح التطبيق من داخل تيليجرام</p></div>`; }
+                renderTelegramMissing() { return `<div class="glass-card p-8 text-center"><i class="fab fa-telegram text-6xl text-blue-500 mb-4"></i><h2 class="text-2xl font-bold">بيئة غير مدعومة</h2><p class="text-gray-400 mt-2">يرجى فتح الرابط من تطبيق تيليجرام</p></div>`; }
 
+                // واجهة المستخدم العادي (تحتوي على جميع أوامر المستخدم)
                 renderUserDashboard() {
                     const user = this.state.user;
-                    const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
-                    const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
-                    const dailyBonusAvailable = !this.state.dailyBonus.claimed;
+                    const name = `${user.first_name} ${user.last_name||''}`.trim();
+                    const initials = name.charAt(0)+(user.last_name?user.last_name.charAt(0):'');
+                    const dailyAvailable = !this.state.dailyBonus.claimed;
                     return `
-                        <div class="space-y-5 animate-enter pb-10">
-                            <div class="glass-card p-5 rounded-3xl relative overflow-hidden">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-16 h-16 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">${user.photo_url ? `<img src="${user.photo_url}" class="w-full h-full object-cover">` : `<div class="w-full h-full default-avatar"><span>${initials}</span></div>`}</div>
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center justify-between"><h2 class="text-lg font-bold truncate">${fullName}</h2>${this.renderNotificationBell()}</div>
-                                        <p class="text-xs text-gray-400 font-mono mt-0.5">ID: ${user.id}</p>
-                                        <div class="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-green-500/10 border border-green-500/20"><span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span><span class="text-[10px] font-bold text-green-400">نشط الآن</span></div>
-                                    </div>
-                                </div>
+                        <div class="space-y-4">
+                            <div class="glass-card p-5 flex items-center gap-4">
+                                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center text-2xl font-bold shadow-lg">${initials}</div>
+                                <div class="flex-1"><h2 class="text-xl font-bold">${name}</h2><p class="text-xs text-gray-400 font-mono">ID: ${user.id}</p></div>
+                                <div id="notificationBell" class="relative cursor-pointer text-2xl"><i class="far fa-bell"></i></div>
                             </div>
-                            <div class="flex justify-center my-4"><div class="wallet-icon-large" id="walletIconLarge"><i class="fa-solid fa-wallet"></i></div></div>
-                            <div class="flex justify-center"><div class="balance-badge" id="balanceBadge"><i class="fa-solid fa-coins"></i><span>${this.state.balance.toLocaleString('ar-EG')}</span></div></div>
-                            <div class="grid grid-cols-2 gap-4 mt-4">
-                                <button id="earnBtn" class="glass-card p-4 rounded-2xl text-center hover:bg-blue-500/10 transition-all"><div class="w-10 h-10 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center mx-auto mb-2"><i class="fa-solid fa-dollar-sign"></i></div><span class="text-gray-400 text-xs">كسب المال</span><span class="text-white font-bold text-lg">إعلانات</span></button>
-                                <button id="dailyBonusBtn" class="glass-card p-4 rounded-2xl text-center hover:bg-yellow-500/10 transition-all ${dailyBonusAvailable ? 'border-yellow-500/50' : 'opacity-60'}" ${!dailyBonusAvailable ? 'disabled' : ''}><div class="w-10 h-10 rounded-full bg-yellow-500/10 text-yellow-400 flex items-center justify-center mx-auto mb-2"><i class="fa-solid fa-gift"></i></div><span class="text-gray-400 text-xs">المكافأة اليومية</span><span class="text-white font-bold text-lg">${CONFIG.DAILY_BONUS_AMOUNT} ر.س</span></button>
+                            <div class="flex justify-center"><div id="walletIcon" class="wallet-icon"><i class="fas fa-wallet"></i></div></div>
+                            <div class="text-center"><div class="inline-flex items-center gap-2 glass-card px-6 py-3 rounded-full"><i class="fas fa-coins text-yellow-400"></i><span id="balanceValue" class="text-2xl font-bold">${this.state.balance.toLocaleString()}</span><span class="text-sm">ر.س</span></div></div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button id="earnBtn" class="glass-card p-4 text-center hover:border-blue-500/50"><i class="fas fa-ad text-green-400 text-2xl mb-2 block"></i><span class="font-bold">إعلانات</span></button>
+                                <button id="dailyBtn" class="glass-card p-4 text-center ${dailyAvailable?'hover:border-yellow-500/50':'opacity-60'}" ${!dailyAvailable?'disabled':''}><i class="fas fa-gift text-yellow-400 text-2xl mb-2 block"></i><span class="font-bold">يومية ${CONFIG.DAILY_BONUS_AMOUNT}</span></button>
                             </div>
-                            <div class="glass-card p-4 rounded-2xl text-center mt-2">
-                                <div class="flex justify-between items-center mb-2"><span class="text-gray-400 text-sm">كود الإحالة</span><i class="fa-regular fa-copy cursor-pointer" id="copyReferralCode" data-code="${this.state.referrals.code}"></i></div>
-                                <div class="font-mono text-sm bg-black/20 p-2 rounded-lg">${this.state.referrals.code}</div>
-                                <div class="flex justify-between mt-2 text-xs"><span>المُحالين: ${this.state.referrals.count}</span><span>أرباح الإحالة: ${this.state.referrals.totalEarned.toLocaleString()} ر.س</span></div>
-                                <div class="mt-2"><input type="text" id="referralInput" placeholder="كود المُحيل" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 text-sm"><button id="applyReferralBtn" class="mt-2 bg-blue-600 px-4 py-1 rounded-lg text-sm w-full">تطبيق</button></div>
+                            <div class="glass-card p-4">
+                                <div class="flex justify-between items-center mb-2"><span class="text-gray-400">كود الإحالة</span><i id="copyRef" class="fas fa-copy cursor-pointer hover:text-blue-400"></i></div>
+                                <div class="bg-black/30 p-2 rounded-lg text-center font-mono text-sm">${this.state.referral.code}</div>
+                                <div class="flex justify-between mt-2 text-sm"><span>المُحالين: ${this.state.referral.count}</span><span>أرباح: ${this.state.referral.totalEarned} ر.س</span></div>
+                                <div class="mt-3"><input type="text" id="refInput" placeholder="كود المُحيل" class="w-full bg-slate-800 rounded-lg p-2 text-sm"><button id="applyRefBtn" class="mt-2 w-full bg-blue-600 py-1 rounded-lg">تطبيق</button></div>
                             </div>
-                            <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 transition-all flex items-center justify-center gap-2"><i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل الخروج</button>
+                            <button id="logoutBtn" class="w-full py-3 rounded-xl bg-red-500/20 text-red-400 font-bold">تسجيل الخروج</button>
                         </div>
                     `;
                 }
 
+                // واجهة المسؤول (تحتوي على جميع أوامر الإدارة)
                 renderAdminDashboard() {
                     const user = this.state.user;
-                    const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
-                    const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
+                    const name = `${user.first_name} ${user.last_name||''}`.trim();
                     const stats = this.state.stats;
-                    const pendingCount = this.data.getPendingRequestsCount();
+                    const pendingCount = this.data.state.withdrawalRequests.filter(r=>r.status==='pending').length;
                     return `
-                        <div class="space-y-5 animate-enter pb-10">
-                            <div class="glass-card p-5 rounded-3xl border-2 border-yellow-500/30">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-16 h-16 rounded-2xl border border-white/10 overflow-hidden bg-slate-800">${user.photo_url ? `<img src="${user.photo_url}" class="w-full h-full object-cover">` : `<div class="w-full h-full default-avatar"><span>${initials}</span></div>`}</div>
-                                    <div class="flex-1"><div class="flex justify-between"><h2 class="text-lg font-bold">${fullName}</h2>${this.renderNotificationBell()}</div><p class="text-xs text-gray-400">ID: ${user.id}</p><div class="inline-flex mt-2 px-2 py-0.5 rounded-md bg-yellow-500/20"><i class="fa-solid fa-crown text-yellow-400 text-[10px] ml-1"></i><span class="text-[10px] font-bold text-yellow-300">مدير النظام</span></div></div>
-                                </div>
+                        <div class="space-y-4">
+                            <div class="glass-card p-5 flex items-center gap-4 border-yellow-500/30">
+                                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-yellow-500 to-orange-500 flex items-center justify-center text-2xl font-bold">👑</div>
+                                <div><h2 class="text-xl font-bold">${name}</h2><p class="text-xs text-yellow-400">مدير النظام</p></div>
+                                <div id="notificationBell" class="relative cursor-pointer text-2xl mr-auto"><i class="far fa-bell"></i></div>
                             </div>
-                            <div class="flex justify-center my-4"><div class="wallet-icon-large" id="walletIconLarge"><i class="fa-solid fa-wallet"></i>${pendingCount > 0 ? `<span class="notification-badge">${pendingCount > 9 ? '9+' : pendingCount}</span>` : ''}</div></div>
-                            <div class="flex justify-center"><div class="balance-badge" id="balanceBadge"><i class="fa-solid fa-coins"></i><span>${this.state.balance.toLocaleString('ar-EG')}</span></div></div>
-                            <div class="grid grid-cols-3 gap-2"><div class="glass-card p-3 text-center"><div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 mx-auto mb-1"><i class="fa-solid fa-users text-sm"></i></div><span class="text-gray-400 text-[10px]">المستخدمين</span><span class="text-white font-bold text-base" id="statsUsers">${stats.users}</span></div><div class="glass-card p-3 text-center"><div class="w-8 h-8 rounded-full bg-green-500/10 text-green-400 mx-auto mb-1"><i class="fa-solid fa-robot text-sm"></i></div><span class="text-gray-400 text-[10px]">البوتات</span><span class="text-white font-bold text-base" id="statsBots">${stats.bots}</span></div><div class="glass-card p-3 text-center"><div class="w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 mx-auto mb-1"><i class="fa-solid fa-chart-line text-sm"></i></div><span class="text-gray-400 text-[10px]">عمليات اليوم</span><span class="text-white font-bold text-base" id="statsDailyOps">${stats.dailyOps}</span></div></div>
-                            <button id="openAdminPanelBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-yellow-600 to-yellow-500 flex items-center justify-center gap-2"><i class="fa-solid fa-gears"></i> لوحة الإدارة (طلبات السحب) ${pendingCount > 0 ? `<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">${pendingCount}</span>` : ''}</button>
-                            <button id="earnBtn" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-green-600 to-green-500 flex items-center justify-center gap-2"><i class="fa-solid fa-dollar-sign"></i> كسب المال (إعلانات)</button>
-                            <button id="logoutBtn" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 transition-all"><i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل الخروج</button>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="glass-card p-3 text-center"><i class="fas fa-users text-blue-400"></i><div class="text-xl font-bold">${stats.users}</div><div class="text-xs">مستخدم</div></div>
+                                <div class="glass-card p-3 text-center"><i class="fas fa-chart-line text-green-400"></i><div class="text-xl font-bold">${stats.dailyOps}</div><div class="text-xs">عمليات اليوم</div></div>
+                                <div class="glass-card p-3 text-center"><i class="fas fa-clock text-purple-400"></i><div class="text-xl font-bold" id="pendingCount">${pendingCount}</div><div class="text-xs">طلبات</div></div>
+                            </div>
+                            <button id="adminPanelBtn" class="w-full glass-card p-4 text-center font-bold"><i class="fas fa-cog ml-2"></i> لوحة التحكم ${pendingCount?`<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">${pendingCount}</span>`:''}</button>
+                            <button id="earnBtn" class="w-full glass-card p-4 text-center font-bold text-green-400"><i class="fas fa-ad ml-2"></i> إدارة الإعلانات</button>
+                            <button id="logoutBtn" class="w-full py-3 rounded-xl bg-red-500/20 text-red-400 font-bold">تسجيل الخروج</button>
                         </div>
                     `;
                 }
-
-                renderNotificationBell() {
-                    const unreadCount = this.data.getUnreadCount();
-                    return `<div class="relative cursor-pointer" id="notificationBell"><i class="fa-regular fa-bell text-xl"></i>${unreadCount > 0 ? `<span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">${unreadCount > 9 ? '9+' : unreadCount}</span>` : ''}</div>`;
-                }
-
-                updateBalanceDisplay() { const span = document.querySelector('#balanceBadge span'); if(span) span.textContent = this.state.balance.toLocaleString('ar-EG'); }
-                updateStatsDisplay() { const s = this.state.stats; if(document.getElementById('statsUsers')) document.getElementById('statsUsers').textContent = s.users; if(document.getElementById('statsBots')) document.getElementById('statsBots').textContent = s.bots; if(document.getElementById('statsDailyOps')) document.getElementById('statsDailyOps').textContent = s.dailyOps; }
 
                 bindEvents() {
-                    document.getElementById('logoutBtn')?.addEventListener('click', () => { this.tg.close(); this.toast.info('تم تسجيل الخروج'); });
-                    document.getElementById('walletIconLarge')?.addEventListener('click', () => this.openWalletModal());
-                    document.getElementById('openAdminPanelBtn')?.addEventListener('click', () => this.openAdminPanel());
+                    document.getElementById('logoutBtn')?.addEventListener('click', () => this.tg.close());
+                    document.getElementById('walletIcon')?.addEventListener('click', () => this.openWalletModal());
                     document.getElementById('notificationBell')?.addEventListener('click', () => this.openNotificationsModal());
                     document.getElementById('earnBtn')?.addEventListener('click', () => this.openAdsModal());
-                    document.getElementById('dailyBonusBtn')?.addEventListener('click', async () => {
-                        const claimed = await this.data.claimDailyBonus();
-                        if(claimed) {
-                            this.toast.success(`🎉 تم الحصول على ${CONFIG.DAILY_BONUS_AMOUNT} ر.س مكافأة يومية!`);
+                    document.getElementById('dailyBtn')?.addEventListener('click', async () => {
+                        if(await this.data.claimDailyBonus()) { this.toast.success(`حصلت على ${CONFIG.DAILY_BONUS_AMOUNT} ر.س`); this.render(); }
+                        else this.toast.info('استلمت المكافأة اليومية مسبقاً');
+                    });
+                    document.getElementById('copyRef')?.addEventListener('click', () => { navigator.clipboard.writeText(this.state.referral.code); this.toast.success('تم نسخ الكود'); });
+                    document.getElementById('applyRefBtn')?.addEventListener('click', async () => {
+                        const code = document.getElementById('refInput').value.trim();
+                        if(code && !this.state.referral.referredBy) {
+                            if(await this.data.setReferredBy(code)) this.toast.success('تم تطبيق كود الإحالة'); else this.toast.error('الكود غير صالح');
                             this.render();
-                        } else {
-                            this.toast.info('لقد حصلت على المكافأة اليومية بالفعل');
-                        }
+                        } else this.toast.warning('لا يمكن استخدام الكود');
                     });
-                    document.getElementById('copyReferralCode')?.addEventListener('click', () => {
-                        const code = document.getElementById('copyReferralCode').dataset.code;
-                        navigator.clipboard.writeText(code);
-                        this.toast.success('تم نسخ كود الإحالة');
-                    });
-                    document.getElementById('applyReferralBtn')?.addEventListener('click', async () => {
-                        const input = document.getElementById('referralInput').value.trim();
-                        if(input && !this.state.referrals.referredBy) {
-                            await this.data.setReferredBy(input);
-                            this.toast.success('تم تطبيق كود الإحالة');
-                            this.render();
-                        } else {
-                            this.toast.warning('لا يمكن تطبيق الكود');
-                        }
-                    });
+                    document.getElementById('adminPanelBtn')?.addEventListener('click', () => this.openAdminPanel());
                 }
 
+                updateBalanceUI() { const el = document.getElementById('balanceValue'); if(el) el.innerText = this.state.balance.toLocaleString(); }
+                updateNotificationBadge() { 
+                    const unread = this.state.notifications.filter(n=>!n.read).length;
+                    const bell = document.getElementById('notificationBell');
+                    if(bell) {
+                        let badge = bell.querySelector('.badge-notify');
+                        if(unread>0) {
+                            if(!badge) { badge = document.createElement('div'); badge.className='badge-notify'; bell.appendChild(badge); }
+                            badge.innerText = unread>9?'9+':unread;
+                        } else if(badge) badge.remove();
+                    }
+                }
+                onNewRequest(req) { if(this.state.isAdmin) this.toast.warning(`طلب سحب جديد من ${req.userName} بقيمة ${req.amount}`); }
+
+                // نافذة المحفظة (تحتوي على أوامر: سحب، تحويل، سجل المعاملات)
                 openWalletModal() {
-                    this.isWalletModalOpen = true;
-                    const modal = document.getElementById('walletModalOverlay');
-                    document.getElementById('walletModalContent').innerHTML = this.renderWalletModal();
-                    modal.classList.add('open');
+                    this.modalContent.innerHTML = this.renderWalletModal();
+                    this.modalOverlay.classList.add('opacity-100','pointer-events-auto');
+                    this.modalContent.classList.remove('scale-95');
+                    this.modalOverlay.classList.remove('opacity-0','pointer-events-none');
                     this.bindWalletModalEvents();
                 }
-
-                closeWalletModal() { this.isWalletModalOpen = false; document.getElementById('walletModalOverlay').classList.remove('open'); }
-
                 renderWalletModal() {
-                    const transactions = this.state.wallet.transactions;
-                    const paymentMethods = this.state.paymentMethods;
-                    const withdrawMethodsHtml = paymentMethods.map(m => `<div class="payment-method" data-method-id="${m.id}"><div class="payment-icon"><i class="${m.icon}"></i></div><div class="flex-1"><div class="font-bold">${m.name}</div><div class="text-xs text-gray-400">${m.description || ''}</div></div></div>`).join('');
-                    const transactionsHtml = transactions.length === 0 ? '<p class="text-center text-gray-400 py-4">لا توجد معاملات بعد</p>' : transactions.map(tx => `<div class="transaction-item"><div><div class="font-medium">${tx.note || tx.type}</div><div class="text-xs text-gray-400">${DateUtils.formatDateTime(tx.date)}</div></div><div class="transaction-amount ${tx.amount > 0 ? 'positive' : 'negative'} font-bold">${tx.amount > 0 ? '+' : ''}${tx.amount.toLocaleString('ar-EG')}</div></div>`).join('');
+                    const methodsHtml = this.state.paymentMethods.map(m => `<div data-method="${m.id}" class="payment-method-item glass-card p-3 rounded-xl mb-2 cursor-pointer hover:border-blue-500 transition"><div class="flex items-center gap-3"><i class="${m.icon} text-2xl w-8"></i><div><div class="font-bold">${m.name}</div><div class="text-xs text-gray-400">${m.description||''}</div></div></div></div>`).join('');
+                    const txHtml = this.state.transactions.length===0?'<div class="text-center text-gray-400 py-4">لا توجد معاملات</div>':this.state.transactions.map(t=>`<div class="flex justify-between items-center border-b border-white/10 py-2"><div><div>${t.note||t.type}</div><div class="text-xs text-gray-500">${new Date(t.date).toLocaleString()}</div></div><div class="${t.amount>0?'text-green-400':'text-red-400'} font-bold">${t.amount>0?'+':''}${t.amount}</div></div>`).join('');
                     return `
-                        <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">محفظتي</h2><button id="closeWalletModal" class="w-8 h-8 rounded-full bg-white/10"><i class="fa-solid fa-times"></i></button></div>
-                        <div class="glass-card p-6 rounded-2xl text-center mb-4"><div class="text-gray-400 text-sm mb-1">الرصيد الحالي</div><div class="text-3xl font-bold">${this.state.balance.toLocaleString('ar-EG')}</div></div>
-                        <div class="wallet-tabs"><button class="wallet-tab active" data-tab="withdraw"><i class="fa-solid fa-arrow-up"></i> سحب</button><button class="wallet-tab" data-tab="transfer"><i class="fa-solid fa-exchange-alt"></i> تحويل</button><button class="wallet-tab" data-tab="history"><i class="fa-solid fa-history"></i> السجل</button></div>
-                        <div id="walletTabContent">
-                            <div class="tab-pane active" id="tab-withdraw"><p class="text-sm text-gray-300 mb-3">اختر طريقة السحب:</p><div class="payment-methods-list mb-4" id="withdrawMethodsList">${withdrawMethodsHtml}</div><div id="withdrawDetailsContainer"><input type="text" id="withdrawDetails" placeholder="أدخل التفاصيل" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2 text-white"></div><div class="flex gap-2"><input type="number" id="withdrawAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2 text-white"><button id="withdrawBtn" class="bg-red-600 px-4 rounded-lg font-bold">طلب سحب</button></div><p class="text-xs text-gray-400 mt-2">سيتم مراجعة طلب السحب من قبل الإدارة.</p></div>
-                            <div class="tab-pane hidden" id="tab-transfer"><p class="text-sm text-gray-300 mb-2">تحويل إلى مستخدم آخر:</p><input type="text" id="transferUserId" placeholder="معرف المستخدم" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2 mb-2"><div class="flex gap-2"><input type="number" id="transferAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 border border-white/10 rounded-lg p-2"><button id="transferBtn" class="bg-green-600 px-4 rounded-lg font-bold">تحويل</button></div></div>
-                            <div class="tab-pane hidden" id="tab-history"><div class="max-h-64 overflow-y-auto">${transactionsHtml}</div></div>
-                        </div>
+                        <div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">محفظتي</h2><button id="closeModalBtn" class="text-2xl">&times;</button></div>
+                        <div class="glass-card p-4 text-center mb-4"><div class="text-gray-400 text-sm">الرصيد الحالي</div><div class="text-3xl font-bold">${this.state.balance.toLocaleString()} ر.س</div></div>
+                        <div class="flex gap-2 border-b border-white/20 mb-4"><button data-tab="withdraw" class="tab-btn py-2 px-3 font-bold text-blue-400 border-b-2 border-blue-400">سحب</button><button data-tab="transfer" class="tab-btn py-2 px-3">تحويل</button><button data-tab="history" class="tab-btn py-2 px-3">السجل</button></div>
+                        <div id="tab-withdraw" class="tab-pane"><div class="mb-3"><div class="text-sm mb-2">طريقة السحب</div><div id="methodsList">${methodsHtml}</div></div><input type="text" id="withdrawDetails" placeholder="تفاصيل السحب" class="w-full bg-slate-800 rounded-lg p-2 my-2"><div class="flex gap-2"><input type="number" id="withdrawAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 rounded-lg p-2"><button id="withdrawSubmit" class="bg-red-600 px-4 rounded-lg">إرسال الطلب</button></div><p class="text-xs text-gray-400 mt-2">سيتم مراجعة الطلب من الإدارة</p></div>
+                        <div id="tab-transfer" class="tab-pane hidden"><input type="text" id="transferUserId" placeholder="معرف المستخدم" class="w-full bg-slate-800 rounded-lg p-2 mb-2"><div class="flex gap-2"><input type="number" id="transferAmount" placeholder="المبلغ" class="flex-1 bg-slate-800 rounded-lg p-2"><button id="transferSubmit" class="bg-green-600 px-4 rounded-lg">تحويل</button></div></div>
+                        <div id="tab-history" class="tab-pane hidden max-h-80 overflow-auto">${txHtml}</div>
                     `;
                 }
-
                 bindWalletModalEvents() {
-                    const modal = document.getElementById('walletModalOverlay');
-                    document.getElementById('closeWalletModal').addEventListener('click', () => this.closeWalletModal());
-                    modal.addEventListener('click', (e) => { if(e.target === modal) this.closeWalletModal(); });
-                    document.querySelectorAll('.wallet-tab').forEach(tab => {
-                        tab.addEventListener('click', () => {
-                            document.querySelectorAll('.wallet-tab').forEach(t => t.classList.remove('active'));
-                            tab.classList.add('active');
-                            const tabId = tab.dataset.tab;
-                            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
-                            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-                        });
-                    });
-                    const withdrawMethods = document.querySelectorAll('#withdrawMethodsList .payment-method');
+                    document.getElementById('closeModalBtn')?.addEventListener('click',()=>this.closeModal());
                     let selectedMethod = null;
-                    withdrawMethods.forEach(m => {
-                        m.addEventListener('click', () => {
-                            withdrawMethods.forEach(m2 => m2.classList.remove('selected'));
-                            m.classList.add('selected');
-                            selectedMethod = m.dataset.methodId;
-                            const method = this.state.paymentMethods.find(p => p.id === selectedMethod);
-                            const detailsInput = document.getElementById('withdrawDetails');
-                            if(method) detailsInput.placeholder = method.withdrawDetails || 'أدخل التفاصيل';
+                    document.querySelectorAll('.payment-method-item').forEach(el=>{
+                        el.addEventListener('click',()=>{
+                            document.querySelectorAll('.payment-method-item').forEach(e=>e.classList.remove('border-blue-500'));
+                            el.classList.add('border-blue-500');
+                            selectedMethod = el.dataset.method;
                         });
                     });
-                    document.getElementById('withdrawBtn')?.addEventListener('click', async () => {
+                    document.getElementById('withdrawSubmit')?.addEventListener('click',async()=>{
                         const amount = parseFloat(document.getElementById('withdrawAmount').value);
                         const details = document.getElementById('withdrawDetails').value.trim();
-                        if(isNaN(amount) || amount <= 0) { this.toast.error('أدخل مبلغ صحيح'); return; }
-                        if(!selectedMethod) { this.toast.error('اختر طريقة سحب أولاً'); return; }
-                        if(!details) { this.toast.error('أدخل التفاصيل المطلوبة'); return; }
-                        const result = await this.data.addWithdrawalRequest(amount, selectedMethod, details, this.state.user);
-                        if(result.success) {
-                            this.toast.success(`✅ تم تقديم طلب السحب بنجاح\nالمبلغ: ${amount}\nالطريقة: ${result.request.method}\nالتفاصيل: ${details}\nسيتم خصم المبلغ بعد الموافقة.`);
-                            document.getElementById('withdrawAmount').value = '';
-                            document.getElementById('withdrawDetails').value = '';
-                            withdrawMethods.forEach(m => m.classList.remove('selected'));
-                            selectedMethod = null;
-                        } else this.toast.error(result.message);
+                        if(!selectedMethod) return this.toast.error('اختر طريقة سحب');
+                        if(isNaN(amount)||amount<=0) return this.toast.error('أدخل مبلغ صحيح');
+                        if(!details) return this.toast.error('أدخل التفاصيل');
+                        const res = await this.data.addWithdrawalRequest(amount, selectedMethod, details, this.state.user);
+                        if(res.success) { this.toast.success('تم تقديم طلب السحب'); this.closeModal(); this.render(); }
+                        else this.toast.error(res.message);
                     });
-                    document.getElementById('transferBtn')?.addEventListener('click', async () => {
+                    document.getElementById('transferSubmit')?.addEventListener('click',async()=>{
                         const amount = parseFloat(document.getElementById('transferAmount').value);
                         const targetId = document.getElementById('transferUserId').value.trim();
-                        if(isNaN(amount) || amount <= 0) { this.toast.error('أدخل مبلغ صحيح'); return; }
-                        if(!targetId) { this.toast.error('أدخل معرف المستخدم'); return; }
-                        if(amount > this.state.balance) { this.toast.error('الرصيد غير كافٍ'); return; }
-                        this.state.balance -= amount;
-                        this.state.addTransaction({ id: IdGenerator.generate('tx_'), type: 'transfer', amount: -amount, note: `تحويل إلى المستخدم ${targetId}`, status: 'مكتمل', date: new Date().toISOString() });
-                        await this.data.saveWallet();
-                        this.toast.success('تم التحويل بنجاح');
-                        document.getElementById('transferAmount').value = '';
-                        document.getElementById('transferUserId').value = '';
-                        this.updateBalanceDisplay();
-                        this.openWalletModal();
+                        if(isNaN(amount)||amount<=0||!targetId) return this.toast.error('بيانات غير صحيحة');
+                        if(amount>this.state.balance) return this.toast.error('رصيد غير كاف');
+                        const success = await this.data.transferBalance(targetId, amount);
+                        if(success) { this.toast.success('تم التحويل بنجاح'); this.closeModal(); this.render(); }
+                        else this.toast.error('المستخدم غير موجود');
+                    });
+                    document.querySelectorAll('.tab-btn').forEach(btn=>{
+                        btn.addEventListener('click',()=>{
+                            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('text-blue-400','border-b-2','border-blue-400'));
+                            btn.classList.add('text-blue-400','border-b-2','border-blue-400');
+                            const tab = btn.dataset.tab;
+                            document.querySelectorAll('.tab-pane').forEach(p=>p.classList.add('hidden'));
+                            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+                        });
                     });
                 }
 
+                // لوحة الإدارة (تحتوي على أوامر: طلبات السحب، طرق الدفع، الإعلانات، المستخدمين)
                 openAdminPanel() {
-                    this.isAdminPanelOpen = true;
-                    const modal = document.getElementById('adminPanelOverlay');
-                    document.getElementById('adminPanelContent').innerHTML = this.renderAdminPanel();
-                    modal.classList.add('open');
+                    this.modalContent.innerHTML = this.renderAdminPanel();
+                    this.modalOverlay.classList.add('opacity-100','pointer-events-auto');
+                    this.modalContent.classList.remove('scale-95');
                     this.bindAdminPanelEvents();
                 }
-
-                closeAdminPanel() { this.isAdminPanelOpen = false; document.getElementById('adminPanelOverlay').classList.remove('open'); }
-
                 renderAdminPanel() {
-                    const pending = this.data.getPendingWithdrawals();
-                    const withdrawalsHtml = pending.length === 0 ? '<p class="text-gray-400 text-center py-2">لا توجد طلبات سحب معلقة</p>' : pending.map(req => `<div class="request-item" data-id="${req.id}" data-type="withdrawal"><div class="request-header"><span class="font-bold">${req.userName}</span><span class="badge-pending">قيد الانتظار</span></div><div class="text-sm">المبلغ: <span class="text-red-400">${req.amount.toLocaleString('ar-EG')}</span></div><div class="text-xs text-gray-400">الطريقة: ${req.method}</div><div class="text-xs text-gray-400">التفاصيل: ${req.details || 'غير محدد'}</div><div class="text-xs text-gray-400">التاريخ: ${DateUtils.formatDateTime(req.date)}</div><div class="request-actions"><button class="btn-accept accept-request" data-id="${req.id}">قبول</button><button class="btn-reject reject-request" data-id="${req.id}">رفض</button></div></div>`).join('');
-                    const paymentMethodsHtml = this.state.paymentMethods.map(m => `<div class="payment-method-admin"><div class="flex items-center gap-3"><div class="payment-icon"><i class="${m.icon}"></i></div><div><div class="font-bold">${m.name}</div><div class="text-xs text-gray-400">${m.description || ''}</div></div></div><div class="actions"><button class="edit-payment-method" data-id="${m.id}" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button><button class="delete-payment-method" data-id="${m.id}" title="حذف"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
-                    const ads = this.state.ads;
-                    const adsHtml = ads.length === 0 ? '<p class="text-gray-400 text-center py-2">لا توجد إعلانات مضافة</p>' : ads.map(ad => `<div class="payment-method-admin"><div class="flex items-center gap-3">${ad.imageUrl ? `<img src="${ad.imageUrl}" class="w-10 h-10 rounded-lg object-cover">` : '<div class="w-10 h-10 rounded-lg bg-gray-700 flex items-center justify-center"><i class="fa-solid fa-image"></i></div>'}<div><div class="font-bold">${ad.title}</div><div class="text-xs text-gray-400">${ad.reward} ر.س | ${ad.duration} ث</div><div class="text-xs truncate max-w-[150px]">${ad.link}</div></div></div><div class="actions"><button class="edit-ad" data-id="${ad.id}" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button><button class="delete-ad" data-id="${ad.id}" title="حذف"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
-                    const users = this.data.getAllUsersData();
-                    const usersHtml = users.map(u => `<div class="user-card"><div class="flex justify-between"><div><span class="font-mono text-sm">${u.id}</span><div class="text-xs">الرصيد: ${u.balance.toLocaleString()} ر.س</div><div class="text-xs">المُحالين: ${u.referrals} | أرباح إحالة: ${u.referralEarned.toLocaleString()}</div></div><div class="flex gap-1"><button class="add-balance text-green-400" data-id="${u.id}"><i class="fa-solid fa-plus-circle"></i></button><button class="toggle-block ${u.blocked ? 'text-red-400' : 'text-yellow-400'}" data-id="${u.id}"><i class="fa-solid ${u.blocked ? 'fa-lock' : 'fa-unlock-alt'}"></i></button></div></div></div>`).join('');
+                    const pending = this.data.state.withdrawalRequests.filter(r=>r.status==='pending');
+                    const pendHtml = pending.length===0?'<div class="text-gray-400">لا توجد طلبات</div>':pending.map(r=>`
+                        <div class="glass-card p-3 mb-2" data-id="${r.id}"><div class="flex justify-between"><span class="font-bold">${r.userName}</span><span class="text-yellow-400">${r.amount} ر.س</span></div><div class="text-sm">${r.method} | ${r.details}</div><div class="text-xs text-gray-500">${new Date(r.date).toLocaleString()}</div><div class="flex gap-2 mt-2"><button class="acceptReq bg-green-600 px-3 py-1 rounded-lg text-sm">قبول</button><button class="rejectReq bg-red-600 px-3 py-1 rounded-lg text-sm">رفض</button></div></div>
+                    `).join('');
+                    const methodsHtml = this.state.paymentMethods.map(m=>`<div class="flex justify-between items-center glass-card p-2 mb-1"><div><i class="${m.icon} ml-2"></i>${m.name}</div><div><button class="editMethod text-blue-400 ml-2" data-id="${m.id}"><i class="fas fa-edit"></i></button><button class="delMethod text-red-400" data-id="${m.id}"><i class="fas fa-trash"></i></button></div></div>`).join('');
+                    const adsHtml = this.state.ads.map(ad=>`<div class="flex justify-between glass-card p-2 mb-1"><div><div class="font-bold">${ad.title}</div><div class="text-xs">${ad.reward} ر.س | ${ad.duration} ث</div></div><div><button class="editAd text-blue-400" data-id="${ad.id}"><i class="fas fa-edit"></i></button><button class="delAd text-red-400" data-id="${ad.id}"><i class="fas fa-trash"></i></button></div></div>`).join('');
+                    const users = this.data.getAllUsers();
+                    const usersHtml = users.map(u=>`<div class="flex justify-between glass-card p-2 mb-1"><div><div class="font-mono text-sm">${u.id}</div><div>الرصيد: ${u.balance} | إحالات: ${u.referrals}</div></div><div><button class="addBalance text-green-400" data-id="${u.id}"><i class="fas fa-plus-circle"></i></button></div></div>`).join('');
                     return `
-                        <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">لوحة الإدارة</h2><button id="closeAdminPanel" class="w-8 h-8 rounded-full bg-white/10"><i class="fa-solid fa-times"></i></button></div>
-                        <div class="wallet-tabs"><button class="wallet-tab active" data-admin-tab="requests">طلبات السحب</button><button class="wallet-tab" data-admin-tab="payment-methods">طرق الدفع</button><button class="wallet-tab" data-admin-tab="ads">الإعلانات</button><button class="wallet-tab" data-admin-tab="users">المستخدمين</button></div>
-                        <div id="adminRequestsTab" class="admin-tab-content"><div><h3 class="text-lg font-bold mb-2">طلبات السحب المعلقة <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">${pending.length}</span></h3><div class="admin-requests-panel">${withdrawalsHtml}</div></div></div>
-                        <div id="adminPaymentMethodsTab" class="admin-tab-content hidden"><div class="flex justify-between items-center mb-3"><h3 class="text-lg font-bold">طرق الدفع المتاحة</h3><button id="addPaymentMethodBtn" class="bg-blue-600 px-3 py-1 rounded-lg text-sm"><i class="fa-solid fa-plus"></i> إضافة</button></div><div class="space-y-2">${paymentMethodsHtml}</div></div>
-                        <div id="adminAdsTab" class="admin-tab-content hidden"><div class="flex justify-between items-center mb-3"><h3 class="text-lg font-bold">الإعلانات المتاحة</h3><button id="addAdBtn" class="bg-blue-600 px-3 py-1 rounded-lg text-sm"><i class="fa-solid fa-plus"></i> إضافة إعلان</button></div><div class="space-y-2">${adsHtml}</div></div>
-                        <div id="adminUsersTab" class="admin-tab-content hidden"><div class="flex justify-between items-center mb-3"><h3 class="text-lg font-bold">إدارة المستخدمين</h3><button id="refreshUsersBtn" class="bg-blue-600 px-3 py-1 rounded-lg text-sm"><i class="fa-solid fa-sync"></i> تحديث</button></div><div class="max-h-96 overflow-y-auto">${usersHtml}</div></div>
+                        <div class="flex justify-between mb-4"><h2 class="text-2xl font-bold">لوحة الإدارة</h2><button id="closeAdminModal" class="text-2xl">&times;</button></div>
+                        <div class="flex gap-2 border-b mb-4"><button data-admintab="requests" class="admin-tab py-2 px-3 font-bold text-blue-400 border-b-2 border-blue-400">الطلبات</button><button data-admintab="methods" class="admin-tab py-2 px-3">طرق الدفع</button><button data-admintab="ads" class="admin-tab py-2 px-3">الإعلانات</button><button data-admintab="users" class="admin-tab py-2 px-3">المستخدمين</button></div>
+                        <div id="admin-requests" class="admin-pane"><h3 class="font-bold">طلبات السحب</h3>${pendHtml}</div>
+                        <div id="admin-methods" class="admin-pane hidden"><div class="flex justify-between mb-2"><h3 class="font-bold">طرق الدفع</h3><button id="addMethodBtn" class="bg-blue-600 px-3 py-1 rounded-lg text-sm"><i class="fas fa-plus"></i> إضافة</button></div>${methodsHtml}</div>
+                        <div id="admin-ads" class="admin-pane hidden"><div class="flex justify-between mb-2"><h3 class="font-bold">الإعلانات</h3><button id="addAdBtn" class="bg-blue-600 px-3 py-1 rounded-lg text-sm"><i class="fas fa-plus"></i> إضافة</button></div>${adsHtml}</div>
+                        <div id="admin-users" class="admin-pane hidden"><h3 class="font-bold mb-2">المستخدمين</h3>${usersHtml}</div>
                     `;
                 }
-
                 bindAdminPanelEvents() {
-                    const modal = document.getElementById('adminPanelOverlay');
-                    document.getElementById('closeAdminPanel').addEventListener('click', () => this.closeAdminPanel());
-                    modal.addEventListener('click', (e) => { if(e.target === modal) this.closeAdminPanel(); });
-                    document.querySelectorAll('[data-admin-tab]').forEach(tab => {
-                        tab.addEventListener('click', () => {
-                            document.querySelectorAll('[data-admin-tab]').forEach(t => t.classList.remove('active'));
-                            tab.classList.add('active');
-                            const tabName = tab.dataset.adminTab;
-                            document.getElementById('adminRequestsTab').classList.toggle('hidden', tabName !== 'requests');
-                            document.getElementById('adminPaymentMethodsTab').classList.toggle('hidden', tabName !== 'payment-methods');
-                            document.getElementById('adminAdsTab').classList.toggle('hidden', tabName !== 'ads');
-                            document.getElementById('adminUsersTab').classList.toggle('hidden', tabName !== 'users');
+                    document.getElementById('closeAdminModal')?.addEventListener('click',()=>this.closeModal());
+                    document.querySelectorAll('.admin-tab').forEach(btn=>{
+                        btn.addEventListener('click',()=>{
+                            const tab = btn.dataset.admintab;
+                            document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('text-blue-400','border-b-2','border-blue-400'));
+                            btn.classList.add('text-blue-400','border-b-2','border-blue-400');
+                            document.querySelectorAll('.admin-pane').forEach(p=>p.classList.add('hidden'));
+                            document.getElementById(`admin-${tab}`).classList.remove('hidden');
                         });
                     });
-                    document.querySelectorAll('.accept-request').forEach(btn => {
-                        btn.addEventListener('click', async () => {
-                            const id = btn.dataset.id;
-                            const req = this.state.withdrawalRequests.find(r => r.id === id);
-                            if(req && await this.data.acceptWithdrawal(req)) {
-                                this.toast.success(`✅ تم قبول طلب السحب\nالمستخدم: ${req.userName}\nالمبلغ: ${req.amount}`);
-                                this.openAdminPanel();
-                            } else this.toast.error('حدث خطأ');
-                        });
-                    });
-                    document.querySelectorAll('.reject-request').forEach(btn => {
-                        btn.addEventListener('click', async () => {
-                            const id = btn.dataset.id;
-                            const req = this.state.withdrawalRequests.find(r => r.id === id);
-                            if(req && await this.data.rejectWithdrawal(req)) {
-                                this.toast.info(`❌ تم رفض طلب السحب\nالمستخدم: ${req.userName}\nالمبلغ: ${req.amount}`);
-                                this.openAdminPanel();
-                            }
-                        });
-                    });
-                    document.getElementById('addPaymentMethodBtn')?.addEventListener('click', () => this.openPaymentMethodModal());
-                    document.querySelectorAll('.edit-payment-method').forEach(btn => btn.addEventListener('click', () => this.openPaymentMethodModal(btn.dataset.id)));
-                    document.querySelectorAll('.delete-payment-method').forEach(btn => btn.addEventListener('click', () => { if(confirm('حذف طريقة الدفع؟')) { this.data.deletePaymentMethod(btn.dataset.id); this.toast.success('تم الحذف'); this.openAdminPanel(); } }));
-                    document.getElementById('addAdBtn')?.addEventListener('click', () => this.openAdFormModal());
-                    document.querySelectorAll('.edit-ad').forEach(btn => btn.addEventListener('click', () => this.openAdFormModal(btn.dataset.id)));
-                    document.querySelectorAll('.delete-ad').forEach(btn => btn.addEventListener('click', () => { if(confirm('حذف الإعلان نهائياً؟')) { this.data.deleteAd(btn.dataset.id); this.toast.success('تم الحذف'); this.openAdminPanel(); } }));
-                    document.getElementById('refreshUsersBtn')?.addEventListener('click', () => this.openAdminPanel());
-                    document.querySelectorAll('.add-balance').forEach(btn => {
-                        btn.addEventListener('click', async () => {
-                            const userId = btn.dataset.id;
-                            const amount = prompt('أدخل المبلغ (ر.س):');
-                            if(amount && !isNaN(parseFloat(amount))) {
-                                await this.data.addBalanceToUser(userId, parseFloat(amount), 'إضافة رصيد من قبل المدير');
-                                this.toast.success(`تمت إضافة ${amount} ر.س للمستخدم ${userId}`);
-                                this.openAdminPanel();
-                            }
-                        });
-                    });
-                    document.querySelectorAll('.toggle-block').forEach(btn => {
-                        btn.addEventListener('click', async () => {
-                            const userId = btn.dataset.id;
-                            const newState = await this.data.toggleBlockUser(userId);
-                            this.toast.info(`المستخدم ${userId} ${newState ? 'محظور' : 'تم إلغاء حظره'}`);
+                    document.querySelectorAll('.acceptReq').forEach(btn=>btn.addEventListener('click',async(e)=>{
+                        const id = btn.closest('[data-id]').dataset.id;
+                        const req = this.data.state.withdrawalRequests.find(r=>r.id==id);
+                        if(req && await this.data.acceptWithdrawal(req)) { this.toast.success('تم قبول الطلب'); this.openAdminPanel(); }
+                    }));
+                    document.querySelectorAll('.rejectReq').forEach(btn=>btn.addEventListener('click',async(e)=>{
+                        const id = btn.closest('[data-id]').dataset.id;
+                        const req = this.data.state.withdrawalRequests.find(r=>r.id==id);
+                        if(req && await this.data.rejectWithdrawal(req)) { this.toast.info('تم رفض الطلب'); this.openAdminPanel(); }
+                    }));
+                    document.getElementById('addMethodBtn')?.addEventListener('click',()=>this.openPaymentMethodModal());
+                    document.querySelectorAll('.editMethod').forEach(btn=>btn.addEventListener('click',()=>this.openPaymentMethodModal(btn.dataset.id)));
+                    document.querySelectorAll('.delMethod').forEach(btn=>btn.addEventListener('click',()=>{ if(confirm('حذف طريقة الدفع؟')){ this.data.deletePaymentMethod(btn.dataset.id); this.openAdminPanel(); } }));
+                    document.getElementById('addAdBtn')?.addEventListener('click',()=>this.openAdModal());
+                    document.querySelectorAll('.editAd').forEach(btn=>btn.addEventListener('click',()=>this.openAdModal(btn.dataset.id)));
+                    document.querySelectorAll('.delAd').forEach(btn=>btn.addEventListener('click',()=>{ if(confirm('حذف الإعلان؟')){ this.data.deleteAd(btn.dataset.id); this.openAdminPanel(); } }));
+                    document.querySelectorAll('.addBalance').forEach(btn=>btn.addEventListener('click',async()=>{
+                        const amount = prompt('أدخل المبلغ (ر.س)');
+                        if(amount && !isNaN(parseFloat(amount))) {
+                            await this.data.addBalanceToUser(btn.dataset.id, parseFloat(amount), 'إضافة من المدير');
+                            this.toast.success('تمت الإضافة');
                             this.openAdminPanel();
-                        });
+                        }
+                    }));
+                }
+
+                // نماذج إضافة/تعديل طرق الدفع والإعلانات
+                openPaymentMethodModal(editId=null) {
+                    const method = editId ? this.state.paymentMethods.find(m=>m.id==editId) : null;
+                    this.modalContent.innerHTML = `
+                        <div class="flex justify-between mb-4"><h2 class="text-2xl">${method?'تعديل':'إضافة'} طريقة دفع</h2><button id="closePm" class="text-2xl">&times;</button></div>
+                        <input type="text" id="pmName" placeholder="الاسم" class="w-full bg-slate-800 rounded-lg p-2 mb-2" value="${method?.name||''}">
+                        <input type="text" id="pmIcon" placeholder="أيقونة (مثال: fab fa-tether)" class="w-full bg-slate-800 rounded-lg p-2 mb-2" value="${method?.icon||''}">
+                        <input type="text" id="pmDesc" placeholder="وصف" class="w-full bg-slate-800 rounded-lg p-2 mb-2" value="${method?.description||''}">
+                        <input type="text" id="pmDetails" placeholder="تفاصيل السحب" class="w-full bg-slate-800 rounded-lg p-2 mb-4" value="${method?.withdrawDetails||''}">
+                        <button id="savePm" class="w-full bg-blue-600 py-2 rounded-lg">حفظ</button>
+                    `;
+                    this.modalOverlay.classList.add('opacity-100','pointer-events-auto');
+                    document.getElementById('closePm').addEventListener('click',()=>this.closeModal());
+                    document.getElementById('savePm').addEventListener('click',()=>{
+                        const newMethod = {
+                            id: method?.id || Date.now().toString(),
+                            name: document.getElementById('pmName').value,
+                            icon: document.getElementById('pmIcon').value,
+                            description: document.getElementById('pmDesc').value,
+                            withdrawDetails: document.getElementById('pmDetails').value
+                        };
+                        if(method) this.data.updatePaymentMethod(editId, newMethod);
+                        else this.data.addPaymentMethod(newMethod);
+                        this.toast.success('تم الحفظ');
+                        this.closeModal();
+                        this.openAdminPanel();
                     });
                 }
-
-                openAdFormModal(adId = null) {
-                    const ad = adId ? this.state.ads.find(a => a.id === adId) : null;
-                    const modal = document.getElementById('paymentMethodModalOverlay');
-                    document.getElementById('paymentMethodModalContent').innerHTML = `
-                        <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">${ad ? 'تعديل إعلان' : 'إضافة إعلان جديد'}</h2><button id="closeAdForm" class="w-8 h-8 rounded-full bg-white/10"><i class="fa-solid fa-times"></i></button></div>
-                        <form id="adForm" class="space-y-3"><input type="hidden" id="adId" value="${ad?.id || ''}"><div><label class="text-sm text-gray-400">العنوان</label><input type="text" id="adTitle" required value="${ad?.title || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2"></div><div><label class="text-sm text-gray-400">الوصف</label><textarea id="adDescription" rows="2" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2">${ad?.description || ''}</textarea></div><div><label class="text-sm text-gray-400">رابط الصورة (URL)</label><input type="url" id="adImageUrl" value="${ad?.imageUrl || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2"></div><div><label class="text-sm text-gray-400">رابط الإعلان</label><input type="url" id="adLink" required value="${ad?.link || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2"></div><div><label class="text-sm text-gray-400">المكافأة (ر.س)</label><input type="number" id="adReward" required value="${ad?.reward || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2"></div><div><label class="text-sm text-gray-400">مدة المشاهدة (ثانية)</label><input type="number" id="adDuration" required value="${ad?.duration || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2"></div><div class="flex gap-2 pt-2"><button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button><button type="button" id="cancelAdForm" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button></div></form>
+                openAdModal(editId=null) {
+                    const ad = editId ? this.state.ads.find(a=>a.id==editId) : null;
+                    this.modalContent.innerHTML = `
+                        <div class="flex justify-between mb-4"><h2 class="text-2xl">${ad?'تعديل':'إضافة'} إعلان</h2><button id="closeAdModal" class="text-2xl">&times;</button></div>
+                        <input type="text" id="adTitle" placeholder="العنوان" class="w-full bg-slate-800 rounded-lg p-2 mb-2" value="${ad?.title||''}">
+                        <textarea id="adDesc" placeholder="الوصف" class="w-full bg-slate-800 rounded-lg p-2 mb-2">${ad?.description||''}</textarea>
+                        <input type="url" id="adImage" placeholder="رابط الصورة" class="w-full bg-slate-800 rounded-lg p-2 mb-2" value="${ad?.imageUrl||''}">
+                        <input type="url" id="adLink" placeholder="رابط الإعلان" class="w-full bg-slate-800 rounded-lg p-2 mb-2" value="${ad?.link||''}">
+                        <div class="flex gap-2"><input type="number" id="adReward" placeholder="المكافأة" class="flex-1 bg-slate-800 rounded-lg p-2 mb-2" value="${ad?.reward||''}"><input type="number" id="adDuration" placeholder="المدة (ث)" class="flex-1 bg-slate-800 rounded-lg p-2 mb-2" value="${ad?.duration||''}"></div>
+                        <button id="saveAdBtn" class="w-full bg-blue-600 py-2 rounded-lg">حفظ</button>
                     `;
-                    modal.classList.add('open');
-                    this.bindAdFormEvents(modal);
-                }
-
-                bindAdFormEvents(modal) {
-                    document.getElementById('closeAdForm').addEventListener('click', () => modal.classList.remove('open'));
-                    document.getElementById('cancelAdForm').addEventListener('click', () => modal.classList.remove('open'));
-                    document.getElementById('adForm').addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        const adId = document.getElementById('adId').value;
+                    this.modalOverlay.classList.add('opacity-100','pointer-events-auto');
+                    document.getElementById('closeAdModal').addEventListener('click',()=>this.closeModal());
+                    document.getElementById('saveAdBtn').addEventListener('click',()=>{
                         const adData = {
                             title: document.getElementById('adTitle').value,
-                            description: document.getElementById('adDescription').value,
-                            imageUrl: document.getElementById('adImageUrl').value,
+                            description: document.getElementById('adDesc').value,
+                            imageUrl: document.getElementById('adImage').value,
                             link: document.getElementById('adLink').value,
                             reward: parseFloat(document.getElementById('adReward').value),
                             duration: parseInt(document.getElementById('adDuration').value)
                         };
-                        if (adId) {
-                            this.data.updateAd(adId, adData);
-                            this.toast.success('تم تحديث الإعلان');
-                        } else {
-                            this.data.addAd(adData);
-                            this.toast.success('تمت إضافة الإعلان');
-                        }
-                        modal.classList.remove('open');
-                        this.openAdminPanel(); // refresh admin panel
-                    });
-                }
-
-                openAdsModal() {
-                    const ads = this.data.getAvailableAdsForUser();
-                    if (ads.length === 0) {
-                        this.toast.info('لا توجد إعلانات متاحة حالياً، يرجى العودة لاحقاً.');
-                        return;
-                    }
-                    this.isAdsModalOpen = true;
-                    const modal = document.getElementById('adsModalOverlay');
-                    document.getElementById('adsModalContent').innerHTML = this.renderAdsModal(ads);
-                    modal.classList.add('open');
-                    this.bindAdsModalEvents();
-                }
-
-                renderAdsModal(ads) {
-                    return `
-                        <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">كسب المال عبر الإعلانات</h2><button id="closeAdsModal" class="w-8 h-8 rounded-full bg-white/10"><i class="fa-solid fa-times"></i></button></div>
-                        <div class="space-y-3 max-h-96 overflow-y-auto">
-                            ${ads.map(ad => `
-                                <div class="ad-item" data-ad-id="${ad.id}">
-                                    <img src="${ad.imageUrl || 'https://via.placeholder.com/60?text=Ad'}" class="ad-image" onerror="this.src='https://via.placeholder.com/60?text=Ad'">
-                                    <div class="ad-info">
-                                        <div class="ad-title">${ad.title}</div>
-                                        <div class="ad-description">${ad.description || ''}</div>
-                                        <div class="ad-reward"><i class="fa-solid fa-coins"></i> ${ad.reward} ر.س</div>
-                                        <div class="ad-duration"><i class="fa-regular fa-clock"></i> ${ad.duration} ثانية</div>
-                                    </div>
-                                    <button class="ad-go-btn" data-ad-id="${ad.id}"><i class="fa-solid fa-eye"></i> شاهد الإعلان</button>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-
-                bindAdsModalEvents() {
-                    const modal = document.getElementById('adsModalOverlay');
-                    document.getElementById('closeAdsModal').addEventListener('click', () => modal.classList.remove('open'));
-                    modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('open'); });
-                    document.querySelectorAll('.ad-go-btn').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const adId = btn.dataset.adId;
-                            const ad = this.state.ads.find(a => a.id === adId);
-                            if (ad && !this.data.hasUserViewedAd(adId)) {
-                                modal.classList.remove('open');
-                                this.startAdCountdown(ad);
-                            } else {
-                                this.toast.warning('لقد شاهدت هذا الإعلان بالفعل');
-                                this.openAdsModal(); // refresh
-                            }
-                        });
-                    });
-                }
-
-                // =========== بدء العد التنازلي بعد فتح الرابط تلقائياً ===========
-                startAdCountdown(ad) {
-                    // فتح الرابط في نافذة جديدة
-                    window.open(ad.link, '_blank');
-                    
-                    const modal = document.getElementById('countdownModalOverlay');
-                    let remaining = ad.duration;
-                    let interval = null;
-                    
-                    const renderModal = () => {
-                        document.getElementById('countdownModalContent').innerHTML = `
-                            <div class="countdown-modal">
-                                <h3 class="text-xl font-bold mb-2">مشاهدة الإعلان</h3>
-                                <p class="text-gray-300 mb-3">${ad.title}</p>
-                                <div class="countdown-timer" id="countdownTimer">${remaining}</div>
-                                <button id="cancelCountdown" class="mt-4 bg-red-600 px-4 py-2 rounded-lg text-sm">إلغاء</button>
-                                <p class="text-xs text-gray-400 mt-3">⚠️ انتظر حتى انتهاء المدة للحصول على المكافأة.</p>
-                                <p class="text-xs text-gray-400">تم فتح رابط الإعلان في نافذة جديدة. أغلقه بعد الانتهاء.</p>
-                            </div>
-                        `;
-                        
-                        const cancelBtn = document.getElementById('cancelCountdown');
-                        cancelBtn.addEventListener('click', () => {
-                            if (interval) clearInterval(interval);
-                            modal.classList.remove('open');
-                            this.toast.info('تم إلغاء مشاهدة الإعلان');
-                        });
-                        
-                        interval = setInterval(() => {
-                            remaining--;
-                            const timerDiv = document.getElementById('countdownTimer');
-                            if (timerDiv) timerDiv.innerText = remaining;
-                            if (remaining <= 0) {
-                                clearInterval(interval);
-                                this.completeAdView(ad);
-                                modal.classList.remove('open');
-                            }
-                        }, 1000);
-                    };
-                    
-                    modal.classList.add('open');
-                    renderModal();
-                    modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('open'); });
-                }
-
-                async completeAdView(ad) {
-                    if (this.data.hasUserViewedAd(ad.id)) {
-                        this.toast.warning('لقد حصلت على مكافأة هذا الإعلان مسبقاً');
-                        return;
-                    }
-                    this.data.markAdViewed(ad.id);
-                    await this.data.addBalance(ad.reward, `مشاهدة إعلان: ${ad.title}`);
-                    this.toast.success(`🎉 تمت إضافة ${ad.reward} ر.س إلى رصيدك لمشاهدة الإعلان!`);
-                    this.updateBalanceDisplay();
-                    this.data.addNotification('تم إضافة رصيد', `حصلت على ${ad.reward} ر.س من مشاهدة إعلان "${ad.title}"`, 'success');
-                    if (this.isAdsModalOpen) this.openAdsModal();
-                }
-
-                openNotificationsModal() {
-                    const modal = document.getElementById('walletModalOverlay');
-                    document.getElementById('walletModalContent').innerHTML = this.renderNotificationsModal();
-                    modal.classList.add('open');
-                    this.bindNotificationsModalEvents();
-                }
-
-                renderNotificationsModal() {
-                    const notifs = this.data.getUserNotifications();
-                    const html = notifs.length === 0 ? '<p class="text-center text-gray-400 py-8">لا توجد إشعارات</p>' : notifs.map(n => `<div class="transaction-item ${n.read ? 'opacity-60' : ''}" data-id="${n.id}"><div class="flex-1"><div class="font-bold flex items-center gap-2">${!n.read ? '<span class="w-2 h-2 bg-blue-500 rounded-full"></span>' : ''}${n.title}</div><div class="text-sm">${n.message}</div><div class="text-xs text-gray-400 mt-1">${DateUtils.formatDateTime(n.date)}</div></div>${!n.read ? `<button class="mark-read text-xs text-blue-400" data-id="${n.id}"><i class="fa-regular fa-circle-check"></i></button>` : ''}</div>`).join('');
-                    return `<div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">الإشعارات</h2><button id="closeNotificationsModal" class="w-8 h-8 rounded-full bg-white/10"><i class="fa-solid fa-times"></i></button></div><div class="flex justify-end mb-3"><button id="markAllRead" class="text-sm bg-blue-600 px-3 py-1 rounded-lg"><i class="fa-regular fa-bell-slash ml-1"></i> تحديد الكل كمقروء</button></div><div class="max-h-96 overflow-y-auto space-y-2">${html}</div>`;
-                }
-
-                bindNotificationsModalEvents() {
-                    const modal = document.getElementById('walletModalOverlay');
-                    document.getElementById('closeNotificationsModal').addEventListener('click', () => modal.classList.remove('open'));
-                    document.getElementById('markAllRead')?.addEventListener('click', () => { this.data.markAllAsRead(); this.toast.success('تم تحديد الكل كمقروء'); this.openNotificationsModal(); this.updateNotificationBadge(); });
-                    document.querySelectorAll('.mark-read').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); this.data.markAsRead(btn.dataset.id); this.openNotificationsModal(); this.updateNotificationBadge(); }));
-                    modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('open'); });
-                }
-
-                openPaymentMethodModal(editingId = null) {
-                    this.isPaymentMethodModalOpen = true;
-                    const modal = document.getElementById('paymentMethodModalOverlay');
-                    const method = editingId ? this.state.paymentMethods.find(m => m.id === editingId) : null;
-                    document.getElementById('paymentMethodModalContent').innerHTML = `
-                        <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">${method ? 'تعديل طريقة دفع' : 'إضافة طريقة دفع جديدة'}</h2><button id="closePaymentMethodModal" class="w-8 h-8 rounded-full bg-white/10"><i class="fa-solid fa-times"></i></button></div>
-                        <form id="paymentMethodForm" class="space-y-3"><input type="hidden" id="methodId" value="${method?.id || ''}"><div><label class="text-sm text-gray-400">اسم الطريقة</label><input type="text" id="methodName" required value="${method?.name || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2"></div><div><label class="text-sm text-gray-400">الأيقونة (class FontAwesome)</label><input type="text" id="methodIcon" value="${method?.icon || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2"></div><div><label class="text-sm text-gray-400">وصف مختصر</label><input type="text" id="methodDescription" value="${method?.description || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2"></div><div><label class="text-sm text-gray-400">تفاصيل السحب (placeholder)</label><input type="text" id="methodWithdrawDetails" value="${method?.withdrawDetails || ''}" class="w-full bg-slate-800 border border-white/10 rounded-lg p-2"></div><div class="flex gap-2 pt-2"><button type="submit" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">حفظ</button><button type="button" id="cancelPaymentMethod" class="flex-1 bg-gray-600 py-2 rounded-lg font-bold">إلغاء</button></div></form>
-                    `;
-                    modal.classList.add('open');
-                    this.bindPaymentMethodModalEvents();
-                }
-
-                closePaymentMethodModal() { this.isPaymentMethodModalOpen = false; document.getElementById('paymentMethodModalOverlay').classList.remove('open'); }
-
-                bindPaymentMethodModalEvents() {
-                    const modal = document.getElementById('paymentMethodModalOverlay');
-                    document.getElementById('closePaymentMethodModal').addEventListener('click', () => this.closePaymentMethodModal());
-                    document.getElementById('cancelPaymentMethod').addEventListener('click', () => this.closePaymentMethodModal());
-                    modal.addEventListener('click', (e) => { if(e.target === modal) this.closePaymentMethodModal(); });
-                    document.getElementById('paymentMethodForm').addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        const formData = { name: document.getElementById('methodName').value, icon: document.getElementById('methodIcon').value, description: document.getElementById('methodDescription').value, withdrawDetails: document.getElementById('methodWithdrawDetails').value };
-                        const id = document.getElementById('methodId').value;
-                        if(id) this.data.updatePaymentMethod(id, formData);
-                        else this.data.addPaymentMethod(formData);
-                        this.toast.success(id ? 'تم التحديث' : 'تمت الإضافة');
-                        this.closePaymentMethodModal();
+                        if(editId) this.data.updateAd(editId, adData);
+                        else this.data.addAd(adData);
+                        this.toast.success('تم حفظ الإعلان');
+                        this.closeModal();
                         this.openAdminPanel();
                     });
                 }
 
-                startAutoRefresh(interval = 5000) { this.refreshInterval = setInterval(() => this.refreshData(), interval); }
-                stopAutoRefresh() { if(this.refreshInterval) clearInterval(this.refreshInterval); }
-                refreshData() { this.data.loadWallet(); this.data.loadRequests(); this.data.loadStats(); this.data.loadNotifications(); this.data.loadAds(); this.updateBalanceDisplay(); this.updateStatsDisplay(); this.updatePendingBadge(); this.updateNotificationBadge(); if(this.isWalletModalOpen) this.openWalletModal(); if(this.isAdminPanelOpen) this.openAdminPanel(); if(this.isAdsModalOpen) this.openAdsModal(); }
-            }
-
-            class App {
-                constructor() {
-                    this.telegram = new TelegramService();
-                    this.toast = new ToastManager('toastContainer');
-                    this.state = null;
-                    this.data = null;
-                    this.ui = null;
-                    this.init();
+                // أوامر الإعلانات للمستخدم
+                openAdsModal() {
+                    const ads = this.data.getAvailableAds();
+                    if(ads.length===0) return this.toast.info('لا توجد إعلانات متاحة حالياً');
+                    this.modalContent.innerHTML = `<div class="flex justify-between mb-4"><h2 class="text-2xl">إعلانات متاحة</h2><button id="closeAdsModal" class="text-2xl">&times;</button></div><div class="space-y-3">${ads.map(ad=>`
+                        <div class="glass-card p-3 flex gap-3 items-center"><img src="${ad.imageUrl||'https://via.placeholder.com/50'}" class="w-12 h-12 rounded-xl object-cover"><div class="flex-1"><div class="font-bold">${ad.title}</div><div class="text-sm">${ad.reward} ر.س | ${ad.duration} ث</div></div><button data-ad-id="${ad.id}" class="watchAdBtn bg-blue-600 px-4 py-2 rounded-lg text-sm">شاهد</button></div>
+                    `).join('')}</div>`;
+                    this.modalOverlay.classList.add('opacity-100','pointer-events-auto');
+                    document.getElementById('closeAdsModal').addEventListener('click',()=>this.closeModal());
+                    document.querySelectorAll('.watchAdBtn').forEach(btn=>{
+                        btn.addEventListener('click',()=>{
+                            const adId = btn.dataset.adId;
+                            const ad = this.state.ads.find(a=>a.id==adId);
+                            if(ad && !this.data.hasUserViewedAd(adId)) {
+                                this.closeModal();
+                                this.startAdCountdown(ad);
+                            } else this.toast.warning('لقد شاهدت هذا الإعلان مسبقاً');
+                        });
+                    });
+                }
+                startAdCountdown(ad) {
+                    window.open(ad.link, '_blank');
+                    let remaining = ad.duration;
+                    this.modalContent.innerHTML = `<div class="text-center"><div class="text-2xl font-bold mb-2">${ad.title}</div><div class="text-6xl font-mono mb-4" id="timer">${remaining}</div><div class="text-sm text-gray-400">انتظر حتى انتهاء المدة...</div><button id="cancelAd" class="mt-4 bg-red-600 px-4 py-2 rounded-lg">إلغاء</button></div>`;
+                    this.modalOverlay.classList.add('opacity-100','pointer-events-auto');
+                    const timerDiv = document.getElementById('timer');
+                    const interval = setInterval(()=>{
+                        remaining--;
+                        if(timerDiv) timerDiv.innerText = remaining;
+                        if(remaining<=0){
+                            clearInterval(interval);
+                            this.completeAdView(ad);
+                        }
+                    },1000);
+                    document.getElementById('cancelAd')?.addEventListener('click',()=>{
+                        clearInterval(interval);
+                        this.closeModal();
+                        this.toast.info('تم إلغاء مشاهدة الإعلان');
+                    });
+                }
+                async completeAdView(ad) {
+                    if(this.data.hasUserViewedAd(ad.id)) return;
+                    this.data.markAdViewed(ad.id);
+                    await this.data.addBalance(ad.reward, `مشاهدة إعلان: ${ad.title}`);
+                    this.toast.success(`تمت إضافة ${ad.reward} ر.س`);
+                    this.render();
+                    this.closeModal();
                 }
 
-                async init() {
-                    if (!this.telegram.isAvailable) {
-                        this.state = new AppState(null);
-                        this.state.telegramMissing = true;
-                        this.state.loading = false;
-                        this.ui = new UIManager(this.state, null, this.telegram, this.toast);
-                        this.ui.render();
-                        return;
-                    }
-                    this.telegram.init();
-                    if (!this.telegram.isValid() || !this.telegram.getUser()) {
-                        this.state = new AppState(null);
-                        this.state.accessDenied = true;
-                        this.state.loading = false;
-                        this.ui = new UIManager(this.state, null, this.telegram, this.toast);
-                        this.ui.render();
-                        return;
-                    }
-                    const user = this.telegram.getUser();
-                    this.state = new AppState(user.id);
-                    this.state.user = user;
-                    this.state.isAdmin = (user.id === CONFIG.ADMIN_ID);
-                    this.data = new DataService(this.state);
-                    this.ui = new UIManager(this.state, this.data, this.telegram, this.toast);
-                    const startParam = this.telegram.tg?.initDataUnsafe?.start_param;
-                    if (startParam && !this.state.referrals.referredBy) {
-                        await this.data.setReferredBy(startParam);
-                    }
-                    await this.data.registerUser(user.id, this.state.referrals.referredBy);
-                    const savedTheme = this.data.loadTheme();
-                    this.applyTheme(savedTheme);
-                    this.loadSettings();
-                    this.state.loading = true;
-                    this.ui.render();
-                    await new Promise(resolve => setTimeout(resolve, 800));
+                // الإشعارات
+                openNotificationsModal() {
+                    const notifs = this.state.notifications;
+                    const html = notifs.length===0?'<div class="text-center text-gray-400">لا توجد إشعارات</div>':notifs.map(n=>`
+                        <div class="glass-card p-3 mb-2 ${!n.read?'border-r-4 border-blue-500':''}"><div class="font-bold">${n.title}</div><div class="text-sm">${n.message}</div><div class="text-xs text-gray-500 mt-1">${new Date(n.date).toLocaleString()}</div></div>
+                    `).join('');
+                    this.modalContent.innerHTML = `<div class="flex justify-between mb-4"><h2 class="text-2xl">الإشعارات</h2><button id="closeNotifModal" class="text-2xl">&times;</button></div><div class="max-h-96 overflow-auto">${html}</div><button id="markAllReadBtn" class="mt-4 w-full bg-blue-600 py-2 rounded-lg">تحديد الكل كمقروء</button>`;
+                    this.modalOverlay.classList.add('opacity-100','pointer-events-auto');
+                    document.getElementById('closeNotifModal').addEventListener('click',()=>this.closeModal());
+                    document.getElementById('markAllReadBtn').addEventListener('click',()=>{ this.data.markAllRead(); this.openNotificationsModal(); this.updateNotificationBadge(); });
+                }
+
+                closeModal() {
+                    this.modalOverlay.classList.remove('opacity-100','pointer-events-auto');
+                    this.modalOverlay.classList.add('opacity-0','pointer-events-none');
+                    this.modalContent.classList.add('scale-95');
+                }
+
+                startAutoRefresh(ms) { this.autoRefresh = setInterval(()=> this.refreshData(), ms); }
+                stopAutoRefresh() { if(this.autoRefresh) clearInterval(this.autoRefresh); }
+                async refreshData() {
+                    await this.data.loadWallet();
+                    await this.data.loadRequests();
                     await this.data.loadStats();
-                    this.state.loading = false;
-                    this.ui.render();
-                    this.telegram.setMainButton(this.state.isAdmin ? "لوحة التحكم" : "تحديث البيانات", '#3b82f6', '#ffffff', true, () => { this.telegram.showPopup({ title: this.state.isAdmin ? 'مرحباً أيها المدير' : 'نظام آمن', message: this.state.isAdmin ? `الطلبات المعلقة: ${this.data.getPendingRequestsCount()}` : `أهلاً ${user.first_name}`, buttons: [{ type: 'ok', text: 'حسناً' }] }); });
-                    this.toast.success(`مرحباً ${user.first_name}، أهلاً بك في المحفظة المتطورة`);
-                    this.ui.startAutoRefresh(5000);
-                }
-
-                loadSettings() {
-                    const s = this.state.settings;
-                    this.toast.soundEnabled = s.sound;
-                    this.toast.vibrateEnabled = s.vibrate;
-                    if(document.getElementById('soundToggle')) document.getElementById('soundToggle').checked = s.sound;
-                    if(document.getElementById('vibrateToggle')) document.getElementById('vibrateToggle').checked = s.vibrate;
-                }
-
-                applyTheme(theme) {
-                    const root = document.documentElement;
-                    const icon = document.getElementById('themeIcon');
-                    if(theme === 'light') {
-                        root.style.setProperty('--tg-theme-bg-color', '#f8fafc');
-                        root.style.setProperty('--tg-theme-text-color', '#0f172a');
-                        icon.className = 'fa-solid fa-sun';
-                    } else {
-                        root.style.setProperty('--tg-theme-bg-color', '#0f172a');
-                        root.style.setProperty('--tg-theme-text-color', '#ffffff');
-                        icon.className = 'fa-solid fa-moon';
-                    }
+                    this.data.loadNotifications();
+                    this.updateBalanceUI();
+                    this.updateNotificationBadge();
+                    if(this.state.isAdmin) this.render();
                 }
             }
 
-            const app = new App();
-            document.getElementById('themeToggle').addEventListener('click', () => {
-                const newTheme = app.state.theme === 'dark' ? 'light' : 'dark';
-                app.state.theme = newTheme;
-                app.data.saveTheme(newTheme);
-                app.applyTheme(newTheme);
-                app.toast.info(`تم تغيير السمة إلى ${newTheme === 'dark' ? 'الداكنة' : 'الفاتحة'}`);
-            });
-            const settingsOverlay = document.getElementById('settingsOverlay'), settingsPanel = document.getElementById('settingsPanel');
-            document.getElementById('closeSettings').addEventListener('click', () => { settingsOverlay.classList.remove('open'); settingsPanel.classList.remove('open'); });
-            settingsOverlay.addEventListener('click', () => { settingsOverlay.classList.remove('open'); settingsPanel.classList.remove('open'); });
-            document.getElementById('languageSelect').addEventListener('change', (e) => { app.state.settings.language = e.target.value; app.data.saveSettings(); app.toast.success(`تم تغيير اللغة إلى ${e.target.value === 'ar' ? 'العربية' : 'الإنجليزية'}`); });
-            document.getElementById('notificationsToggle').addEventListener('change', (e) => { app.state.settings.notifications = e.target.checked; app.data.saveSettings(); app.toast.success(e.target.checked ? 'تم تفعيل الإشعارات' : 'تم إيقاف الإشعارات'); });
-            document.getElementById('soundToggle').addEventListener('change', (e) => { app.state.settings.sound = e.target.checked; app.data.saveSettings(); app.toast.soundEnabled = e.target.checked; app.toast.success(e.target.checked ? 'تم تفعيل التنبيه الصوتي' : 'تم إيقاف التنبيه الصوتي'); });
-            document.getElementById('vibrateToggle').addEventListener('change', (e) => { app.state.settings.vibrate = e.target.checked; app.data.saveSettings(); app.toast.vibrateEnabled = e.target.checked; app.toast.success(e.target.checked ? 'تم تفعيل الاهتزاز' : 'تم إيقاف الاهتزاز'); });
+            // ======================== تشغيل التطبيق ========================
+            const telegram = new TelegramService();
+            const toast = new ToastManager('toastContainer');
+            let appState = null, dataService = null, uiManager = null;
+
+            async function bootstrap() {
+                if(!telegram.available) {
+                    appState = new AppState(null);
+                    appState.telegramMissing = true;
+                    uiManager = new UIManager(appState, null, telegram, toast);
+                    uiManager.render();
+                    return;
+                }
+                telegram.init();
+                const user = telegram.getUser();
+                if(!user) {
+                    appState = new AppState(null);
+                    appState.accessDenied = true;
+                    uiManager = new UIManager(appState, null, telegram, toast);
+                    uiManager.render();
+                    return;
+                }
+                appState = new AppState(user.id);
+                appState.user = user;
+                appState.isAdmin = (user.id === CONFIG.ADMIN_ID);
+                dataService = new DataService(appState);
+                uiManager = new UIManager(appState, dataService, telegram, toast);
+                const startParam = telegram.tg?.initDataUnsafe?.start_param;
+                if(startParam && !appState.referral.referredBy) await dataService.setReferredBy(startParam);
+                await dataService.registerUser(user.id);
+                const savedTheme = Storage.get(CONFIG.STORAGE_KEYS.THEME, 'dark');
+                document.documentElement.style.setProperty('--tg-theme-bg-color', savedTheme==='light'?'#f1f5f9':'#0a0c15');
+                document.documentElement.style.setProperty('--tg-theme-text-color', savedTheme==='light'?'#0f172a':'#ffffff');
+                appState.loading = false;
+                uiManager.render();
+                telegram.setMainButton(appState.isAdmin?'لوحة الإدارة':'تحديث', '#3b82f6', '#fff', true, ()=>{});
+                toast.success(`مرحباً ${user.first_name}`);
+                uiManager.startAutoRefresh(5000);
+            }
+            bootstrap();
         })();
     </script>
 </body>
