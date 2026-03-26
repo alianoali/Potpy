@@ -8,7 +8,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Telegram Web App Script (Loaded immediately) -->
+    <!-- Telegram Web App Script (Loaded Immediately) -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- Font Awesome -->
@@ -70,6 +70,7 @@
             min-height: 100vh;
             padding-bottom: env(safe-area-inset-bottom);
             margin: 0;
+            user-select: none; /* Prevent text selection for app-like feel */
         }
         .luxury-card {
             background: rgba(26, 26, 26, 0.6);
@@ -154,13 +155,13 @@
 
     <div id="toastContainer" class="toast-container"></div>
 
-    <!-- VIEW 1: LOADING -->
+    <!-- VIEW 1: LOADING (Robust) -->
     <div id="loadingView" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#050505] transition-opacity duration-700">
         <div class="flex flex-col items-center justify-center">
             <div class="loader-ring mb-6 shadow-[0_0_20px_rgba(212,175,55,0.3)]"></div>
             <h2 class="text-xl font-luxury text-gold-gradient tracking-widest uppercase text-sm">Gold Gate</h2>
-            <p class="text-xs text-gray-500 mt-3 font-mono animate-pulse" id="loadingSubtext">جاري المصادقة الآمنة...</p>
-            <p class="text-[10px] text-gray-600 mt-1 font-mono" id="debugStatus">انتظار البيانات...</p>
+            <p class="text-xs text-gray-500 mt-3 font-mono animate-pulse" id="loadingSubtext">جاري الاتصال بخادم تيليجرام...</p>
+            <p class="text-[10px] text-gray-700 mt-1 font-mono" id="debugStatus">انتظار البيانات...</p>
         </div>
     </div>
 
@@ -313,7 +314,7 @@
             debug: document.getElementById('debugStatus')
         };
 
-        // --- ULTRA-ROBUST AUTHENTICATION LOGIC ---
+        // --- ULTRA-ROBUST AUTHENTICATION LOGIC (FINAL FIX) ---
         function init() {
             // 1. Expand and Ready immediately
             try {
@@ -323,18 +324,22 @@
                 console.warn("TG Init Warning:", e);
             }
 
-            // Dynamic Loading Text
+            // Dynamic Loading Text to show activity
             let step = 0;
             const steps = ["جارِ الاتصال بخادم تيليجرام...", "استلام بيانات المستخدم...", "تشفير الجلسة...", "الدخول الآمن..."];
             const textInterval = setInterval(() => {
                 step = (step + 1) % steps.length;
                 if(els.subtext) els.subtext.textContent = steps[step];
-            }, 1000);
+            }, 1200);
 
             // Core Check Function
             const checkAuth = () => {
-                // Debug info
-                if(els.debug) els.debug.textContent = `Checking... Data: ${!!tg.initData}, User: ${!!tg.initDataUnsafe?.user}`;
+                // Debug info (Visible only in loading screen)
+                if(els.debug) {
+                    const hasData = !!tg.initData;
+                    const hasUser = !!tg.initDataUnsafe?.user;
+                    els.debug.textContent = `Checking... Data: ${hasData}, User: ${hasUser}`;
+                }
 
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     // SUCCESS! Stop everything and load dashboard
@@ -350,32 +355,40 @@
             // Attempt 1: Immediate Check
             if (checkAuth()) return;
 
-            // Attempt 2: Polling System (Check every 50ms)
+            // Attempt 2: Aggressive Polling System (Check every 50ms)
             let pollCount = 0;
-            const maxPolls = 160; // 160 * 50ms = 8 seconds max wait time
-            const pollInterval = setInterval(() => {
-                pollCount++;
-                if (checkAuth()) return;
-                
-                if (pollCount >= maxPolls) {
-                    clearInterval(pollInterval);
-                    onAuthFailed("Timeout: Data not received after 8s");
-                }
-            }, 50); // Very fast polling
+            const maxPolls = 200; // 200 * 50ms = 10 seconds max wait time (Very generous)
+            let pollInterval;
+            
+            const startPolling = () => {
+                pollInterval = setInterval(() => {
+                    pollCount++;
+                    if (checkAuth()) return;
+                    
+                    if (pollCount >= maxPolls) {
+                        clearInterval(pollInterval);
+                        onAuthFailed("Timeout: Data not received after 10s");
+                    }
+                }, 50); // Ultra-fast check interval
+            };
 
-            // Attempt 3: Safety Timeout
-            const timeoutId = setTimeout(() => {
+            // Start polling immediately as a fallback
+            startPolling();
+
+            // Attempt 3: Safety Timeout (Fail-safe)
+            let timeoutId = setTimeout(() => {
                 if (!views.dashboard.classList.contains('hidden-view')) return; // Already succeeded
                 clearInterval(pollInterval);
                 clearInterval(textInterval);
                 onAuthFailed("Final Timeout");
-            }, 9000);
+            }, 11000);
         }
 
         function onAuthSuccess(user) {
             loadUserData(user);
             switchView('dashboard');
             setupMainButton();
+            // Force dark theme for Telegram header to match our black theme
             tg.setHeaderColor('#050505'); 
             tg.setBackgroundColor('#050505');
         }
@@ -414,6 +427,7 @@
                 els.initials.textContent = initials || "U";
             }
 
+            // Simulate Real Data Fetching with Animation
             const simulatedBalance = Math.floor(Math.random() * 5000) + 1000; 
             animateValue(els.balance, 0, simulatedBalance, 2000);
         }
