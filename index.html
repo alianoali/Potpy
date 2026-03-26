@@ -14,7 +14,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts (Cairo & Playfair Display for Luxury) -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
     <script>
@@ -30,7 +30,7 @@
                         gold: {
                             100: '#F9F1D8',
                             300: '#E5C560',
-                            400: '#D4AF37', /* Classic Gold */
+                            400: '#D4AF37',
                             500: '#C5A028',
                             600: '#AA8820',
                             glow: '#FFD700',
@@ -44,7 +44,6 @@
                     },
                     backgroundImage: {
                         'gold-gradient': 'linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)',
-                        'dark-gradient': 'linear-gradient(to bottom, #0a0a0a, #121212)',
                     },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
@@ -76,12 +75,8 @@
             -webkit-tap-highlight-color: transparent;
             min-height: 100vh;
             padding-bottom: env(safe-area-inset-bottom);
+            margin: 0;
         }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
         /* Luxury Glassmorphism */
         .luxury-card {
@@ -199,7 +194,7 @@
         <div class="flex flex-col items-center justify-center">
             <div class="loader-ring mb-6 shadow-[0_0_20px_rgba(212,175,55,0.3)]"></div>
             <h2 class="text-xl font-luxury text-gold-gradient tracking-widest uppercase text-sm">Gold Gate</h2>
-            <p class="text-xs text-gray-500 mt-3 font-mono animate-pulse">جاري المصادقة الآمنة...</p>
+            <p class="text-xs text-gray-500 mt-3 font-mono animate-pulse" id="loadingSubtext">جاري المصادقة الآمنة...</p>
         </div>
     </div>
 
@@ -211,11 +206,12 @@
             </div>
             <h2 class="text-2xl font-bold mb-3 text-white">دخول مرفوض</h2>
             <p class="text-gray-400 mb-8 text-sm leading-relaxed">
-                هذه البوابة مخصصة للأعضاء فقط عبر تيليجرام الرسمي.
+                فشل التحقق من الهوية. يرجى التأكد من فتح التطبيق عبر بوت تيليجرام الرسمي.
             </p>
             <button onclick="window.location.href='https://telegram.org'" class="w-full py-4 rounded-xl font-bold text-black bg-gold-gradient hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all transform hover:-translate-y-1 active:scale-95">
                 <i class="fa-brands fa-telegram ml-2"></i> فتح تيليجرام
             </button>
+            <button onclick="location.reload()" class="mt-4 text-xs text-gray-500 hover:text-white underline">إعادة المحاولة</button>
         </div>
     </div>
 
@@ -272,7 +268,7 @@
             </div>
         </div>
 
-        <!-- Balance Card (Prominent) -->
+        <!-- Balance Card -->
         <div class="luxury-card p-6 rounded-3xl text-center relative overflow-hidden group">
             <div class="absolute inset-0 bg-gradient-to-b from-yellow-900/10 to-transparent pointer-events-none"></div>
             <div class="relative z-10">
@@ -365,23 +361,25 @@
             defaultAvatar: document.getElementById('defaultAvatar'),
             initials: document.getElementById('avatarInitials'),
             balance: document.getElementById('userBalance'),
+            subtext: document.getElementById('loadingSubtext')
         };
 
-        // --- PROFESSIONAL SMART WAIT LOGIC ---
+        // --- PROFESSIONAL SMART WAIT LOGIC (FIXED) ---
         function init() {
             tg.expand();
-            tg.ready();
+            tg.ready(); // Tell Telegram we are ready
             
             // Update loading text dynamically
             let step = 0;
             const steps = ["جارِ التحقق من الهوية...", "تشفير البيانات...", "إنشاء الجلسة الآمنة..."];
             const intervalText = setInterval(() => {
                 step = (step + 1) % steps.length;
-                const subtext = document.querySelector('#loadingView p');
-                if(subtext) subtext.textContent = steps[step];
+                if(els.subtext) els.subtext.textContent = steps[step];
             }, 800);
 
+            // Function to attempt login
             const attemptLogin = () => {
+                // Check if initData and user exist
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     clearInterval(intervalText);
                     clearInterval(pollInterval);
@@ -392,32 +390,45 @@
                 return false;
             };
 
+            // 1. Try immediately
             if (attemptLogin()) return;
 
+            // 2. Listen for 'ready' event explicitly
             tg.onEvent('ready', () => {
-                if (!attemptLogin()) startPolling();
+                if (!attemptLogin()) {
+                    // If still no data after 'ready', start polling
+                    startPolling();
+                }
             });
 
+            // 3. Polling Mechanism (Check every 50ms for faster response)
             let pollCount = 0;
-            const maxPolls = 50; 
-            const pollInterval = setInterval(() => {
-                pollCount++;
-                if (attemptLogin()) return;
-                if (pollCount >= maxPolls) {
-                    clearInterval(pollInterval);
-                    onAuthFailed();
-                }
-            }, 100);
+            const maxPolls = 100; // 100 * 50ms = 5 seconds max wait
+            let pollInterval;
+            
+            const startPolling = () => {
+                pollInterval = setInterval(() => {
+                    pollCount++;
+                    if (attemptLogin()) return;
+                    
+                    if (pollCount >= maxPolls) {
+                        clearInterval(pollInterval);
+                        onAuthFailed();
+                    }
+                }, 50); // Faster check interval
+            };
 
-            const timeoutId = setTimeout(() => {
-                if (!views.dashboard.classList.contains('hidden-view')) return;
+            // Start polling immediately as a fallback if 'ready' event is delayed
+            startPolling();
+
+            // 4. Safety Timeout (Fail-safe)
+            let timeoutId = setTimeout(() => {
+                if (!views.dashboard.classList.contains('hidden-view')) return; // Already success
                 clearInterval(pollInterval);
                 clearInterval(intervalText);
                 onAuthFailed();
             }, 6000);
         }
-
-        function startPolling() {} // Handled in init
 
         function onAuthSuccess(user) {
             loadUserData(user);
@@ -462,7 +473,6 @@
             }
 
             // Simulate Real Data Fetching with Animation
-            // In a real app, you would fetch this from your API using user.id
             const simulatedBalance = Math.floor(Math.random() * 5000) + 1000; 
             animateValue(els.balance, 0, simulatedBalance, 2000);
         }
@@ -472,7 +482,6 @@
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                // Easing function for smooth finish
                 const easeOutQuart = 1 - Math.pow(1 - progress, 4);
                 
                 const currentVal = Math.floor(easeOutQuart * (end - start) + start);
@@ -495,7 +504,6 @@
                 tg.HapticFeedback.notificationOccurred('success');
                 showToast('تم مزامنة البيانات بنجاح', 'success');
                 
-                // Simulate balance increase
                 const current = parseInt(els.balance.innerText.replace(/,/g,''));
                 const increase = Math.floor(Math.random() * 100) + 50;
                 animateValue(els.balance, current, current + increase, 1000);
@@ -551,7 +559,7 @@
             }, 3000);
         }
 
-        // Start
+        // Start the app
         init();
     </script>
 </body>
