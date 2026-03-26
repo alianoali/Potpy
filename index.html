@@ -12,8 +12,8 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts (Added Noto Sans for CJK & Hindi) -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700&family=Roboto:wght@300;400;500;700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+Devanagari:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -22,7 +22,12 @@
                 extend: {
                     fontFamily: {
                         cairo: ['Cairo', 'sans-serif'],
-                        roboto: ['Roboto', 'sans-serif'], // For Latin/Cyrillic
+                        roboto: ['Roboto', 'sans-serif'],
+                        noto_sc: ['"Noto Sans SC"', 'sans-serif'], // Chinese Simplified
+                        noto_tc: ['"Noto Sans TC"', 'sans-serif'], // Chinese Traditional
+                        noto_jp: ['"Noto Sans JP"', 'sans-serif'], // Japanese
+                        noto_kr: ['"Noto Sans KR"', 'sans-serif'], // Korean
+                        noto_hi: ['"Noto Sans Devanagari"', 'sans-serif'], // Hindi
                         amiri: ['Amiri', 'serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     },
@@ -59,7 +64,7 @@
             min-height: 100vh;
             padding-bottom: env(safe-area-inset-bottom);
             touch-action: manipulation;
-            transition: direction 0.3s ease;
+            transition: direction 0.3s ease, font-family 0.3s ease;
         }
         .hw-accel { transform: translateZ(0); backface-visibility: hidden; perspective: 1000px; }
         
@@ -101,18 +106,23 @@
             background: rgba(10, 10, 10, 0.95);
             border: 1px solid rgba(38, 161, 123, 0.4);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border-right: 3px solid #26A17B; /* Will flip in LTR via JS if needed or use logical properties */
+            border-right: 3px solid #26A17B;
             animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             display: flex; align-items: center; gap: 10px;
             padding: 12px 16px; border-radius: 12px;
             margin-bottom: 10px; min-width: 260px;
             pointer-events: auto; transform: translateZ(0);
+            max-width: 90vw;
         }
         [dir="ltr"] .toast { border-right: none; border-left: 3px solid #26A17B; }
 
         .hidden-view { display: none !important; }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Specific adjustments for CJK languages */
+        .lang-cjk { letter-spacing: 0.05em; line-height: 1.6; }
+        .lang-hi { line-height: 1.5; }
     </style>
 </head>
 <body class="flex flex-col items-center justify-start p-4 sm:p-6 relative selection:bg-green-900 selection:text-white hw-accel font-cairo">
@@ -308,7 +318,7 @@
     <script>
         const tg = window.Telegram.WebApp;
         
-        // --- TRANSLATION SYSTEM ---
+        // --- TRANSLATION SYSTEM (Expanded) ---
         const translations = {
             ar: {
                 app_title: 'بوابة <span class="text-usdt-green text-glow">USDT</span>',
@@ -540,12 +550,154 @@
                 toast_min_withdraw: 'Retiro mín. 10 USDT',
                 toast_success: 'Éxito',
                 confirm_logout: '¿Estás seguro de que quieres cerrar sesión?'
+            },
+            // New Languages
+            zh: {
+                app_title: '<span class="text-usdt-green text-glow">USDT</span> 网关',
+                loading_text: '正在初始化...',
+                access_denied_title: '拒绝访问',
+                access_denied_msg: '请仅在官方 Telegram 客户端内打开此应用。',
+                open_telegram: '打开 Telegram',
+                status_connected: '已连接',
+                welcome_prefix: '欢迎，',
+                balance_label: 'USDT 余额',
+                stat_performance: '性能',
+                stat_wallet: '钱包',
+                stat_network: '网络',
+                stat_security: '安全',
+                val_excellent: '优秀',
+                val_active: '活跃',
+                menu_title: '主菜单',
+                btn_refresh: '刷新市场',
+                btn_support: '支持',
+                btn_withdraw: '提现',
+                btn_mining: '挖矿（即将推出）',
+                btn_logout: '退出登录',
+                toast_no_notif: '无新通知',
+                toast_copy_id: 'ID 已复制',
+                toast_refreshing: '刷新中...',
+                toast_updated: '更新成功',
+                toast_connecting: '连接中...',
+                toast_processing: '处理中...',
+                toast_sent: '请求已发送',
+                toast_reward: 'USDT 奖励已添加！',
+                toast_min_withdraw: '最低提现 10 USDT',
+                toast_success: '成功',
+                confirm_logout: '确定要退出吗？'
+            },
+            ja: {
+                app_title: '<span class="text-usdt-green text-glow">USDT</span> ゲートウェイ',
+                loading_text: '初期化中...',
+                access_denied_title: 'アクセス拒否',
+                access_denied_msg: 'このアプリは公式 Telegram クライアント内でのみ開いてください。',
+                open_telegram: 'Telegram を開く',
+                status_connected: '接続済み',
+                welcome_prefix: 'ようこそ、',
+                balance_label: 'USDT 残高',
+                stat_performance: 'パフォーマンス',
+                stat_wallet: 'ウォレット',
+                stat_network: 'ネットワーク',
+                stat_security: 'セキュリティ',
+                val_excellent: '優秀',
+                val_active: 'アクティブ',
+                menu_title: 'メインメニュー',
+                btn_refresh: '市場を更新',
+                btn_support: 'サポート',
+                btn_withdraw: '出金',
+                btn_mining: 'マイニング（近日）',
+                btn_logout: 'ログアウト',
+                toast_no_notif: '新しい通知はありません',
+                toast_copy_id: 'ID をコピーしました',
+                toast_refreshing: '更新中...',
+                toast_updated: '更新に成功しました',
+                toast_connecting: '接続中...',
+                toast_processing: '処理中...',
+                toast_sent: 'リクエストを送信しました',
+                toast_reward: 'USDT 報酬を追加しました！',
+                toast_min_withdraw: '最低出金額は 10 USDT です',
+                toast_success: '成功',
+                confirm_logout: '本当にログアウトしますか？'
+            },
+            ko: {
+                app_title: '<span class="text-usdt-green text-glow">USDT</span> 게이트웨이',
+                loading_text: '초기화 중...',
+                access_denied_title: '접근 거부됨',
+                access_denied_msg: '공식 Telegram 클라이언트 내에서만 이 앱을 열어주세요.',
+                open_telegram: 'Telegram 열기',
+                status_connected: '연결됨',
+                welcome_prefix: '환영합니다,',
+                balance_label: 'USDT 잔액',
+                stat_performance: '성능',
+                stat_wallet: '지갑',
+                stat_network: '네트워크',
+                stat_security: '보안',
+                val_excellent: '우수함',
+                val_active: '활성',
+                menu_title: '메인 메뉴',
+                btn_refresh: '시장 새로고침',
+                btn_support: '지원',
+                btn_withdraw: '출금',
+                btn_mining: '마이닝 (곧 출시)',
+                btn_logout: '로그아웃',
+                toast_no_notif: '새 알림 없음',
+                toast_copy_id: 'ID 복사됨',
+                toast_refreshing: '새로고침 중...',
+                toast_updated: '업데이트 성공',
+                toast_connecting: '연결 중...',
+                toast_processing: '처리 중...',
+                toast_sent: '요청 전송됨',
+                toast_reward: 'USDT 보상이 추가되었습니다!',
+                toast_min_withdraw: '최소 출금 금액은 10 USDT 입니다',
+                toast_success: '성공',
+                confirm_logout: '정말로 로그아웃하시겠습니까?'
+            },
+            hi: {
+                app_title: '<span class="text-usdt-green text-glow">USDT</span> गेटवे',
+                loading_text: 'प्रारंभ हो रहा है...',
+                access_denied_title: 'पहुंच अस्वीकार',
+                access_denied_msg: 'कृपया इस ऐप को केवल आधिकारिक Telegram क्लाइंट के भीतर खोलें।',
+                open_telegram: 'Telegram खोलें',
+                status_connected: 'जुड़ा हुआ',
+                welcome_prefix: 'स्वागत है,',
+                balance_label: 'USDT शेष',
+                stat_performance: 'प्रदर्शन',
+                stat_wallet: 'वॉलेट',
+                stat_network: 'नेटवर्क',
+                stat_security: 'सुरक्षा',
+                val_excellent: 'उत्कृष्ट',
+                val_active: 'सक्रिय',
+                menu_title: 'मुख्य मेनू',
+                btn_refresh: 'बाजार रिफ्रेश करें',
+                btn_support: 'सहायता',
+                btn_withdraw: 'निकासी',
+                btn_mining: 'माइनिंग (जल्द ही)',
+                btn_logout: 'लॉग आउट',
+                toast_no_notif: 'कोई नई सूचना नहीं',
+                toast_copy_id: 'ID कॉपी किया गया',
+                toast_refreshing: 'रिफ्रेश हो रहा है...',
+                toast_updated: 'सफलतापूर्वक अपडेट किया गया',
+                toast_connecting: 'कनेक्ट हो रहा है...',
+                toast_processing: 'प्रसंस्करण...',
+                toast_sent: 'अनुरोध भेजा गया',
+                toast_reward: 'USDT पुरस्कार जोड़ा गया!',
+                toast_min_withdraw: 'न्यूनतम निकासी 10 USDT है',
+                toast_success: 'सफल',
+                confirm_logout: 'क्या आप वाकई लॉग आउट करना चाहते हैं?'
             }
         };
 
         let currentLang = 'ar';
 
         function setLanguage(lang) {
+            // Handle regional variants (e.g., zh-CN, zh-TW, pt-BR)
+            let baseLang = lang.split('-')[0];
+            
+            // Map specific variants if needed, otherwise use base
+            if (baseLang === 'zh') {
+                // Default to Simplified Chinese, could detect region for Traditional
+                lang = 'zh'; 
+            }
+            
             if (!translations[lang]) lang = 'en'; // Fallback to English
             currentLang = lang;
             
@@ -554,13 +706,24 @@
             document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
             document.documentElement.lang = lang;
             
+            // Reset font classes
+            document.body.classList.remove('font-cairo', 'font-roboto', 'font-noto_sc', 'font-noto_jp', 'font-noto_kr', 'font-noto_hi');
+            
             if (isRTL) {
-                document.body.classList.remove('font-roboto');
                 document.body.classList.add('font-cairo');
             } else {
-                document.body.classList.remove('font-cairo');
-                document.body.classList.add('font-roboto');
+                // Assign specific fonts for Asian languages
+                if (lang === 'zh') document.body.classList.add('font-noto_sc');
+                else if (lang === 'ja') document.body.classList.add('font-noto_jp');
+                else if (lang === 'ko') document.body.classList.add('font-noto_kr');
+                else if (lang === 'hi') document.body.classList.add('font-noto_hi');
+                else document.body.classList.add('font-roboto');
             }
+
+            // Add specific class for line-height adjustments
+            document.body.classList.remove('lang-cjk', 'lang-hi');
+            if (['zh', 'ja', 'ko'].includes(lang)) document.body.classList.add('lang-cjk');
+            if (lang === 'hi') document.body.classList.add('lang-hi');
 
             // Update Text Content
             document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -710,7 +873,7 @@
         }
 
         function setupMainButton() {
-            tg.MainButton.setText(translations[currentLang].btn_refresh); // Default text
+            tg.MainButton.setText(translations[currentLang].btn_refresh);
             tg.MainButton.setTextColor("#000000");
             tg.MainButton.setColor("#26A17B");
             tg.MainButton.show();
