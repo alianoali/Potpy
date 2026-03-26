@@ -12,7 +12,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts (Added Noto Sans for CJK & Hindi) -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700&family=Roboto:wght@300;400;500;700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+Devanagari:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <script>
@@ -23,11 +23,11 @@
                     fontFamily: {
                         cairo: ['Cairo', 'sans-serif'],
                         roboto: ['Roboto', 'sans-serif'],
-                        noto_sc: ['"Noto Sans SC"', 'sans-serif'], // Chinese Simplified
-                        noto_tc: ['"Noto Sans TC"', 'sans-serif'], // Chinese Traditional
-                        noto_jp: ['"Noto Sans JP"', 'sans-serif'], // Japanese
-                        noto_kr: ['"Noto Sans KR"', 'sans-serif'], // Korean
-                        noto_hi: ['"Noto Sans Devanagari"', 'sans-serif'], // Hindi
+                        noto_sc: ['"Noto Sans SC"', 'sans-serif'],
+                        noto_tc: ['"Noto Sans TC"', 'sans-serif'],
+                        noto_jp: ['"Noto Sans JP"', 'sans-serif'],
+                        noto_kr: ['"Noto Sans KR"', 'sans-serif'],
+                        noto_hi: ['"Noto Sans Devanagari"', 'sans-serif'],
                         amiri: ['Amiri', 'serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     },
@@ -40,11 +40,13 @@
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'shimmer': 'shimmer 2s linear infinite',
                         'fade-in-up': 'fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'scale-in': 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                     },
                     keyframes: {
                         float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
                         shimmer: { '0%': { backgroundPosition: '-200% center' }, '100%': { backgroundPosition: '200% center' } },
-                        fadeInUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+                        fadeInUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        scaleIn: { '0%': { opacity: '0', transform: 'scale(0.95)' }, '100%': { opacity: '1', transform: 'scale(1)' } }
                     },
                     backgroundImage: {
                         'usdt-gradient': 'linear-gradient(135deg, #26A17B 0%, #4ade80 50%, #1b7a5c 100%)',
@@ -117,10 +119,37 @@
         [dir="ltr"] .toast { border-right: none; border-left: 3px solid #26A17B; }
 
         .hidden-view { display: none !important; }
+        
+        /* Language Modal Styles */
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .lang-option {
+            transition: all 0.2s ease;
+        }
+        .lang-option:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(-4px);
+        }
+        [dir="ltr"] .lang-option:hover {
+            transform: translateX(4px);
+        }
+        .lang-option.active {
+            background: rgba(38, 161, 123, 0.15);
+            border-color: rgba(38, 161, 123, 0.5);
+        }
+
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Specific adjustments for CJK languages */
         .lang-cjk { letter-spacing: 0.05em; line-height: 1.6; }
         .lang-hi { line-height: 1.5; }
     </style>
@@ -129,6 +158,22 @@
 
     <div class="bg-mesh"></div>
     <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-full max-w-xs px-4 pointer-events-none flex flex-col items-center"></div>
+
+    <!-- Language Selector Modal -->
+    <div id="langModal" class="modal-overlay fixed inset-0 z-[200] flex items-end sm:items-center justify-center">
+        <div class="glass-card w-full max-w-md mx-4 sm:mx-0 rounded-2xl sm:rounded-3xl p-6 transform translate-y-full sm:translate-y-4 sm:scale-95 transition-all duration-300 modal-content">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold text-white" data-i18n="select_language">اختر اللغة</h3>
+                <button onclick="toggleLangModal()" class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700 transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-2 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar" id="langList">
+                <!-- Languages will be injected here by JS -->
+            </div>
+        </div>
+    </div>
 
     <!-- VIEW 1: LOADING -->
     <div id="loadingView" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-500">
@@ -171,10 +216,16 @@
                 </h1>
                 <p class="text-[10px] text-gray-600 font-mono mt-1" id="currentDate">...</p>
             </div>
-            <button onclick="showToast('no_notifications', 'info')" class="w-11 h-11 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center text-usdt-green active:scale-90 transition-transform relative">
-                <i class="fa-solid fa-bell"></i>
-                <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-black"></span>
-            </button>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleLangModal()" class="w-11 h-11 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center text-gold-400 active:scale-90 transition-transform relative group" title="Change Language">
+                    <i class="fa-solid fa-globe"></i>
+                    <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[10px] bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Language</span>
+                </button>
+                <button onclick="showToast('no_notifications', 'info')" class="w-11 h-11 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center text-usdt-green active:scale-90 transition-transform relative">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-black"></span>
+                </button>
+            </div>
         </header>
 
         <!-- Main Card -->
@@ -318,7 +369,21 @@
     <script>
         const tg = window.Telegram.WebApp;
         
-        // --- TRANSLATION SYSTEM (Expanded) ---
+        // --- TRANSLATION SYSTEM ---
+        const languages = [
+            { code: 'ar', name: 'العربية', native: 'العربية', flag: '🇸🇦', dir: 'rtl', font: 'font-cairo' },
+            { code: 'en', name: 'English', native: 'English', flag: '🇺🇸', dir: 'ltr', font: 'font-roboto' },
+            { code: 'ru', name: 'Russian', native: 'Русский', flag: '🇷🇺', dir: 'ltr', font: 'font-roboto' },
+            { code: 'fr', name: 'French', native: 'Français', flag: '🇫🇷', dir: 'ltr', font: 'font-roboto' },
+            { code: 'tr', name: 'Turkish', native: 'Türkçe', flag: '🇹🇷', dir: 'ltr', font: 'font-roboto' },
+            { code: 'pt', name: 'Portuguese', native: 'Português', flag: '🇵🇹', dir: 'ltr', font: 'font-roboto' },
+            { code: 'es', name: 'Spanish', native: 'Español', flag: '🇪🇸', dir: 'ltr', font: 'font-roboto' },
+            { code: 'zh', name: 'Chinese', native: '中文', flag: '🇨🇳', dir: 'ltr', font: 'font-noto_sc', class: 'lang-cjk' },
+            { code: 'ja', name: 'Japanese', native: '日本語', flag: '🇯🇵', dir: 'ltr', font: 'font-noto_jp', class: 'lang-cjk' },
+            { code: 'ko', name: 'Korean', native: '한국어', flag: '🇰🇷', dir: 'ltr', font: 'font-noto_kr', class: 'lang-cjk' },
+            { code: 'hi', name: 'Hindi', native: 'हिन्दी', flag: '🇮🇳', dir: 'ltr', font: 'font-noto_hi', class: 'lang-hi' }
+        ];
+
         const translations = {
             ar: {
                 app_title: 'بوابة <span class="text-usdt-green text-glow">USDT</span>',
@@ -341,6 +406,7 @@
                 btn_withdraw: 'سحب الأرباح',
                 btn_mining: 'التعدين (قريباً)',
                 btn_logout: 'إنهاء الجلسة',
+                select_language: 'اختر اللغة',
                 toast_no_notif: 'لا توجد تنبيهات',
                 toast_copy_id: 'تم نسخ المعرف',
                 toast_refreshing: 'جاري التحديث...',
@@ -374,6 +440,7 @@
                 btn_withdraw: 'Withdraw',
                 btn_mining: 'Mining (Soon)',
                 btn_logout: 'Logout',
+                select_language: 'Select Language',
                 toast_no_notif: 'No new notifications',
                 toast_copy_id: 'ID Copied',
                 toast_refreshing: 'Refreshing...',
@@ -407,6 +474,7 @@
                 btn_withdraw: 'Вывод средств',
                 btn_mining: 'Майнинг (Скоро)',
                 btn_logout: 'Выйти',
+                select_language: 'Выбрать язык',
                 toast_no_notif: 'Нет новых уведомлений',
                 toast_copy_id: 'ID скопирован',
                 toast_refreshing: 'Обновление...',
@@ -440,6 +508,7 @@
                 btn_withdraw: 'Retrait',
                 btn_mining: 'Mining (Bientôt)',
                 btn_logout: 'Déconnexion',
+                select_language: 'Choisir la langue',
                 toast_no_notif: 'Aucune nouvelle notification',
                 toast_copy_id: 'ID copié',
                 toast_refreshing: 'Actualisation...',
@@ -473,6 +542,7 @@
                 btn_withdraw: 'Çekim',
                 btn_mining: 'Madencilik (Yakında)',
                 btn_logout: 'Çıkış Yap',
+                select_language: 'Dil Seçin',
                 toast_no_notif: 'Yeni bildirim yok',
                 toast_copy_id: 'ID Kopyalandı',
                 toast_refreshing: 'Yenileniyor...',
@@ -506,6 +576,7 @@
                 btn_withdraw: 'Sacar',
                 btn_mining: 'Mineração (Em breve)',
                 btn_logout: 'Sair',
+                select_language: 'Selecionar Idioma',
                 toast_no_notif: 'Sem novas notificações',
                 toast_copy_id: 'ID Copiado',
                 toast_refreshing: 'Atualizando...',
@@ -539,6 +610,7 @@
                 btn_withdraw: 'Retirar',
                 btn_mining: 'Minería (Pronto)',
                 btn_logout: 'Cerrar Sesión',
+                select_language: 'Seleccionar Idioma',
                 toast_no_notif: 'Sin nuevas notificaciones',
                 toast_copy_id: 'ID Copiado',
                 toast_refreshing: 'Actualizando...',
@@ -551,7 +623,6 @@
                 toast_success: 'Éxito',
                 confirm_logout: '¿Estás seguro de que quieres cerrar sesión?'
             },
-            // New Languages
             zh: {
                 app_title: '<span class="text-usdt-green text-glow">USDT</span> 网关',
                 loading_text: '正在初始化...',
@@ -573,6 +644,7 @@
                 btn_withdraw: '提现',
                 btn_mining: '挖矿（即将推出）',
                 btn_logout: '退出登录',
+                select_language: '选择语言',
                 toast_no_notif: '无新通知',
                 toast_copy_id: 'ID 已复制',
                 toast_refreshing: '刷新中...',
@@ -606,6 +678,7 @@
                 btn_withdraw: '出金',
                 btn_mining: 'マイニング（近日）',
                 btn_logout: 'ログアウト',
+                select_language: '言語を選択',
                 toast_no_notif: '新しい通知はありません',
                 toast_copy_id: 'ID をコピーしました',
                 toast_refreshing: '更新中...',
@@ -639,6 +712,7 @@
                 btn_withdraw: '출금',
                 btn_mining: '마이닝 (곧 출시)',
                 btn_logout: '로그아웃',
+                select_language: '언어 선택',
                 toast_no_notif: '새 알림 없음',
                 toast_copy_id: 'ID 복사됨',
                 toast_refreshing: '새로고침 중...',
@@ -672,6 +746,7 @@
                 btn_withdraw: 'निकासी',
                 btn_mining: 'माइनिंग (जल्द ही)',
                 btn_logout: 'लॉग आउट',
+                select_language: 'भाषा चुनें',
                 toast_no_notif: 'कोई नई सूचना नहीं',
                 toast_copy_id: 'ID कॉपी किया गया',
                 toast_refreshing: 'रिफ्रेश हो रहा है...',
@@ -688,42 +763,66 @@
 
         let currentLang = 'ar';
 
-        function setLanguage(lang) {
-            // Handle regional variants (e.g., zh-CN, zh-TW, pt-BR)
-            let baseLang = lang.split('-')[0];
+        function initLanguageSelector() {
+            const list = document.getElementById('langList');
+            list.innerHTML = '';
             
-            // Map specific variants if needed, otherwise use base
-            if (baseLang === 'zh') {
-                // Default to Simplified Chinese, could detect region for Traditional
-                lang = 'zh'; 
+            languages.forEach(lang => {
+                const item = document.createElement('div');
+                item.className = `lang-option flex items-center gap-4 p-3 rounded-xl cursor-pointer border border-transparent ${currentLang === lang.code ? 'active' : ''}`;
+                item.onclick = () => changeLanguage(lang.code);
+                
+                item.innerHTML = `
+                    <span class="text-2xl">${lang.flag}</span>
+                    <div class="flex-1">
+                        <div class="text-white font-medium">${lang.native}</div>
+                        <div class="text-gray-500 text-xs">${lang.name}</div>
+                    </div>
+                    ${currentLang === lang.code ? '<i class="fa-solid fa-check text-usdt-green"></i>' : ''}
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function toggleLangModal() {
+            const modal = document.getElementById('langModal');
+            const content = modal.querySelector('.modal-content');
+            const isActive = modal.classList.contains('active');
+            
+            if (isActive) {
+                modal.classList.remove('active');
+                content.classList.add('translate-y-full', 'sm:translate-y-4', 'sm:scale-95');
+                content.classList.remove('translate-y-0', 'sm:translate-y-0', 'sm:scale-100');
+            } else {
+                initLanguageSelector(); // Refresh list to show current selection
+                modal.classList.add('active');
+                content.classList.remove('translate-y-full', 'sm:translate-y-4', 'sm:scale-95');
+                content.classList.add('translate-y-0', 'sm:translate-y-0', 'sm:scale-100');
             }
-            
-            if (!translations[lang]) lang = 'en'; // Fallback to English
+        }
+
+        function changeLanguage(code) {
+            setLanguage(code);
+            localStorage.setItem('usdt_gateway_lang', code); // Save preference
+            toggleLangModal();
+            showToast('toast_updated', 'success');
+        }
+
+        function setLanguage(lang) {
+            if (!translations[lang]) lang = 'en';
             currentLang = lang;
             
-            // Set Direction and Font
-            const isRTL = ['ar', 'he', 'fa', 'ur'].includes(lang);
+            const langData = languages.find(l => l.code === lang) || languages[1];
+            const isRTL = langData.dir === 'rtl';
+            
             document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
             document.documentElement.lang = lang;
             
-            // Reset font classes
-            document.body.classList.remove('font-cairo', 'font-roboto', 'font-noto_sc', 'font-noto_jp', 'font-noto_kr', 'font-noto_hi');
-            
-            if (isRTL) {
-                document.body.classList.add('font-cairo');
-            } else {
-                // Assign specific fonts for Asian languages
-                if (lang === 'zh') document.body.classList.add('font-noto_sc');
-                else if (lang === 'ja') document.body.classList.add('font-noto_jp');
-                else if (lang === 'ko') document.body.classList.add('font-noto_kr');
-                else if (lang === 'hi') document.body.classList.add('font-noto_hi');
-                else document.body.classList.add('font-roboto');
-            }
-
-            // Add specific class for line-height adjustments
-            document.body.classList.remove('lang-cjk', 'lang-hi');
-            if (['zh', 'ja', 'ko'].includes(lang)) document.body.classList.add('lang-cjk');
-            if (lang === 'hi') document.body.classList.add('lang-hi');
+            // Reset and set fonts
+            document.body.className = document.body.className.replace(/font-\w+/g, '').replace(/lang-\w+/g, '');
+            document.body.classList.add(langData.font);
+            if (langData.class) document.body.classList.add(langData.class);
+            document.body.classList.add('flex', 'flex-col', 'items-center', 'justify-start', 'p-4', 'sm:p-6', 'relative', 'selection:bg-green-900', 'selection:text-white', 'hw-accel');
 
             // Update Text Content
             document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -742,6 +841,11 @@
             const dateEl = document.getElementById('currentDate');
             if (dateEl) {
                 dateEl.textContent = now.toLocaleDateString(lang, { weekday: 'long', day: 'numeric', month: 'long' });
+            }
+            
+            // Update Main Button Text if visible
+            if(tg.MainButton.isVisible) {
+                tg.MainButton.setText(translations[currentLang].btn_refresh);
             }
         }
 
@@ -783,9 +887,15 @@
             tg.expand();
             tg.ready();
             
-            // Detect Language from Telegram
-            const tgLang = tg.initDataUnsafe?.user?.language_code || 'en';
-            setLanguage(tgLang);
+            // 1. Check for saved language preference first
+            let savedLang = localStorage.getItem('usdt_gateway_lang');
+            
+            // 2. If no saved preference, detect from Telegram
+            if (!savedLang) {
+                savedLang = tg.initDataUnsafe?.user?.language_code || 'en';
+            }
+            
+            setLanguage(savedLang);
 
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 onAuthSuccess(tg.initDataUnsafe.user);
@@ -961,6 +1071,13 @@
                 setTimeout(() => toast.remove(), 300);
             }, 2500);
         }
+
+        // Close modal when clicking outside
+        document.getElementById('langModal').addEventListener('click', (e) => {
+            if (e.target.id === 'langModal') {
+                toggleLangModal();
+            }
+        });
 
         init();
     </script>
