@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>البوابة المطلقة | The Ultimate Gateway</title>
+    <title>بوابة USDT النخبوية | Elite USDT Gateway</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -28,17 +28,17 @@
                     fontFamily: {
                         cairo: ['Cairo', 'sans-serif'],
                         amiri: ['Amiri', 'serif'],
+                        mono: ['JetBrains Mono', 'monospace'], // Font for numbers
                     },
                     colors: {
-                        void: '#000000',
-                        deep: '#050505',
+                        usdt: {
+                            green: '#26A17B', // Official USDT Green
+                            dark: '#1b7a5c',
+                            glow: '#4ade80',
+                        },
                         gold: {
-                            100: '#FDFBF7',
-                            300: '#F4E4BC',
-                            400: '#D4AF37',
-                            500: '#C5A028',
-                            600: '#AA8820',
-                            glow: '#FFD700',
+                            DEFAULT: '#D4AF37',
+                            metallic: '#BF953F',
                         }
                     },
                     animation: {
@@ -49,6 +49,7 @@
                         'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
                         'slide-up-fade': 'slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                         'spin-slow': 'spin 12s linear infinite',
+                        'ticker': 'ticker 3s linear infinite',
                     },
                     keyframes: {
                         breathe: {
@@ -70,10 +71,15 @@
                         slideUpFade: {
                             '0%': { opacity: '0', transform: 'translateY(30px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        ticker: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-50%)' },
                         }
                     },
                     backgroundImage: {
                         'liquid-gold': 'linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%)',
+                        'usdt-gradient': 'linear-gradient(135deg, #26A17B 0%, #4ade80 50%, #1b7a5c 100%)',
                         'dark-void': 'radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%)',
                     }
                 }
@@ -84,6 +90,7 @@
     <style>
         :root {
             --gold-glow: 0 0 30px rgba(212, 175, 55, 0.3);
+            --usdt-glow: 0 0 30px rgba(38, 161, 123, 0.4);
             --intense-glow: 0 0 50px rgba(212, 175, 55, 0.6);
         }
 
@@ -98,7 +105,7 @@
             touch-action: manipulation;
         }
 
-        /* Hypnotic Gold Text */
+        /* Hypnotic Text */
         .text-hypno-gold {
             background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
             -webkit-background-clip: text;
@@ -108,6 +115,11 @@
             animation: shimmer 3s linear infinite;
             filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
             font-weight: 900;
+        }
+
+        .text-usdt-glow {
+            color: #26A17B;
+            text-shadow: 0 0 15px rgba(38, 161, 123, 0.6);
         }
 
         /* Addictive Card Design */
@@ -129,7 +141,7 @@
             position: absolute;
             top: 0; left: -100%;
             width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(38, 161, 123, 0.1), transparent);
             transition: 0.5s;
             pointer-events: none;
         }
@@ -144,8 +156,8 @@
         }
 
         .addict-card:hover {
-            border-color: rgba(212, 175, 55, 0.4);
-            box-shadow: var(--gold-glow);
+            border-color: rgba(38, 161, 123, 0.4);
+            box-shadow: var(--usdt-glow);
             transform: translateY(-5px);
         }
 
@@ -164,30 +176,29 @@
             filter: blur(80px);
             opacity: 0.2;
             animation: float 10s infinite ease-in-out;
-            background: radial-gradient(circle, #D4AF37, transparent 70%);
         }
-        .orb-1 { top: -10%; right: -10%; width: 60vw; height: 60vw; animation-delay: 0s; }
-        .orb-2 { bottom: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, #8A6D18, transparent 70%); animation-delay: -5s; }
-        .orb-3 { top: 40%; left: 50%; transform: translateX(-50%); width: 40vw; height: 40vw; opacity: 0.1; animation-delay: -10s; }
+        .orb-1 { top: -10%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, #26A17B, transparent 70%); animation-delay: 0s; }
+        .orb-2 { bottom: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, #1b7a5c, transparent 70%); animation-delay: -5s; }
+        .orb-3 { top: 40%; left: 50%; transform: translateX(-50%); width: 40vw; height: 40vw; background: radial-gradient(circle, #D4AF37, transparent 70%); opacity: 0.1; animation-delay: -10s; }
 
         /* Loader */
         .loader-ring {
             width: 80px;
             height: 80px;
-            border: 2px solid rgba(212, 175, 55, 0.1);
-            border-top: 3px solid #D4AF37;
+            border: 2px solid rgba(38, 161, 123, 0.1);
+            border-top: 3px solid #26A17B;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 0 30px rgba(38, 161, 123, 0.3);
         }
 
         /* Toast */
         .toast {
             background: rgba(10, 10, 10, 0.95);
-            border: 1px solid rgba(212, 175, 55, 0.4);
+            border: 1px solid rgba(38, 161, 123, 0.4);
             backdrop-filter: blur(16px);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(212, 175, 55, 0.2);
-            border-right: 4px solid #D4AF37;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(38, 161, 123, 0.2);
+            border-right: 4px solid #26A17B;
             animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             display: flex;
             align-items: center;
@@ -225,7 +236,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="flex flex-col items-center justify-start p-4 sm:p-6 relative selection:bg-yellow-900 selection:text-white">
+<body class="flex flex-col items-center justify-start p-4 sm:p-6 relative selection:bg-green-900 selection:text-white">
 
     <!-- Dynamic Background -->
     <div class="dynamic-bg">
@@ -233,7 +244,7 @@
         <div class="orb orb-2 animate-breathe"></div>
         <div class="orb orb-3 animate-breathe"></div>
         <!-- Grid Overlay for Texture -->
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-20"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMzgsIDE2MSwgMTIzLCAwLjEpIi8+PC9zdmc+')] opacity-20"></div>
     </div>
 
     <!-- Toast Container -->
@@ -242,15 +253,15 @@
     <!-- VIEW 1: LOADING (Hypnotic) -->
     <div id="loadingView" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-1000">
         <div class="relative mb-8">
-            <div class="absolute inset-0 bg-gold-400/20 blur-2xl rounded-full animate-pulse-fast"></div>
-            <div class="loader-ring shadow-[0_0_40px_rgba(212,175,55,0.5)]"></div>
-            <i class="fa-solid fa-crown absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gold-300 text-2xl animate-bounce"></i>
+            <div class="absolute inset-0 bg-usdt-green/20 blur-2xl rounded-full animate-pulse-fast"></div>
+            <div class="loader-ring shadow-[0_0_40px_rgba(38,161,123,0.5)]"></div>
+            <i class="fa-solid fa-t absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-usdt-green text-2xl animate-bounce"></i>
         </div>
-        <h2 class="text-3xl font-amiri font-bold text-hypno-gold tracking-[0.2em] uppercase mb-2 text-center px-4">
-            البوابة المطلقة
+        <h2 class="text-3xl font-amiri font-bold text-white tracking-[0.2em] uppercase mb-2 text-center px-4">
+            بوابة <span class="text-usdt-glow">USDT</span>
         </h2>
-        <p class="text-[10px] text-gray-500 font-mono tracking-[0.3em] opacity-70 animate-pulse">جاري تهيئة النظام...</p>
-        <div class="w-32 h-[1px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mt-8 animate-shimmer"></div>
+        <p class="text-[10px] text-gray-500 font-mono tracking-[0.3em] opacity-70 animate-pulse">جاري تهيئة المحفظة...</p>
+        <div class="w-32 h-[1px] bg-gradient-to-r from-transparent via-usdt-green to-transparent mt-8 animate-shimmer"></div>
     </div>
 
     <!-- VIEW 2: ACCESS DENIED -->
@@ -264,7 +275,7 @@
             <p class="text-gray-400 mb-10 text-sm leading-relaxed px-4 font-light">
                 هذا النظام مصمم حصراً لعملاء تيليجرام النخبويين. يرجى فتح التطبيق من المصدر الرسمي.
             </p>
-            <button onclick="window.location.href='https://telegram.org'" class="w-full py-4 rounded-2xl font-bold text-black bg-liquid-gold hover:shadow-[0_0_50px_rgba(212,175,55,0.6)] transition-all transform hover:-translate-y-2 active:scale-95 flex items-center justify-center gap-3 glow-btn">
+            <button onclick="window.location.href='https://telegram.org'" class="w-full py-4 rounded-2xl font-bold text-black bg-usdt-gradient hover:shadow-[0_0_50px_rgba(38,161,123,0.6)] transition-all transform hover:-translate-y-2 active:scale-95 flex items-center justify-center gap-3 glow-btn">
                 <i class="fa-brands fa-telegram text-lg"></i>
                 الدخول الآمن
             </button>
@@ -278,8 +289,8 @@
         <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2 pt-2">
             <div>
                 <p class="text-[10px] text-gray-500 font-medium mb-1 tracking-widest uppercase flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e] animate-pulse"></span>
-                    نظام نشط
+                    <span class="w-1.5 h-1.5 rounded-full bg-usdt-green shadow-[0_0_10px_#26A17B] animate-pulse"></span>
+                    شبكة نشطة
                 </p>
                 <h1 class="text-2xl sm:text-3xl lg:text-4xl font-amiri font-bold text-white tracking-wide drop-shadow-lg">
                     أهلاً، <span id="headerUserName" class="text-hypno-gold">...</span>
@@ -287,8 +298,8 @@
                 <p class="text-[10px] text-gray-600 font-mono tracking-widest uppercase mt-2" id="currentDate">...</p>
             </div>
             <div class="relative group cursor-pointer touch-feedback" onclick="showToast('لا توجد تنبيهات جديدة', 'info')">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-900 to-black border border-gray-800 flex items-center justify-center shadow-lg group-hover:border-gold-400/50 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
-                    <i class="fa-solid fa-bell text-gold-400 text-lg"></i>
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-900 to-black border border-gray-800 flex items-center justify-center shadow-lg group-hover:border-usdt-green/50 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(38,161,123,0.3)]">
+                    <i class="fa-solid fa-bell text-usdt-green text-lg"></i>
                 </div>
                 <span class="absolute top-0 right-0 w-3 h-3 bg-red-600 border-2 border-black rounded-full animate-ping"></span>
                 <span class="absolute top-0 right-0 w-3 h-3 bg-red-600 border-2 border-black rounded-full"></span>
@@ -296,18 +307,18 @@
         </header>
 
         <!-- Main Profile Card (Hero) -->
-        <div class="addict-card p-1 rounded-[2.5rem] relative overflow-hidden group border-gold-500/20">
+        <div class="addict-card p-1 rounded-[2.5rem] relative overflow-hidden group border-usdt-green/20">
             <!-- Internal Dynamic Glow -->
-            <div class="absolute top-0 right-0 w-64 h-64 bg-gold-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none group-hover:bg-gold-500/20 transition-colors duration-700"></div>
+            <div class="absolute top-0 right-0 w-64 h-64 bg-usdt-green/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none group-hover:bg-usdt-green/20 transition-colors duration-700"></div>
             
             <div class="addict-card p-6 sm:p-8 rounded-[2.2rem] relative z-10 h-full border-none bg-transparent shadow-none">
                 <div class="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
                     <!-- Avatar with Metallic Ring -->
                     <div class="relative shrink-0">
-                        <div class="absolute inset-0 bg-liquid-gold rounded-2xl blur opacity-40 group-hover:opacity-70 transition-opacity duration-700 animate-pulse-slow"></div>
-                        <div id="avatarContainer" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-[2px] border-gold-400/50 overflow-hidden bg-black relative z-10 shadow-2xl">
+                        <div class="absolute inset-0 bg-usdt-gradient rounded-2xl blur opacity-40 group-hover:opacity-70 transition-opacity duration-700 animate-pulse-slow"></div>
+                        <div id="avatarContainer" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-[2px] border-usdt-green/50 overflow-hidden bg-black relative z-10 shadow-2xl">
                             <img id="userPhoto" src="" alt="User" class="w-full h-full object-cover hidden">
-                            <div id="defaultAvatar" class="w-full h-full flex items-center justify-center text-3xl sm:text-4xl font-bold text-gold-300 bg-gray-900 font-amiri">
+                            <div id="defaultAvatar" class="w-full h-full flex items-center justify-center text-3xl sm:text-4xl font-bold text-usdt-green bg-gray-900 font-amiri">
                                 <span id="avatarInitials">U</span>
                             </div>
                         </div>
@@ -320,24 +331,29 @@
                         <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-3">
                             <div class="bg-black/60 backdrop-blur-md px-4 py-2 rounded-xl border border-white/5 flex items-center gap-2 group/copy cursor-pointer touch-feedback" onclick="copyId()">
                                 <span class="text-xs sm:text-sm text-gray-400 font-mono tracking-wider select-all" id="userId">ID: 00000</span>
-                                <i class="fa-regular fa-copy text-gray-600 text-xs sm:text-sm group-hover/copy:text-gold-400 transition-colors"></i>
+                                <i class="fa-regular fa-copy text-gray-600 text-xs sm:text-sm group-hover/copy:text-usdt-green transition-colors"></i>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Balance Mini Card (The Hook) -->
-                    <div class="bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl px-6 py-5 rounded-2xl border border-gold-500/30 flex flex-col items-center min-w-[140px] shadow-2xl relative overflow-hidden group/balance touch-feedback w-full sm:w-auto">
-                        <div class="absolute inset-0 bg-liquid-gold opacity-5 group-hover/balance:opacity-10 transition-opacity"></div>
+                    <!-- Balance Mini Card (The Hook - USDT) -->
+                    <div class="bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl px-6 py-5 rounded-2xl border border-usdt-green/30 flex flex-col items-center min-w-[160px] shadow-2xl relative overflow-hidden group/balance touch-feedback w-full sm:w-auto">
+                        <div class="absolute inset-0 bg-usdt-gradient opacity-5 group-hover/balance:opacity-10 transition-opacity"></div>
                         <!-- Sparkles -->
                         <div class="absolute top-2 right-2 w-1 h-1 bg-white rounded-full animate-ping"></div>
-                        <div class="absolute bottom-3 left-4 w-1 h-1 bg-gold-300 rounded-full animate-ping delay-75"></div>
+                        <div class="absolute bottom-3 left-4 w-1 h-1 bg-usdt-green rounded-full animate-ping delay-75"></div>
                         
-                        <span class="text-[10px] text-gray-400 mb-1 font-medium uppercase tracking-[0.15em] relative z-10">الرصيد الحالي</span>
-                        <div class="flex items-center gap-2 text-gold-400 drop-shadow-md relative z-10">
-                            <i class="fa-solid fa-coins text-lg animate-spin-slow"></i>
-                            <span class="font-bold text-white text-2xl sm:text-3xl tracking-tight font-mono" id="userBalance">0</span>
+                        <div class="flex items-center gap-2 mb-1 relative z-10">
+                            <i class="fa-solid fa-circle-dollar-to-slot text-usdt-green text-lg animate-pulse-slow"></i>
+                            <span class="text-[10px] text-gray-400 font-medium uppercase tracking-[0.15em] relative z-10">رصيد USDT</span>
                         </div>
-                        <div class="mt-2 text-[10px] text-green-400 font-medium flex items-center gap-1">
+                        
+                        <div class="flex items-center gap-1 text-white drop-shadow-md relative z-10">
+                            <span class="font-bold text-usdt-green text-2xl sm:text-3xl tracking-tight font-mono" id="userBalance">0.00</span>
+                            <span class="text-xs text-gray-500 font-mono">USDT</span>
+                        </div>
+                        
+                        <div class="mt-2 text-[10px] text-usdt-green font-medium flex items-center gap-1 bg-usdt-green/10 px-2 py-0.5 rounded-full">
                             <i class="fa-solid fa-arrow-trend-up"></i>
                             <span>+2.5% اليوم</span>
                         </div>
@@ -350,7 +366,7 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Stat 1 -->
             <div class="addict-card p-5 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group touch-feedback">
-                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/40 transition-colors group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
+                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-usdt-green flex items-center justify-center mb-3 border border-usdt-green/10 shadow-inner group-hover:border-usdt-green/40 transition-colors group-hover:shadow-[0_0_20px_rgba(38,161,123,0.3)]">
                     <i class="fa-solid fa-chart-line text-xl"></i>
                 </div>
                 <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">الأداء</span>
@@ -358,15 +374,15 @@
             </div>
             <!-- Stat 2 -->
             <div class="addict-card p-5 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group touch-feedback">
-                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/40 transition-colors group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
-                    <i class="fa-solid fa-crown text-xl"></i>
+                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-usdt-green flex items-center justify-center mb-3 border border-usdt-green/10 shadow-inner group-hover:border-usdt-green/40 transition-colors group-hover:shadow-[0_0_20px_rgba(38,161,123,0.3)]">
+                    <i class="fa-solid fa-wallet text-xl"></i>
                 </div>
-                <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">المستوى</span>
-                <span class="text-gold-300 font-bold text-lg font-amiri drop-shadow-sm">بلاتيني</span>
+                <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">المحفظة</span>
+                <span class="text-usdt-green font-bold text-lg font-amiri drop-shadow-sm">نشطة</span>
             </div>
             <!-- Stat 3 -->
             <div class="hidden sm:flex addict-card p-5 rounded-2xl flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group touch-feedback">
-                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/40 transition-colors group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
+                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-usdt-green flex items-center justify-center mb-3 border border-usdt-green/10 shadow-inner group-hover:border-usdt-green/40 transition-colors group-hover:shadow-[0_0_20px_rgba(38,161,123,0.3)]">
                     <i class="fa-solid fa-users text-xl"></i>
                 </div>
                 <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">الشبكة</span>
@@ -374,7 +390,7 @@
             </div>
             <!-- Stat 4 -->
             <div class="hidden sm:flex addict-card p-5 rounded-2xl flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group touch-feedback">
-                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/40 transition-colors group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
+                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-usdt-green flex items-center justify-center mb-3 border border-usdt-green/10 shadow-inner group-hover:border-usdt-green/40 transition-colors group-hover:shadow-[0_0_20px_rgba(38,161,123,0.3)]">
                     <i class="fa-solid fa-shield-check text-xl"></i>
                 </div>
                 <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">الحماية</span>
@@ -386,25 +402,25 @@
         <div class="addict-card p-6 sm:p-8 rounded-[2.5rem]">
             <div class="flex items-center justify-between mb-6 px-1">
                 <h3 class="font-amiri font-bold text-white text-xl sm:text-2xl">لوحة التحكم</h3>
-                <span class="text-[9px] sm:text-xs text-gold-500/70 bg-gold-900/10 px-3 py-1 rounded-full border border-gold-500/10 font-mono tracking-wider animate-pulse">v5.0 ULTRA</span>
+                <span class="text-[9px] sm:text-xs text-usdt-green/70 bg-usdt-green/10 px-3 py-1 rounded-full border border-usdt-green/10 font-mono tracking-wider animate-pulse">v5.0 CRYPTO</span>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 <!-- Action Item 1 -->
-                <button onclick="handleAction('refresh')" class="w-full p-4 rounded-2xl flex items-center justify-between addict-card hover:bg-white/5 group border border-transparent hover:border-gold-500/30 bg-transparent shadow-none touch-feedback glow-btn">
+                <button onclick="handleAction('refresh')" class="w-full p-4 rounded-2xl flex items-center justify-between addict-card hover:bg-white/5 group border border-transparent hover:border-usdt-green/30 bg-transparent shadow-none touch-feedback glow-btn">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-gold-400 flex items-center justify-center group-hover:bg-liquid-gold group-hover:text-black transition-all duration-500 shadow-lg group-hover:shadow-[0_0_30px_rgba(212,175,55,0.5)]">
+                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-usdt-green flex items-center justify-center group-hover:bg-usdt-gradient group-hover:text-black transition-all duration-500 shadow-lg group-hover:shadow-[0_0_30px_rgba(38,161,123,0.5)]">
                             <i class="fa-solid fa-sync group-hover:animate-spin"></i>
                         </div>
-                        <span class="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">تحديث فوري</span>
+                        <span class="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">تحديث السوق</span>
                     </div>
-                    <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] group-hover:text-gold-400 transition-all duration-300"></i>
+                    <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] group-hover:text-usdt-green transition-all duration-300"></i>
                 </button>
 
                 <!-- Action Item 2 -->
-                <button onclick="handleAction('support')" class="w-full p-4 rounded-2xl flex items-center justify-between addict-card hover:bg-white/5 group border border-transparent hover:border-gold-500/30 bg-transparent shadow-none touch-feedback glow-btn">
+                <button onclick="handleAction('support')" class="w-full p-4 rounded-2xl flex items-center justify-between addict-card hover:bg-white/5 group border border-transparent hover:border-usdt-green/30 bg-transparent shadow-none touch-feedback glow-btn">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-gold-400 flex items-center justify-center group-hover:bg-liquid-gold group-hover:text-black transition-all duration-500 shadow-lg group-hover:shadow-[0_0_30px_rgba(212,175,55,0.5)]">
+                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-usdt-green flex items-center justify-center group-hover:bg-usdt-gradient group-hover:text-black transition-all duration-500 shadow-lg group-hover:shadow-[0_0_30px_rgba(38,161,123,0.5)]">
                             <i class="fa-solid fa-headset"></i>
                         </div>
                         <span class="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">دعم النخبة</span>
@@ -412,19 +428,19 @@
                     <div class="flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-red-500 animate-ping shadow-[0_0_10px_red]"></span>
                         <span class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_10px_red]"></span>
-                        <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] group-hover:text-gold-400 transition-all duration-300"></i>
+                        <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] group-hover:text-usdt-green transition-all duration-300"></i>
                     </div>
                 </button>
 
                 <!-- Action Item 3 -->
-                <button onclick="handleAction('settings')" class="w-full p-4 rounded-2xl flex items-center justify-between addict-card hover:bg-white/5 group border border-transparent hover:border-gold-500/30 bg-transparent shadow-none touch-feedback glow-btn">
+                <button onclick="handleAction('withdraw')" class="w-full p-4 rounded-2xl flex items-center justify-between addict-card hover:bg-white/5 group border border-transparent hover:border-usdt-green/30 bg-transparent shadow-none touch-feedback glow-btn">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-gold-400 flex items-center justify-center group-hover:bg-liquid-gold group-hover:text-black transition-all duration-500 shadow-lg group-hover:shadow-[0_0_30px_rgba(212,175,55,0.5)]">
-                            <i class="fa-solid fa-gear"></i>
+                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-usdt-green flex items-center justify-center group-hover:bg-usdt-gradient group-hover:text-black transition-all duration-500 shadow-lg group-hover:shadow-[0_0_30px_rgba(38,161,123,0.5)]">
+                            <i class="fa-solid fa-money-bill-transfer"></i>
                         </div>
-                        <span class="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">الإعدادات المتقدمة</span>
+                        <span class="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">سحب الأرباح</span>
                     </div>
-                    <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] group-hover:text-gold-400 transition-all duration-300"></i>
+                    <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] group-hover:text-usdt-green transition-all duration-300"></i>
                 </button>
 
                 <!-- Action Item 4 (Locked) -->
@@ -433,7 +449,7 @@
                         <div class="w-12 h-12 rounded-xl bg-gray-900/50 text-gray-600 flex items-center justify-center border border-gray-800">
                             <i class="fa-solid fa-lock"></i>
                         </div>
-                        <span class="text-gray-500 text-sm font-medium">الميزات الأسطورية (قريباً)</span>
+                        <span class="text-gray-500 text-sm font-medium">التعدين السحابي (قريباً)</span>
                     </div>
                 </button>
             </div>
@@ -544,8 +560,8 @@
                 els.initials.textContent = initials || "U";
             }
 
-            // Addictive Counter Animation
-            animateValue(els.balance, 0, 2500, 2500);
+            // Addictive Counter Animation for USDT (Decimal format)
+            animateValue(els.balance, 0, 2500.50, 2500);
         }
 
         function animateValue(obj, start, end, duration) {
@@ -556,7 +572,10 @@
                 // Elastic easing for addictive feel
                 const easeOutElastic = Math.pow(2, -10 * progress) * Math.sin((progress * 10 - 0.75) * (2 * Math.PI) / 3) + 1;
                 
-                obj.innerHTML = Math.floor(easeOutElastic * (end - start) + start).toLocaleString('en-US');
+                const currentVal = easeOutElastic * (end - start) + start;
+                // Format as currency with 2 decimal places
+                obj.innerHTML = currentVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                
                 if (progress < 1) {
                     window.requestAnimationFrame(step);
                 }
@@ -565,20 +584,18 @@
         }
 
         function setupMainButton() {
-            tg.MainButton.setText("زيادة الرصيد");
+            tg.MainButton.setText("زيادة الرصيد (USDT)");
             tg.MainButton.setTextColor("#000000");
-            tg.MainButton.setColor("#D4AF37");
+            tg.MainButton.setColor("#26A17B"); // USDT Green
             tg.MainButton.show();
             
             tg.MainButton.onClick(() => {
                 tg.HapticFeedback.notificationOccurred('success');
-                showToast('تمت إضافة مكافأة ذهبية!', 'success');
+                showToast('تمت إضافة مكافأة USDT!', 'success');
                 
                 // Visual explosion effect on balance
-                const current = parseInt(els.balance.innerText.replace(/,/g,''));
-                animateValue(els.balance, current, current + 500, 1000);
-                
-                // Trigger confetti or particle effect here if possible
+                const current = parseFloat(els.balance.innerText.replace(/,/g,''));
+                animateValue(els.balance, current, current + 50.00, 1000);
             });
         }
 
@@ -593,18 +610,19 @@
         function handleAction(type) {
             tg.HapticFeedback.impactOccurred('light');
             if (type === 'refresh') {
-                showToast('جاري تحديث البيانات...', 'info');
+                showToast('جاري تحديث أسعار السوق...', 'info');
                 setTimeout(() => {
                     showToast('تم التحديث بنجاح', 'success');
                     // Re-animate balance slightly to show change
-                    const current = parseInt(els.balance.innerText.replace(/,/g,''));
-                    animateValue(els.balance, current, current + 50, 800);
+                    const current = parseFloat(els.balance.innerText.replace(/,/g,''));
+                    animateValue(els.balance, current, current + 0.50, 800);
                 }, 1000);
             } else if (type === 'support') {
                 showToast('جاري الاتصال بالدعم...', 'info');
                 setTimeout(() => tg.openLink('https://telegram.org'), 800);
-            } else if (type === 'settings') {
-                showToast('الإعدادات متاحة قريباً', 'info');
+            } else if (type === 'withdraw') {
+                showToast('جارٍ معالجة طلب السحب...', 'info');
+                setTimeout(() => showToast('تم إرسال الطلب للمراجعة', 'success'), 1500);
             }
         }
 
@@ -622,7 +640,7 @@
             const toast = document.createElement('div');
             toast.className = 'toast pointer-events-auto';
             
-            let icon = '<i class="fa-solid fa-circle-info text-gold-400 text-lg"></i>';
+            let icon = '<i class="fa-solid fa-circle-info text-usdt-green text-lg"></i>';
             if (type === 'success') icon = '<i class="fa-solid fa-check-circle text-green-500 text-lg animate-bounce"></i>';
             if (type === 'error') icon = '<i class="fa-solid fa-triangle-exclamation text-red-500 text-lg"></i>';
 
