@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>البوابة الذهبية | Gold Gate</title>
+    <title>البوابة الذهبية | Telegram Web App</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Telegram Web App Script (Loaded Immediately) -->
+    <!-- Telegram Web App Script -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts (Cairo & Playfair Display for Luxury feel) -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
     <script>
@@ -28,28 +28,44 @@
                     },
                     colors: {
                         gold: {
-                            100: '#F9F1D8',
-                            300: '#E5C560',
-                            400: '#D4AF37',
-                            500: '#C5A028',
-                            600: '#AA8820',
+                            50: '#fdfbf7',
+                            100: '#f9f4e6',
+                            200: '#f0e3c2',
+                            300: '#e5cda0',
+                            400: '#d4b076',
+                            500: '#c59a57', // Base Gold
+                            600: '#b08246',
+                            700: '#91683a',
+                            800: '#765432',
+                            900: '#61462d',
+                            glow: '#ffd700',
                         },
                         black: {
                             900: '#050505',
                             800: '#0a0a0a',
+                            700: '#121212',
                             card: '#1a1a1a',
                         }
                     },
-                    backgroundImage: {
-                        'gold-gradient': 'linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)',
-                    },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
-                        'shine': 'shine 3s linear infinite',
+                        'shine': 'shine 2s linear infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'scale-in': 'scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'dots': 'dots 1.5s infinite steps(4)',
                     },
                     keyframes: {
                         float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
                         shine: { '0%': { backgroundPosition: '-200% center' }, '100%': { backgroundPosition: '200% center' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(30px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        scaleIn: { '0%': { opacity: '0', transform: 'scale(0.9)' }, '100%': { opacity: '1', transform: 'scale(1)' } },
+                        dots: { '0%, 20%': { content: '"."' }, '40%': { content: '".."' }, '60%': { content: '"..."' }, '80%, 100%': { content: '""' } }
+                    },
+                    backgroundImage: {
+                        'gold-gradient': 'linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c)',
+                        'gold-gradient-text': 'linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c)',
+                        'dark-gradient': 'linear-gradient(to bottom, #0a0a0a, #121212)',
                     }
                 }
             }
@@ -58,238 +74,308 @@
 
     <style>
         :root {
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --black-deep: #050505;
             --glass-bg: rgba(20, 20, 20, 0.7);
-            --glass-border: rgba(212, 175, 55, 0.15);
+            --glass-border: rgba(212, 175, 55, 0.2);
         }
+
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: #050505;
+            background-color: var(--black-deep);
             color: #ffffff;
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
             min-height: 100vh;
             padding-bottom: env(safe-area-inset-bottom);
             margin: 0;
-            user-select: none; /* Prevent text selection for app-like feel */
+            background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #050505 100%);
         }
+
+        /* Luxury Glassmorphism */
         .luxury-card {
-            background: rgba(26, 26, 26, 0.6);
+            background: rgba(20, 20, 20, 0.6);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(212, 175, 55, 0.1);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.8);
             position: relative;
             overflow: hidden;
         }
+
         .luxury-card::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; height: 1px;
             background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.5), transparent);
+            opacity: 0.5;
         }
-        .luxury-card:active { transform: scale(0.98); border-color: rgba(212, 175, 55, 0.3); }
-        
+
+        .luxury-btn {
+            background: linear-gradient(135deg, #b88a44 0%, #eebb55 50%, #b88a44 100%);
+            background-size: 200% auto;
+            color: #000;
+            font-weight: 700;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 15px rgba(184, 138, 68, 0.3);
+        }
+
+        .luxury-btn:hover {
+            background-position: right center;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(184, 138, 68, 0.5);
+        }
+
+        .luxury-btn:active {
+            transform: scale(0.98);
+        }
+
         .text-gold-gradient {
-            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-size: 200% auto;
-            animation: shine 5s linear infinite;
+            background-clip: text;
+            text-shadow: 0 2px 10px rgba(179, 135, 40, 0.3);
         }
 
+        .icon-gold {
+            color: #d4af37;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Ambient Glow */
         .ambient-glow {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; overflow: hidden; pointer-events: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
         }
         .glow-orb {
-            position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.15;
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
             animation: float 10s infinite ease-in-out;
-            background: radial-gradient(circle, rgba(212,175,55,0.4) 0%, rgba(0,0,0,0) 70%);
+            background: radial-gradient(circle, #d4af37 0%, transparent 70%);
         }
-        .glow-1 { top: -10%; right: -10%; width: 400px; height: 400px; }
-        .glow-2 { bottom: -10%; left: -10%; width: 300px; height: 300px; animation-delay: -5s; }
+        .glow-1 { top: -10%; right: -10%; width: 300px; height: 300px; }
+        .glow-2 { bottom: -10%; left: -10%; width: 250px; height: 250px; animation-delay: -5s; }
 
+        /* Loader */
         .loader-ring {
             width: 60px; height: 60px;
             border: 2px solid rgba(212, 175, 55, 0.1);
-            border-top-color: #D4AF37;
+            border-top-color: #d4af37;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        .status-text::after { content: ""; animation: dots 1.5s infinite steps(4); }
+
+        /* Toast */
         .toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 350px; pointer-events: none; }
         .toast {
             background: rgba(10, 10, 10, 0.95);
             border: 1px solid rgba(212, 175, 55, 0.3);
-            color: #fff; padding: 14px 16px; border-radius: 12px;
-            margin-bottom: 10px; display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            color: #fff;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             pointer-events: auto;
+            backdrop-filter: blur(10px);
         }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         .toast.hide { animation: slideUp 0.3s ease forwards; }
         @keyframes slideUp { to { opacity: 0; transform: translateY(-20px); } }
 
         .hidden-view { display: none !important; }
-        .fade-in { animation: scaleIn 0.5s ease-out forwards; }
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .fade-in { animation: scale-in 0.5s ease-out forwards; }
 
-        .progress-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #AA771C, #FCF6BA, #AA771C);
-            background-size: 200% 100%;
-            animation: shine 2s linear infinite;
-            width: 0%; transition: width 1s ease-out;
-        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
     </style>
 </head>
 <body class="flex flex-col items-center justify-start p-4 relative selection:bg-yellow-500/30">
 
+    <!-- Background -->
     <div class="ambient-glow">
         <div class="glow-orb glow-1"></div>
         <div class="glow-orb glow-2"></div>
     </div>
 
+    <!-- Toast Container -->
     <div id="toastContainer" class="toast-container"></div>
 
-    <!-- VIEW 1: LOADING (Robust) -->
-    <div id="loadingView" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#050505] transition-opacity duration-700">
+    <!-- VIEW 1: LOADING -->
+    <div id="loadingView" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#050505] transition-opacity duration-500">
         <div class="flex flex-col items-center justify-center">
-            <div class="loader-ring mb-6 shadow-[0_0_20px_rgba(212,175,55,0.3)]"></div>
-            <h2 class="text-xl font-luxury text-gold-gradient tracking-widest uppercase text-sm">Gold Gate</h2>
-            <p class="text-xs text-gray-500 mt-3 font-mono animate-pulse" id="loadingSubtext">جاري الاتصال بخادم تيليجرام...</p>
-            <p class="text-[10px] text-gray-700 mt-1 font-mono" id="debugStatus">انتظار البيانات...</p>
+            <div class="loader-ring mb-6"></div>
+            <h2 class="text-xl font-bold text-white tracking-widest uppercase font-luxury">
+                <span class="text-gold-gradient">ROYAL</span> GATE<span class="status-text"></span>
+            </h2>
+            <p class="text-xs text-gray-500 mt-3 font-mono opacity-60" id="loadingSubtext">مزامنة مع الخادم...</p>
         </div>
     </div>
 
     <!-- VIEW 2: ACCESS DENIED -->
     <div id="accessDeniedView" class="hidden-view w-full max-w-md flex flex-col items-center justify-center min-h-[80vh] fade-in">
-        <div class="luxury-card p-8 rounded-3xl text-center w-full border-red-900/30">
-            <div class="w-20 h-20 bg-red-900/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
+        <div class="luxury-card p-8 rounded-3xl text-center w-full border-red-900/30 shadow-2xl shadow-red-900/10">
+            <div class="w-24 h-24 bg-red-900/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-inner animate-bounce border border-red-900/20">
                 <i class="fa-solid fa-shield-halved"></i>
             </div>
-            <h2 class="text-2xl font-bold mb-3 text-white">دخول مرفوض</h2>
-            <p class="text-gray-400 mb-8 text-sm leading-relaxed">
-                فشل التحقق من الهوية بعد عدة محاولات. يرجى التأكد من فتح التطبيق عبر بوت تيليجرام الرسمي.
+            <h2 class="text-2xl font-bold mb-3 text-white font-luxury">دخول مرفوض</h2>
+            <p class="text-gray-400 mb-8 text-sm leading-relaxed px-4">
+                يجب فتح هذه البوابة حصراً عبر تطبيق تيليجرام الرسمي لضمان الأمان الملكي للبيانات.
             </p>
-            <button onclick="window.location.href='https://telegram.org'" class="w-full py-4 rounded-xl font-bold text-black bg-gold-gradient hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all transform hover:-translate-y-1 active:scale-95">
+            <button onclick="window.location.href='https://telegram.org'" class="w-full py-4 rounded-xl font-bold text-black bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 hover:shadow-lg hover:shadow-yellow-500/20 transition-all transform hover:-translate-y-1 active:scale-95">
                 <i class="fa-brands fa-telegram ml-2"></i> فتح تيليجرام
             </button>
-            <button onclick="location.reload()" class="mt-4 text-xs text-gray-500 hover:text-white underline">إعادة المحاولة</button>
+            <button onclick="location.reload()" class="mt-4 text-xs text-gray-500 hover:text-yellow-500 underline transition-colors">إعادة المحاولة</button>
         </div>
     </div>
 
     <!-- VIEW 3: DASHBOARD -->
-    <div id="dashboardView" class="hidden-view w-full max-w-md space-y-5 pb-24 fade-in">
-        <header class="flex items-center justify-between mb-2 pt-2">
+    <div id="dashboardView" class="hidden-view w-full max-w-md space-y-6 pb-24 fade-in">
+        
+        <!-- Header Section -->
+        <header class="flex items-center justify-between mb-6 pt-4">
             <div>
-                <p class="text-xs text-gray-400 font-medium tracking-wide">مرحباً بك في</p>
-                <h1 class="text-2xl font-luxury text-gold-gradient tracking-wider">GOLD GATE</h1>
+                <p class="text-xs text-gray-400 mb-1 tracking-wider uppercase">مرحباً بك في</p>
+                <h1 class="text-3xl font-bold text-white tracking-tight font-luxury">
+                    البوابة <span class="text-gold-gradient">الملكية</span>
+                </h1>
+                <p class="text-xs text-gray-500 mt-2 font-mono" id="currentDate">...</p>
             </div>
             <div class="relative group cursor-pointer" onclick="showToast('لا توجد إشعارات جديدة', 'info')">
-                <div class="w-10 h-10 rounded-full bg-black-card border border-yellow-600/30 flex items-center justify-center shadow-lg group-hover:border-yellow-500/50 transition-all">
-                    <i class="fa-solid fa-bell text-yellow-500 text-sm"></i>
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-600 to-yellow-300 flex items-center justify-center shadow-lg shadow-yellow-600/20 transition-transform group-hover:scale-110 border border-yellow-200/20">
+                    <i class="fa-solid fa-bell text-black text-lg"></i>
                 </div>
-                <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 border-2 border-[#050505] rounded-full animate-pulse"></span>
+                <span class="absolute top-0 right-0 w-3 h-3 bg-red-500 border-2 border-[#050505] rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]"></span>
             </div>
         </header>
 
+        <!-- Main Profile Card -->
         <div class="luxury-card p-6 rounded-3xl relative group">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-600/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+            <!-- Decorative Glow -->
+            <div class="absolute top-0 right-0 w-40 h-40 bg-yellow-600/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+            
             <div class="flex items-center gap-5 relative z-10">
+                <!-- Avatar with Gold Ring -->
                 <div class="relative">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-yellow-600 to-yellow-300 rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                    <div id="avatarContainer" class="w-20 h-20 rounded-2xl border border-yellow-600/30 overflow-hidden bg-black relative z-10 shadow-lg">
-                        <img id="userPhoto" src="" alt="User" class="w-full h-full object-cover hidden grayscale hover:grayscale-0 transition-all duration-500">
-                        <div id="defaultAvatar" class="w-full h-full flex items-center justify-center text-2xl font-bold text-yellow-500 bg-black/50 backdrop-blur-sm">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-yellow-600 to-yellow-300 rounded-2xl blur opacity-50 group-hover:opacity-80 transition-opacity duration-500"></div>
+                    <div id="avatarContainer" class="w-20 h-20 rounded-2xl border-2 border-yellow-500/30 overflow-hidden bg-black relative z-10 shadow-xl">
+                        <img id="userPhoto" src="" alt="User" class="w-full h-full object-cover hidden">
+                        <div id="defaultAvatar" class="w-full h-full flex items-center justify-center text-2xl font-bold text-yellow-500 bg-neutral-900">
                             <span id="avatarInitials">U</span>
                         </div>
                     </div>
-                    <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-[#050505] rounded-full z-20 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
+                    <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-[#050505] rounded-full z-20 shadow-[0_0_10px_rgba(34,197,94,0.6)]"></div>
                 </div>
+
+                <!-- Info -->
                 <div class="flex-1 min-w-0">
                     <h2 class="text-lg font-bold text-white truncate" id="userName">مستخدم</h2>
-                    <div class="flex items-center gap-2 mt-1.5">
-                        <span class="text-[10px] text-yellow-500/70 font-mono bg-black/40 px-2 py-1 rounded border border-yellow-900/30 select-all" id="userId">ID: 00000</span>
-                        <button onclick="copyId()" class="text-gray-500 hover:text-yellow-400 transition-colors"><i class="fa-regular fa-copy text-xs"></i></button>
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="text-xs text-gray-400 font-mono bg-white/5 px-2.5 py-1 rounded-lg select-all border border-white/5" id="userId">ID: 00000</span>
+                        <button onclick="copyId()" class="text-gray-400 hover:text-yellow-400 hover:bg-white/10 p-1.5 rounded-lg transition-colors" title="نسخ المعرف">
+                            <i class="fa-regular fa-copy text-xs"></i>
+                        </button>
                     </div>
-                    <div class="mt-3 flex items-center gap-2">
-                        <div class="flex-1 progress-bar"><div class="progress-fill" style="width: 75%"></div></div>
-                        <span class="text-[10px] text-yellow-500 font-bold whitespace-nowrap">LEVEL 5</span>
+                    <div class="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-yellow-500/10 border border-yellow-500/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></span>
+                        <span class="text-[10px] font-bold text-yellow-500 uppercase tracking-wide">عضو مميز</span>
+                    </div>
+                </div>
+
+                <!-- Balance Mini Card -->
+                <div class="bg-gradient-to-br from-neutral-900 to-black px-4 py-3 rounded-2xl border border-yellow-500/20 flex flex-col items-center min-w-[90px] shadow-lg relative overflow-hidden">
+                    <div class="absolute inset-0 bg-yellow-500/5 blur-xl"></div>
+                    <span class="text-[10px] text-gray-400 mb-1 font-medium relative z-10">الرصيد الذهبي</span>
+                    <div class="flex items-center gap-1.5 text-yellow-400 drop-shadow-md relative z-10">
+                        <i class="fa-solid fa-coins text-sm"></i>
+                        <span class="font-bold text-white text-base tracking-tight font-luxury" id="userBalance">0</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="luxury-card p-6 rounded-3xl text-center relative overflow-hidden group">
-            <div class="absolute inset-0 bg-gradient-to-b from-yellow-900/10 to-transparent pointer-events-none"></div>
-            <div class="relative z-10">
-                <p class="text-xs text-gray-400 uppercase tracking-widest mb-2">الرصيد الحالي</p>
-                <div class="flex items-center justify-center gap-2 mb-1">
-                    <i class="fa-solid fa-coins text-yellow-400 text-2xl drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]"></i>
-                    <span class="font-luxury text-4xl text-white tracking-tight" id="userBalance">0</span>
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 gap-4">
+            <div class="luxury-card p-4 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-yellow-500/10">
+                <div class="w-10 h-10 rounded-full bg-yellow-500/10 text-yellow-400 flex items-center justify-center mb-2.5 border border-yellow-500/20">
+                    <i class="fa-solid fa-chart-line"></i>
                 </div>
-                <p class="text-[10px] text-gray-500">GOLD COINS</p>
-                <div class="mt-6 grid grid-cols-2 gap-3">
-                    <button onclick="handleAction('deposit')" class="py-2.5 rounded-xl bg-white/5 border border-white/5 hover:bg-yellow-600 hover:border-yellow-500 hover:text-black transition-all duration-300 text-xs font-bold flex items-center justify-center gap-2 group/btn">
-                        <i class="fa-solid fa-plus group-hover/btn:rotate-90 transition-transform"></i> إيداع
-                    </button>
-                    <button onclick="handleAction('withdraw')" class="py-2.5 rounded-xl bg-white/5 border border-white/5 hover:bg-yellow-600 hover:border-yellow-500 hover:text-black transition-all duration-300 text-xs font-bold flex items-center justify-center gap-2 group/btn">
-                        <i class="fa-solid fa-arrow-up group-hover/btn:-rotate-45 transition-transform"></i> سحب
-                    </button>
-                </div>
+                <span class="text-gray-400 text-xs mb-1 font-medium">الأداء العام</span>
+                <span class="text-white font-bold text-lg text-gold-gradient">ممتاز</span>
             </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-            <div class="luxury-card p-4 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-yellow-600/20">
-                <div class="w-10 h-10 rounded-full bg-black border border-yellow-600/20 text-yellow-500 flex items-center justify-center mb-2 shadow-[0_0_15px_rgba(212,175,55,0.1)]">
-                    <i class="fa-solid fa-chart-pie"></i>
-                </div>
-                <span class="text-gray-400 text-xs mb-1">الأرباح الكلية</span>
-                <span class="text-white font-bold text-lg font-luxury">$1,240</span>
-            </div>
-            <div class="luxury-card p-4 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-yellow-600/20">
-                <div class="w-10 h-10 rounded-full bg-black border border-yellow-600/20 text-yellow-500 flex items-center justify-center mb-2 shadow-[0_0_15px_rgba(212,175,55,0.1)]">
+            <div class="luxury-card p-4 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-yellow-500/10">
+                <div class="w-10 h-10 rounded-full bg-yellow-500/10 text-yellow-400 flex items-center justify-center mb-2.5 border border-yellow-500/20">
                     <i class="fa-solid fa-crown"></i>
                 </div>
-                <span class="text-gray-400 text-xs mb-1">الرتبة</span>
-                <span class="text-gold-gradient font-bold text-lg">VIP GOLD</span>
+                <span class="text-gray-400 text-xs mb-1 font-medium">الرتبة الحالية</span>
+                <span class="text-white font-bold text-lg text-gold-gradient">ملكي</span>
             </div>
         </div>
 
-        <div class="luxury-card p-5 rounded-3xl">
-            <h3 class="font-bold text-white text-sm mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-layer-group text-yellow-600"></i> القائمة الرئيسية
-            </h3>
+        <!-- Actions Menu -->
+        <div class="luxury-card p-5 rounded-3xl border-yellow-500/10">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="font-bold text-white text-base font-luxury">القائمة الرئيسية</h3>
+                <span class="text-[10px] text-yellow-600 bg-yellow-500/10 px-2 py-1 rounded-md border border-yellow-500/20">v4.0 Gold</span>
+            </div>
+            
             <div class="space-y-3">
-                <button onclick="handleAction('tasks')" class="w-full p-3.5 rounded-xl flex items-center justify-between luxury-card hover:bg-white/5 group border-none bg-transparent">
-                    <div class="flex items-center gap-3.5">
-                        <div class="w-9 h-9 rounded-lg bg-black border border-yellow-900/30 text-yellow-500 flex items-center justify-center group-hover:bg-yellow-600 group-hover:text-black transition-all duration-300">
-                            <i class="fa-solid fa-list-check"></i>
+                <!-- Action Item 1 -->
+                <button onclick="handleAction('refresh')" class="w-full p-4 rounded-xl flex items-center justify-between luxury-card hover:bg-white/5 group border-yellow-500/5">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-600 to-yellow-400 text-black flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-lg shadow-yellow-500/20">
+                            <i class="fa-solid fa-sync"></i>
                         </div>
-                        <span class="text-gray-300 text-sm font-medium">المهام اليومية</span>
+                        <span class="text-gray-200 text-sm font-medium">تحديث البيانات</span>
                     </div>
-                    <span class="text-[10px] bg-yellow-600/20 text-yellow-500 px-2 py-0.5 rounded border border-yellow-600/20">+500</span>
+                    <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] transition-transform duration-300"></i>
                 </button>
-                <button onclick="handleAction('referral')" class="w-full p-3.5 rounded-xl flex items-center justify-between luxury-card hover:bg-white/5 group border-none bg-transparent">
-                    <div class="flex items-center gap-3.5">
-                        <div class="w-9 h-9 rounded-lg bg-black border border-yellow-900/30 text-yellow-500 flex items-center justify-center group-hover:bg-yellow-600 group-hover:text-black transition-all duration-300">
-                            <i class="fa-solid fa-users"></i>
+
+                <!-- Action Item 2 -->
+                <button onclick="handleAction('support')" class="w-full p-4 rounded-xl flex items-center justify-between luxury-card hover:bg-white/5 group border-yellow-500/5">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-neutral-800 text-yellow-500 flex items-center justify-center group-hover:bg-yellow-500 group-hover:text-black transition-all duration-300 border border-yellow-500/20">
+                            <i class="fa-solid fa-headset"></i>
                         </div>
-                        <span class="text-gray-300 text-sm font-medium">الأصدقاء</span>
+                        <span class="text-gray-200 text-sm font-medium">الدعم الفني</span>
                     </div>
-                    <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] transition-transform"></i>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span>
+                        <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] transition-transform duration-300"></i>
+                    </div>
+                </button>
+
+                <!-- Action Item 3 (Locked) -->
+                <button disabled class="w-full p-4 rounded-xl flex items-center justify-between opacity-50 cursor-not-allowed border border-dashed border-gray-800 bg-transparent">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-gray-900 text-gray-600 flex items-center justify-center border border-gray-800">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <span class="text-gray-500 text-sm font-medium">الميزات الحصرية (قريباً)</span>
+                    </div>
                 </button>
             </div>
         </div>
 
-        <button onclick="confirmLogout()" class="w-full py-4 rounded-xl font-bold text-gray-500 hover:text-red-400 hover:bg-red-900/10 transition-all duration-300 border border-transparent hover:border-red-900/30 flex items-center justify-center gap-2 group mt-2">
-            <i class="fa-solid fa-power-off group-hover:rotate-180 transition-transform duration-500"></i>
-            تسجيل الخروج
+        <!-- Footer / Logout -->
+        <button onclick="confirmLogout()" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-900/10 hover:text-red-300 hover:border-red-900/30 transition-all duration-300 border border-transparent flex items-center justify-center gap-2.5 group mt-4">
+            <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
+            إنهاء الجلسة الآمنة
         </button>
     </div>
 
@@ -305,45 +391,34 @@
 
         const els = {
             userName: document.getElementById('userName'),
+            headerName: document.getElementById('headerUserName'),
             userId: document.getElementById('userId'),
             photo: document.getElementById('userPhoto'),
             defaultAvatar: document.getElementById('defaultAvatar'),
             initials: document.getElementById('avatarInitials'),
             balance: document.getElementById('userBalance'),
-            subtext: document.getElementById('loadingSubtext'),
-            debug: document.getElementById('debugStatus')
+            date: document.getElementById('currentDate'),
+            subtext: document.getElementById('loadingSubtext')
         };
 
-        // --- ULTRA-ROBUST AUTHENTICATION LOGIC (FINAL FIX) ---
+        // Initialize with Robust Smart Wait Logic
         function init() {
-            // 1. Expand and Ready immediately
-            try {
-                tg.expand();
-                tg.ready();
-            } catch (e) {
-                console.warn("TG Init Warning:", e);
-            }
+            tg.expand();
+            tg.ready();
+            
+            const now = new Date();
+            els.date.textContent = now.toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' });
 
-            // Dynamic Loading Text to show activity
             let step = 0;
-            const steps = ["جارِ الاتصال بخادم تيليجرام...", "استلام بيانات المستخدم...", "تشفير الجلسة...", "الدخول الآمن..."];
-            const textInterval = setInterval(() => {
+            const steps = ["جارِ التحقق من الهوية...", "تشفير البيانات...", "إنشاء الجلسة الملكية..."];
+            const intervalText = setInterval(() => {
                 step = (step + 1) % steps.length;
                 if(els.subtext) els.subtext.textContent = steps[step];
-            }, 1200);
+            }, 800);
 
-            // Core Check Function
-            const checkAuth = () => {
-                // Debug info (Visible only in loading screen)
-                if(els.debug) {
-                    const hasData = !!tg.initData;
-                    const hasUser = !!tg.initDataUnsafe?.user;
-                    els.debug.textContent = `Checking... Data: ${hasData}, User: ${hasUser}`;
-                }
-
+            const attemptLogin = () => {
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    // SUCCESS! Stop everything and load dashboard
-                    clearInterval(textInterval);
+                    clearInterval(intervalText);
                     clearInterval(pollInterval);
                     clearTimeout(timeoutId);
                     onAuthSuccess(tg.initDataUnsafe.user);
@@ -352,50 +427,43 @@
                 return false;
             };
 
-            // Attempt 1: Immediate Check
-            if (checkAuth()) return;
+            if (attemptLogin()) return;
 
-            // Attempt 2: Aggressive Polling System (Check every 50ms)
+            tg.onEvent('ready', () => {
+                if (!attemptLogin()) startPolling();
+            });
+
             let pollCount = 0;
-            const maxPolls = 200; // 200 * 50ms = 10 seconds max wait time (Very generous)
-            let pollInterval;
-            
-            const startPolling = () => {
-                pollInterval = setInterval(() => {
-                    pollCount++;
-                    if (checkAuth()) return;
-                    
-                    if (pollCount >= maxPolls) {
-                        clearInterval(pollInterval);
-                        onAuthFailed("Timeout: Data not received after 10s");
-                    }
-                }, 50); // Ultra-fast check interval
-            };
+            const maxPolls = 50;
+            const pollInterval = setInterval(() => {
+                pollCount++;
+                if (attemptLogin()) return;
+                if (pollCount >= maxPolls) {
+                    clearInterval(pollInterval);
+                    onAuthFailed();
+                }
+            }, 100);
 
-            // Start polling immediately as a fallback
-            startPolling();
-
-            // Attempt 3: Safety Timeout (Fail-safe)
-            let timeoutId = setTimeout(() => {
-                if (!views.dashboard.classList.contains('hidden-view')) return; // Already succeeded
+            const timeoutId = setTimeout(() => {
+                if (!views.dashboard.classList.contains('hidden-view')) return;
                 clearInterval(pollInterval);
-                clearInterval(textInterval);
-                onAuthFailed("Final Timeout");
-            }, 11000);
+                clearInterval(intervalText);
+                onAuthFailed();
+            }, 6000);
         }
+
+        function startPolling() {}
 
         function onAuthSuccess(user) {
             loadUserData(user);
             switchView('dashboard');
             setupMainButton();
-            // Force dark theme for Telegram header to match our black theme
-            tg.setHeaderColor('#050505'); 
-            tg.setBackgroundColor('#050505');
+            tg.setHeaderColor('#050505');
         }
 
-        function onAuthFailed(reason) {
-            console.error("Auth Failed:", reason);
+        function onAuthFailed() {
             switchView('denied');
+            try { tg.setHeaderColor('#050505'); } catch(e){}
         }
 
         function switchView(viewName) {
@@ -407,7 +475,7 @@
                 views.loading.style.opacity = '1';
             } else {
                 views.loading.style.opacity = '0';
-                setTimeout(() => views.loading.classList.add('hidden-view'), 700);
+                setTimeout(() => views.loading.classList.add('hidden-view'), 500);
             }
         }
 
@@ -426,10 +494,7 @@
                 const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
                 els.initials.textContent = initials || "U";
             }
-
-            // Simulate Real Data Fetching with Animation
-            const simulatedBalance = Math.floor(Math.random() * 5000) + 1000; 
-            animateValue(els.balance, 0, simulatedBalance, 2000);
+            animateValue(els.balance, 0, 2500, 2000);
         }
 
         function animateValue(obj, start, end, duration) {
@@ -437,9 +502,7 @@
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-                const currentVal = Math.floor(easeOutQuart * (end - start) + start);
-                obj.innerHTML = currentVal.toLocaleString('en-US');
+                obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString('en-US');
                 if (progress < 1) window.requestAnimationFrame(step);
             };
             window.requestAnimationFrame(step);
@@ -448,15 +511,13 @@
         function setupMainButton() {
             tg.MainButton.setText("تحديث الرصيد");
             tg.MainButton.setTextColor("#000000");
-            tg.MainButton.setColor("#D4AF37");
+            tg.MainButton.setColor("#d4af37"); // Gold Color
             tg.MainButton.show();
             
             tg.MainButton.onClick(() => {
                 tg.HapticFeedback.notificationOccurred('success');
                 showToast('تم مزامنة البيانات بنجاح', 'success');
-                const current = parseInt(els.balance.innerText.replace(/,/g,''));
-                const increase = Math.floor(Math.random() * 100) + 50;
-                animateValue(els.balance, current, current + increase, 1000);
+                animateValue(els.balance, parseInt(els.balance.innerText.replace(/,/g,'')), parseInt(els.balance.innerText.replace(/,/g,'')) + 100, 1000);
             });
         }
 
@@ -470,21 +531,18 @@
 
         function handleAction(type) {
             tg.HapticFeedback.impactOccurred('light');
-            if (type === 'deposit') {
-                showToast('جارٍ فتح بوابة الإيداع...', 'info');
-                setTimeout(() => showToast('خاصية قادمة قريباً', 'error'), 1000);
-            } else if (type === 'withdraw') {
-                showToast('جارٍ معالجة الطلب...', 'info');
-            } else if (type === 'tasks') {
-                showToast('قائمة المهام قيد التحميل', 'info');
-            } else if (type === 'referral') {
-                showToast('رابط الدعوة: t.me/yourbot?start=123', 'success');
+            if (type === 'refresh') {
+                showToast('جارٍ تحديث البيانات...', 'info');
+                setTimeout(() => showToast('تم التحديث بنجاح', 'success'), 1000);
+            } else if (type === 'support') {
+                showToast('جارٍ فتح الدعم...', 'info');
+                setTimeout(() => tg.openLink('https://telegram.org'), 800);
             }
         }
 
         function confirmLogout() {
             tg.HapticFeedback.notificationOccurred('warning');
-            tg.showConfirm("هل تريد إنهاء الجلسة؟", (confirmed) => {
+            tg.showConfirm("هل ترغب في إنهاء الجلسة؟", (confirmed) => {
                 if (confirmed) tg.close();
             });
         }
@@ -496,7 +554,7 @@
             let icon = '<i class="fa-solid fa-circle-info text-yellow-500 text-lg"></i>';
             if (type === 'success') icon = '<i class="fa-solid fa-check-circle text-green-500 text-lg"></i>';
             if (type === 'error') icon = '<i class="fa-solid fa-triangle-exclamation text-red-500 text-lg"></i>';
-            toast.innerHTML = `${icon}<span class="text-sm font-medium flex-1 text-gray-200">${message}</span>`;
+            toast.innerHTML = `${icon}<span class="text-sm font-medium flex-1">${message}</span>`;
             container.appendChild(toast);
             tg.HapticFeedback.impactOccurred('light');
             setTimeout(() => {
@@ -505,7 +563,6 @@
             }, 3000);
         }
 
-        // Start Application
         init();
     </script>
 </body>
