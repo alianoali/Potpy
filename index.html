@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <title>بوابة USDT النخبوية | Elite USDT Gateway</title>
+    <title>Elite USDT Gateway</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,7 +13,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -22,6 +22,7 @@
                 extend: {
                     fontFamily: {
                         cairo: ['Cairo', 'sans-serif'],
+                        roboto: ['Roboto', 'sans-serif'], // For Latin/Cyrillic
                         amiri: ['Amiri', 'serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     },
@@ -51,7 +52,6 @@
 
     <style>
         body {
-            font-family: 'Cairo', sans-serif;
             background-color: #000000;
             color: #ffffff;
             overflow-x: hidden;
@@ -59,10 +59,10 @@
             min-height: 100vh;
             padding-bottom: env(safe-area-inset-bottom);
             touch-action: manipulation;
+            transition: direction 0.3s ease;
         }
         .hw-accel { transform: translateZ(0); backface-visibility: hidden; perspective: 1000px; }
         
-        /* Optimized Glassmorphism */
         .glass-card {
             background: rgba(20, 20, 20, 0.6);
             backdrop-filter: blur(12px);
@@ -101,20 +101,21 @@
             background: rgba(10, 10, 10, 0.95);
             border: 1px solid rgba(38, 161, 123, 0.4);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border-right: 3px solid #26A17B;
+            border-right: 3px solid #26A17B; /* Will flip in LTR via JS if needed or use logical properties */
             animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             display: flex; align-items: center; gap: 10px;
             padding: 12px 16px; border-radius: 12px;
             margin-bottom: 10px; min-width: 260px;
             pointer-events: auto; transform: translateZ(0);
         }
+        [dir="ltr"] .toast { border-right: none; border-left: 3px solid #26A17B; }
 
         .hidden-view { display: none !important; }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="flex flex-col items-center justify-start p-4 sm:p-6 relative selection:bg-green-900 selection:text-white hw-accel">
+<body class="flex flex-col items-center justify-start p-4 sm:p-6 relative selection:bg-green-900 selection:text-white hw-accel font-cairo">
 
     <div class="bg-mesh"></div>
     <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-full max-w-xs px-4 pointer-events-none flex flex-col items-center"></div>
@@ -125,10 +126,10 @@
             <div class="loader-ring"></div>
             <i class="fa-solid fa-t absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-usdt-green text-xl"></i>
         </div>
-        <h2 class="text-2xl font-amiri font-bold text-white tracking-wide mb-2 text-center">
+        <h2 class="text-2xl font-amiri font-bold text-white tracking-wide mb-2 text-center px-4" data-i18n="app_title">
             بوابة <span class="text-usdt-green text-glow">USDT</span>
         </h2>
-        <p class="text-[10px] text-gray-500 font-mono tracking-widest uppercase animate-pulse">جاري تحميل المحفظة...</p>
+        <p class="text-[10px] text-gray-500 font-mono tracking-widest uppercase animate-pulse" data-i18n="loading_text">جاري التهيئة...</p>
     </div>
 
     <!-- VIEW 2: ACCESS DENIED -->
@@ -137,10 +138,10 @@
             <div class="w-20 h-20 bg-red-900/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl border border-red-500/20">
                 <i class="fa-solid fa-shield-halved"></i>
             </div>
-            <h2 class="text-2xl font-amiri font-bold mb-4 text-white">دخول مرفوض</h2>
-            <p class="text-gray-400 mb-8 text-sm leading-relaxed">يرجى فتح التطبيق من داخل تيليجرام الرسمي.</p>
+            <h2 class="text-2xl font-amiri font-bold mb-4 text-white" data-i18n="access_denied_title">دخول مرفوض</h2>
+            <p class="text-gray-400 mb-8 text-sm leading-relaxed" data-i18n="access_denied_msg">يرجى فتح التطبيق من داخل تيليجرام الرسمي.</p>
             <button onclick="window.location.href='https://telegram.org'" class="w-full py-3.5 rounded-xl font-bold text-black bg-usdt-gradient hover:brightness-110 transition-all active:scale-95 flex items-center justify-center gap-2">
-                <i class="fa-brands fa-telegram"></i> فتح تيليجرام
+                <i class="fa-brands fa-telegram"></i> <span data-i18n="open_telegram">فتح تيليجرام</span>
             </button>
         </div>
     </div>
@@ -153,14 +154,14 @@
             <div>
                 <p class="text-[10px] text-gray-500 font-medium mb-1 tracking-widest uppercase flex items-center gap-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-usdt-green shadow-[0_0_8px_#26A17B]"></span>
-                    متصل
+                    <span data-i18n="status_connected">متصل</span>
                 </p>
                 <h1 class="text-2xl sm:text-3xl font-amiri font-bold text-white">
-                    أهلاً، <span id="headerUserName" class="text-gold-metallic bg-clip-text text-transparent bg-gradient-to-r from-[#BF953F] to-[#AA771C] animate-shimmer bg-[length:200%_auto] text-gold-glow">...</span>
+                    <span data-i18n="welcome_prefix">أهلاً،</span> <span id="headerUserName" class="text-gold-metallic bg-clip-text text-transparent bg-gradient-to-r from-[#BF953F] to-[#AA771C] animate-shimmer bg-[length:200%_auto] text-gold-glow">...</span>
                 </h1>
                 <p class="text-[10px] text-gray-600 font-mono mt-1" id="currentDate">...</p>
             </div>
-            <button onclick="showToast('لا توجد تنبيهات', 'info')" class="w-11 h-11 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center text-usdt-green active:scale-90 transition-transform">
+            <button onclick="showToast('no_notifications', 'info')" class="w-11 h-11 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center text-usdt-green active:scale-90 transition-transform relative">
                 <i class="fa-solid fa-bell"></i>
                 <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-black"></span>
             </button>
@@ -193,12 +194,12 @@
                         </div>
                     </div>
 
-                    <!-- Balance (Dynamic from Storage) -->
+                    <!-- Balance -->
                     <div class="bg-gradient-to-br from-gray-900 to-black px-5 py-4 rounded-xl border border-usdt-green/30 flex flex-col items-center min-w-[130px] relative overflow-hidden active:scale-95 transition-transform cursor-pointer w-full sm:w-auto" onclick="handleAction('refresh')">
                         <div class="absolute inset-0 bg-usdt-gradient opacity-5"></div>
                         <div class="flex items-center gap-2 mb-1 relative z-10">
                             <i class="fa-solid fa-circle-dollar-to-slot text-usdt-green text-sm"></i>
-                            <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider">رصيد USDT</span>
+                            <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider" data-i18n="balance_label">رصيد USDT</span>
                         </div>
                         <div class="flex items-baseline gap-1 relative z-10">
                             <span class="font-bold text-usdt-green text-xl sm:text-2xl font-mono" id="userBalance">0.00</span>
@@ -219,36 +220,36 @@
                 <div class="w-10 h-10 rounded-full bg-gray-900/50 text-usdt-green flex items-center justify-center mb-2 border border-usdt-green/10">
                     <i class="fa-solid fa-chart-line"></i>
                 </div>
-                <span class="text-gray-500 text-xs mb-1">الأداء</span>
-                <span class="text-white font-bold text-sm">ممتاز</span>
+                <span class="text-gray-500 text-xs mb-1" data-i18n="stat_performance">الأداء</span>
+                <span class="text-white font-bold text-sm" data-i18n="val_excellent">ممتاز</span>
             </div>
             <div class="glass-card p-4 rounded-xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform">
                 <div class="w-10 h-10 rounded-full bg-gray-900/50 text-usdt-green flex items-center justify-center mb-2 border border-usdt-green/10">
                     <i class="fa-solid fa-wallet"></i>
                 </div>
-                <span class="text-gray-500 text-xs mb-1">المحفظة</span>
-                <span class="text-usdt-green font-bold text-sm">نشطة</span>
+                <span class="text-gray-500 text-xs mb-1" data-i18n="stat_wallet">المحفظة</span>
+                <span class="text-usdt-green font-bold text-sm" data-i18n="val_active">نشطة</span>
             </div>
             <div class="hidden sm:flex glass-card p-4 rounded-xl flex-col items-center justify-center text-center active:scale-95 transition-transform">
                 <div class="w-10 h-10 rounded-full bg-gray-900/50 text-usdt-green flex items-center justify-center mb-2 border border-usdt-green/10">
                     <i class="fa-solid fa-users"></i>
                 </div>
-                <span class="text-gray-500 text-xs mb-1">الشبكة</span>
+                <span class="text-gray-500 text-xs mb-1" data-i18n="stat_network">الشبكة</span>
                 <span class="text-white font-bold text-sm">+10K</span>
             </div>
             <div class="hidden sm:flex glass-card p-4 rounded-xl flex-col items-center justify-center text-center active:scale-95 transition-transform">
                 <div class="w-10 h-10 rounded-full bg-gray-900/50 text-usdt-green flex items-center justify-center mb-2 border border-usgt-green/10">
                     <i class="fa-solid fa-shield-check"></i>
                 </div>
-                <span class="text-gray-500 text-xs mb-1">الحماية</span>
-                <span class="text-green-400 font-bold text-sm">نشطة</span>
+                <span class="text-gray-500 text-xs mb-1" data-i18n="stat_security">الحماية</span>
+                <span class="text-green-400 font-bold text-sm" data-i18n="val_active">نشطة</span>
             </div>
         </div>
 
         <!-- Actions -->
         <div class="glass-card p-5 sm:p-6 rounded-2xl">
             <div class="flex items-center justify-between mb-5">
-                <h3 class="font-amiri font-bold text-white text-lg">القائمة الرئيسية</h3>
+                <h3 class="font-amiri font-bold text-white text-lg" data-i18n="menu_title">القائمة الرئيسية</h3>
                 <span class="text-[10px] text-usdt-green/70 bg-usdt-green/10 px-2 py-0.5 rounded border border-usdt-green/10 font-mono">v5.0</span>
             </div>
             
@@ -258,9 +259,9 @@
                         <div class="w-10 h-10 rounded-lg bg-gray-900 text-usdt-green flex items-center justify-center group-hover:bg-usdt-gradient group-hover:text-black transition-colors">
                             <i class="fa-solid fa-sync"></i>
                         </div>
-                        <span class="text-gray-200 text-sm font-medium">تحديث السوق</span>
+                        <span class="text-gray-200 text-sm font-medium" data-i18n="btn_refresh">تحديث السوق</span>
                     </div>
-                    <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:text-usdt-green transition-colors"></i>
+                    <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:text-usdt-green transition-colors rtl:rotate-180"></i>
                 </button>
 
                 <button onclick="handleAction('support')" class="w-full p-3.5 rounded-xl flex items-center justify-between glass-card hover:bg-white/5 group border border-transparent hover:border-usdt-green/30 bg-transparent shadow-none active:scale-95 transition-all">
@@ -268,11 +269,11 @@
                         <div class="w-10 h-10 rounded-lg bg-gray-900 text-usdt-green flex items-center justify-center group-hover:bg-usdt-gradient group-hover:text-black transition-colors">
                             <i class="fa-solid fa-headset"></i>
                         </div>
-                        <span class="text-gray-200 text-sm font-medium">الدعم الفني</span>
+                        <span class="text-gray-200 text-sm font-medium" data-i18n="btn_support">الدعم الفني</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                        <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:text-usdt-green transition-colors"></i>
+                        <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:text-usdt-green transition-colors rtl:rotate-180"></i>
                     </div>
                 </button>
 
@@ -281,9 +282,9 @@
                         <div class="w-10 h-10 rounded-lg bg-gray-900 text-usdt-green flex items-center justify-center group-hover:bg-usdt-gradient group-hover:text-black transition-colors">
                             <i class="fa-solid fa-money-bill-transfer"></i>
                         </div>
-                        <span class="text-gray-200 text-sm font-medium">سحب الأرباح</span>
+                        <span class="text-gray-200 text-sm font-medium" data-i18n="btn_withdraw">سحب الأرباح</span>
                     </div>
-                    <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:text-usdt-green transition-colors"></i>
+                    <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:text-usdt-green transition-colors rtl:rotate-180"></i>
                 </button>
 
                 <button disabled class="w-full p-3.5 rounded-xl flex items-center justify-between opacity-40 cursor-not-allowed border border-dashed border-gray-800 bg-transparent">
@@ -291,7 +292,7 @@
                         <div class="w-10 h-10 rounded-lg bg-gray-900/50 text-gray-600 flex items-center justify-center border border-gray-800">
                             <i class="fa-solid fa-lock"></i>
                         </div>
-                        <span class="text-gray-500 text-sm">التعدين (قريباً)</span>
+                        <span class="text-gray-500 text-sm" data-i18n="btn_mining">التعدين (قريباً)</span>
                     </div>
                 </button>
             </div>
@@ -299,14 +300,288 @@
 
         <!-- Logout -->
         <button onclick="confirmLogout()" class="w-full py-3.5 rounded-xl font-bold text-red-400/80 hover:text-red-400 hover:bg-red-900/10 transition-all active:scale-95 flex items-center justify-center gap-2 mt-2">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            إنهاء الجلسة
+            <i class="fa-solid fa-arrow-right-from-bracket rtl:rotate-180"></i>
+            <span data-i18n="btn_logout">إنهاء الجلسة</span>
         </button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         
+        // --- TRANSLATION SYSTEM ---
+        const translations = {
+            ar: {
+                app_title: 'بوابة <span class="text-usdt-green text-glow">USDT</span>',
+                loading_text: 'جاري التهيئة...',
+                access_denied_title: 'دخول مرفوض',
+                access_denied_msg: 'يرجى فتح التطبيق من داخل تيليجرام الرسمي.',
+                open_telegram: 'فتح تيليجرام',
+                status_connected: 'متصل',
+                welcome_prefix: 'أهلاً،',
+                balance_label: 'رصيد USDT',
+                stat_performance: 'الأداء',
+                stat_wallet: 'المحفظة',
+                stat_network: 'الشبكة',
+                stat_security: 'الحماية',
+                val_excellent: 'ممتاز',
+                val_active: 'نشطة',
+                menu_title: 'القائمة الرئيسية',
+                btn_refresh: 'تحديث السوق',
+                btn_support: 'الدعم الفني',
+                btn_withdraw: 'سحب الأرباح',
+                btn_mining: 'التعدين (قريباً)',
+                btn_logout: 'إنهاء الجلسة',
+                toast_no_notif: 'لا توجد تنبيهات',
+                toast_copy_id: 'تم نسخ المعرف',
+                toast_refreshing: 'جاري التحديث...',
+                toast_updated: 'تم التحديث بنجاح',
+                toast_connecting: 'جاري الاتصال...',
+                toast_processing: 'جارٍ المعالجة...',
+                toast_sent: 'تم إرسال الطلب',
+                toast_reward: 'تمت إضافة مكافأة USDT!',
+                toast_min_withdraw: 'الحد الأدنى للسحب 10 USDT',
+                toast_success: 'تم بنجاح',
+                confirm_logout: 'هل تريد الخروج؟'
+            },
+            en: {
+                app_title: '<span class="text-usdt-green text-glow">USDT</span> Gateway',
+                loading_text: 'Initializing...',
+                access_denied_title: 'Access Denied',
+                access_denied_msg: 'Please open this app exclusively within the official Telegram client.',
+                open_telegram: 'Open Telegram',
+                status_connected: 'Connected',
+                welcome_prefix: 'Welcome,',
+                balance_label: 'USDT Balance',
+                stat_performance: 'Performance',
+                stat_wallet: 'Wallet',
+                stat_network: 'Network',
+                stat_security: 'Security',
+                val_excellent: 'Excellent',
+                val_active: 'Active',
+                menu_title: 'Main Menu',
+                btn_refresh: 'Refresh Market',
+                btn_support: 'Support',
+                btn_withdraw: 'Withdraw',
+                btn_mining: 'Mining (Soon)',
+                btn_logout: 'Logout',
+                toast_no_notif: 'No new notifications',
+                toast_copy_id: 'ID Copied',
+                toast_refreshing: 'Refreshing...',
+                toast_updated: 'Updated Successfully',
+                toast_connecting: 'Connecting...',
+                toast_processing: 'Processing...',
+                toast_sent: 'Request Sent',
+                toast_reward: 'USDT Reward Added!',
+                toast_min_withdraw: 'Min withdrawal is 10 USDT',
+                toast_success: 'Success',
+                confirm_logout: 'Are you sure you want to logout?'
+            },
+            ru: {
+                app_title: 'Шлюз <span class="text-usdt-green text-glow">USDT</span>',
+                loading_text: 'Инициализация...',
+                access_denied_title: 'Доступ запрещен',
+                access_denied_msg: 'Пожалуйста, откройте это приложение исключительно в официальном клиенте Telegram.',
+                open_telegram: 'Открыть Telegram',
+                status_connected: 'Подключено',
+                welcome_prefix: 'Добро пожаловать,',
+                balance_label: 'Баланс USDT',
+                stat_performance: 'Производительность',
+                stat_wallet: 'Кошелек',
+                stat_network: 'Сеть',
+                stat_security: 'Безопасность',
+                val_excellent: 'Отлично',
+                val_active: 'Активно',
+                menu_title: 'Главное меню',
+                btn_refresh: 'Обновить рынок',
+                btn_support: 'Поддержка',
+                btn_withdraw: 'Вывод средств',
+                btn_mining: 'Майнинг (Скоро)',
+                btn_logout: 'Выйти',
+                toast_no_notif: 'Нет новых уведомлений',
+                toast_copy_id: 'ID скопирован',
+                toast_refreshing: 'Обновление...',
+                toast_updated: 'Успешно обновлено',
+                toast_connecting: 'Подключение...',
+                toast_processing: 'Обработка...',
+                toast_sent: 'Запрос отправлен',
+                toast_reward: 'Награда USDT добавлена!',
+                toast_min_withdraw: 'Мин. вывод 10 USDT',
+                toast_success: 'Успех',
+                confirm_logout: 'Вы уверены, что хотите выйти?'
+            },
+            fr: {
+                app_title: 'Passerelle <span class="text-usdt-green text-glow">USDT</span>',
+                loading_text: 'Initialisation...',
+                access_denied_title: 'Accès Refusé',
+                access_denied_msg: 'Veuillez ouvrir cette application exclusivement dans le client officiel Telegram.',
+                open_telegram: 'Ouvrir Telegram',
+                status_connected: 'Connecté',
+                welcome_prefix: 'Bienvenue,',
+                balance_label: 'Solde USDT',
+                stat_performance: 'Performance',
+                stat_wallet: 'Portefeuille',
+                stat_network: 'Réseau',
+                stat_security: 'Sécurité',
+                val_excellent: 'Excellent',
+                val_active: 'Actif',
+                menu_title: 'Menu Principal',
+                btn_refresh: 'Actualiser le marché',
+                btn_support: 'Support',
+                btn_withdraw: 'Retrait',
+                btn_mining: 'Mining (Bientôt)',
+                btn_logout: 'Déconnexion',
+                toast_no_notif: 'Aucune nouvelle notification',
+                toast_copy_id: 'ID copié',
+                toast_refreshing: 'Actualisation...',
+                toast_updated: 'Mis à jour avec succès',
+                toast_connecting: 'Connexion...',
+                toast_processing: 'Traitement...',
+                toast_sent: 'Demande envoyée',
+                toast_reward: 'Récompense USDT ajoutée !',
+                toast_min_withdraw: 'Retrait min. 10 USDT',
+                toast_success: 'Succès',
+                confirm_logout: 'Êtes-vous sûr de vouloir vous déconnecter ?'
+            },
+            tr: {
+                app_title: '<span class="text-usdt-green text-glow">USDT</span> Ağ Geçidi',
+                loading_text: 'Başlatılıyor...',
+                access_denied_title: 'Erişim Reddedildi',
+                access_denied_msg: 'Lütfen bu uygulamayı yalnızca resmi Telegram istemcisinde açın.',
+                open_telegram: "Telegram'ı Aç",
+                status_connected: 'Bağlı',
+                welcome_prefix: 'Hoş Geldiniz,',
+                balance_label: 'USDT Bakiyesi',
+                stat_performance: 'Performans',
+                stat_wallet: 'Cüzdan',
+                stat_network: 'Ağ',
+                stat_security: 'Güvenlik',
+                val_excellent: 'Mükemmel',
+                val_active: 'Aktif',
+                menu_title: 'Ana Menü',
+                btn_refresh: 'Piyasayı Yenile',
+                btn_support: 'Destek',
+                btn_withdraw: 'Çekim',
+                btn_mining: 'Madencilik (Yakında)',
+                btn_logout: 'Çıkış Yap',
+                toast_no_notif: 'Yeni bildirim yok',
+                toast_copy_id: 'ID Kopyalandı',
+                toast_refreshing: 'Yenileniyor...',
+                toast_updated: 'Başarıyla Güncellendi',
+                toast_connecting: 'Bağlanıyor...',
+                toast_processing: 'İşleniyor...',
+                toast_sent: 'İstek Gönderildi',
+                toast_reward: 'USDT Ödülü Eklendi!',
+                toast_min_withdraw: 'Min. çekim 10 USDT',
+                toast_success: 'Başarılı',
+                confirm_logout: 'Çıkış yapmak istediğinizden emin misiniz?'
+            },
+            pt: {
+                app_title: 'Gateway <span class="text-usdt-green text-glow">USDT</span>',
+                loading_text: 'Inicializando...',
+                access_denied_title: 'Acesso Negado',
+                access_denied_msg: 'Por favor, abra este aplicativo exclusivamente no cliente oficial do Telegram.',
+                open_telegram: 'Abrir Telegram',
+                status_connected: 'Conectado',
+                welcome_prefix: 'Bem-vindo,',
+                balance_label: 'Saldo USDT',
+                stat_performance: 'Desempenho',
+                stat_wallet: 'Carteira',
+                stat_network: 'Rede',
+                stat_security: 'Segurança',
+                val_excellent: 'Excelente',
+                val_active: 'Ativo',
+                menu_title: 'Menu Principal',
+                btn_refresh: 'Atualizar Mercado',
+                btn_support: 'Suporte',
+                btn_withdraw: 'Sacar',
+                btn_mining: 'Mineração (Em breve)',
+                btn_logout: 'Sair',
+                toast_no_notif: 'Sem novas notificações',
+                toast_copy_id: 'ID Copiado',
+                toast_refreshing: 'Atualizando...',
+                toast_updated: 'Atualizado com Sucesso',
+                toast_connecting: 'Conectando...',
+                toast_processing: 'Processando...',
+                toast_sent: 'Solicitação Enviada',
+                toast_reward: 'Recompensa USDT Adicionada!',
+                toast_min_withdraw: 'Saque mín. 10 USDT',
+                toast_success: 'Sucesso',
+                confirm_logout: 'Tem certeza que deseja sair?'
+            },
+            es: {
+                app_title: 'Pasarela <span class="text-usdt-green text-glow">USDT</span>',
+                loading_text: 'Iniciando...',
+                access_denied_title: 'Acceso Denegado',
+                access_denied_msg: 'Por favor, abra esta aplicación exclusivamente dentro del cliente oficial de Telegram.',
+                open_telegram: 'Abrir Telegram',
+                status_connected: 'Conectado',
+                welcome_prefix: 'Bienvenido,',
+                balance_label: 'Saldo USDT',
+                stat_performance: 'Rendimiento',
+                stat_wallet: 'Billetera',
+                stat_network: 'Red',
+                stat_security: 'Seguridad',
+                val_excellent: 'Excelente',
+                val_active: 'Activo',
+                menu_title: 'Menú Principal',
+                btn_refresh: 'Actualizar Mercado',
+                btn_support: 'Soporte',
+                btn_withdraw: 'Retirar',
+                btn_mining: 'Minería (Pronto)',
+                btn_logout: 'Cerrar Sesión',
+                toast_no_notif: 'Sin nuevas notificaciones',
+                toast_copy_id: 'ID Copiado',
+                toast_refreshing: 'Actualizando...',
+                toast_updated: 'Actualizado con Éxito',
+                toast_connecting: 'Conectando...',
+                toast_processing: 'Procesando...',
+                toast_sent: 'Solicitud Enviada',
+                toast_reward: '¡Recompensa USDT Añadida!',
+                toast_min_withdraw: 'Retiro mín. 10 USDT',
+                toast_success: 'Éxito',
+                confirm_logout: '¿Estás seguro de que quieres cerrar sesión?'
+            }
+        };
+
+        let currentLang = 'ar';
+
+        function setLanguage(lang) {
+            if (!translations[lang]) lang = 'en'; // Fallback to English
+            currentLang = lang;
+            
+            // Set Direction and Font
+            const isRTL = ['ar', 'he', 'fa', 'ur'].includes(lang);
+            document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang;
+            
+            if (isRTL) {
+                document.body.classList.remove('font-roboto');
+                document.body.classList.add('font-cairo');
+            } else {
+                document.body.classList.remove('font-cairo');
+                document.body.classList.add('font-roboto');
+            }
+
+            // Update Text Content
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    if (key === 'app_title') {
+                        el.innerHTML = translations[lang][key];
+                    } else {
+                        el.textContent = translations[lang][key];
+                    }
+                }
+            });
+
+            // Update Date Format
+            const now = new Date();
+            const dateEl = document.getElementById('currentDate');
+            if (dateEl) {
+                dateEl.textContent = now.toLocaleDateString(lang, { weekday: 'long', day: 'numeric', month: 'long' });
+            }
+        }
+
         // State
         const views = {
             loading: document.getElementById('loadingView'),
@@ -331,15 +606,8 @@
         function getUserData(userId) {
             const key = DB_KEY_PREFIX + userId;
             const stored = localStorage.getItem(key);
-            if (stored) {
-                return JSON.parse(stored);
-            }
-            // Default Data for New Users
-            return {
-                balance: 0.00,
-                joinedAt: new Date().toISOString(),
-                lastActive: new Date().toISOString()
-            };
+            if (stored) return JSON.parse(stored);
+            return { balance: 0.00, joinedAt: new Date().toISOString(), lastActive: new Date().toISOString() };
         }
 
         function saveUserData(userId, data) {
@@ -352,8 +620,9 @@
             tg.expand();
             tg.ready();
             
-            const now = new Date();
-            els.date.textContent = now.toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' });
+            // Detect Language from Telegram
+            const tgLang = tg.initDataUnsafe?.user?.language_code || 'en';
+            setLanguage(tgLang);
 
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 onAuthSuccess(tg.initDataUnsafe.user);
@@ -420,13 +689,9 @@
                 els.initials.textContent = initials || "U";
             }
 
-            // Load Balance from LocalStorage
             const userData = getUserData(user.id);
-            
-            // Animate from 0 to Stored Balance
             animateValue(els.balance, 0, userData.balance, 1500);
             
-            // Store current user data in global scope for easy access
             window.currentUserData = userData;
             window.currentUserId = user.id;
         }
@@ -437,39 +702,29 @@
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
                 const ease = 1 - (1 - progress) * (1 - progress);
-                
                 const currentVal = ease * (end - start) + start;
                 obj.innerHTML = currentVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                }
+                if (progress < 1) window.requestAnimationFrame(step);
             };
             window.requestAnimationFrame(step);
         }
 
         function setupMainButton() {
-            tg.MainButton.setText("زيادة الرصيد (USDT)");
+            tg.MainButton.setText(translations[currentLang].btn_refresh); // Default text
             tg.MainButton.setTextColor("#000000");
             tg.MainButton.setColor("#26A17B");
             tg.MainButton.show();
             
             tg.MainButton.onClick(() => {
                 tg.HapticFeedback.notificationOccurred('success');
-                
-                // Calculate new balance
                 const currentBalance = window.currentUserData.balance;
-                const reward = 50.00; // Fixed reward for demo
+                const reward = 50.00;
                 const newBalance = currentBalance + reward;
                 
-                // Update State
                 window.currentUserData.balance = newBalance;
-                
-                // Save to Database (LocalStorage)
                 saveUserData(window.currentUserId, window.currentUserData);
                 
-                // Update UI
-                showToast(`تمت إضافة ${reward} USDT!`, 'success');
+                showToast('toast_reward', 'success');
                 animateValue(els.balance, currentBalance, newBalance, 800);
             });
         }
@@ -478,39 +733,38 @@
             const id = els.userId.textContent.replace('ID: ', '');
             navigator.clipboard.writeText(id).then(() => {
                 tg.HapticFeedback.selectionChanged();
-                showToast('تم نسخ المعرف', 'info');
+                showToast('toast_copy_id', 'info');
             });
         }
 
         function handleAction(type) {
             tg.HapticFeedback.impactOccurred('light');
             if (type === 'refresh') {
-                showToast('جاري تحديث البيانات...', 'info');
+                showToast('toast_refreshing', 'info');
                 setTimeout(() => {
-                    // Simulate small market fluctuation
                     const currentBalance = window.currentUserData.balance;
-                    const fluctuation = (Math.random() * 2) - 1; // Random between -1 and 1
+                    const fluctuation = (Math.random() * 2) - 1;
                     const newBalance = Math.max(0, currentBalance + fluctuation);
                     
                     window.currentUserData.balance = newBalance;
                     saveUserData(window.currentUserId, window.currentUserData);
                     
-                    showToast('تم تحديث السوق بنجاح', 'success');
+                    showToast('toast_updated', 'success');
                     animateValue(els.balance, currentBalance, newBalance, 600);
                 }, 800);
             } else if (type === 'support') {
-                showToast('جاري الاتصال...', 'info');
+                showToast('toast_connecting', 'info');
                 setTimeout(() => tg.openLink('https://telegram.org'), 600);
             } else if (type === 'withdraw') {
                 if (window.currentUserData.balance < 10) {
-                    showToast('الحد الأدنى للسحب 10 USDT', 'error');
+                    showToast('toast_min_withdraw', 'error');
                 } else {
-                    showToast('جارٍ معالجة الطلب...', 'info');
+                    showToast('toast_processing', 'info');
                     setTimeout(() => {
                         window.currentUserData.balance = 0;
                         saveUserData(window.currentUserId, window.currentUserData);
                         animateValue(els.balance, parseFloat(els.balance.innerText.replace(/,/g,'')), 0, 1000);
-                        showToast('تم سحب الرصيد بنجاح', 'success');
+                        showToast('toast_sent', 'success');
                     }, 1500);
                 }
             }
@@ -518,12 +772,12 @@
 
         function confirmLogout() {
             tg.HapticFeedback.notificationOccurred('warning');
-            tg.showConfirm("هل تريد الخروج؟", (confirmed) => {
+            tg.showConfirm(translations[currentLang].confirm_logout, (confirmed) => {
                 if (confirmed) tg.close();
             });
         }
 
-        function showToast(message, type = 'info') {
+        function showToast(key, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = 'toast pointer-events-auto';
@@ -532,6 +786,7 @@
             if (type === 'success') icon = '<i class="fa-solid fa-check-circle text-green-500"></i>';
             if (type === 'error') icon = '<i class="fa-solid fa-triangle-exclamation text-red-500"></i>';
 
+            const message = translations[currentLang][key] || key;
             toast.innerHTML = `${icon}<span class="text-sm font-medium flex-1 text-gray-200">${message}</span>`;
             
             container.appendChild(toast);
