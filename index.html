@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#030303">
+    <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>البوابة الملكية | Royal Gateway</title>
+    <title>البوابة المطلقة | The Ultimate Gateway</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,58 +30,51 @@
                         amiri: ['Amiri', 'serif'],
                     },
                     colors: {
-                        royal: {
-                            black: '#030303',
-                            charcoal: '#0a0a0a',
-                            gold: {
-                                light: '#FDF6D6',
-                                DEFAULT: '#D4AF37',
-                                dark: '#AA8820',
-                                metallic: '#BF953F',
-                            }
+                        void: '#000000',
+                        deep: '#050505',
+                        gold: {
+                            100: '#FDFBF7',
+                            300: '#F4E4BC',
+                            400: '#D4AF37',
+                            500: '#C5A028',
+                            600: '#AA8820',
+                            glow: '#FFD700',
                         }
                     },
-                    screens: {
-                        'xs': '475px',
-                        'sm': '640px',
-                        'md': '768px',
-                        'lg': '1024px',
-                        'xl': '1280px',
-                    },
                     animation: {
-                        'float': 'float 12s ease-in-out infinite',
-                        'pulse-slow': 'pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'shimmer': 'shimmer 3s linear infinite',
-                        'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'scale-in': 'scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'breathe': 'breathe 4s ease-in-out infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shimmer': 'shimmer 2s linear infinite',
+                        'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                        'slide-up-fade': 'slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'spin-slow': 'spin 12s linear infinite',
                     },
                     keyframes: {
+                        breathe: {
+                            '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+                            '50%': { opacity: '0.7', transform: 'scale(1.1)' },
+                        },
                         float: {
-                            '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
-                            '50%': { transform: 'translateY(-20px) rotate(2deg)' },
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
                         },
                         shimmer: {
                             '0%': { backgroundPosition: '-200% center' },
                             '100%': { backgroundPosition: '200% center' }
                         },
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(40px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        pop: {
+                            '0%': { transform: 'scale(0.9)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
                         },
-                        scaleIn: {
-                            '0%': { opacity: '0', transform: 'scale(0.95)' },
-                            '100%': { opacity: '1', transform: 'scale(1)' },
+                        slideUpFade: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
                         }
                     },
                     backgroundImage: {
-                        'gold-metallic': 'linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%)',
-                        'aurora-glow': 'conic-gradient(from 180deg at 50% 50%, #000000 0deg, #1a1a1a 180deg, #000000 360deg)',
-                    },
-                    spacing: {
-                        'safe-top': 'env(safe-area-inset-top)',
-                        'safe-bottom': 'env(safe-area-inset-bottom)',
-                        'safe-left': 'env(safe-area-inset-left)',
-                        'safe-right': 'env(safe-area-inset-right)',
+                        'liquid-gold': 'linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%)',
+                        'dark-void': 'radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%)',
                     }
                 }
             }
@@ -90,10 +83,8 @@
 
     <style>
         :root {
-            --glass-surface: rgba(20, 20, 20, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --gold-glow: 0 0 40px rgba(212, 175, 55, 0.15);
-            --touch-target: 48px; /* Minimum touch target size */
+            --gold-glow: 0 0 30px rgba(212, 175, 55, 0.3);
+            --intense-glow: 0 0 50px rgba(212, 175, 55, 0.6);
         }
 
         body {
@@ -107,205 +98,220 @@
             touch-action: manipulation;
         }
 
-        /* Premium Gold Text */
-        .text-gold-premium {
+        /* Hypnotic Gold Text */
+        .text-hypno-gold {
             background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             background-size: 200% auto;
-            animation: shimmer 5s linear infinite;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            animation: shimmer 3s linear infinite;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+            font-weight: 900;
         }
 
-        /* Ultra Glassmorphism Card - Responsive */
-        .luxury-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+        /* Addictive Card Design */
+        .addict-card {
+            background: rgba(20, 20, 20, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border-radius: 1.5rem; /* Default for mobile */
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-radius: 1.5rem;
         }
 
-        @media (min-width: 768px) {
-            .luxury-card {
-                border-radius: 2rem; /* Larger radius for tablets/desktop */
-            }
-        }
-
-        .luxury-card::before {
+        .addict-card::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.5), transparent);
-            opacity: 0.5;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+            pointer-events: none;
         }
 
-        .luxury-card:hover {
+        .addict-card:hover::before {
+            left: 100%;
+        }
+
+        .addict-card:active {
+            transform: scale(0.96);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .addict-card:hover {
+            border-color: rgba(212, 175, 55, 0.4);
+            box-shadow: var(--gold-glow);
             transform: translateY(-5px);
-            border-color: rgba(212, 175, 55, 0.3);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.1);
         }
 
-        .luxury-card:active {
-            transform: scale(0.98);
-        }
-
-        /* Ambient Background Mesh */
-        .ambient-mesh {
+        /* Dynamic Background */
+        .dynamic-bg {
             position: fixed;
             inset: 0;
             z-index: -1;
-            background: radial-gradient(circle at 50% 50%, #111111 0%, #000000 100%);
+            background: #000;
             overflow: hidden;
         }
         
-        .mesh-orb {
+        .orb {
             position: absolute;
             border-radius: 50%;
             filter: blur(80px);
-            opacity: 0.15;
-            animation: float 15s infinite ease-in-out;
+            opacity: 0.2;
+            animation: float 10s infinite ease-in-out;
+            background: radial-gradient(circle, #D4AF37, transparent 70%);
         }
-        .orb-1 { top: -10%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, #D4AF37, transparent 70%); animation-delay: 0s; }
-        .orb-2 { bottom: -10%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, #5c4d18, transparent 70%); animation-delay: -5s; }
-        .orb-3 { top: 40%; left: 50%; transform: translateX(-50%); width: 40vw; height: 40vw; background: radial-gradient(circle, #2a2a2a, transparent 70%); opacity: 0.2; animation-delay: -10s; }
+        .orb-1 { top: -10%; right: -10%; width: 60vw; height: 60vw; animation-delay: 0s; }
+        .orb-2 { bottom: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, #8A6D18, transparent 70%); animation-delay: -5s; }
+        .orb-3 { top: 40%; left: 50%; transform: translateX(-50%); width: 40vw; height: 40vw; opacity: 0.1; animation-delay: -10s; }
 
         /* Loader */
-        .loader-container {
-            perspective: 1000px;
-        }
         .loader-ring {
             width: 80px;
             height: 80px;
-            border: 1px solid rgba(212, 175, 55, 0.1);
-            border-top: 2px solid #D4AF37;
+            border: 2px solid rgba(212, 175, 55, 0.1);
+            border-top: 3px solid #D4AF37;
             border-radius: 50%;
-            animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
         }
 
-        /* Toast Notification */
+        /* Toast */
         .toast {
             background: rgba(10, 10, 10, 0.95);
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.4);
             backdrop-filter: blur(16px);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            border-right: 3px solid #D4AF37;
-            animation: slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            min-height: var(--touch-target);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(212, 175, 55, 0.2);
+            border-right: 4px solid #D4AF37;
+            animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             display: flex;
             align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            min-width: 280px;
         }
 
         .hidden-view { display: none !important; }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
-
-        /* Touch Feedback */
-        .touch-feedback:active {
-            opacity: 0.7;
-            transform: scale(0.95);
+        /* Button Glow Effect */
+        .glow-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .glow-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            opacity: 0;
+            transform: scale(0.5);
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+        }
+        .glow-btn:active::after {
+            opacity: 1;
+            transform: scale(1);
+            transition: 0s;
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8 relative selection:bg-yellow-900 selection:text-white">
+<body class="flex flex-col items-center justify-start p-4 sm:p-6 relative selection:bg-yellow-900 selection:text-white">
 
-    <!-- Ambient Background -->
-    <div class="ambient-mesh">
-        <div class="mesh-orb orb-1"></div>
-        <div class="mesh-orb orb-2"></div>
-        <div class="mesh-orb orb-3"></div>
+    <!-- Dynamic Background -->
+    <div class="dynamic-bg">
+        <div class="orb orb-1 animate-breathe"></div>
+        <div class="orb orb-2 animate-breathe"></div>
+        <div class="orb orb-3 animate-breathe"></div>
+        <!-- Grid Overlay for Texture -->
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-20"></div>
     </div>
 
     <!-- Toast Container -->
-    <div id="toastContainer" class="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-[100] w-full max-w-xs px-4 pointer-events-none"></div>
+    <div id="toastContainer" class="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-[100] w-full max-w-xs px-4 pointer-events-none flex flex-col items-center"></div>
 
-    <!-- VIEW 1: LOADING (Cinematic) -->
+    <!-- VIEW 1: LOADING (Hypnotic) -->
     <div id="loadingView" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-1000">
-        <div class="loader-container mb-8">
-            <div class="loader-ring"></div>
-            <div class="absolute inset-0 flex items-center justify-center">
-                <i class="fa-solid fa-crown text-gold-400 text-xl animate-pulse"></i>
-            </div>
+        <div class="relative mb-8">
+            <div class="absolute inset-0 bg-gold-400/20 blur-2xl rounded-full animate-pulse-fast"></div>
+            <div class="loader-ring shadow-[0_0_40px_rgba(212,175,55,0.5)]"></div>
+            <i class="fa-solid fa-crown absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gold-300 text-2xl animate-bounce"></i>
         </div>
-        <h2 class="text-2xl sm:text-3xl font-amiri font-bold text-gold-premium tracking-[0.2em] uppercase mb-2 text-center px-4">
-            البوابة الملكية
+        <h2 class="text-3xl font-amiri font-bold text-hypno-gold tracking-[0.2em] uppercase mb-2 text-center px-4">
+            البوابة المطلقة
         </h2>
-        <p class="text-[10px] sm:text-xs text-gray-500 font-mono tracking-[0.3em] opacity-70">SECURE CONNECTION ESTABLISHED</p>
-        <div class="w-24 h-[1px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mt-8"></div>
+        <p class="text-[10px] text-gray-500 font-mono tracking-[0.3em] opacity-70 animate-pulse">جاري تهيئة النظام...</p>
+        <div class="w-32 h-[1px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mt-8 animate-shimmer"></div>
     </div>
 
     <!-- VIEW 2: ACCESS DENIED -->
-    <div id="accessDeniedView" class="hidden-view w-full max-w-md flex flex-col items-center justify-center min-h-[80vh] fade-in-up px-4">
-        <div class="luxury-card p-8 sm:p-10 rounded-[2rem] text-center w-full border-red-900/20 shadow-2xl relative">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent"></div>
-            <div class="w-20 h-20 sm:w-24 sm:h-24 bg-red-900/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 text-3xl sm:text-4xl shadow-inner border border-red-500/10">
+    <div id="accessDeniedView" class="hidden-view w-full max-w-md flex flex-col items-center justify-center min-h-[80vh] animate-slide-up-fade px-4">
+        <div class="addict-card p-10 rounded-[2.5rem] text-center w-full border-red-900/30 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent animate-pulse-fast"></div>
+            <div class="w-24 h-24 bg-red-900/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-8 text-4xl shadow-inner border border-red-500/20 animate-pulse">
                 <i class="fa-solid fa-shield-halved"></i>
             </div>
-            <h2 class="text-2xl sm:text-3xl font-amiri font-bold mb-4 text-white">دخول مرفوض</h2>
-            <p class="text-gray-400 mb-8 sm:mb-10 text-sm leading-relaxed px-2 sm:px-4 font-light">
-                يجب تشغيل هذا التطبيق حصراً من داخل عميل تيليجرام الرسمي لضمان الخصوصية والأمان العالي.
+            <h2 class="text-3xl font-amiri font-bold mb-4 text-white">دخول مرفوض</h2>
+            <p class="text-gray-400 mb-10 text-sm leading-relaxed px-4 font-light">
+                هذا النظام مصمم حصراً لعملاء تيليجرام النخبويين. يرجى فتح التطبيق من المصدر الرسمي.
             </p>
-            <button onclick="window.location.href='https://telegram.org'" class="w-full py-4 rounded-2xl font-bold text-black bg-gold-metallic hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3 touch-feedback">
+            <button onclick="window.location.href='https://telegram.org'" class="w-full py-4 rounded-2xl font-bold text-black bg-liquid-gold hover:shadow-[0_0_50px_rgba(212,175,55,0.6)] transition-all transform hover:-translate-y-2 active:scale-95 flex items-center justify-center gap-3 glow-btn">
                 <i class="fa-brands fa-telegram text-lg"></i>
-                فتح تيليجرام
+                الدخول الآمن
             </button>
         </div>
     </div>
 
-    <!-- VIEW 3: DASHBOARD -->
-    <div id="dashboardView" class="hidden-view w-full max-w-5xl mx-auto space-y-6 sm:space-y-8 pb-24 fade-in-up px-2 sm:px-0">
+    <!-- VIEW 3: DASHBOARD (Addictive UI) -->
+    <div id="dashboardView" class="hidden-view w-full max-w-5xl mx-auto space-y-6 sm:space-y-8 pb-24 animate-slide-up-fade px-2 sm:px-0">
         
         <!-- Header Section -->
-        <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 pt-2">
+        <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2 pt-2">
             <div>
-                <p class="text-[10px] text-gray-500 font-medium mb-1 tracking-widest uppercase">مرحباً بك في</p>
+                <p class="text-[10px] text-gray-500 font-medium mb-1 tracking-widest uppercase flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e] animate-pulse"></span>
+                    نظام نشط
+                </p>
                 <h1 class="text-2xl sm:text-3xl lg:text-4xl font-amiri font-bold text-white tracking-wide drop-shadow-lg">
-                    <span id="headerUserName" class="text-gold-premium">...</span>
+                    أهلاً، <span id="headerUserName" class="text-hypno-gold">...</span>
                 </h1>
-                <div class="flex items-center gap-2 mt-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></span>
-                    <p class="text-[10px] sm:text-xs text-gray-600 font-mono tracking-widest uppercase" id="currentDate">...</p>
-                </div>
+                <p class="text-[10px] text-gray-600 font-mono tracking-widest uppercase mt-2" id="currentDate">...</p>
             </div>
-            <div class="relative group cursor-pointer touch-feedback" onclick="showToast('لا توجد إشعارات جديدة', 'info')">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-900 to-black border border-gray-800 flex items-center justify-center shadow-lg group-hover:border-gold-400/50 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+            <div class="relative group cursor-pointer touch-feedback" onclick="showToast('لا توجد تنبيهات جديدة', 'info')">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-900 to-black border border-gray-800 flex items-center justify-center shadow-lg group-hover:border-gold-400/50 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
                     <i class="fa-solid fa-bell text-gold-400 text-lg"></i>
                 </div>
-                <span class="absolute top-0 right-0 w-3 h-3 bg-red-600 border-2 border-black rounded-full animate-pulse shadow-[0_0_10px_red]"></span>
+                <span class="absolute top-0 right-0 w-3 h-3 bg-red-600 border-2 border-black rounded-full animate-ping"></span>
+                <span class="absolute top-0 right-0 w-3 h-3 bg-red-600 border-2 border-black rounded-full"></span>
             </div>
         </header>
 
-        <!-- Main Profile Card (Hero) - Responsive Layout -->
-        <div class="luxury-card p-1 rounded-[2rem] relative overflow-hidden group border-gold-500/10">
-            <!-- Internal Glow -->
-            <div class="absolute top-0 right-0 w-64 h-64 bg-gold-500/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+        <!-- Main Profile Card (Hero) -->
+        <div class="addict-card p-1 rounded-[2.5rem] relative overflow-hidden group border-gold-500/20">
+            <!-- Internal Dynamic Glow -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-gold-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none group-hover:bg-gold-500/20 transition-colors duration-700"></div>
             
-            <div class="luxury-card p-6 sm:p-8 rounded-[1.8rem] relative z-10 h-full border-none bg-transparent shadow-none">
+            <div class="addict-card p-6 sm:p-8 rounded-[2.2rem] relative z-10 h-full border-none bg-transparent shadow-none">
                 <div class="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
                     <!-- Avatar with Metallic Ring -->
                     <div class="relative shrink-0">
-                        <div class="absolute inset-0 bg-gold-metallic rounded-2xl blur opacity-30 group-hover:opacity-60 transition-opacity duration-700"></div>
-                        <div id="avatarContainer" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-[1.5px] border-gold-400/40 overflow-hidden bg-black relative z-10 shadow-2xl">
+                        <div class="absolute inset-0 bg-liquid-gold rounded-2xl blur opacity-40 group-hover:opacity-70 transition-opacity duration-700 animate-pulse-slow"></div>
+                        <div id="avatarContainer" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-[2px] border-gold-400/50 overflow-hidden bg-black relative z-10 shadow-2xl">
                             <img id="userPhoto" src="" alt="User" class="w-full h-full object-cover hidden">
                             <div id="defaultAvatar" class="w-full h-full flex items-center justify-center text-3xl sm:text-4xl font-bold text-gold-300 bg-gray-900 font-amiri">
                                 <span id="avatarInitials">U</span>
                             </div>
                         </div>
-                        <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-4 border-black rounded-full z-20 shadow-[0_0_15px_#22c55e]"></div>
+                        <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-4 border-black rounded-full z-20 shadow-[0_0_15px_#22c55e] animate-pulse"></div>
                     </div>
 
                     <!-- Info -->
@@ -319,48 +325,56 @@
                         </div>
                     </div>
 
-                    <!-- Balance Mini Card -->
-                    <div class="bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl px-6 py-5 rounded-2xl border border-gold-500/20 flex flex-col items-center min-w-[120px] shadow-2xl relative overflow-hidden group/balance touch-feedback w-full sm:w-auto">
-                        <div class="absolute inset-0 bg-gold-metallic opacity-5 group-hover/balance:opacity-10 transition-opacity"></div>
-                        <span class="text-[10px] text-gray-400 mb-1 font-medium uppercase tracking-[0.15em] relative z-10">الرصيد</span>
+                    <!-- Balance Mini Card (The Hook) -->
+                    <div class="bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl px-6 py-5 rounded-2xl border border-gold-500/30 flex flex-col items-center min-w-[140px] shadow-2xl relative overflow-hidden group/balance touch-feedback w-full sm:w-auto">
+                        <div class="absolute inset-0 bg-liquid-gold opacity-5 group-hover/balance:opacity-10 transition-opacity"></div>
+                        <!-- Sparkles -->
+                        <div class="absolute top-2 right-2 w-1 h-1 bg-white rounded-full animate-ping"></div>
+                        <div class="absolute bottom-3 left-4 w-1 h-1 bg-gold-300 rounded-full animate-ping delay-75"></div>
+                        
+                        <span class="text-[10px] text-gray-400 mb-1 font-medium uppercase tracking-[0.15em] relative z-10">الرصيد الحالي</span>
                         <div class="flex items-center gap-2 text-gold-400 drop-shadow-md relative z-10">
-                            <i class="fa-solid fa-coins text-sm animate-pulse-slow"></i>
-                            <span class="font-bold text-white text-2xl tracking-tight font-mono" id="userBalance">0</span>
+                            <i class="fa-solid fa-coins text-lg animate-spin-slow"></i>
+                            <span class="font-bold text-white text-2xl sm:text-3xl tracking-tight font-mono" id="userBalance">0</span>
+                        </div>
+                        <div class="mt-2 text-[10px] text-green-400 font-medium flex items-center gap-1">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                            <span>+2.5% اليوم</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Stats Grid - Responsive Columns -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Stat 1 -->
-            <div class="luxury-card p-5 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group touch-feedback">
-                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/30 transition-colors group-hover:shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+            <div class="addict-card p-5 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group touch-feedback">
+                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/40 transition-colors group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
                     <i class="fa-solid fa-chart-line text-xl"></i>
                 </div>
-                <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">الأداء العام</span>
+                <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">الأداء</span>
                 <span class="text-white font-bold text-lg font-amiri drop-shadow-sm">ممتاز</span>
             </div>
             <!-- Stat 2 -->
-            <div class="luxury-card p-5 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group touch-feedback">
-                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/30 transition-colors group-hover:shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+            <div class="addict-card p-5 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group touch-feedback">
+                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/40 transition-colors group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
                     <i class="fa-solid fa-crown text-xl"></i>
                 </div>
-                <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">المستوى الحالي</span>
+                <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">المستوى</span>
                 <span class="text-gold-300 font-bold text-lg font-amiri drop-shadow-sm">بلاتيني</span>
             </div>
-            <!-- Stat 3 (Hidden on small mobile, visible on larger) -->
-            <div class="hidden sm:flex luxury-card p-5 rounded-2xl flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group touch-feedback">
-                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/30 transition-colors group-hover:shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+            <!-- Stat 3 -->
+            <div class="hidden sm:flex addict-card p-5 rounded-2xl flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group touch-feedback">
+                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/40 transition-colors group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
                     <i class="fa-solid fa-users text-xl"></i>
                 </div>
-                <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">المستخدمين</span>
+                <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">الشبكة</span>
                 <span class="text-white font-bold text-lg font-amiri drop-shadow-sm">+10K</span>
             </div>
-            <!-- Stat 4 (Hidden on small mobile, visible on larger) -->
-            <div class="hidden sm:flex luxury-card p-5 rounded-2xl flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group touch-feedback">
-                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/30 transition-colors group-hover:shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+            <!-- Stat 4 -->
+            <div class="hidden sm:flex addict-card p-5 rounded-2xl flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group touch-feedback">
+                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/40 transition-colors group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
                     <i class="fa-solid fa-shield-check text-xl"></i>
                 </div>
                 <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">الحماية</span>
@@ -368,46 +382,47 @@
             </div>
         </div>
 
-        <!-- Actions Menu - Responsive Grid -->
-        <div class="luxury-card p-6 sm:p-8 rounded-[2.5rem]">
+        <!-- Actions Menu (Interactive) -->
+        <div class="addict-card p-6 sm:p-8 rounded-[2.5rem]">
             <div class="flex items-center justify-between mb-6 px-1">
-                <h3 class="font-amiri font-bold text-white text-xl sm:text-2xl">القائمة الرئيسية</h3>
-                <span class="text-[9px] sm:text-xs text-gold-500/70 bg-gold-900/10 px-3 py-1 rounded-full border border-gold-500/10 font-mono tracking-wider">v4.0 GOLD</span>
+                <h3 class="font-amiri font-bold text-white text-xl sm:text-2xl">لوحة التحكم</h3>
+                <span class="text-[9px] sm:text-xs text-gold-500/70 bg-gold-900/10 px-3 py-1 rounded-full border border-gold-500/10 font-mono tracking-wider animate-pulse">v5.0 ULTRA</span>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 <!-- Action Item 1 -->
-                <button onclick="handleAction('refresh')" class="w-full p-4 rounded-2xl flex items-center justify-between luxury-card hover:bg-white/5 group border border-transparent hover:border-gold-500/20 bg-transparent shadow-none touch-feedback">
+                <button onclick="handleAction('refresh')" class="w-full p-4 rounded-2xl flex items-center justify-between addict-card hover:bg-white/5 group border border-transparent hover:border-gold-500/30 bg-transparent shadow-none touch-feedback glow-btn">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-gold-400 flex items-center justify-center group-hover:bg-gold-metallic group-hover:text-black transition-all duration-500 shadow-lg group-hover:shadow-[0_0_25px_rgba(212,175,55,0.4)]">
+                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-gold-400 flex items-center justify-center group-hover:bg-liquid-gold group-hover:text-black transition-all duration-500 shadow-lg group-hover:shadow-[0_0_30px_rgba(212,175,55,0.5)]">
                             <i class="fa-solid fa-sync group-hover:animate-spin"></i>
                         </div>
-                        <span class="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">تحديث البيانات</span>
+                        <span class="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">تحديث فوري</span>
                     </div>
                     <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] group-hover:text-gold-400 transition-all duration-300"></i>
                 </button>
 
                 <!-- Action Item 2 -->
-                <button onclick="handleAction('support')" class="w-full p-4 rounded-2xl flex items-center justify-between luxury-card hover:bg-white/5 group border border-transparent hover:border-gold-500/20 bg-transparent shadow-none touch-feedback">
+                <button onclick="handleAction('support')" class="w-full p-4 rounded-2xl flex items-center justify-between addict-card hover:bg-white/5 group border border-transparent hover:border-gold-500/30 bg-transparent shadow-none touch-feedback glow-btn">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-gold-400 flex items-center justify-center group-hover:bg-gold-metallic group-hover:text-black transition-all duration-500 shadow-lg group-hover:shadow-[0_0_25px_rgba(212,175,55,0.4)]">
+                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-gold-400 flex items-center justify-center group-hover:bg-liquid-gold group-hover:text-black transition-all duration-500 shadow-lg group-hover:shadow-[0_0_30px_rgba(212,175,55,0.5)]">
                             <i class="fa-solid fa-headset"></i>
                         </div>
-                        <span class="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">الدعم الفني</span>
+                        <span class="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">دعم النخبة</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_red]"></span>
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-ping shadow-[0_0_10px_red]"></span>
+                        <span class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_10px_red]"></span>
                         <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] group-hover:text-gold-400 transition-all duration-300"></i>
                     </div>
                 </button>
 
                 <!-- Action Item 3 -->
-                <button onclick="handleAction('settings')" class="w-full p-4 rounded-2xl flex items-center justify-between luxury-card hover:bg-white/5 group border border-transparent hover:border-gold-500/20 bg-transparent shadow-none touch-feedback">
+                <button onclick="handleAction('settings')" class="w-full p-4 rounded-2xl flex items-center justify-between addict-card hover:bg-white/5 group border border-transparent hover:border-gold-500/30 bg-transparent shadow-none touch-feedback glow-btn">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-gold-400 flex items-center justify-center group-hover:bg-gold-metallic group-hover:text-black transition-all duration-500 shadow-lg group-hover:shadow-[0_0_25px_rgba(212,175,55,0.4)]">
+                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-gold-400 flex items-center justify-center group-hover:bg-liquid-gold group-hover:text-black transition-all duration-500 shadow-lg group-hover:shadow-[0_0_30px_rgba(212,175,55,0.5)]">
                             <i class="fa-solid fa-gear"></i>
                         </div>
-                        <span class="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">الإعدادات</span>
+                        <span class="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">الإعدادات المتقدمة</span>
                     </div>
                     <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] group-hover:text-gold-400 transition-all duration-300"></i>
                 </button>
@@ -418,7 +433,7 @@
                         <div class="w-12 h-12 rounded-xl bg-gray-900/50 text-gray-600 flex items-center justify-center border border-gray-800">
                             <i class="fa-solid fa-lock"></i>
                         </div>
-                        <span class="text-gray-500 text-sm font-medium">الميزات الحصرية (قريباً)</span>
+                        <span class="text-gray-500 text-sm font-medium">الميزات الأسطورية (قريباً)</span>
                     </div>
                 </button>
             </div>
@@ -453,16 +468,14 @@
             date: document.getElementById('currentDate'),
         };
 
-        // Initialize with Robust Error Handling
+        // Initialize
         function init() {
             tg.expand();
             tg.ready();
             
-            // Set Date
             const now = new Date();
             els.date.textContent = now.toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' });
 
-            // Wait for initData
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 onAuthSuccess(tg.initDataUnsafe.user);
             } else {
@@ -479,8 +492,6 @@
                         }, 500);
                     }
                 });
-
-                // Safety timeout
                 setTimeout(() => {
                     if (!views.dashboard.classList.contains('hidden-view') && !views.denied.classList.contains('hidden-view')) {
                         if (!(tg.initDataUnsafe && tg.initDataUnsafe.user)) {
@@ -522,7 +533,6 @@
             els.headerName.textContent = user.first_name;
             els.userId.textContent = `ID: ${user.id}`;
             
-            // Avatar Logic
             if (user.photo_url) {
                 els.photo.src = user.photo_url;
                 els.photo.classList.remove('hidden');
@@ -534,8 +544,8 @@
                 els.initials.textContent = initials || "U";
             }
 
-            // Animate Balance with Gold Counter
-            animateValue(els.balance, 0, 2500, 2000);
+            // Addictive Counter Animation
+            animateValue(els.balance, 0, 2500, 2500);
         }
 
         function animateValue(obj, start, end, duration) {
@@ -543,8 +553,10 @@
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-                obj.innerHTML = Math.floor(easeOutQuart * (end - start) + start).toLocaleString('en-US');
+                // Elastic easing for addictive feel
+                const easeOutElastic = Math.pow(2, -10 * progress) * Math.sin((progress * 10 - 0.75) * (2 * Math.PI) / 3) + 1;
+                
+                obj.innerHTML = Math.floor(easeOutElastic * (end - start) + start).toLocaleString('en-US');
                 if (progress < 1) {
                     window.requestAnimationFrame(step);
                 }
@@ -553,43 +565,52 @@
         }
 
         function setupMainButton() {
-            tg.MainButton.setText("تحديث الرصيد");
+            tg.MainButton.setText("زيادة الرصيد");
             tg.MainButton.setTextColor("#000000");
             tg.MainButton.setColor("#D4AF37");
             tg.MainButton.show();
             
             tg.MainButton.onClick(() => {
                 tg.HapticFeedback.notificationOccurred('success');
-                showToast('تم مزامنة البيانات بنجاح', 'success');
-                animateValue(els.balance, parseInt(els.balance.innerText.replace(/,/g,'')), parseInt(els.balance.innerText.replace(/,/g,'')) + 100, 1000);
+                showToast('تمت إضافة مكافأة ذهبية!', 'success');
+                
+                // Visual explosion effect on balance
+                const current = parseInt(els.balance.innerText.replace(/,/g,''));
+                animateValue(els.balance, current, current + 500, 1000);
+                
+                // Trigger confetti or particle effect here if possible
             });
         }
 
-        // Utilities
         function copyId() {
             const id = els.userId.textContent.replace('ID: ', '');
             navigator.clipboard.writeText(id).then(() => {
                 tg.HapticFeedback.selectionChanged();
-                showToast('تم نسخ المعرف ID', 'info');
+                showToast('تم نسخ المعرف بنجاح', 'info');
             });
         }
 
         function handleAction(type) {
             tg.HapticFeedback.impactOccurred('light');
             if (type === 'refresh') {
-                showToast('جارٍ تحديث البيانات...', 'info');
-                setTimeout(() => showToast('تم التحديث بنجاح', 'success'), 1000);
+                showToast('جاري تحديث البيانات...', 'info');
+                setTimeout(() => {
+                    showToast('تم التحديث بنجاح', 'success');
+                    // Re-animate balance slightly to show change
+                    const current = parseInt(els.balance.innerText.replace(/,/g,''));
+                    animateValue(els.balance, current, current + 50, 800);
+                }, 1000);
             } else if (type === 'support') {
-                showToast('جارٍ فتح الدعم...', 'info');
+                showToast('جاري الاتصال بالدعم...', 'info');
                 setTimeout(() => tg.openLink('https://telegram.org'), 800);
             } else if (type === 'settings') {
-                showToast('الإعدادات قيد التطوير', 'info');
+                showToast('الإعدادات متاحة قريباً', 'info');
             }
         }
 
         function confirmLogout() {
             tg.HapticFeedback.notificationOccurred('warning');
-            tg.showConfirm("هل أنت متأكد من رغبتك في إنهاء الجلسة؟", (confirmed) => {
+            tg.showConfirm("هل أنت متأكد من رغبتك في مغادرة هذا العالم؟", (confirmed) => {
                 if (confirmed) {
                     tg.close();
                 }
@@ -599,10 +620,10 @@
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            toast.className = 'toast rounded-xl p-4 mb-3 flex items-center gap-3 pointer-events-auto';
+            toast.className = 'toast pointer-events-auto';
             
             let icon = '<i class="fa-solid fa-circle-info text-gold-400 text-lg"></i>';
-            if (type === 'success') icon = '<i class="fa-solid fa-check-circle text-green-500 text-lg"></i>';
+            if (type === 'success') icon = '<i class="fa-solid fa-check-circle text-green-500 text-lg animate-bounce"></i>';
             if (type === 'error') icon = '<i class="fa-solid fa-triangle-exclamation text-red-500 text-lg"></i>';
 
             toast.innerHTML = `${icon}<span class="text-sm font-medium flex-1 text-gray-200">${message}</span>`;
@@ -617,7 +638,6 @@
             }, 3000);
         }
 
-        // Start the app
         init();
     </script>
 </body>
