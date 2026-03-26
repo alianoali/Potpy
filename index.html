@@ -14,8 +14,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts (Amiri for Luxury, Cairo for UI) -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -27,51 +27,61 @@
                         amiri: ['Amiri', 'serif'],
                     },
                     colors: {
+                        // Luxury Gold Palette
                         gold: {
-                            100: '#F9F1D8',
-                            300: '#EAD692',
-                            400: '#D4AF37', /* Classic Gold */
-                            500: '#C5A028',
-                            600: '#AA8820',
-                            700: '#8A6D18',
+                            50: '#FBF8E8',
+                            100: '#F5EDC9',
+                            200: '#EAD692',
+                            300: '#D4AF37', /* Classic Gold */
+                            400: '#C5A028',
+                            500: '#AA8820',
+                            600: '#8A6D18',
+                            700: '#6B5514',
+                            800: '#594713',
                             900: '#4B3B0A',
+                            950: '#2C2205',
                         },
-                        black: {
-                            900: '#050505',
+                        // Deep Luxury Black
+                        rich: {
+                            900: '#020202',
                             800: '#0a0a0a',
-                            700: '#121212',
-                            card: '#1a1a1a',
+                            700: '#111111',
+                            card: '#161616',
                         }
                     },
                     animation: {
-                        'float': 'float 8s ease-in-out infinite',
-                        'shine': 'shine 3s linear infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 10s ease-in-out infinite',
+                        'float-delayed': 'float 10s ease-in-out 5s infinite',
+                        'shine': 'shine 4s linear infinite',
+                        'pulse-slow': 'pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'scale-in': 'scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'scale-in': 'scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'spin-slow': 'spin 8s linear infinite',
                     },
                     keyframes: {
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-15px)' },
+                            '50%': { transform: 'translateY(-20px)' },
                         },
                         shine: {
                             '0%': { backgroundPosition: '-200% center' },
                             '100%': { backgroundPosition: '200% center' }
                         },
                         slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
                         },
                         scaleIn: {
-                            '0%': { opacity: '0', transform: 'scale(0.9)' },
+                            '0%': { opacity: '0', transform: 'scale(0.95)' },
                             '100%': { opacity: '1', transform: 'scale(1)' },
                         }
                     },
                     backgroundImage: {
-                        'gold-gradient': 'linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)',
+                        // Complex Metallic Gradient
+                        'gold-gradient': 'linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%)',
                         'gold-text': 'linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)',
-                        'dark-gradient': 'linear-gradient(to bottom, #000000, #1a1a1a)',
+                        'dark-gradient': 'radial-gradient(circle at top, #1a1a1a 0%, #000000 100%)',
+                        'grid-pattern': "linear-gradient(to right, #ffffff05 1px, transparent 1px), linear-gradient(to bottom, #ffffff05 1px, transparent 1px)"
                     }
                 }
             }
@@ -80,14 +90,14 @@
 
     <style>
         :root {
-            --glass-bg: rgba(20, 20, 20, 0.7);
-            --glass-border: rgba(212, 175, 55, 0.2);
-            --gold-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+            --glass-bg: rgba(22, 22, 22, 0.65);
+            --glass-border: rgba(212, 175, 55, 0.15);
+            --gold-glow: 0 0 30px rgba(212, 175, 55, 0.1);
         }
 
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: #050505;
+            background-color: #020202;
             color: #ffffff;
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
@@ -95,81 +105,107 @@
             padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* Gold Text Effect */
+        /* Advanced Gold Text Effect */
         .text-gold {
             background: var(--gold-text);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             background-size: 200% auto;
-            animation: shine 5s linear infinite;
+            animation: shine 6s linear infinite;
+            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.2);
         }
 
-        /* Gold Border & Glow */
-        .border-gold {
-            border-color: rgba(212, 175, 55, 0.3);
-        }
-        
-        .shadow-gold {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(212, 175, 55, 0.1);
+        /* Premium Borders */
+        .border-gold-premium {
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.05);
         }
 
-        /* Glassmorphism Luxury */
+        /* Ultra Glassmorphism */
         .glass-panel {
-            background: rgba(26, 26, 26, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(212, 175, 55, 0.15);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            background: rgba(22, 22, 22, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle Shine on Cards */
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -50%;
+            width: 100%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent);
+            transform: skewX(-25deg);
+            pointer-events: none;
         }
 
         .glass-card {
-            background: linear-gradient(145deg, rgba(30,30,30,0.4) 0%, rgba(10,10,10,0.4) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            background: linear-gradient(145deg, rgba(30,30,30,0.4) 0%, rgba(10,10,10,0.6) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
         
         .glass-card:hover {
             border-color: rgba(212, 175, 55, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px -10px rgba(212, 175, 55, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.1);
         }
 
         .glass-card:active {
             transform: scale(0.98);
         }
 
-        /* Ambient Background Particles */
+        /* Ambient Background */
         .ambient-glow {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
             overflow: hidden;
             pointer-events: none;
-            background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%);
+            background: radial-gradient(circle at 50% 50%, #111111 0%, #000000 100%);
         }
+        
+        /* Grid Overlay */
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: var(--grid-pattern);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            opacity: 0.3;
+        }
+
         .glow-orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
+            filter: blur(100px);
             opacity: 0.15;
-            animation: float 12s infinite ease-in-out;
+            animation: float 15s infinite ease-in-out;
             background: radial-gradient(circle, #D4AF37 0%, transparent 70%);
         }
-        .glow-1 { top: -10%; right: -10%; width: 400px; height: 400px; animation-delay: 0s; }
-        .glow-2 { bottom: -10%; left: -10%; width: 300px; height: 300px; animation-delay: -6s; }
-        .glow-3 { top: 40%; left: 40%; width: 200px; height: 200px; animation-delay: -3s; opacity: 0.08; }
+        .glow-1 { top: -10%; right: -10%; width: 500px; height: 500px; animation-delay: 0s; }
+        .glow-2 { bottom: -10%; left: -10%; width: 400px; height: 400px; animation-delay: -5s; background: radial-gradient(circle, #8A6D18 0%, transparent 70%); }
+        .glow-3 { top: 40%; left: 40%; width: 300px; height: 300px; animation-delay: -10s; opacity: 0.08; }
 
         /* Loader */
         .loader-ring {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border: 2px solid rgba(212, 175, 55, 0.1);
             border-top-color: #D4AF37;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* Toast */
         .toast-container {
@@ -186,38 +222,47 @@
             background: rgba(10, 10, 10, 0.95);
             border: 1px solid rgba(212, 175, 55, 0.3);
             color: #F9F1D8;
-            padding: 14px 16px;
-            border-radius: 12px;
-            margin-bottom: 10px;
+            padding: 16px 20px;
+            border-radius: 16px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            gap: 14px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            animation: slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             pointer-events: auto;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
+            border-left: 4px solid #D4AF37;
         }
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
+            from { opacity: 0; transform: translateY(-30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .toast.hide { animation: slideUp 0.3s ease forwards; }
-        @keyframes slideUp { to { opacity: 0; transform: translateY(-20px); } }
+        .toast.hide { animation: slideUp 0.4s ease forwards; }
+        @keyframes slideUp { to { opacity: 0; transform: translateY(-30px); } }
 
         .hidden-view { display: none !important; }
-        .fade-in { animation: scale-in 0.5s ease-out forwards; }
+        .fade-in { animation: scale-in 0.6s ease-out forwards; }
         
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
         ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+        /* Input Focus Glow */
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #D4AF37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+        }
     </style>
 </head>
-<body class="flex flex-col items-center justify-start p-4 relative selection:bg-yellow-900 selection:text-white">
+<body class="flex flex-col items-center justify-start p-5 relative selection:bg-yellow-900 selection:text-white">
 
-    <!-- Background -->
+    <!-- Background Elements -->
     <div class="ambient-glow">
+        <div class="grid-overlay"></div>
         <div class="glow-orb glow-1"></div>
         <div class="glow-orb glow-2"></div>
         <div class="glow-orb glow-3"></div>
@@ -228,28 +273,34 @@
 
     <!-- VIEW 1: LOADING -->
     <div id="loadingView" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-700">
-        <div class="loader-ring mb-6 shadow-[0_0_20px_rgba(212,175,55,0.3)]"></div>
-        <h2 class="text-xl font-amiri font-bold text-gold tracking-widest uppercase">
-            جاري الدخول<span class="status-text"></span>
+        <div class="relative mb-8">
+            <div class="absolute inset-0 bg-gold-500/20 blur-xl rounded-full animate-pulse"></div>
+            <div class="loader-ring shadow-[0_0_30px_rgba(212,175,55,0.4)]"></div>
+            <i class="fa-solid fa-crown absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gold-400 text-xl animate-pulse"></i>
+        </div>
+        <h2 class="text-2xl font-amiri font-bold text-gold tracking-widest uppercase mb-2">
+            البوابة الذهبية
         </h2>
-        <p class="text-xs text-gray-500 mt-3 font-mono opacity-60">SECURE CONNECTION ESTABLISHED</p>
+        <p class="text-xs text-gray-500 mt-2 font-mono opacity-60 tracking-[0.2em]">SECURE CONNECTION ESTABLISHED</p>
+        <div class="w-32 h-[1px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mt-6"></div>
     </div>
 
     <!-- VIEW 2: ACCESS DENIED -->
     <div id="accessDeniedView" class="hidden-view w-full max-w-md flex flex-col items-center justify-center min-h-[80vh] fade-in">
-        <div class="glass-panel p-8 rounded-3xl text-center w-full border-red-900/30 shadow-2xl">
-            <div class="w-24 h-24 bg-red-900/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-inner animate-pulse">
+        <div class="glass-panel p-10 rounded-[2rem] text-center w-full border-red-900/30 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent"></div>
+            <div class="w-24 h-24 bg-red-900/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-8 text-4xl shadow-inner animate-pulse border border-red-500/20">
                 <i class="fa-solid fa-shield-halved"></i>
             </div>
-            <h2 class="text-2xl font-amiri font-bold mb-3 text-white">دخول مرفوض</h2>
-            <p class="text-gray-400 mb-8 text-sm leading-relaxed px-4">
-                يجب تشغيل هذا التطبيق حصراً من داخل عميل تيليجرام الرسمي لضمان الخصوصية والأمان.
+            <h2 class="text-3xl font-amiri font-bold mb-4 text-white">دخول مرفوض</h2>
+            <p class="text-gray-400 mb-10 text-sm leading-relaxed px-4 font-light">
+                يجب تشغيل هذا التطبيق حصراً من داخل عميل تيليجرام الرسمي لضمان الخصوصية والأمان العالي.
             </p>
-            <button onclick="window.location.href='https://telegram.org'" class="w-full py-4 rounded-xl font-bold text-black bg-gold-gradient hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all transform hover:-translate-y-1 active:scale-95">
-                <i class="fa-brands fa-telegram ml-2"></i>
+            <button onclick="window.location.href='https://telegram.org'" class="w-full py-4 rounded-xl font-bold text-black bg-gold-gradient hover:shadow-[0_0_30px_rgba(212,175,55,0.5)] transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3">
+                <i class="fa-brands fa-telegram text-lg"></i>
                 فتح تيليجرام
             </button>
-            <button onclick="location.reload()" class="mt-4 text-xs text-gray-600 hover:text-gold-400 underline transition-colors">
+            <button onclick="location.reload()" class="mt-6 text-xs text-gray-600 hover:text-gold-400 underline transition-colors font-mono">
                 إعادة المحاولة
             </button>
         </div>
@@ -259,13 +310,19 @@
     <div id="dashboardView" class="hidden-view w-full max-w-md space-y-6 pb-24 fade-in">
         
         <!-- Header Section -->
-        <header class="flex items-center justify-between mb-6 pt-4">
+        <header class="flex items-center justify-between mb-8 pt-2">
             <div>
-                <h1 class="text-3xl font-amiri font-bold text-white tracking-wide">مرحباً، <span id="headerUserName" class="text-gold">...</span></h1>
-                <p class="text-xs text-gray-500 mt-1 font-mono tracking-wider" id="currentDate">...</p>
+                <p class="text-xs text-gray-500 font-medium mb-1 tracking-wide">مرحباً بك في</p>
+                <h1 class="text-3xl font-amiri font-bold text-white tracking-wide drop-shadow-lg">
+                    <span id="headerUserName" class="text-gold">...</span>
+                </h1>
+                <p class="text-[10px] text-gray-600 mt-2 font-mono tracking-widest uppercase flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e]"></span>
+                    <span id="currentDate">...</span>
+                </p>
             </div>
             <div class="relative group cursor-pointer" onclick="showToast('لا توجد إشعارات جديدة', 'info')">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gray-800 to-black border border-gray-700 flex items-center justify-center shadow-lg group-hover:border-gold-400 transition-all duration-300">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-black border border-gray-700 flex items-center justify-center shadow-lg group-hover:border-gold-400 transition-all duration-300 group-hover:shadow-[0_0_15px_rgba(212,175,55,0.3)]">
                     <i class="fa-solid fa-bell text-gold-400 text-lg"></i>
                 </div>
                 <span class="absolute top-0 right-0 w-3 h-3 bg-red-600 border-2 border-black rounded-full animate-pulse shadow-[0_0_10px_red]"></span>
@@ -273,41 +330,43 @@
         </header>
 
         <!-- Main Profile Card -->
-        <div class="glass-panel p-6 rounded-3xl relative overflow-hidden group">
-            <!-- Decorative Gold Glow -->
-            <div class="absolute top-0 right-0 w-40 h-40 bg-gold-500/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+        <div class="glass-panel p-1 rounded-[2rem] relative overflow-hidden group border-gold-premium">
+            <!-- Decorative Gold Glow Inside Card -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-gold-500/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
             
-            <div class="flex items-center gap-5 relative z-10">
-                <!-- Avatar with Gold Ring -->
-                <div class="relative">
-                    <div class="absolute inset-0 bg-gold-gradient rounded-2xl blur opacity-30 group-hover:opacity-60 transition-opacity duration-500"></div>
-                    <div id="avatarContainer" class="w-20 h-20 rounded-2xl border-2 border-gold-400/50 overflow-hidden bg-black relative z-10 shadow-lg">
-                        <img id="userPhoto" src="" alt="User" class="w-full h-full object-cover hidden">
-                        <div id="defaultAvatar" class="w-full h-full flex items-center justify-center text-2xl font-bold text-gold-300 bg-gray-900 font-amiri">
-                            <span id="avatarInitials">U</span>
+            <div class="glass-panel p-6 rounded-[1.8rem] relative z-10 h-full">
+                <div class="flex items-center gap-6">
+                    <!-- Avatar with Gold Ring -->
+                    <div class="relative shrink-0">
+                        <div class="absolute inset-0 bg-gold-gradient rounded-2xl blur opacity-40 group-hover:opacity-70 transition-opacity duration-500"></div>
+                        <div id="avatarContainer" class="w-24 h-24 rounded-2xl border-2 border-gold-400/50 overflow-hidden bg-black relative z-10 shadow-2xl">
+                            <img id="userPhoto" src="" alt="User" class="w-full h-full object-cover hidden">
+                            <div id="defaultAvatar" class="w-full h-full flex items-center justify-center text-3xl font-bold text-gold-300 bg-gray-900 font-amiri">
+                                <span id="avatarInitials">U</span>
+                            </div>
+                        </div>
+                        <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-4 border-black rounded-full z-20 shadow-[0_0_15px_#22c55e]"></div>
+                    </div>
+
+                    <!-- Info -->
+                    <div class="flex-1 min-w-0">
+                        <h2 class="text-xl font-bold text-white truncate mb-1" id="userName">مستخدم</h2>
+                        <div class="flex items-center gap-2 mt-3">
+                            <div class="bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/5 flex items-center gap-2 group/copy cursor-pointer" onclick="copyId()">
+                                <span class="text-[10px] text-gray-400 font-mono tracking-wider select-all" id="userId">ID: 00000</span>
+                                <i class="fa-regular fa-copy text-gray-600 text-[10px] group-hover/copy:text-gold-400 transition-colors"></i>
+                            </div>
                         </div>
                     </div>
-                    <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-black rounded-full z-20 shadow-[0_0_10px_#22c55e]"></div>
-                </div>
 
-                <!-- Info -->
-                <div class="flex-1 min-w-0">
-                    <h2 class="text-lg font-bold text-white truncate" id="userName">مستخدم</h2>
-                    <div class="flex items-center gap-2 mt-2">
-                        <span class="text-xs text-gray-400 font-mono bg-white/5 px-2.5 py-1 rounded border border-white/5 select-all" id="userId">ID: 00000</span>
-                        <button onclick="copyId()" class="text-gray-500 hover:text-gold-400 hover:bg-white/5 p-1.5 rounded transition-all" title="نسخ المعرف">
-                            <i class="fa-regular fa-copy text-xs"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Balance Mini Card -->
-                <div class="bg-gradient-to-br from-gray-900 to-black backdrop-blur-md px-4 py-3 rounded-2xl border border-gold-500/20 flex flex-col items-center min-w-[90px] shadow-lg relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gold-gradient opacity-5"></div>
-                    <span class="text-[10px] text-gray-400 mb-1 font-medium uppercase tracking-wider relative z-10">الرصيد</span>
-                    <div class="flex items-center gap-1.5 text-gold-400 drop-shadow-md relative z-10">
-                        <i class="fa-solid fa-coins text-xs"></i>
-                        <span class="font-bold text-white text-base tracking-tight font-mono" id="userBalance">0</span>
+                    <!-- Balance Mini Card -->
+                    <div class="bg-gradient-to-br from-gray-900 to-black backdrop-blur-md px-5 py-4 rounded-2xl border border-gold-500/20 flex flex-col items-center min-w-[100px] shadow-xl relative overflow-hidden group/balance">
+                        <div class="absolute inset-0 bg-gold-gradient opacity-5 group-hover/balance:opacity-10 transition-opacity"></div>
+                        <span class="text-[10px] text-gray-400 mb-1 font-medium uppercase tracking-widest relative z-10">الرصيد</span>
+                        <div class="flex items-center gap-2 text-gold-400 drop-shadow-md relative z-10">
+                            <i class="fa-solid fa-coins text-sm animate-pulse-slow"></i>
+                            <span class="font-bold text-white text-xl tracking-tight font-mono" id="userBalance">0</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -315,48 +374,48 @@
 
         <!-- Stats Grid -->
         <div class="grid grid-cols-2 gap-4">
-            <div class="glass-card p-5 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5">
-                <div class="w-12 h-12 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner">
-                    <i class="fa-solid fa-chart-line text-lg"></i>
+            <div class="glass-card p-5 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group">
+                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/30 transition-colors">
+                    <i class="fa-solid fa-chart-line text-xl"></i>
                 </div>
-                <span class="text-gray-500 text-xs mb-1 font-medium">الأداء العام</span>
-                <span class="text-white font-bold text-lg font-amiri">ممتاز</span>
+                <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">الأداء العام</span>
+                <span class="text-white font-bold text-lg font-amiri drop-shadow-sm">ممتاز</span>
             </div>
-            <div class="glass-card p-5 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5">
-                <div class="w-12 h-12 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner">
-                    <i class="fa-solid fa-crown text-lg"></i>
+            <div class="glass-card p-5 rounded-2xl flex flex-col items-center justify-center text-center active:scale-95 transition-transform cursor-default border-t border-white/5 group">
+                <div class="w-14 h-14 rounded-full bg-gray-900/50 text-gold-400 flex items-center justify-center mb-3 border border-gold-500/10 shadow-inner group-hover:border-gold-500/30 transition-colors">
+                    <i class="fa-solid fa-crown text-xl"></i>
                 </div>
-                <span class="text-gray-500 text-xs mb-1 font-medium">المستوى الحالي</span>
-                <span class="text-gold-300 font-bold text-lg font-amiri">بلاتيني</span>
+                <span class="text-gray-500 text-xs mb-1 font-medium tracking-wide">المستوى الحالي</span>
+                <span class="text-gold-300 font-bold text-lg font-amiri drop-shadow-sm">بلاتيني</span>
             </div>
         </div>
 
         <!-- Actions Menu -->
-        <div class="glass-panel p-6 rounded-3xl">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="font-amiri font-bold text-white text-lg">القائمة الرئيسية</h3>
-                <span class="text-[10px] text-gold-500/70 bg-gold-900/10 px-2 py-1 rounded border border-gold-500/10">v4.0 Gold</span>
+        <div class="glass-panel p-6 rounded-[2rem]">
+            <div class="flex items-center justify-between mb-6 px-1">
+                <h3 class="font-amiri font-bold text-white text-xl">القائمة الرئيسية</h3>
+                <span class="text-[10px] text-gold-500/70 bg-gold-900/10 px-3 py-1 rounded-full border border-gold-500/10 font-mono">v4.0 Gold</span>
             </div>
             
             <div class="space-y-3">
                 <!-- Action Item 1 -->
-                <button onclick="handleAction('refresh')" class="w-full p-4 rounded-xl flex items-center justify-between glass-card hover:bg-white/5 group">
+                <button onclick="handleAction('refresh')" class="w-full p-4 rounded-xl flex items-center justify-between glass-card hover:bg-white/5 group border border-transparent hover:border-gold-500/20">
                     <div class="flex items-center gap-4">
-                        <div class="w-11 h-11 rounded-lg bg-gray-900 text-gold-400 flex items-center justify-center group-hover:bg-gold-gradient group-hover:text-black transition-all duration-300 shadow-lg">
-                            <i class="fa-solid fa-sync"></i>
+                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-gold-400 flex items-center justify-center group-hover:bg-gold-gradient group-hover:text-black transition-all duration-300 shadow-lg group-hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]">
+                            <i class="fa-solid fa-sync group-hover:animate-spin"></i>
                         </div>
-                        <span class="text-gray-200 text-sm font-medium">تحديث البيانات</span>
+                        <span class="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">تحديث البيانات</span>
                     </div>
                     <i class="fa-solid fa-chevron-left text-gray-600 text-xs group-hover:translate-x-[-4px] group-hover:text-gold-400 transition-all duration-300"></i>
                 </button>
 
                 <!-- Action Item 2 -->
-                <button onclick="handleAction('support')" class="w-full p-4 rounded-xl flex items-center justify-between glass-card hover:bg-white/5 group">
+                <button onclick="handleAction('support')" class="w-full p-4 rounded-xl flex items-center justify-between glass-card hover:bg-white/5 group border border-transparent hover:border-gold-500/20">
                     <div class="flex items-center gap-4">
-                        <div class="w-11 h-11 rounded-lg bg-gray-900 text-gold-400 flex items-center justify-center group-hover:bg-gold-gradient group-hover:text-black transition-all duration-300 shadow-lg">
+                        <div class="w-12 h-12 rounded-xl bg-gray-900 text-gold-400 flex items-center justify-center group-hover:bg-gold-gradient group-hover:text-black transition-all duration-300 shadow-lg group-hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]">
                             <i class="fa-solid fa-headset"></i>
                         </div>
-                        <span class="text-gray-200 text-sm font-medium">الدعم الفني</span>
+                        <span class="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">الدعم الفني</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_red]"></span>
@@ -365,9 +424,9 @@
                 </button>
 
                 <!-- Action Item 3 (Locked) -->
-                <button disabled class="w-full p-4 rounded-xl flex items-center justify-between opacity-50 cursor-not-allowed border border-dashed border-gray-800 bg-transparent">
+                <button disabled class="w-full p-4 rounded-xl flex items-center justify-between opacity-50 cursor-not-allowed border border-dashed border-gray-800 bg-transparent grayscale">
                     <div class="flex items-center gap-4">
-                        <div class="w-11 h-11 rounded-lg bg-gray-900/50 text-gray-600 flex items-center justify-center">
+                        <div class="w-12 h-12 rounded-xl bg-gray-900/50 text-gray-600 flex items-center justify-center border border-gray-800">
                             <i class="fa-solid fa-lock"></i>
                         </div>
                         <span class="text-gray-500 text-sm font-medium">الميزات الحصرية (قريباً)</span>
@@ -377,7 +436,7 @@
         </div>
 
         <!-- Footer / Logout -->
-        <button onclick="confirmLogout()" class="w-full py-4 rounded-xl font-bold text-red-400/80 hover:text-red-400 hover:bg-red-900/10 transition-all duration-300 border border-transparent hover:border-red-900/30 flex items-center justify-center gap-2.5 group mt-4">
+        <button onclick="confirmLogout()" class="w-full py-4 rounded-xl font-bold text-red-400/80 hover:text-red-400 hover:bg-red-900/10 transition-all duration-300 border border-transparent hover:border-red-900/30 flex items-center justify-center gap-3 group mt-6 backdrop-blur-sm">
             <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
             إنهاء الجلسة
         </button>
@@ -403,7 +462,6 @@
             initials: document.getElementById('avatarInitials'),
             balance: document.getElementById('userBalance'),
             date: document.getElementById('currentDate'),
-            subtext: document.getElementById('loadingSubtext')
         };
 
         // Initialize with Robust Error Handling
@@ -414,9 +472,6 @@
             // Set Date
             const now = new Date();
             els.date.textContent = now.toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' });
-
-            // Update loading text dynamically
-            setTimeout(() => { if(document.querySelector('.status-text')) document.querySelector('.status-text').textContent = "..."; }, 800);
 
             // Wait for initData
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -452,7 +507,7 @@
             switchView('dashboard');
             setupMainButton();
             // Force dark header for luxury feel even if TG theme is light
-            try { tg.setHeaderColor('#050505'); } catch(e){}
+            try { tg.setHeaderColor('#020202'); } catch(e){}
         }
 
         function onAuthFailed() {
