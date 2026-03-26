@@ -4,19 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>بوابة USDT النخبوية | Elite USDT Gateway</title>
     
-    <!-- Tailwind CSS (CDN for speed in this context) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Telegram Web App Script -->
+    <!-- Telegram Web App -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <!-- Font Awesome (Lightweight subset if possible, using CDN) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
@@ -31,36 +26,19 @@
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        usdt: {
-                            green: '#26A17B',
-                            dark: '#1b7a5c',
-                            light: '#4ade80',
-                        },
-                        gold: {
-                            DEFAULT: '#D4AF37',
-                            metallic: '#BF953F',
-                        }
+                        usdt: { green: '#26A17B', dark: '#1b7a5c', light: '#4ade80' },
+                        gold: { DEFAULT: '#D4AF37', metallic: '#BF953F' }
                     },
                     animation: {
                         'float': 'float 8s ease-in-out infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'shimmer': 'shimmer 2s linear infinite',
                         'fade-in-up': 'fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'spin-slow': 'spin 10s linear infinite',
                     },
                     keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        },
-                        shimmer: {
-                            '0%': { backgroundPosition: '-200% center' },
-                            '100%': { backgroundPosition: '200% center' }
-                        },
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+                        shimmer: { '0%': { backgroundPosition: '-200% center' }, '100%': { backgroundPosition: '200% center' } },
+                        fadeInUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
                     },
                     backgroundImage: {
                         'usdt-gradient': 'linear-gradient(135deg, #26A17B 0%, #4ade80 50%, #1b7a5c 100%)',
@@ -72,7 +50,6 @@
     </script>
 
     <style>
-        /* Performance Optimizations */
         body {
             font-family: 'Cairo', sans-serif;
             background-color: #000000;
@@ -81,111 +58,65 @@
             -webkit-tap-highlight-color: transparent;
             min-height: 100vh;
             padding-bottom: env(safe-area-inset-bottom);
-            touch-action: manipulation; /* Prevents double-tap zoom delay */
-            will-change: scroll-position; /* Hint for browser */
+            touch-action: manipulation;
         }
-
-        /* Hardware Accelerated Layers */
-        .hw-accel {
-            transform: translateZ(0);
-            backface-visibility: hidden;
-            perspective: 1000px;
-        }
-
-        /* Optimized Glassmorphism - Reduced Blur for Performance */
+        .hw-accel { transform: translateZ(0); backface-visibility: hidden; perspective: 1000px; }
+        
+        /* Optimized Glassmorphism */
         .glass-card {
             background: rgba(20, 20, 20, 0.6);
-            backdrop-filter: blur(12px); /* Reduced from 24px for speed */
+            backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-top: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); /* Lighter shadow */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.2s;
             will-change: transform, border-color;
             border-radius: 1rem;
         }
+        .glass-card:active { transform: scale(0.98); }
+        .glass-card:hover { border-color: rgba(38, 161, 123, 0.5); transform: translateY(-2px); }
 
-        .glass-card:active {
-            transform: scale(0.98);
-        }
+        .text-glow { text-shadow: 0 0 10px rgba(38, 161, 123, 0.5); }
+        .text-gold-glow { text-shadow: 0 0 10px rgba(212, 175, 55, 0.4); }
 
-        .glass-card:hover {
-            border-color: rgba(38, 161, 123, 0.5);
-            transform: translateY(-2px);
-        }
-
-        /* Text Effects */
-        .text-glow {
-            text-shadow: 0 0 10px rgba(38, 161, 123, 0.5);
-        }
-        
-        .text-gold-glow {
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
-        }
-
-        /* Background Optimization - Using CSS Gradients instead of heavy DOM elements */
         .bg-mesh {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
+            position: fixed; inset: 0; z-index: -1;
             background: 
                 radial-gradient(circle at 15% 50%, rgba(38, 161, 123, 0.15) 0%, transparent 25%),
                 radial-gradient(circle at 85% 30%, rgba(212, 175, 55, 0.1) 0%, transparent 25%),
                 radial-gradient(circle at 50% 80%, rgba(38, 161, 123, 0.1) 0%, transparent 30%),
                 #000000;
-            will-change: background-position;
         }
 
-        /* Loader */
         .loader-ring {
-            width: 60px;
-            height: 60px;
+            width: 60px; height: 60px;
             border: 2px solid rgba(38, 161, 123, 0.1);
             border-top: 3px solid #26A17B;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
 
-        /* Toast */
         .toast {
             background: rgba(10, 10, 10, 0.95);
             border: 1px solid rgba(38, 161, 123, 0.4);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             border-right: 3px solid #26A17B;
             animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            min-width: 260px;
-            pointer-events: auto;
-            transform: translateZ(0); /* Force GPU */
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 16px; border-radius: 12px;
+            margin-bottom: 10px; min-width: 260px;
+            pointer-events: auto; transform: translateZ(0);
         }
 
         .hidden-view { display: none !important; }
-        
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Disable animations for users who prefer reduced motion */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-start p-4 sm:p-6 relative selection:bg-green-900 selection:text-white hw-accel">
 
-    <!-- Optimized Background -->
     <div class="bg-mesh"></div>
-
-    <!-- Toast Container -->
     <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-full max-w-xs px-4 pointer-events-none flex flex-col items-center"></div>
 
     <!-- VIEW 1: LOADING -->
@@ -197,7 +128,7 @@
         <h2 class="text-2xl font-amiri font-bold text-white tracking-wide mb-2 text-center">
             بوابة <span class="text-usdt-green text-glow">USDT</span>
         </h2>
-        <p class="text-[10px] text-gray-500 font-mono tracking-widest uppercase animate-pulse">جاري التهيئة...</p>
+        <p class="text-[10px] text-gray-500 font-mono tracking-widest uppercase animate-pulse">جاري تحميل المحفظة...</p>
     </div>
 
     <!-- VIEW 2: ACCESS DENIED -->
@@ -207,12 +138,9 @@
                 <i class="fa-solid fa-shield-halved"></i>
             </div>
             <h2 class="text-2xl font-amiri font-bold mb-4 text-white">دخول مرفوض</h2>
-            <p class="text-gray-400 mb-8 text-sm leading-relaxed">
-                يرجى فتح التطبيق من داخل تيليجرام الرسمي لضمان الأمان.
-            </p>
+            <p class="text-gray-400 mb-8 text-sm leading-relaxed">يرجى فتح التطبيق من داخل تيليجرام الرسمي.</p>
             <button onclick="window.location.href='https://telegram.org'" class="w-full py-3.5 rounded-xl font-bold text-black bg-usdt-gradient hover:brightness-110 transition-all active:scale-95 flex items-center justify-center gap-2">
-                <i class="fa-brands fa-telegram"></i>
-                فتح تيليجرام
+                <i class="fa-brands fa-telegram"></i> فتح تيليجرام
             </button>
         </div>
     </div>
@@ -265,7 +193,7 @@
                         </div>
                     </div>
 
-                    <!-- Balance -->
+                    <!-- Balance (Dynamic from Storage) -->
                     <div class="bg-gradient-to-br from-gray-900 to-black px-5 py-4 rounded-xl border border-usdt-green/30 flex flex-col items-center min-w-[130px] relative overflow-hidden active:scale-95 transition-transform cursor-pointer w-full sm:w-auto" onclick="handleAction('refresh')">
                         <div class="absolute inset-0 bg-usdt-gradient opacity-5"></div>
                         <div class="flex items-center gap-2 mb-1 relative z-10">
@@ -397,6 +325,29 @@
             date: document.getElementById('currentDate'),
         };
 
+        // --- DATABASE LOGIC (LocalStorage) ---
+        const DB_KEY_PREFIX = 'usdt_gateway_user_';
+        
+        function getUserData(userId) {
+            const key = DB_KEY_PREFIX + userId;
+            const stored = localStorage.getItem(key);
+            if (stored) {
+                return JSON.parse(stored);
+            }
+            // Default Data for New Users
+            return {
+                balance: 0.00,
+                joinedAt: new Date().toISOString(),
+                lastActive: new Date().toISOString()
+            };
+        }
+
+        function saveUserData(userId, data) {
+            const key = DB_KEY_PREFIX + userId;
+            data.lastActive = new Date().toISOString();
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
         function init() {
             tg.expand();
             tg.ready();
@@ -469,8 +420,15 @@
                 els.initials.textContent = initials || "U";
             }
 
-            // Smooth counter animation using requestAnimationFrame
-            animateValue(els.balance, 0, 2500.50, 1500);
+            // Load Balance from LocalStorage
+            const userData = getUserData(user.id);
+            
+            // Animate from 0 to Stored Balance
+            animateValue(els.balance, 0, userData.balance, 1500);
+            
+            // Store current user data in global scope for easy access
+            window.currentUserData = userData;
+            window.currentUserId = user.id;
         }
 
         function animateValue(obj, start, end, duration) {
@@ -478,7 +436,6 @@
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                // Simple easeOutQuad for performance
                 const ease = 1 - (1 - progress) * (1 - progress);
                 
                 const currentVal = ease * (end - start) + start;
@@ -499,9 +456,21 @@
             
             tg.MainButton.onClick(() => {
                 tg.HapticFeedback.notificationOccurred('success');
-                showToast('تمت إضافة مكافأة USDT!', 'success');
-                const current = parseFloat(els.balance.innerText.replace(/,/g,''));
-                animateValue(els.balance, current, current + 50.00, 800);
+                
+                // Calculate new balance
+                const currentBalance = window.currentUserData.balance;
+                const reward = 50.00; // Fixed reward for demo
+                const newBalance = currentBalance + reward;
+                
+                // Update State
+                window.currentUserData.balance = newBalance;
+                
+                // Save to Database (LocalStorage)
+                saveUserData(window.currentUserId, window.currentUserData);
+                
+                // Update UI
+                showToast(`تمت إضافة ${reward} USDT!`, 'success');
+                animateValue(els.balance, currentBalance, newBalance, 800);
             });
         }
 
@@ -516,18 +485,34 @@
         function handleAction(type) {
             tg.HapticFeedback.impactOccurred('light');
             if (type === 'refresh') {
-                showToast('جاري التحديث...', 'info');
+                showToast('جاري تحديث البيانات...', 'info');
                 setTimeout(() => {
-                    showToast('تم التحديث بنجاح', 'success');
-                    const current = parseFloat(els.balance.innerText.replace(/,/g,''));
-                    animateValue(els.balance, current, current + 0.50, 600);
+                    // Simulate small market fluctuation
+                    const currentBalance = window.currentUserData.balance;
+                    const fluctuation = (Math.random() * 2) - 1; // Random between -1 and 1
+                    const newBalance = Math.max(0, currentBalance + fluctuation);
+                    
+                    window.currentUserData.balance = newBalance;
+                    saveUserData(window.currentUserId, window.currentUserData);
+                    
+                    showToast('تم تحديث السوق بنجاح', 'success');
+                    animateValue(els.balance, currentBalance, newBalance, 600);
                 }, 800);
             } else if (type === 'support') {
                 showToast('جاري الاتصال...', 'info');
                 setTimeout(() => tg.openLink('https://telegram.org'), 600);
             } else if (type === 'withdraw') {
-                showToast('جارٍ المعالجة...', 'info');
-                setTimeout(() => showToast('تم إرسال الطلب', 'success'), 1000);
+                if (window.currentUserData.balance < 10) {
+                    showToast('الحد الأدنى للسحب 10 USDT', 'error');
+                } else {
+                    showToast('جارٍ معالجة الطلب...', 'info');
+                    setTimeout(() => {
+                        window.currentUserData.balance = 0;
+                        saveUserData(window.currentUserId, window.currentUserData);
+                        animateValue(els.balance, parseFloat(els.balance.innerText.replace(/,/g,'')), 0, 1000);
+                        showToast('تم سحب الرصيد بنجاح', 'success');
+                    }, 1500);
+                }
             }
         }
 
@@ -552,7 +537,6 @@
             container.appendChild(toast);
             tg.HapticFeedback.impactOccurred('light');
 
-            // Cleanup
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateY(-20px)';
