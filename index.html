@@ -3,315 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بوابة تيليجرام الآمنة</title>
+    <title>Cyber Catcher Pro</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Telegram Web App Script -->
+    <!-- Telegram Web App -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts (Cairo) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        cairo: ['Cairo', 'sans-serif'],
-                    },
-                    colors: {
-                        tg-bg: 'var(--tg-theme-bg-color, #0f172a)',
-                        tg-text: 'var(--tg-theme-text-color, #ffffff)',
-                        tg-button: 'var(--tg-theme-button-color, #3b82f6)',
-                        tg-button-text: 'var(--tg-theme-button-text-color, #ffffff)',
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --primary: #3b82f6;
+            --accent: #8b5cf6;
+            --bg-dark: #0f172a;
+        }
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: var(--tg-theme-bg-color, #0f172a);
+            background-color: var(--tg-theme-bg-color, var(--bg-dark));
             color: var(--tg-theme-text-color, #ffffff);
-            overflow-x: hidden;
-            margin: 0;
-            padding: 0;
+            overflow: hidden; /* منع التمرير أثناء اللعب */
+            touch-action: none;
+            user-select: none;
             -webkit-tap-highlight-color: transparent;
-            touch-action: none; /* لمنع التكبير والسحب أثناء اللعب */
         }
 
-        /* خلفية متحركة ناعمة */
-        .ambient-light {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-            pointer-events: none;
+        /* خلفية متحركة احترافية */
+        .cyber-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            perspective: 500px;
+            transform-style: preserve-3d;
+            z-index: -2;
+            opacity: 0.3;
         }
         .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.4;
-            animation: float 10s infinite ease-in-out;
+            position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5;
+            animation: floatOrb 10s infinite ease-in-out alternate;
         }
-        .orb-1 { top: -10%; right: -10%; width: 300px; height: 300px; background: #3b82f6; animation-delay: 0s; }
-        .orb-2 { bottom: -10%; left: -10%; width: 250px; height: 250px; background: #8b5cf6; animation-delay: 5s; }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(20px, 40px); }
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 50px); }
         }
 
-        /* Animations */
-        @keyframes slideUpFade {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-enter {
-            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        /* Glassmorphism Cards */
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        /* تأثيرات الزجاج */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        /* Loader */
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: var(--tg-theme-button-color, #3b82f6);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        /* Canvas Styling */
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
+        .neon-text {
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.8), 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+        
         .hidden-content { display: none !important; }
         
-        /* Avatar Placeholder */
-        .default-avatar {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-            font-weight: bold;
-        }
-
-        /* --- GAME STYLES --- */
-        #gameCanvas {
-            background: rgba(15, 23, 42, 0.9);
-            border-radius: 12px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-            touch-action: none;
-            cursor: pointer;
-        }
-        .game-overlay {
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-        }
+        /* Animations */
+        .pop-in { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-5 relative">
+<body class="h-screen w-full flex flex-col relative">
 
-    <!-- Background Elements -->
-    <div class="ambient-light">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-    </div>
+    <!-- Background Effects -->
+    <div class="cyber-grid"></div>
+    <div class="orb" style="top: -10%; right: -10%; width: 300px; height: 300px; background: #3b82f6;"></div>
+    <div class="orb" style="bottom: -10%; left: -10%; width: 250px; height: 250px; background: #8b5cf6; animation-delay: -5s;"></div>
 
-    <!-- STATE 1: LOADING -->
-    <div id="loadingState" class="flex flex-col items-center justify-center text-center space-y-6 animate-enter">
-        <div class="spinner"></div>
-        <div>
-            <h2 class="text-xl font-bold text-white mb-1">جاري التحقق...</h2>
-            <p class="text-sm text-gray-400">نحن نتأكد من هويتك عبر تيليجرام</p>
-        </div>
-    </div>
-
-    <!-- STATE 2: ACCESS DENIED -->
-    <div id="accessDeniedState" class="hidden-content glass-card p-8 rounded-3xl shadow-2xl text-center max-w-md w-full animate-enter border-red-500/20">
-        <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
-            <i class="fa-solid fa-shield-halved"></i>
-        </div>
-        <h2 class="text-2xl font-bold mb-2 text-white">دخول محظور</h2>
-        <p class="text-gray-400 mb-8 leading-relaxed text-sm">
-            يجب فتح هذا التطبيق حصراً من خلال بوت تيليجرام الرسمي لضمان الأمان.
-        </p>
-        <a href="https://telegram.org" target="_blank" class="block w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg shadow-blue-500/20">
-            <i class="fa-brands fa-telegram ml-2"></i>
-            فتح تيليجرام
-        </a>
-    </div>
-
-    <!-- STATE 3: DASHBOARD -->
-    <div id="dashboardState" class="hidden-content w-full max-w-md space-y-5 animate-enter pb-10">
-        
-        <!-- Header Profile Card -->
-        <div class="glass-card p-5 rounded-3xl relative overflow-hidden group">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
-
-            <div class="flex items-center gap-4 relative z-10">
-                <div id="userPhotoContainer" class="w-16 h-16 rounded-2xl border border-white/10 overflow-hidden bg-slate-800 shadow-lg flex-shrink-0">
-                    <img id="userPhoto" src="" alt="User" class="w-full h-full object-cover hidden">
-                    <div id="defaultAvatar" class="w-full h-full default-avatar hidden">
-                        <span id="avatarInitials">U</span>
-                    </div>
-                </div>
-
-                <div class="flex-1 min-w-0">
-                    <h2 class="text-lg font-bold text-white truncate" id="userName">مستخدم</h2>
-                    <p class="text-xs text-gray-400 font-mono mt-0.5" id="userId">ID: 00000</p>
-                    
-                    <div class="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-green-500/10 border border-green-500/20">
-                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                        <span class="text-[10px] font-bold text-green-400 uppercase tracking-wide">نشط الآن</span>
-                    </div>
-                </div>
-
-                <div class="flex flex-col items-end justify-center bg-slate-900/50 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/5 shadow-lg">
-                    <span class="text-[10px] text-gray-400 font-medium mb-0.5">الرصيد الحالي</span>
-                    <div class="flex items-center gap-1.5">
-                        <i class="fa-solid fa-coins text-yellow-400 text-sm drop-shadow-md"></i>
-                        <span class="font-bold text-white text-base tracking-tight" id="userBalance">٠</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-2 gap-4">
-            <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
-                <div class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2">
-                    <i class="fa-solid fa-chart-pie"></i>
-                </div>
-                <span class="text-gray-400 text-xs mb-1">الإحصائيات</span>
-                <span class="text-white font-bold text-lg">100%</span>
-            </div>
-            <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors cursor-default">
-                <div class="w-10 h-10 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2">
-                    <i class="fa-solid fa-crown"></i>
-                </div>
-                <span class="text-gray-400 text-xs mb-1">الرتبة</span>
-                <span class="text-white font-bold text-lg">مميز</span>
-            </div>
-        </div>
-
-        <!-- Main Actions Area -->
-        <div class="glass-card p-5 rounded-3xl">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="font-bold text-white text-lg">القائمة الرئيسية</h3>
-                <span class="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded-lg">v2.0</span>
+    <!-- MAIN DASHBOARD -->
+    <div id="dashboard" class="flex-1 flex flex-col items-center justify-center p-6 z-10 transition-opacity duration-500">
+        <div class="glass-panel p-8 rounded-3xl w-full max-w-md text-center pop-in">
+            <div class="w-24 h-24 mx-auto bg-gradient-to-tr from-blue-600 to-purple-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30 mb-6 animate-pulse">
+                <i class="fa-solid fa-gamepad text-4xl text-white"></i>
             </div>
             
-            <div class="space-y-3">
-                <!-- Game Button (NEW) -->
-                <button onclick="openGame()" class="w-full p-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-between shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 transition-all active:scale-95">
-                    <span class="flex items-center gap-3 text-white font-bold">
-                        <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                            <i class="fa-solid fa-gamepad text-xl"></i>
-                        </div>
-                        <div class="text-right">
-                            <span class="block text-sm">لعبة صائد الجوائز</span>
-                            <span class="block text-[10px] text-white/70 font-normal">اربح نقاط إضافية!</span>
-                        </div>
-                    </span>
-                    <i class="fa-solid fa-chevron-left text-white/50"></i>
-                </button>
+            <h1 class="text-3xl font-black text-white mb-2 neon-text">سايبر كاتشر</h1>
+            <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+                مهمة لجمع البيانات المشفرة.<br>تجنب الفيروسات الحمراء واجمع الماس الأزرق!
+            </p>
 
-                <!-- Info Message -->
-                <div class="bg-blue-500/5 border border-blue-500/10 rounded-xl p-4 flex items-start gap-3">
-                    <i class="fa-solid fa-circle-info text-blue-400 mt-1"></i>
-                    <div>
-                        <p class="text-sm text-blue-100 font-medium">مرحباً بك في البوابة الآمنة</p>
-                        <p class="text-xs text-blue-200/60 mt-1 leading-relaxed">
-                            جميع خدماتك متاحة الآن. يمكنك متابعة آخر التحديثات من خلال القناة الرسمية.
-                        </p>
-                    </div>
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-slate-800/50 p-4 rounded-2xl border border-white/5">
+                    <span class="block text-xs text-gray-500 mb-1">أعلى نتيجة</span>
+                    <span id="highScoreDisplay" class="text-xl font-bold text-yellow-400">0</span>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-2xl border border-white/5">
+                    <span class="block text-xs text-gray-500 mb-1">الحالة</span>
+                    <span class="text-xl font-bold text-green-400">متصل</span>
                 </div>
             </div>
-        </div>
 
-        <!-- Logout Button -->
-        <button onclick="logout()" class="w-full py-4 rounded-xl font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-transparent hover:border-red-500/20 flex items-center justify-center gap-2 group">
-            <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
-            تسجيل الخروج
-        </button>
+            <button onclick="openGame()" class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-600/30 transform transition-all active:scale-95 flex items-center justify-center gap-3 group">
+                <span>ابدأ المهمة</span>
+                <i class="fa-solid fa-rocket group-hover:-translate-y-1 transition-transform"></i>
+            </button>
+        </div>
     </div>
 
-    <!-- GAME MODAL OVERLAY -->
-    <div id="gameModal" class="fixed inset-0 z-50 hidden-content game-overlay flex flex-col items-center justify-center p-4">
-        <div class="w-full max-w-md flex flex-col h-[80vh]">
-            <!-- Game Header -->
-            <div class="flex justify-between items-center mb-4 text-white">
-                <div>
-                    <h3 class="font-bold text-lg">صائد الجوائز</h3>
-                    <p class="text-xs text-gray-400">اسحب لتحريك السلة</p>
+    <!-- GAME OVERLAY -->
+    <div id="gameOverlay" class="fixed inset-0 z-50 bg-[#0f172a] hidden-content flex flex-col">
+        <!-- HUD -->
+        <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-start z-20 pointer-events-none">
+            <div class="flex flex-col">
+                <span class="text-[10px] text-gray-400 uppercase tracking-widest">النقاط</span>
+                <span id="scoreEl" class="text-4xl font-black text-white neon-text">0</span>
+            </div>
+            
+            <!-- Health Bar -->
+            <div class="w-32 mt-2">
+                <div class="flex justify-between text-[10px] text-gray-400 mb-1">
+                    <span>الدرع</span>
+                    <span id="healthText">100%</span>
                 </div>
-                <div class="flex gap-4">
-                    <div class="text-center">
-                        <span class="block text-[10px] text-gray-400">النقاط</span>
-                        <span id="gameScore" class="font-bold text-yellow-400 text-xl">0</span>
-                    </div>
-                    <div class="text-center">
-                        <span class="block text-[10px] text-gray-400">الوقت</span>
-                        <span id="gameTime" class="font-bold text-blue-400 text-xl">30</span>
-                    </div>
+                <div class="h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                    <div id="healthBar" class="h-full bg-gradient-to-l from-green-400 to-emerald-500 w-full transition-all duration-200"></div>
                 </div>
-                <button onclick="closeGame()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20">
-                    <i class="fa-solid fa-times"></i>
-                </button>
             </div>
 
-            <!-- Canvas Container -->
-            <div class="relative flex-1 w-full bg-slate-900/50 rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
-                <canvas id="gameCanvas"></canvas>
-                
-                <!-- Start Screen Overlay -->
-                <div id="startScreen" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 z-10">
-                    <div class="w-20 h-20 bg-gradient-to-tr from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-4 shadow-lg animate-bounce">
-                        <i class="fa-solid fa-gift text-3xl text-white"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-white mb-2">جاهز للتحدي؟</h2>
-                    <p class="text-gray-400 text-sm mb-6 text-center px-8">اجمع الهدايا 🎁 وتجنب القنابل 💣</p>
-                    <button onclick="startGame()" class="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold shadow-lg shadow-blue-600/30 transition-all transform hover:scale-105">
-                        ابدأ اللعب
+            <button onclick="closeGame()" class="pointer-events-auto w-10 h-10 rounded-full bg-white/10 backdrop-blur flex items-center justify-center hover:bg-white/20 transition-colors border border-white/10">
+                <i class="fa-solid fa-pause text-white"></i>
+            </button>
+        </div>
+
+        <!-- Game Area -->
+        <div class="flex-1 relative overflow-hidden p-4 flex items-center justify-center">
+            <canvas id="gameCanvas"></canvas>
+
+            <!-- Start Screen inside Canvas -->
+            <div id="startScreen" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 backdrop-blur-sm z-30">
+                <div class="text-center pop-in">
+                    <i class="fa-solid fa-shield-halved text-6xl text-blue-500 mb-4 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"></i>
+                    <h2 class="text-2xl font-bold text-white mb-6">هل أنت جاهز؟</h2>
+                    <button onclick="startGame()" class="px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold shadow-[0_0_20px_rgba(37,99,235,0.5)] transition-all transform hover:scale-105 active:scale-95">
+                        اضغط للبدء
                     </button>
                 </div>
+            </div>
 
-                <!-- Game Over Overlay -->
-                <div id="gameOverScreen" class="hidden-content absolute inset-0 flex flex-col items-center justify-center bg-slate-900/95 z-20">
-                    <div class="text-center">
-                        <h2 class="text-3xl font-bold text-white mb-2">انتهت اللعبة!</h2>
-                        <div class="my-6">
-                            <p class="text-gray-400 text-sm">مجموع النقاط</p>
-                            <p id="finalScore" class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 mt-2">0</p>
-                        </div>
-                        <div class="flex gap-3 justify-center">
-                            <button onclick="closeGame()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors">
-                                خروج
-                            </button>
-                            <button onclick="startGame()" class="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-500 shadow-lg shadow-blue-600/30 transition-colors">
-                                العب مجدداً
-                            </button>
-                        </div>
+            <!-- Game Over Screen -->
+            <div id="gameOverScreen" class="hidden-content absolute inset-0 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-md z-40">
+                <div class="text-center pop-in">
+                    <div class="text-6xl mb-4 animate-bounce">💀</div>
+                    <h2 class="text-3xl font-black text-white mb-2">فشلت المهمة</h2>
+                    <div class="my-6 bg-slate-800/50 p-4 rounded-2xl border border-white/5">
+                        <p class="text-gray-400 text-xs uppercase tracking-wider">النتيجة النهائية</p>
+                        <p id="finalScore" class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mt-2">0</p>
+                    </div>
+                    <div class="flex gap-3 justify-center mt-6">
+                        <button onclick="closeGame()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors">خروج</button>
+                        <button onclick="startGame()" class="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:bg-blue-500 transition-colors">إعادة</button>
                     </div>
                 </div>
             </div>
@@ -321,254 +178,361 @@
     <script>
         const tg = window.Telegram.WebApp;
         
-        // DOM Elements
-        const loadingState = document.getElementById('loadingState');
-        const accessDeniedState = document.getElementById('accessDeniedState');
-        const dashboardState = document.getElementById('dashboardState');
-        
-        const userNameEl = document.getElementById('userName');
-        const userIdEl = document.getElementById('userId');
-        const userPhotoEl = document.getElementById('userPhoto');
-        const defaultAvatarEl = document.getElementById('defaultAvatar');
-        const avatarInitialsEl = document.getElementById('avatarInitials');
-        const userBalanceEl = document.getElementById('userBalance');
-
-        function initApp() {
+        // --- INITIALIZATION ---
+        function init() {
             tg.expand();
             tg.ready();
+            // Load High Score
+            const savedScore = localStorage.getItem('cyberCatcher_highScore');
+            if(savedScore) document.getElementById('highScoreDisplay').innerText = savedScore;
+        }
+        init();
 
-            // Security Check
-            if (!tg.initData || !tg.initDataUnsafe.user) {
-                showAccessDenied();
-                return;
-            }
-
-            const user = tg.initDataUnsafe.user;
+        // --- AUDIO SYSTEM (Procedural Sound Synthesis) ---
+        // لا يحتاج لملفات خارجية، يولد الصوت باستخدام المتصفح
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
             
-            // Set User Data
-            const fullName = `${user.first_name} ${user.last_name || ''}`.trim();
-            userNameEl.textContent = fullName || "مستخدم تيليجرام";
-            userIdEl.textContent = `ID: ${user.id}`;
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
             
-            // Handle Avatar
-            if (user.photo_url) {
-                userPhotoEl.src = user.photo_url;
-                userPhotoEl.classList.remove('hidden');
-                defaultAvatarEl.classList.add('hidden');
-            } else {
-                userPhotoEl.classList.add('hidden');
-                defaultAvatarEl.classList.remove('hidden');
-                const initials = (user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '')).toUpperCase();
-                avatarInitialsEl.textContent = initials || "U";
+            const now = audioCtx.currentTime;
+            
+            if (type === 'coin') {
+                // صوت عملة معدنية نقي
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1200, now);
+                osc.frequency.exponentialRampToValueAtTime(1800, now + 0.1);
+                gainNode.gain.setValueAtTime(0.2, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'hit') {
+                // صوت ضرر خشن
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.3);
+                gainNode.gain.setValueAtTime(0.3, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'over') {
+                // صوت نهاية اللعبة
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.linearRampToValueAtTime(50, now + 0.6);
+                gainNode.gain.setValueAtTime(0.4, now);
+                gainNode.gain.linearRampToValueAtTime(0.01, now + 0.6);
+                osc.start(now);
+                osc.stop(now + 0.6);
             }
-
-            // Format Balance
-            const balance = 1234; 
-            userBalanceEl.textContent = balance.toLocaleString('en-US'); 
-
-            // Transition to Dashboard
-            setTimeout(() => {
-                loadingState.style.display = 'none';
-                dashboardState.classList.remove('hidden-content');
-                dashboardState.style.display = 'block';
-                
-                tg.MainButton.setText("تحديث البيانات");
-                tg.MainButton.setTextColor("#ffffff");
-                tg.MainButton.setColor("#3b82f6");
-                tg.MainButton.show();
-            }, 1200);
         }
 
-        function showAccessDenied() {
-            loadingState.style.display = 'none';
-            accessDeniedState.classList.remove('hidden-content');
-            accessDeniedState.style.display = 'block';
-            try { tg.setHeaderColor('#ef4444'); } catch(e){}
-        }
-
-        function logout() {
-            tg.close();
-        }
-
-        tg.MainButton.onClick(function() {
-            tg.showPopup({
-                title: 'نظام آمن',
-                message: `أهلاً ${tg.initDataUnsafe.user.first_name}، اتصالك مشفر ومحمي بالكامل.`,
-                buttons: [{type: 'ok', text: 'حسناً'}]
-            });
-        });
-
-        // ================= GAME LOGIC =================
-        const gameModal = document.getElementById('gameModal');
+        // --- GAME ENGINE ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const scoreEl = document.getElementById('gameScore');
-        const timeEl = document.getElementById('gameTime');
-        const startScreen = document.getElementById('startScreen');
-        const gameOverScreen = document.getElementById('gameOverScreen');
+        const scoreEl = document.getElementById('scoreEl');
         const finalScoreEl = document.getElementById('finalScore');
-
-        let gameLoopId;
-        let score = 0;
-        let timeLeft = 30;
-        let isPlaying = false;
-        let playerX = 0;
-        let items = []; // Falling items
+        const healthBar = document.getElementById('healthBar');
+        const healthText = document.getElementById('healthText');
         
-        // Resize Canvas
-        function resizeCanvas() {
+        let gameState = {
+            isPlaying: false,
+            score: 0,
+            health: 100,
+            frames: 0,
+            difficulty: 1,
+            width: 0,
+            height: 0
+        };
+
+        let player = { x: 0, y: 0, width: 70, targetX: 0 };
+        let items = [];
+        let particles = [];
+        let animationId;
+
+        // Resize Handling
+        function resize() {
             const rect = canvas.parentElement.getBoundingClientRect();
             canvas.width = rect.width;
             canvas.height = rect.height;
-            playerX = canvas.width / 2;
+            gameState.width = canvas.width;
+            gameState.height = canvas.height;
+            player.y = canvas.height - 60;
+            player.x = canvas.width / 2;
+            player.targetX = canvas.width / 2;
+        }
+        window.addEventListener('resize', resize);
+
+        // Input Handling
+        function handleInput(clientX) {
+            const rect = canvas.getBoundingClientRect();
+            player.targetX = clientX - rect.left;
+        }
+        canvas.addEventListener('mousemove', e => handleInput(e.clientX));
+        canvas.addEventListener('touchmove', e => {
+            e.preventDefault(); // Prevent scrolling
+            handleInput(e.touches[0].clientX);
+        }, { passive: false });
+
+        // --- CLASSES ---
+        class Particle {
+            constructor(x, y, color, speed) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * speed;
+                this.vx = Math.cos(angle) * velocity;
+                this.vy = Math.sin(angle) * velocity;
+                this.life = 1.0;
+                this.decay = Math.random() * 0.03 + 0.02;
+                this.size = Math.random() * 3 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+                this.size *= 0.95;
+            }
+            draw(ctx) {
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
         }
 
-        function openGame() {
-            gameModal.classList.remove('hidden-content');
-            gameModal.style.display = 'flex';
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
+        class Item {
+            constructor() {
+                this.radius = 15;
+                this.x = Math.random() * (gameState.width - 40) + 20;
+                this.y = -30;
+                // Physics with randomness
+                this.speedY = (Math.random() * 2 + 3) + (gameState.difficulty * 0.4);
+                this.rotation = 0;
+                this.rotSpeed = (Math.random() - 0.5) * 0.1;
+                
+                // 25% chance for bomb, increases with difficulty
+                this.isBomb = Math.random() < Math.min(0.25 + (gameState.difficulty * 0.02), 0.45);
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.rotation += this.rotSpeed;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+
+                // Glow Effect
+                ctx.shadowBlur = 15;
+                
+                if (this.isBomb) {
+                    // Draw Bomb (Red Triangle)
+                    ctx.shadowColor = '#ef4444';
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.moveTo(0, -12);
+                    ctx.lineTo(10, 8);
+                    ctx.lineTo(-10, 8);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    // Inner Detail
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(0, 2, 3, 0, Math.PI*2);
+                    ctx.fill();
+                } else {
+                    // Draw Diamond (Blue Gem)
+                    ctx.shadowColor = '#3b82f6';
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.beginPath();
+                    ctx.moveTo(0, -14);
+                    ctx.lineTo(12, 0);
+                    ctx.lineTo(0, 14);
+                    ctx.lineTo(-12, 0);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    // Shine
+                    ctx.fillStyle = '#bfdbfe';
+                    ctx.beginPath();
+                    ctx.moveTo(0, -14);
+                    ctx.lineTo(4, -6);
+                    ctx.lineTo(0, -2);
+                    ctx.lineTo(-4, -6);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
         }
 
-        function closeGame() {
-            stopGame();
-            gameModal.classList.add('hidden-content');
-            gameModal.style.display = 'none';
-            window.removeEventListener('resize', resizeCanvas);
+        // --- CORE FUNCTIONS ---
+        function createExplosion(x, y, color) {
+            for(let i=0; i<15; i++) {
+                particles.push(new Particle(x, y, color, 4));
+            }
+        }
+
+        function shakeScreen() {
+            canvas.style.transform = `translate(${Math.random()*10-5}px, ${Math.random()*10-5}px)`;
+            setTimeout(() => canvas.style.transform = 'none', 50);
         }
 
         function startGame() {
-            score = 0;
-            timeLeft = 30;
+            resize();
+            gameState.isPlaying = true;
+            gameState.score = 0;
+            gameState.health = 100;
+            gameState.difficulty = 1;
+            gameState.frames = 0;
             items = [];
-            isPlaying = true;
-            scoreEl.innerText = score;
-            timeEl.innerText = timeLeft;
+            particles = [];
             
-            startScreen.style.display = 'none'; // Use style directly for logic
-            startScreen.classList.add('hidden-content');
-            gameOverScreen.classList.add('hidden-content');
-            gameOverScreen.style.display = 'none';
-
-            // Input Handling (Touch & Mouse)
-            canvas.onmousemove = (e) => {
-                const rect = canvas.getBoundingClientRect();
-                playerX = e.clientX - rect.left;
-            };
-            canvas.ontouchmove = (e) => {
-                e.preventDefault();
-                const rect = canvas.getBoundingClientRect();
-                playerX = e.touches[0].clientX - rect.left;
-            };
-
-            lastTime = performance.now();
-            requestAnimationFrame(updateGame);
+            scoreEl.innerText = '0';
+            updateHealthUI();
             
-            // Timer
-            const timerInterval = setInterval(() => {
-                if(!isPlaying) {
-                    clearInterval(timerInterval);
-                    return;
-                }
-                timeLeft--;
-                timeEl.innerText = timeLeft;
-                if(timeLeft <= 0) endGame();
-            }, 1000);
-        }
-
-        function stopGame() {
-            isPlaying = false;
+            document.getElementById('startScreen').classList.add('hidden-content');
+            document.getElementById('gameOverScreen').classList.add('hidden-content');
+            
+            // Haptic Start
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            
+            loop();
         }
 
         function endGame() {
-            stopGame();
-            finalScoreEl.innerText = score;
-            gameOverScreen.classList.remove('hidden-content');
-            gameOverScreen.style.display = 'flex';
+            gameState.isPlaying = false;
+            cancelAnimationFrame(animationId);
+            playSound('over');
+            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             
-            // Haptic Feedback
-            if(tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
+            finalScoreEl.innerText = gameState.score;
+            
+            // Save High Score
+            const currentHigh = localStorage.getItem('cyberCatcher_highScore') || 0;
+            if(gameState.score > currentHigh) {
+                localStorage.setItem('cyberCatcher_highScore', gameState.score);
+                document.getElementById('highScoreDisplay').innerText = gameState.score;
             }
+
+            document.getElementById('gameOverScreen').classList.remove('hidden-content');
         }
 
-        let lastTime = 0;
-        function updateGame(time) {
-            if (!isPlaying) return;
+        function updateHealthUI() {
+            healthBar.style.width = Math.max(0, gameState.health) + '%';
+            healthText.innerText = Math.max(0, gameState.health) + '%';
             
-            const deltaTime = time - lastTime;
-            lastTime = time;
+            if(gameState.health > 50) healthBar.className = "h-full w-full transition-all duration-200 bg-gradient-to-l from-green-400 to-emerald-500";
+            else if(gameState.health > 25) healthBar.className = "h-full w-full transition-all duration-200 bg-gradient-to-l from-yellow-400 to-orange-500";
+            else healthBar.className = "h-full w-full transition-all duration-200 bg-red-600 animate-pulse";
+        }
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function openGame() {
+            document.getElementById('gameOverlay').classList.remove('hidden-content');
+            document.getElementById('gameOverlay').style.display = 'flex';
+            resize();
+        }
 
-            // Draw Player (Basket)
-            const basketWidth = 60;
-            const basketHeight = 15;
-            ctx.fillStyle = '#3b82f6';
+        function closeGame() {
+            gameState.isPlaying = false;
+            cancelAnimationFrame(animationId);
+            document.getElementById('gameOverlay').classList.add('hidden-content');
+            document.getElementById('gameOverlay').style.display = 'none';
+        }
+
+        function loop() {
+            if (!gameState.isPlaying) return;
+
+            // Clear Canvas with Trail Effect
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.2)'; // Creates trails
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Update Player (Smooth Movement)
+            player.x += (player.targetX - player.x) * 0.15;
+            
+            // Draw Player (Futuristic Paddle)
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#6366f1';
+            ctx.fillStyle = '#6366f1';
             ctx.beginPath();
-            ctx.roundRect(playerX - basketWidth/2, canvas.height - 30, basketWidth, basketHeight, 10);
+            ctx.roundRect(player.x - 35, player.y, 70, 12, 6);
             ctx.fill();
             
-            // Glow effect
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = '#3b82f6';
-            ctx.fill();
+            // Engine Glow
+            ctx.fillStyle = '#a5b4fc';
+            ctx.fillRect(player.x - 25, player.y + 12, 50, 4);
             ctx.shadowBlur = 0;
 
             // Spawn Items
-            if (Math.random() < 0.03) {
-                const type = Math.random() > 0.2 ? 'gift' : 'bomb'; // 80% gift, 20% bomb
-                items.push({
-                    x: Math.random() * (canvas.width - 30) + 15,
-                    y: -30,
-                    speed: Math.random() * 2 + 2 + (score / 50), // Gets faster
-                    type: type,
-                    size: 25
-                });
+            if (gameState.frames % Math.max(20, 60 - gameState.difficulty * 2) === 0) {
+                items.push(new Item());
             }
 
             // Update & Draw Items
-            for (let i = 0; i < items.length; i++) {
+            for (let i = items.length - 1; i >= 0; i--) {
                 let item = items[i];
-                item.y += item.speed;
-
-                // Draw Item
-                ctx.font = `${item.size}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(item.type === 'gift' ? '🎁' : '💣', item.x, item.y);
+                item.update();
+                item.draw(ctx);
 
                 // Collision Detection
-                if (item.y > canvas.height - 45 && item.y < canvas.height - 15) {
-                    if (Math.abs(item.x - playerX) < basketWidth / 2 + 10) {
-                        if (item.type === 'gift') {
-                            score += 10;
-                            scoreEl.innerText = score;
-                            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-                        } else {
-                            score = Math.max(0, score - 20);
-                            scoreEl.innerText = score;
-                            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-                            // Shake effect could be added here
-                        }
-                        items.splice(i, 1);
-                        i--;
-                        continue;
+                let dx = item.x - player.x;
+                let dy = item.y - (player.y + 5);
+                let distance = Math.sqrt(dx*dx + dy*dy);
+
+                if (distance < item.radius + 30 && item.y > player.y - 10 && item.y < player.y + 20) {
+                    // Hit!
+                    if (item.isBomb) {
+                        gameState.health -= 25;
+                        playSound('hit');
+                        shakeScreen();
+                        createExplosion(item.x, item.y, '#ef4444');
+                        if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+                        
+                        updateHealthUI();
+                        if (gameState.health <= 0) { endGame(); return; }
+                    } else {
+                        gameState.score += 10;
+                        scoreEl.innerText = gameState.score;
+                        playSound('coin');
+                        createExplosion(item.x, item.y, '#3b82f6');
+                        if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                        
+                        // Increase Difficulty every 50 points
+                        if (gameState.score % 50 === 0) gameState.difficulty++;
                     }
+                    items.splice(i, 1);
+                    continue;
                 }
 
                 // Remove if out of screen
                 if (item.y > canvas.height) {
                     items.splice(i, 1);
-                    i--;
                 }
             }
 
-            requestAnimationFrame(updateGame);
-        }
+            // Update & Draw Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.update();
+                p.draw(ctx);
+                if (p.life <= 0) particles.splice(i, 1);
+            }
 
-        // Initialize
-        initApp();
+            gameState.frames++;
+            animationId = requestAnimationFrame(loop);
+        }
     </script>
 </body>
 </html>
