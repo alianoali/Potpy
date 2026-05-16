@@ -93,13 +93,17 @@
         .wallet-balance-bar .wb-icon { font-size: 18px; }
         .wallet-balance-bar .wb-amount { font-size: 0.9rem; font-weight: 700; color: var(--wallet-gold); }
 
+        /* Admin badge - hidden by default, shown only for admin */
         .admin-badge-bar {
-            display: flex; align-items: center; gap: 8px;
+            display: none;
+            align-items: center; gap: 8px;
             background: linear-gradient(135deg, rgba(155,89,182,0.15), rgba(52,152,219,0.15));
             border: 1px solid rgba(155,89,182,0.3); border-radius: 10px;
             padding: 6px 14px; cursor: pointer; transition: all 0.3s ease;
             position: relative; overflow: hidden;
         }
+        /* Only show admin badge for admin */
+        .admin-badge-bar.show-admin { display: flex; }
         .admin-badge-bar::before {
             content: ''; position: absolute; inset: 0;
             background: linear-gradient(90deg, transparent, rgba(155,89,182,0.1), transparent);
@@ -123,9 +127,7 @@
         .admin-overlay.active { display: flex; }
 
         .admin-panel {
-            width: 100%;
-            max-width: 1100px;
-            margin: 20px auto;
+            width: 100%; max-width: 1100px; margin: 20px auto;
             animation: adminIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         @keyframes adminIn { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -133,17 +135,14 @@
         .admin-header {
             background: linear-gradient(135deg, rgba(155,89,182,0.15), rgba(52,152,219,0.1));
             border: 1px solid rgba(155,89,182,0.25);
-            border-radius: 20px;
-            padding: 24px 30px;
+            border-radius: 20px; padding: 24px 30px;
             display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 20px;
-            position: relative; overflow: hidden;
+            margin-bottom: 20px; position: relative; overflow: hidden;
         }
         .admin-header::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
             background: linear-gradient(90deg, var(--admin-purple), var(--admin-blue), var(--admin-purple));
         }
-
         .admin-header-left { display: flex; align-items: center; gap: 16px; }
         .admin-header-icon {
             width: 56px; height: 56px; border-radius: 16px;
@@ -153,25 +152,19 @@
         }
         .admin-header-title { font-size: 1.4rem; font-weight: 700; }
         .admin-header-subtitle { font-size: 0.85rem; color: var(--text-dim); }
-
         .admin-close-btn {
             width: 40px; height: 40px; border-radius: 12px;
             background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
             color: var(--text); font-size: 20px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;
         }
         .admin-close-btn:hover { background: var(--primary); border-color: var(--primary); }
 
-        /* Admin Stats */
-        .admin-stats-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;
-        }
+        .admin-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
         .admin-stat-card {
             background: var(--glass); backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border); border-radius: 16px;
-            padding: 20px 16px; text-align: center;
-            transition: all 0.3s ease;
+            padding: 20px 16px; text-align: center; transition: all 0.3s ease;
         }
         .admin-stat-card:hover { transform: translateY(-4px); border-color: rgba(155,89,182,0.3); }
         .admin-stat-icon { font-size: 28px; margin-bottom: 8px; display: block; }
@@ -182,7 +175,6 @@
         .admin-stat-value.green { color: var(--wallet-green); }
         .admin-stat-label { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
 
-        /* Admin Tabs */
         .admin-tabs {
             display: flex; gap: 4px; background: var(--glass);
             border: 1px solid var(--glass-border); border-radius: 16px;
@@ -201,48 +193,34 @@
         }
         .admin-tab:hover:not(.active) { background: rgba(255,255,255,0.03); }
 
-        /* Admin Content */
-        .admin-content {
-            background: var(--glass); backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 20px;
-            padding: 24px; min-height: 400px;
-        }
+        .admin-content { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 24px; min-height: 400px; }
         .admin-tab-content { display: none; animation: fadeInUp 0.4s ease; }
         .admin-tab-content.active { display: block; }
 
-        /* Admin Users Table */
+        .admin-search-bar { display: flex; gap: 10px; margin-bottom: 16px; }
+        .admin-search-input {
+            flex: 1; padding: 12px 16px; background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border); border-radius: 12px;
+            color: var(--text); font-family: 'Tajawal', sans-serif;
+            font-size: 0.9rem; outline: none; transition: all 0.3s ease;
+        }
+        .admin-search-input:focus { border-color: var(--admin-purple); box-shadow: 0 0 0 3px rgba(155,89,182,0.1); }
+        .admin-search-input::placeholder { color: rgba(255,255,255,0.2); }
+
         .admin-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
-        .admin-table thead th {
-            padding: 12px 16px; text-align: right;
-            font-size: 0.8rem; color: var(--text-dim); font-weight: 600;
-            border-bottom: 1px solid var(--glass-border);
-        }
-        .admin-table tbody tr {
-            background: rgba(255,255,255,0.02); transition: all 0.3s ease;
-        }
+        .admin-table thead th { padding: 12px 16px; text-align: right; font-size: 0.8rem; color: var(--text-dim); font-weight: 600; border-bottom: 1px solid var(--glass-border); }
+        .admin-table tbody tr { background: rgba(255,255,255,0.02); transition: all 0.3s ease; }
         .admin-table tbody tr:hover { background: rgba(255,255,255,0.06); }
-        .admin-table tbody td {
-            padding: 14px 16px; font-size: 0.9rem;
-            border-bottom: 1px solid var(--glass-border);
-        }
+        .admin-table tbody td { padding: 14px 16px; font-size: 0.9rem; border-bottom: 1px solid var(--glass-border); }
         .admin-table tbody td:first-child { border-radius: 0 12px 12px 0; }
         .admin-table tbody td:last-child { border-radius: 12px 0 0 12px; }
 
         .admin-user-cell { display: flex; align-items: center; gap: 10px; }
-        .admin-user-avatar {
-            width: 36px; height: 36px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--tg-blue), #1E96D1);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: 700; color: white; flex-shrink: 0;
-        }
+        .admin-user-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--tg-blue), #1E96D1); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: white; flex-shrink: 0; }
         .admin-user-name { font-weight: 600; }
         .admin-user-id { font-size: 0.75rem; color: var(--text-dim); direction: ltr; }
 
-        .admin-action-btn {
-            padding: 6px 14px; border-radius: 8px; border: none;
-            font-family: 'Tajawal', sans-serif; font-size: 0.8rem; font-weight: 600;
-            cursor: pointer; transition: all 0.3s ease; margin: 0 2px;
-        }
+        .admin-action-btn { padding: 6px 14px; border-radius: 8px; border: none; font-family: 'Tajawal', sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin: 0 2px; }
         .admin-action-btn.view { background: rgba(52,152,219,0.15); color: var(--admin-blue); }
         .admin-action-btn.view:hover { background: rgba(52,152,219,0.3); }
         .admin-action-btn.edit { background: rgba(155,89,182,0.15); color: var(--admin-purple); }
@@ -250,31 +228,14 @@
         .admin-action-btn.delete { background: rgba(231,76,60,0.15); color: var(--primary-glow); }
         .admin-action-btn.delete:hover { background: rgba(231,76,60,0.3); }
 
-        /* Admin Transactions */
-        .admin-tx-filter {
-            display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;
-        }
-        .admin-filter-btn {
-            padding: 8px 18px; border-radius: 10px;
-            background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
-            color: var(--text-dim); font-family: 'Tajawal', sans-serif;
-            font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
-        }
+        .admin-tx-filter { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+        .admin-filter-btn { padding: 8px 18px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: var(--text-dim); font-family: 'Tajawal', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
         .admin-filter-btn.active { background: rgba(155,89,182,0.15); color: var(--admin-purple); border-color: rgba(155,89,182,0.3); }
         .admin-filter-btn:hover:not(.active) { background: rgba(255,255,255,0.05); }
 
-        .admin-tx-item {
-            display: flex; align-items: center; gap: 14px;
-            padding: 14px; border-radius: 14px; margin-bottom: 8px;
-            background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
-            transition: all 0.3s ease;
-        }
+        .admin-tx-item { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 14px; margin-bottom: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); transition: all 0.3s ease; }
         .admin-tx-item:hover { background: rgba(255,255,255,0.05); }
-        .admin-tx-icon {
-            width: 40px; height: 40px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px; flex-shrink: 0;
-        }
+        .admin-tx-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
         .admin-tx-icon.deposit { background: rgba(46,204,113,0.15); }
         .admin-tx-icon.withdraw { background: rgba(231,76,60,0.15); }
         .admin-tx-info { flex: 1; }
@@ -285,100 +246,56 @@
         .admin-tx-amount.positive { color: var(--wallet-green); }
         .admin-tx-amount.negative { color: var(--primary-glow); }
 
-        /* Admin Search */
-        .admin-search-bar {
-            display: flex; gap: 10px; margin-bottom: 16px;
-        }
-        .admin-search-input {
-            flex: 1; padding: 12px 16px; background: rgba(255,255,255,0.04);
-            border: 1px solid var(--glass-border); border-radius: 12px;
-            color: var(--text); font-family: 'Tajawal', sans-serif;
-            font-size: 0.9rem; outline: none; transition: all 0.3s ease;
-        }
-        .admin-search-input:focus { border-color: var(--admin-purple); box-shadow: 0 0 0 3px rgba(155,89,182,0.1); }
-        .admin-search-input::placeholder { color: rgba(255,255,255,0.2); }
-
-        /* Admin Settings */
         .admin-settings-group { margin-bottom: 24px; }
         .admin-settings-title { font-size: 1rem; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-        .admin-setting-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 18px; background: rgba(255,255,255,0.02);
-            border: 1px solid var(--glass-border); border-radius: 12px;
-            margin-bottom: 8px;
-        }
+        .admin-setting-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px; margin-bottom: 8px; }
         .admin-setting-label { font-size: 0.9rem; }
         .admin-setting-desc { font-size: 0.75rem; color: var(--text-dim); }
-
-        /* Toggle Switch */
-        .toggle-switch {
-            width: 48px; height: 26px; border-radius: 13px;
-            background: rgba(255,255,255,0.1); cursor: pointer;
-            position: relative; transition: all 0.3s ease;
-        }
+        .toggle-switch { width: 48px; height: 26px; border-radius: 13px; background: rgba(255,255,255,0.1); cursor: pointer; position: relative; transition: all 0.3s ease; }
         .toggle-switch.active { background: var(--admin-purple); }
-        .toggle-switch::after {
-            content: ''; position: absolute; top: 3px; right: 3px;
-            width: 20px; height: 20px; border-radius: 50%;
-            background: white; transition: all 0.3s ease;
-        }
+        .toggle-switch::after { content: ''; position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%; background: white; transition: all 0.3s ease; }
         .toggle-switch.active::after { right: 25px; }
 
-        /* Admin Edit Balance Modal */
         .admin-edit-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10004; display: none; align-items: center; justify-content: center;
-            padding: 20px; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10004;
+            display: none; align-items: center; justify-content: center; padding: 20px;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
         }
         .admin-edit-modal.active { display: flex; }
-        .admin-edit-box {
-            background: rgba(15,15,25,0.95); border: 1px solid var(--glass-border);
-            border-radius: 24px; padding: 32px; max-width: 420px; width: 100%;
-            animation: modalIn 0.4s ease;
-        }
+        .admin-edit-box { background: rgba(15,15,25,0.95); border: 1px solid var(--glass-border); border-radius: 24px; padding: 32px; max-width: 420px; width: 100%; animation: modalIn 0.4s ease; }
         @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .admin-edit-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; text-align: center; }
         .admin-edit-subtitle { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 20px; text-align: center; }
-        .admin-edit-input {
-            width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.04);
-            border: 1.5px solid var(--glass-border); border-radius: 12px;
-            color: var(--text); font-family: 'Tajawal', sans-serif;
-            font-size: 1.2rem; font-weight: 700; text-align: center;
-            outline: none; transition: all 0.3s ease; margin-bottom: 16px;
-        }
+        .admin-edit-input { width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.04); border: 1.5px solid var(--glass-border); border-radius: 12px; color: var(--text); font-family: 'Tajawal', sans-serif; font-size: 1.2rem; font-weight: 700; text-align: center; outline: none; transition: all 0.3s ease; margin-bottom: 16px; }
         .admin-edit-input:focus { border-color: var(--admin-purple); box-shadow: 0 0 0 3px rgba(155,89,182,0.1); }
         .admin-edit-actions { display: flex; gap: 10px; }
-        .admin-edit-btn {
-            flex: 1; padding: 12px; border: none; border-radius: 12px;
-            font-family: 'Tajawal', sans-serif; font-size: 0.95rem; font-weight: 600;
-            cursor: pointer; transition: all 0.3s ease;
-        }
-        .admin-edit-btn.confirm {
-            background: linear-gradient(135deg, var(--admin-purple), var(--admin-blue));
-            color: white;
-        }
+        .admin-edit-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-family: 'Tajawal', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .admin-edit-btn.confirm { background: linear-gradient(135deg, var(--admin-purple), var(--admin-blue)); color: white; }
         .admin-edit-btn.confirm:hover { transform: translateY(-2px); }
-        .admin-edit-btn.cancel {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
-            color: var(--text-dim);
-        }
+        .admin-edit-btn.cancel { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-dim); }
         .admin-edit-btn.cancel:hover { border-color: var(--primary); color: var(--primary-glow); }
 
-        /* Wallet Modal */
-        .wallet-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10002;
+        .admin-detail-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10005;
             display: none; align-items: center; justify-content: center; padding: 20px;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
         }
+        .admin-detail-modal.active { display: flex; }
+        .admin-detail-box { background: rgba(15,15,25,0.95); border: 1px solid var(--glass-border); border-radius: 24px; padding: 32px; max-width: 450px; width: 100%; animation: modalIn 0.4s ease; max-height: 80vh; overflow-y: auto; }
+        .admin-detail-header { text-align: center; margin-bottom: 20px; }
+        .admin-detail-avatar { width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 12px; background: linear-gradient(135deg, var(--tg-blue), #1E96D1); display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; font-weight: 700; }
+        .admin-detail-name { font-size: 1.3rem; font-weight: 700; }
+        .admin-detail-username { color: var(--tg-blue); font-size: 0.9rem; }
+        .admin-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        .admin-detail-stat { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px; text-align: center; }
+        .admin-detail-stat-val { font-size: 1.1rem; font-weight: 700; }
+        .admin-detail-stat-lbl { font-size: 0.7rem; color: var(--text-dim); margin-top: 2px; }
+        .admin-detail-actions { display: flex; gap: 10px; margin-top: 16px; }
+
+        /* Wallet Modal */
+        .wallet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10002; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); }
         .wallet-overlay.active { display: flex; }
-        .wallet-modal {
-            background: rgba(12, 12, 20, 0.97);
-            border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto;
-            animation: walletIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-        }
+        .wallet-modal { background: rgba(12, 12, 20, 0.97); border: 1px solid var(--glass-border); border-radius: 28px; max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto; animation: walletIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; }
         @keyframes walletIn { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
         .wallet-close { position: absolute; top: 16px; left: 16px; z-index: 10; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
         .wallet-close:hover { background: var(--primary); border-color: var(--primary); }
@@ -542,8 +459,6 @@
         .section-tag { display: inline-block; padding: 6px 16px; background: rgba(192,57,43,0.1); border: 1px solid rgba(192,57,43,0.2); border-radius: 50px; font-size: 0.8rem; color: var(--primary-glow); margin-bottom: 16px; letter-spacing: 2px; }
         .section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 16px; }
         .section-desc { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.7; }
-
-        /* Abilities */
         .abilities-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; }
         .ability-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 32px; transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden; }
         .ability-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), var(--secondary)); transform: scaleX(0); transition: transform 0.4s ease; }
@@ -561,8 +476,6 @@
         .level-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.1); }
         .level-dot.active { background: var(--primary); box-shadow: 0 0 8px rgba(192,57,43,0.5); }
         .ability-power { font-size: 0.85rem; color: var(--primary-glow); font-weight: 600; }
-
-        /* Weapons */
         .weapons-section { background: linear-gradient(180deg, transparent, rgba(10,10,15,0.5), transparent); }
         .weapons-showcase { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
         .weapon-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 40px; text-align: center; transition: all 0.4s ease; position: relative; overflow: hidden; }
@@ -574,8 +487,6 @@
         .w-stat { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; }
         .w-stat-label { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 4px; }
         .w-stat-value { font-size: 1.1rem; font-weight: 700; }
-
-        /* Progress */
         .progress-section { max-width: 800px; margin: 0 auto; }
         .progress-item { margin-bottom: 28px; }
         .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -587,8 +498,6 @@
         @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
         .pf-purple { background: linear-gradient(90deg, #8e44ad, #9b59b6); }
         .pf-green { background: linear-gradient(90deg, #27ae60, #2ecc71); }
-
-        /* Timeline */
         .timeline { max-width: 800px; margin: 0 auto; position: relative; }
         .timeline::before { content: ''; position: absolute; top: 0; right: 20px; width: 2px; height: 100%; background: linear-gradient(180deg, var(--primary), var(--secondary), var(--primary)); }
         .timeline-item { padding-right: 60px; padding-bottom: 40px; position: relative; opacity: 0; transform: translateX(30px); transition: all 0.6s ease; }
@@ -598,8 +507,6 @@
         .timeline-date { font-size: 0.85rem; color: var(--primary-glow); font-weight: 600; margin-bottom: 8px; }
         .timeline-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
         .timeline-desc { color: var(--text-dim); font-size: 0.95rem; line-height: 1.7; }
-
-        /* Gallery */
         .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 250px); gap: 16px; max-width: 1200px; margin: 0 auto; }
         .gallery-item { border-radius: 16px; overflow: hidden; position: relative; cursor: pointer; transition: all 0.4s ease; }
         .gallery-item:hover { transform: scale(1.03); z-index: 2; }
@@ -610,8 +517,6 @@
         .gallery-item:hover .gallery-overlay { transform: translateY(0); }
         .gallery-title { font-size: 1.1rem; font-weight: 700; }
         .gallery-subtitle { font-size: 0.8rem; color: var(--text-dim); }
-
-        /* Contact */
         .contact-section { max-width: 700px; margin: 0 auto; }
         .contact-form { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 40px; }
         .form-group { margin-bottom: 20px; }
@@ -621,8 +526,6 @@
         .form-input::placeholder { color: rgba(255,255,255,0.2); }
         textarea.form-input { min-height: 120px; resize: vertical; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-        /* Footer */
         .footer { padding: 60px 5% 30px; border-top: 1px solid var(--glass-border); background: rgba(10,10,15,0.5); backdrop-filter: blur(20px); }
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto 40px; }
         .footer-brand p { color: var(--text-dim); line-height: 1.8; margin-top: 16px; font-size: 0.9rem; }
@@ -639,48 +542,14 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
         .fade-in.visible { opacity: 1; transform: translateY(0); }
-
         .scroll-top { position: fixed; bottom: 30px; left: 30px; width: 48px; height: 48px; border-radius: 50%; background: var(--primary); border: none; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(192,57,43,0.4); }
         .scroll-top.visible { opacity: 1; transform: translateY(0); }
         .scroll-top:hover { transform: translateY(-3px); box-shadow: 0 6px 30px rgba(192,57,43,0.5); }
-
         .toast { position: fixed; bottom: 30px; right: 30px; background: #1a1a2e; border: 1px solid var(--glass-border); border-right: 3px solid var(--primary); border-radius: 12px; padding: 16px 24px; display: flex; align-items: center; gap: 12px; z-index: 11000; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
         .toast.show { transform: translateX(0); }
         .toast-icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(192,57,43,0.2); display: flex; align-items: center; justify-content: center; font-size: 16px; }
         .toast-text { font-size: 0.95rem; font-weight: 600; }
 
-        /* Admin user detail modal */
-        .admin-detail-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10005;
-            display: none; align-items: center; justify-content: center; padding: 20px;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
-        }
-        .admin-detail-modal.active { display: flex; }
-        .admin-detail-box {
-            background: rgba(15,15,25,0.95); border: 1px solid var(--glass-border);
-            border-radius: 24px; padding: 32px; max-width: 450px; width: 100%;
-            animation: modalIn 0.4s ease; max-height: 80vh; overflow-y: auto;
-        }
-        .admin-detail-header { text-align: center; margin-bottom: 20px; }
-        .admin-detail-avatar {
-            width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 12px;
-            background: linear-gradient(135deg, var(--tg-blue), #1E96D1);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px; color: white; font-weight: 700;
-        }
-        .admin-detail-name { font-size: 1.3rem; font-weight: 700; }
-        .admin-detail-username { color: var(--tg-blue); font-size: 0.9rem; }
-        .admin-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-        .admin-detail-stat {
-            background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
-            border-radius: 12px; padding: 12px; text-align: center;
-        }
-        .admin-detail-stat-val { font-size: 1.1rem; font-weight: 700; }
-        .admin-detail-stat-lbl { font-size: 0.7rem; color: var(--text-dim); margin-top: 2px; }
-        .admin-detail-actions { display: flex; gap: 10px; margin-top: 16px; }
-        .admin-detail-actions .admin-edit-btn { flex: 1; }
-
-        /* Responsive */
         @media (max-width: 1024px) {
             .hero-visual { display: none; }
             .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 200px); }
@@ -712,9 +581,9 @@
             .admin-header-left { flex-direction: column; }
             .payment-methods { grid-template-columns: repeat(2, 1fr); }
             .profile-stats-grid { grid-template-columns: 1fr; }
-            .admin-table { font-size: 0.8rem; }
-            .admin-action-btn { padding: 4px 8px; font-size: 0.7rem; }
             .admin-detail-grid { grid-template-columns: 1fr; }
+            .admin-table { font-size: 0.75rem; }
+            .admin-action-btn { padding: 4px 8px; font-size: 0.7rem; }
         }
     </style>
 </head>
@@ -745,9 +614,9 @@
                 <div class="login-loading-text">جاري تسجيل الدخول...</div>
                 <div class="login-steps">
                     <div class="login-step active" id="step1"><span class="login-step-icon"></span><span>الاتصال بتلغرام...</span></div>
-                    <div class="login-step" id="step2"><span class="login-step-icon"></span><span>استخراج بيانات الحساب...</span></div>
+                    <div class="login-step" id="step2"><span class="login-step-icon">⏳</span><span>استخراج بيانات الحساب...</span></div>
                     <div class="login-step" id="step3"><span class="login-step-icon">⏳</span><span>إنشاء حساب المحارب...</span></div>
-                    <div class="login-step" id="step4"><span class="login-step-icon"></span><span>الدخول إلى عالم كراتوس...</span></div>
+                    <div class="login-step" id="step4"><span class="login-step-icon">⏳</span><span>الدخول إلى عالم كراتوس...</span></div>
                 </div>
             </div>
             <div class="login-note">🔒 بياناتك محمية ومشفرة بالكامل</div>
@@ -769,9 +638,10 @@
             <div class="user-actions">
                 <div class="wallet-balance-bar" onclick="openWallet()">
                     <span class="wb-icon">💰</span>
-                    <span class="wb-amount" id="barBalance">0.00</span>
+                    <span class="wb-amount" id="barBalance">$0.00</span>
                 </div>
-                <div class="admin-badge-bar" id="adminBadgeBar" style="display:none;" onclick="openAdminPanel()">
+                <!-- Admin badge - ONLY shown for admin user -->
+                <div class="admin-badge-bar" id="adminBadgeBar" onclick="openAdminPanel()">
                     <span class="ab-icon">👑</span>
                     <span class="ab-text">لوحة التحكم</span>
                 </div>
@@ -814,7 +684,7 @@
                 <h1 class="hero-title">كراتوس<br><span class="highlight">قاتل الآلهة</span></h1>
                 <p class="hero-desc">من شبح إسبرطة إلى إله الحرب، رحلة كراتوس الأسطورية عبر عوالم الأساطير اليونانية والإسكندنافية.</p>
                 <div class="hero-actions">
-                    <button class="btn-primary" onclick="showToast('️ انطلقت المغامرة!')">⚔️ ابدأ الرحلة</button>
+                    <button class="btn-primary" onclick="showToast('⚔️ انطلقت المغامرة!')">⚔️ ابدأ الرحلة</button>
                     <button class="btn-secondary" onclick="scrollToSection('abilities')">📖 اكتشف القدرات</button>
                 </div>
                 <div class="hero-stats">
@@ -853,7 +723,7 @@
                     <div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="ability-power">MAX</span></div>
                 </div>
                 <div class="ability-card fade-in" onclick="showToast('⚡ برق زيوس!')">
-                    <div class="ability-icon gold"></div>
+                    <div class="ability-icon gold">⚡</div>
                     <h3 class="ability-name">برق زيوس</h3>
                     <p class="ability-desc">تحكم في قوة البرق والرعد لتوجيه صاعقات مدمرة</p>
                     <div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot"></span></div><span class="ability-power">85%</span></div>
@@ -921,7 +791,7 @@
             <div class="section-header fade-in"><span class="section-tag">إحصائيات القوة</span><h2 class="section-title">مستويات كراتوس</h2></div>
             <div class="progress-section fade-in">
                 <div class="progress-item"><div class="progress-header"><span class="progress-label">⚔️ القوة الجسدية</span><span class="progress-value">97%</span></div><div class="progress-bar"><div class="progress-fill pf-red" data-width="97"></div></div></div>
-                <div class="progress-item"><div class="progress-header"><span class="progress-label"> الحكمة</span><span class="progress-value">82%</span></div><div class="progress-bar"><div class="progress-fill pf-gold" data-width="82"></div></div></div>
+                <div class="progress-item"><div class="progress-header"><span class="progress-label">🧠 الحكمة</span><span class="progress-value">82%</span></div><div class="progress-bar"><div class="progress-fill pf-gold" data-width="82"></div></div></div>
                 <div class="progress-item"><div class="progress-header"><span class="progress-label">✨ القوة السحرية</span><span class="progress-value">88%</span></div><div class="progress-bar"><div class="progress-fill pf-blue" data-width="88"></div></div></div>
                 <div class="progress-item"><div class="progress-header"><span class="progress-label">🛡️ التحمل</span><span class="progress-value">95%</span></div><div class="progress-bar"><div class="progress-fill pf-purple" data-width="95"></div></div></div>
                 <div class="progress-item"><div class="progress-header"><span class="progress-label">💨 السرعة</span><span class="progress-value">79%</span></div><div class="progress-bar"><div class="progress-fill pf-green" data-width="79"></div></div></div>
@@ -1006,7 +876,7 @@
             </div>
             <div class="wallet-tabs">
                 <button class="wallet-tab active" onclick="switchWalletTab(0)" id="wTab0">💳 شحن</button>
-                <button class="wallet-tab" onclick="switchWalletTab(1)" id="wTab1"> سحب</button>
+                <button class="wallet-tab" onclick="switchWalletTab(1)" id="wTab1">📤 سحب</button>
                 <button class="wallet-tab" onclick="switchWalletTab(2)" id="wTab2">📋 السجل</button>
             </div>
             <div class="wallet-content">
@@ -1036,7 +906,7 @@
                             <div class="payment-method" onclick="selectPayment(this,'crypto')"><span class="payment-method-icon">₿</span><span class="payment-method-name">كريبتو</span></div>
                             <div class="payment-method" onclick="selectPayment(this,'card')"><span class="payment-method-icon">💳</span><span class="payment-method-name">بطاقة</span></div>
                             <div class="payment-method" onclick="selectPayment(this,'paypal')"><span class="payment-method-icon">️</span><span class="payment-method-name">PayPal</span></div>
-                            <div class="payment-method" onclick="selectPayment(this,'gift')"><span class="payment-method-icon"></span><span class="payment-method-name">هدية</span></div>
+                            <div class="payment-method" onclick="selectPayment(this,'gift')"><span class="payment-method-icon">🎁</span><span class="payment-method-name">هدية</span></div>
                         </div>
                     </div>
                     <button class="wallet-submit-btn deposit" onclick="processDeposit()">💰 شحن الرصيد</button>
@@ -1067,7 +937,7 @@
                             <div class="payment-method" onclick="selectWithdrawMethod(this,'card_w')"><span class="payment-method-icon">💳</span><span class="payment-method-name">بطاقة</span></div>
                         </div>
                     </div>
-                    <button class="wallet-submit-btn withdraw" onclick="processWithdraw()"> سحب الرصيد</button>
+                    <button class="wallet-submit-btn withdraw" onclick="processWithdraw()">📤 سحب الرصيد</button>
                 </div>
                 <div class="wallet-tab-content" id="wContent2">
                     <div class="wallet-stats-grid">
@@ -1105,14 +975,14 @@
                 <li class="profile-info-item"><span class="profile-info-label">💰 الرصيد</span><span class="profile-info-value" id="profileWalletBalance" style="color:var(--wallet-gold);">$0.00</span></li>
                 <li class="profile-info-item"><span class="profile-info-label">📱 منصة الدخول</span><span class="profile-info-value tg-verified">✓ Telegram</span></li>
                 <li class="profile-info-item"><span class="profile-info-label">🆔 معرف تلغرام</span><span class="profile-info-value" id="infoTgId" style="direction:ltr;">---</span></li>
-                <li class="profile-info-item"><span class="profile-info-label"> تاريخ الانضمام</span><span class="profile-info-value" id="infoJoinDate">---</span></li>
+                <li class="profile-info-item"><span class="profile-info-label">📅 تاريخ الانضمام</span><span class="profile-info-value" id="infoJoinDate">---</span></li>
                 <li class="profile-info-item"><span class="profile-info-label">🌐 اللغة</span><span class="profile-info-value" id="infoLang">العربية</span></li>
                 <li class="profile-info-item"><span class="profile-info-label">⚔️ الحالة</span><span class="profile-info-value" style="color:#4ade80;">نشط - محارب</span></li>
             </ul>
         </div>
     </div>
 
-    <!-- ADMIN PANEL -->
+    <!-- ADMIN PANEL (Hidden - only accessible by admin) -->
     <div class="admin-overlay" id="adminOverlay" onclick="closeAdminPanel(event)">
         <div class="admin-panel" onclick="event.stopPropagation()">
             <div class="admin-header">
@@ -1126,7 +996,7 @@
                 <button class="admin-close-btn" onclick="closeAdminPanelDirect()">✕</button>
             </div>
 
-            <div class="admin-stats-grid" id="adminStatsGrid">
+            <div class="admin-stats-grid">
                 <div class="admin-stat-card">
                     <span class="admin-stat-icon">👥</span>
                     <div class="admin-stat-value purple" id="adminTotalUsers">0</div>
@@ -1144,7 +1014,7 @@
                 </div>
                 <div class="admin-stat-card">
                     <span class="admin-stat-icon">📤</span>
-                    <div class="admin-stat-value blue" id="adminTotalWithdrawals">$0</div>
+                    <div class="admin-stat-value blue" id="adminTotalWithdrawalsAdmin">$0</div>
                     <div class="admin-stat-label">إجمالي السحوبات</div>
                 </div>
             </div>
@@ -1152,7 +1022,7 @@
             <div class="admin-tabs">
                 <button class="admin-tab active" onclick="switchAdminTab(0)" id="aTab0">👥 المستخدمين</button>
                 <button class="admin-tab" onclick="switchAdminTab(1)" id="aTab1">📋 المعاملات</button>
-                <button class="admin-tab" onclick="switchAdminTab(2)" id="aTab2">️ الإعدادات</button>
+                <button class="admin-tab" onclick="switchAdminTab(2)" id="aTab2">⚙️ الإعدادات</button>
                 <button class="admin-tab" onclick="switchAdminTab(3)" id="aTab3">📊 الإحصائيات</button>
             </div>
 
@@ -1194,59 +1064,34 @@
                     <div class="admin-settings-group">
                         <div class="admin-settings-title">⚙️ إعدادات الموقع</div>
                         <div class="admin-setting-item">
-                            <div>
-                                <div class="admin-setting-label">تفعيل التسجيل</div>
-                                <div class="admin-setting-desc">السماح للمستخدمين الجدد بالتسجيل</div>
-                            </div>
+                            <div><div class="admin-setting-label">تفعيل التسجيل</div><div class="admin-setting-desc">السماح للمستخدمين الجدد بالتسجيل</div></div>
                             <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
                         </div>
                         <div class="admin-setting-item">
-                            <div>
-                                <div class="admin-setting-label">وضع الصيانة</div>
-                                <div class="admin-setting-desc">إيقاف الموقع مؤقتاً للصيانة</div>
-                            </div>
+                            <div><div class="admin-setting-label">وضع الصيانة</div><div class="admin-setting-desc">إيقاف الموقع مؤقتاً للصيانة</div></div>
                             <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
                         </div>
                         <div class="admin-setting-item">
-                            <div>
-                                <div class="admin-setting-label">إشعارات المعاملات</div>
-                                <div class="admin-setting-desc">إرسال إشعار عند كل معاملة</div>
-                            </div>
+                            <div><div class="admin-setting-label">إشعارات المعاملات</div><div class="admin-setting-desc">إرسال إشعار عند كل معاملة</div></div>
                             <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
                         </div>
                     </div>
                     <div class="admin-settings-group">
                         <div class="admin-settings-title">💰 إعدادات المحفظة</div>
                         <div class="admin-setting-item">
-                            <div>
-                                <div class="admin-setting-label">الحد الأدنى للشحن</div>
-                                <div class="admin-setting-desc">أقل مبلغ يمكن شحنه</div>
-                            </div>
+                            <div><div class="admin-setting-label">الحد الأدنى للشحن</div><div class="admin-setting-desc">أقل مبلغ يمكن شحنه</div></div>
                             <span style="color:var(--wallet-gold);font-weight:600;">$1.00</span>
                         </div>
                         <div class="admin-setting-item">
-                            <div>
-                                <div class="admin-setting-label">الحد الأقصى للسحب اليومي</div>
-                                <div class="admin-setting-desc">أقصى مبلغ يمكن سحبه يومياً</div>
-                            </div>
+                            <div><div class="admin-setting-label">الحد الأقصى للسحب اليومي</div><div class="admin-setting-desc">أقصى مبلغ يمكن سحبه يومياً</div></div>
                             <span style="color:var(--wallet-gold);font-weight:600;">$1,000</span>
-                        </div>
-                        <div class="admin-setting-item">
-                            <div>
-                                <div class="admin-setting-label">رسوم السحب</div>
-                                <div class="admin-setting-desc">نسبة الرسوم على عمليات السحب</div>
-                            </div>
-                            <span style="color:var(--wallet-gold);font-weight:600;">2%</span>
                         </div>
                     </div>
                     <div class="admin-settings-group">
-                        <div class="admin-settings-title">️ إدارة البيانات</div>
+                        <div class="admin-settings-title">🗑️ إدارة البيانات</div>
                         <div class="admin-setting-item">
-                            <div>
-                                <div class="admin-setting-label">مسح جميع البيانات</div>
-                                <div class="admin-setting-desc">حذف جميع المستخدمين والمعاملات</div>
-                            </div>
-                            <button class="admin-action-btn delete" onclick="if(confirm('هل أنت متأكد؟ سيتم حذف كل البيانات!')){localStorage.clear();showToast('️ تم مسح البيانات');location.reload();}">مسح</button>
+                            <div><div class="admin-setting-label">مسح جميع البيانات</div><div class="admin-setting-desc">حذف جميع المستخدمين والمعاملات</div></div>
+                            <button class="admin-action-btn delete" onclick="if(confirm('هل أنت متأكد؟ سيتم حذف كل البيانات!')){localStorage.clear();showToast('🗑️ تم مسح البيانات');location.reload();}">مسح</button>
                         </div>
                     </div>
                 </div>
@@ -1284,7 +1129,7 @@
             <p class="admin-edit-subtitle" id="adminEditUser">المستخدم: ---</p>
             <input type="number" class="admin-edit-input" id="adminEditAmount" placeholder="أدخل المبلغ الجديد" step="0.01">
             <div class="admin-edit-actions">
-                <button class="admin-edit-btn confirm" onclick="saveEditBalance()"> حفظ</button>
+                <button class="admin-edit-btn confirm" onclick="saveEditBalance()">💾 حفظ</button>
                 <button class="admin-edit-btn cancel" onclick="closeAdminEditModal()">إلغاء</button>
             </div>
         </div>
@@ -1313,8 +1158,8 @@
     </div>
 
     <script>
-        // ===== CONSTANTS =====
-        const ADMIN_ID = 7609492965;
+        // ===== ADMIN ID - Only this Telegram ID has admin access =====
+        const ADMIN_TELEGRAM_ID = 7609492965;
 
         // ===== PARTICLES =====
         const particlesContainer = document.getElementById('particles');
@@ -1336,7 +1181,6 @@
         let detailUserId = null;
         let adminTxFilter = 'all';
 
-        // Get all users from localStorage
         function getAllUsers() {
             const users = [];
             for (let i = 0; i < localStorage.length; i++) {
@@ -1345,7 +1189,6 @@
                     try { users.push(JSON.parse(localStorage.getItem(key))); } catch(e) {}
                 }
             }
-            // Also check if current user exists as separate key
             return users;
         }
 
@@ -1375,6 +1218,11 @@
             return false;
         }
 
+        // ============================================================
+        // SMART AUTH: Check Telegram ID and assign role
+        // - Admin (ID: 7609492965) → shows admin panel
+        // - Everyone else → regular user, NO admin access
+        // ============================================================
         function authenticateTelegram() {
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('loginLoading').classList.add('active');
@@ -1388,6 +1236,8 @@
 
                 let userData = null;
                 let platform = 'تطبيق الويب';
+
+                // Get user data from Telegram Web App
                 if (tgWebApp && tgWebApp.initDataUnsafe && tgWebApp.initDataUnsafe.user) {
                     userData = {
                         id: tgWebApp.initDataUnsafe.user.id,
@@ -1400,6 +1250,7 @@
                     };
                     platform = 'Telegram Web App';
                 } else {
+                    // Fallback for testing outside Telegram
                     userData = {
                         id: Math.floor(Math.random() * 900000000) + 100000000,
                         first_name: 'محارب', last_name: 'الأساطير',
@@ -1412,16 +1263,37 @@
                 const fullName = (userData.first_name + ' ' + userData.last_name).trim();
                 const username = userData.username ? '@' + userData.username : '@warrior_' + userData.id;
 
+                // ===== SMART ROLE ASSIGNMENT =====
+                const isAdmin = (userData.id === ADMIN_TELEGRAM_ID);
+
                 currentUser = {
-                    id: userData.id, name: fullName, username: username,
-                    language: userData.language_code, isPremium: userData.is_premium,
-                    photoUrl: userData.photo_url, platform: platform,
+                    id: userData.id,
+                    name: fullName,
+                    username: username,
+                    language: userData.language_code,
+                    isPremium: userData.is_premium,
+                    photoUrl: userData.photo_url,
+                    platform: platform,
                     joinDate: new Date().toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' }),
-                    visits: 1, level: 1, points: 100,
+                    visits: 1,
+                    level: 1,
+                    points: 100,
+                    role: isAdmin ? 'admin' : 'user', // Smart role assignment
                     wallet: { balance: 0, transactions: [], totalDeposited: 0, totalWithdrawn: 0 }
                 };
+
                 localStorage.setItem('kratos_tg_user', JSON.stringify(currentUser));
                 saveUserToStore(currentUser);
+
+                // Log for debugging
+                console.log('User logged in:', {
+                    name: currentUser.name,
+                    id: currentUser.id,
+                    role: currentUser.role,
+                    isAdmin: isAdmin,
+                    adminId: ADMIN_TELEGRAM_ID
+                });
+
                 setTimeout(() => loginSuccess(currentUser), 500);
             }, 2800);
         }
@@ -1461,13 +1333,26 @@
 
             document.getElementById('navbar').style.top = '58px';
 
-            // Show admin badge if admin
-            if (user.id === ADMIN_ID) {
-                document.getElementById('adminBadgeBar').style.display = 'flex';
+            // ===== SMART: Show admin badge ONLY for admin user =====
+            const adminBadge = document.getElementById('adminBadgeBar');
+            if (user.role === 'admin' && user.id === ADMIN_TELEGRAM_ID) {
+                adminBadge.classList.add('show-admin');
+                console.log('👑 Admin access granted for user:', user.name, user.id);
+            } else {
+                adminBadge.classList.remove('show-admin');
+                adminBadge.style.display = 'none';
+                console.log('👤 Regular user - no admin access for:', user.name, user.id);
             }
 
             updateWalletUI();
-            showToast('✅ تم تسجيل الدخول! مرحباً ' + user.name);
+
+            // Welcome message based on role
+            if (user.role === 'admin') {
+                showToast('👑 مرحباً أيها المشرف! لديك صلاحيات كاملة');
+            } else {
+                showToast('✅ تم تسجيل الدخول! مرحباً ' + user.name);
+            }
+
             setTimeout(initSiteAnimations, 500);
         }
 
@@ -1482,6 +1367,8 @@
                 currentUser = null;
                 document.getElementById('mainSite').classList.remove('visible');
                 document.getElementById('userProfileBar').classList.remove('visible');
+                document.getElementById('adminBadgeBar').classList.remove('show-admin');
+                document.getElementById('adminBadgeBar').style.display = 'none';
                 document.getElementById('loginScreen').classList.remove('hidden');
                 document.getElementById('loginForm').style.display = 'block';
                 document.getElementById('loginLoading').classList.remove('active');
@@ -1612,9 +1499,13 @@
         function closeProfileModal(e) { if (e.target === e.currentTarget) closeProfileModalDirect(); }
         function closeProfileModalDirect() { document.getElementById('profileModalOverlay').classList.remove('active'); document.body.style.overflow = ''; }
 
-        // ===== ADMIN PANEL =====
+        // ===== ADMIN PANEL - Only accessible if user.role === 'admin' =====
         function openAdminPanel() {
-            if (currentUser.id !== ADMIN_ID) { showToast(' لا تملك صلاحية الدخول'); return; }
+            // Double-check: Only allow access if user is actually the admin
+            if (!currentUser || currentUser.role !== 'admin' || currentUser.id !== ADMIN_TELEGRAM_ID) {
+                showToast('⛔ لا تملك صلاحية الوصول');
+                return;
+            }
             document.getElementById('adminOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
             refreshAdminData();
@@ -1625,7 +1516,6 @@
         function refreshAdminData() {
             const users = getAllUsers();
 
-            // Stats
             const totalUsers = users.length;
             const totalBalance = users.reduce((sum, u) => sum + ((u.wallet && u.wallet.balance) || 0), 0);
             const totalDeposits = users.reduce((sum, u) => sum + ((u.wallet && u.wallet.totalDeposited) || 0), 0);
@@ -1634,15 +1524,11 @@
             document.getElementById('adminTotalUsers').textContent = totalUsers;
             document.getElementById('adminTotalBalance').textContent = '$' + totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 });
             document.getElementById('adminTotalDeposits').textContent = '$' + totalDeposits.toLocaleString('en-US', { minimumFractionDigits: 2 });
-            document.getElementById('adminTotalWithdrawals').textContent = '$' + totalWithdrawals.toLocaleString('en-US', { minimumFractionDigits: 2 });
+            document.getElementById('adminTotalWithdrawalsAdmin').textContent = '$' + totalWithdrawals.toLocaleString('en-US', { minimumFractionDigits: 2 });
 
-            // Render users table
             renderAdminUsers(users);
-
-            // Render all transactions
             renderAdminAllTransactions(users);
 
-            // Statistics
             const totalPoints = users.reduce((sum, u) => sum + (u.points || 0), 0);
             const avgBalance = totalUsers > 0 ? totalBalance / totalUsers : 0;
             let totalTx = 0;
@@ -1652,9 +1538,8 @@
             document.getElementById('statAvgBalance').textContent = '$' + avgBalance.toFixed(2);
             document.getElementById('statTotalTx').textContent = totalTx;
 
-            // Active today (users who logged in today)
             const today = new Date().toDateString();
-            const activeToday = users.filter(u => new Date(u.joinDate || new Date()).toDateString() === today).length || totalUsers;
+            const activeToday = users.filter(u => new Date(u.joinDate || new Date()).toDateString() === today).length || Math.max(1, totalUsers);
             document.getElementById('statActiveToday').textContent = activeToday;
         }
 
@@ -1677,7 +1562,7 @@
                 const level = u.level || 1;
                 const visits = u.visits || 0;
                 const joinDate = u.joinDate || '---';
-                const isAdmin = u.id === ADMIN_ID;
+                const isAdmin = u.id === ADMIN_TELEGRAM_ID;
                 return `<tr>
                     <td>
                         <div class="admin-user-cell">
@@ -1695,9 +1580,17 @@
                     <td>
                         <button class="admin-action-btn view" onclick="viewUserDetail('${u.id}')">👁️</button>
                         <button class="admin-action-btn edit" onclick="openEditBalance('${u.id}')">✏️</button>
+                        ${!isAdmin ? '<button class="admin-action-btn delete" onclick="deleteUser(\''+u.id+'\')">🗑️</button>' : ''}
                     </td>
                 </tr>`;
             }).join('');
+        }
+
+        function deleteUser(userId) {
+            if (!confirm('هل أنت متأكد من حذف هذا المستخدم؟')) return;
+            localStorage.removeItem('kratos_user_' + userId);
+            showToast('🗑️ تم حذف المستخدم');
+            refreshAdminData();
         }
 
         function filterAdminUsers() { renderAdminUsers(getAllUsers()); }
@@ -1726,7 +1619,7 @@
             container.innerHTML = allTx.slice(0, 50).map(tx => {
                 const isDeposit = tx.type === 'deposit';
                 const iconClass = isDeposit ? 'deposit' : 'withdraw';
-                const icon = isDeposit ? '' : '📤';
+                const icon = isDeposit ? '📥' : '📤';
                 const date = new Date(tx.date).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
                 const amountClass = isDeposit ? 'positive' : 'negative';
                 const sign = isDeposit ? '+' : '-';
@@ -1754,7 +1647,6 @@
             document.querySelectorAll('.admin-tab-content').forEach((content, i) => content.classList.toggle('active', i === index));
         }
 
-        // Admin Edit Balance
         function openEditBalance(userId) {
             const users = getAllUsers();
             const user = users.find(u => String(u.id) === String(userId));
@@ -1769,14 +1661,11 @@
         function saveEditBalance() {
             const newBalance = parseFloat(document.getElementById('adminEditAmount').value);
             if (isNaN(newBalance) || newBalance < 0) { showToast('⚠️ أدخل مبلغاً صحيحاً'); return; }
-
             const users = getAllUsers();
             const user = users.find(u => String(u.id) === String(editingUserId));
             if (!user) return;
-
             const oldBalance = ((user.wallet && user.wallet.balance) || 0);
             const diff = newBalance - oldBalance;
-
             user.wallet.balance = newBalance;
             user.wallet.transactions.push({
                 type: diff >= 0 ? 'deposit' : 'withdraw',
@@ -1785,31 +1674,25 @@
                 method: 'لوحة التحكم',
                 date: new Date().toISOString()
             });
-
-            // Update in all stores
             localStorage.setItem('kratos_user_' + user.id, JSON.stringify(user));
             if (String(currentUser.id) === String(editingUserId)) {
                 currentUser = user;
                 localStorage.setItem('kratos_tg_user', JSON.stringify(currentUser));
             }
-
             closeAdminEditModal();
             refreshAdminData();
             showToast('✅ تم تعديل رصيد ' + (user.name || 'المستخدم') + ' إلى $' + newBalance.toFixed(2));
         }
 
-        // Admin User Detail
         function viewUserDetail(userId) {
             const users = getAllUsers();
             const user = users.find(u => String(u.id) === String(userId));
             if (!user) return;
             detailUserId = userId;
-
             const initial = user.name ? user.name.charAt(0) : '?';
             document.getElementById('detailAvatar').textContent = initial;
             document.getElementById('detailName').textContent = user.name || 'مجهول';
             document.getElementById('detailUsername').textContent = user.username || '@---';
-
             const balance = ((user.wallet && user.wallet.balance) || 0).toFixed(2);
             const visits = user.visits || 0;
             const level = user.level || 1;
@@ -1817,7 +1700,6 @@
             const totalDeposited = ((user.wallet && user.wallet.totalDeposited) || 0).toFixed(2);
             const totalWithdrawn = ((user.wallet && user.wallet.totalWithdrawn) || 0).toFixed(2);
             const txCount = (user.wallet && user.wallet.transactions) ? user.wallet.transactions.length : 0;
-
             document.getElementById('detailGrid').innerHTML = `
                 <div class="admin-detail-stat"><div class="admin-detail-stat-val" style="color:var(--wallet-gold);">$${balance}</div><div class="admin-detail-stat-lbl">الرصيد</div></div>
                 <div class="admin-detail-stat"><div class="admin-detail-stat-val" style="color:var(--admin-purple);">${level}</div><div class="admin-detail-stat-lbl">المستوى</div></div>
@@ -1828,14 +1710,10 @@
                 <div class="admin-detail-stat"><div class="admin-detail-stat-val" style="color:var(--tg-blue);">${txCount}</div><div class="admin-detail-stat-lbl">المعاملات</div></div>
                 <div class="admin-detail-stat"><div class="admin-detail-stat-val" style="color:var(--text-dim);direction:ltr;font-size:0.8rem;">${user.id}</div><div class="admin-detail-stat-lbl">معرف تلغرام</div></div>
             `;
-
             document.getElementById('adminDetailModal').classList.add('active');
         }
         function closeAdminDetailModal() { document.getElementById('adminDetailModal').classList.remove('active'); detailUserId = null; }
-        function editUserBalanceFromDetail() {
-            closeAdminDetailModal();
-            if (detailUserId) openEditBalance(detailUserId);
-        }
+        function editUserBalanceFromDetail() { closeAdminDetailModal(); if (detailUserId) openEditBalance(detailUserId); }
 
         // ===== SITE ANIMATIONS =====
         function initSiteAnimations() {
