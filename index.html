@@ -2,537 +2,2683 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cyber Catcher Pro</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Telegram Web App -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>God of War - Kratos</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-tajawal@5.0.0/700.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-tajawal@5.0.0/400.css" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
-            --primary: #3b82f6;
-            --accent: #8b5cf6;
-            --bg-dark: #0f172a;
+            --primary: #c0392b;
+            --primary-glow: #e74c3c;
+            --secondary: #d4a017;
+            --dark: #0a0a0f;
+            --glass: rgba(10, 10, 15, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text: #f0e6d3;
+            --text-dim: rgba(240, 230, 211, 0.6);
+            --telegram: #2AABEE;
         }
+
         body {
-            font-family: 'Cairo', sans-serif;
-            background-color: var(--tg-theme-bg-color, var(--bg-dark));
-            color: var(--tg-theme-text-color, #ffffff);
-            overflow: hidden; /* منع التمرير أثناء اللعب */
-            touch-action: none;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Tajawal', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        /* خلفية متحركة احترافية */
-        .cyber-grid {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
-            background-size: 40px 40px;
-            perspective: 500px;
-            transform-style: preserve-3d;
-            z-index: -2;
-            opacity: 0.3;
-        }
-        .orb {
-            position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5;
-            animation: floatOrb 10s infinite ease-in-out alternate;
-        }
-        @keyframes floatOrb {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(30px, 50px); }
-        }
-
-        /* تأثيرات الزجاج */
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Canvas Styling */
-        canvas {
-            display: block;
+        /* Background */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            border-radius: 16px;
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+            z-index: -2;
+            background: url('https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png') center center / cover no-repeat;
         }
 
-        .neon-text {
-            text-shadow: 0 0 10px rgba(59, 130, 246, 0.8), 0 0 20px rgba(59, 130, 246, 0.4);
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(
+                180deg,
+                rgba(10, 10, 15, 0.4) 0%,
+                rgba(10, 10, 15, 0.6) 40%,
+                rgba(10, 10, 15, 0.85) 100%
+            );
         }
-        
-        .hidden-content { display: none !important; }
-        
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatParticle linear infinite;
+            box-shadow: 0 0 6px var(--primary), 0 0 12px rgba(231, 76, 60, 0.3);
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--dark); }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        /* ===== TELEGRAM LOGIN SCREEN ===== */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .login-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.05);
+        }
+
+        .login-container {
+            background: rgba(15, 15, 25, 0.85);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px 40px;
+            max-width: 460px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: loginSlideIn 0.8s ease;
+        }
+
+        @keyframes loginSlideIn {
+            from { transform: translateY(50px) scale(0.95); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--telegram), #229ED9, var(--telegram));
+        }
+
+        .login-shield {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            box-shadow: 0 8px 40px rgba(192, 57, 43, 0.4);
+            animation: shieldPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes shieldPulse {
+            0%, 100% { box-shadow: 0 8px 40px rgba(192, 57, 43, 0.4); }
+            50% { box-shadow: 0 8px 60px rgba(192, 57, 43, 0.6); }
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--text), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-subtitle {
+            color: var(--text-dim);
+            font-size: 1rem;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .login-telegram-section {
+            background: rgba(42, 171, 238, 0.08);
+            border: 1px solid rgba(42, 171, 238, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .tg-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .tg-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--telegram);
+            margin-bottom: 8px;
+        }
+
+        .tg-desc {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .tg-login-btn {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #2AABEE, #229ED9);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 25px rgba(42, 171, 238, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tg-login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .tg-login-btn:hover::before {
+            left: 100%;
+        }
+
+        .tg-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 35px rgba(42, 171, 238, 0.5);
+        }
+
+        .tg-login-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-note {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* Telegram Auth Modal */
+        .tg-auth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(15px);
+        }
+
+        .tg-auth-modal.active {
+            display: flex;
+        }
+
+        .tg-auth-box {
+            background: rgba(15, 15, 25, 0.95);
+            border: 1px solid rgba(42, 171, 238, 0.2);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            animation: modalIn 0.4s ease;
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .tg-auth-box .tg-icon {
+            font-size: 3rem;
+        }
+
+        .tg-auth-box h3 {
+            font-size: 1.4rem;
+            margin: 16px 0 8px;
+            color: var(--telegram);
+        }
+
+        .tg-auth-box p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .tg-phone-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.05);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            text-align: center;
+            direction: ltr;
+            outline: none;
+            margin-bottom: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .tg-phone-input:focus {
+            border-color: var(--telegram);
+            box-shadow: 0 0 0 3px rgba(42, 171, 238, 0.15);
+        }
+
+        .tg-code-inputs {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .tg-code-input {
+            width: 48px;
+            height: 56px;
+            background: rgba(255,255,255,0.05);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .tg-code-input:focus {
+            border-color: var(--telegram);
+            box-shadow: 0 0 0 3px rgba(42, 171, 238, 0.15);
+            transform: scale(1.05);
+        }
+
+        .tg-submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #2AABEE, #229ED9);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tg-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(42, 171, 238, 0.4);
+        }
+
+        .tg-cancel-btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-dim);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .tg-cancel-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary-glow);
+        }
+
+        /* Loading State */
+        .login-loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .login-loading.active {
+            display: flex;
+        }
+
+        .login-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(42, 171, 238, 0.15);
+            border-top: 3px solid var(--telegram);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .login-loading-text {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        /* User Profile Card */
+        .user-profile-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            background: rgba(15, 15, 25, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 8px 2rem;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .user-profile-bar.visible {
+            display: flex;
+        }
+
+        .user-profile-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--telegram), #1E96D1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            border: 2px solid rgba(42, 171, 238, 0.4);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .user-avatar .avatar-placeholder {
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .user-username {
+            font-size: 0.8rem;
+            color: var(--telegram);
+        }
+
+        .user-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: #4ade80;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logout-btn {
+            padding: 8px 18px;
+            background: rgba(192, 57, 43, 0.15);
+            border: 1px solid rgba(192, 57, 43, 0.3);
+            border-radius: 10px;
+            color: var(--primary-glow);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(192, 57, 43, 0.3);
+            border-color: var(--primary);
+        }
+
+        /* Profile Modal */
+        .profile-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(15px);
+        }
+
+        .profile-modal-overlay.active {
+            display: flex;
+        }
+
+        .profile-modal {
+            background: rgba(15, 15, 25, 0.95);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            animation: modalIn 0.4s ease;
+            position: relative;
+        }
+
+        .profile-close {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .profile-close:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--telegram), #1E96D1);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: white;
+            border: 3px solid rgba(42, 171, 238, 0.4);
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(42, 171, 238, 0.3);
+        }
+
+        .profile-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .profile-username {
+            color: var(--telegram);
+            font-size: 1rem;
+        }
+
+        .profile-id {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin-top: 4px;
+            direction: ltr;
+        }
+
+        .profile-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .profile-stat {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 16px 12px;
+            text-align: center;
+        }
+
+        .profile-stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--telegram);
+        }
+
+        .profile-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        .profile-info-list {
+            list-style: none;
+        }
+
+        .profile-info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .profile-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-info-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .profile-info-value {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .profile-info-value.tg-verified {
+            color: var(--telegram);
+        }
+
+        /* ===== MAIN SITE STYLES ===== */
+        .main-site {
+            display: none;
+        }
+
+        .main-site.visible {
+            display: block;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 58px;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 15, 0.3);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(10, 10, 15, 0.85);
+            padding: 0.6rem 2rem;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 4px 15px rgba(192, 57, 43, 0.4);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: var(--text);
+        }
+
+        .nav-btn {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, var(--primary), #a93226);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(192, 57, 43, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(192, 57, 43, 0.5);
+        }
+
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .mobile-toggle span {
+            width: 28px;
+            height: 2.5px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 180px 5% 80px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 650px;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(192, 57, 43, 0.15);
+            border: 1px solid rgba(192, 57, 43, 0.3);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--primary-glow);
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero-title .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--text-dim);
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        .btn-primary {
+            padding: 14px 36px;
+            background: linear-gradient(135deg, var(--primary), #a93226);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 30px rgba(192, 57, 43, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(192, 57, 43, 0.5);
+        }
+
+        .btn-secondary {
+            padding: 14px 36px;
+            background: transparent;
+            border: 1.5px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            background: rgba(192, 57, 43, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 60px;
+            animation: fadeInUp 0.8s ease 0.8s both;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* Floating Cards */
+        .hero-visual {
+            position: absolute;
+            left: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .float-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            min-width: 220px;
+            animation: floatCard 6s ease-in-out infinite;
+        }
+
+        .float-card:nth-child(2) { animation-delay: -2s; }
+        .float-card:nth-child(3) { animation-delay: -4s; }
+
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .float-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .fc-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .fc-icon.red { background: rgba(192, 57, 43, 0.2); }
+        .fc-icon.gold { background: rgba(212, 160, 23, 0.2); }
+        .fc-icon.blue { background: rgba(52, 152, 219, 0.2); }
+
+        .fc-title { font-size: 0.85rem; color: var(--text-dim); }
+        .fc-value { font-size: 1.3rem; font-weight: 700; }
+
+        .fc-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .fc-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 1.5s ease;
+        }
+
+        /* Sections */
+        .section {
+            padding: 100px 5%;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(192, 57, 43, 0.1);
+            border: 1px solid rgba(192, 57, 43, 0.2);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--primary-glow);
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-desc {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Abilities Grid */
+        .abilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .ability-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ability-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .ability-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .ability-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(192, 57, 43, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .ability-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .ability-icon.red {
+            background: linear-gradient(135deg, rgba(192, 57, 43, 0.2), rgba(192, 57, 43, 0.05));
+            border: 1px solid rgba(192, 57, 43, 0.3);
+        }
+
+        .ability-icon.gold {
+            background: linear-gradient(135deg, rgba(212, 160, 23, 0.2), rgba(212, 160, 23, 0.05));
+            border: 1px solid rgba(212, 160, 23, 0.3);
+        }
+
+        .ability-icon.blue {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.05));
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .ability-icon.purple {
+            background: linear-gradient(135deg, rgba(142, 68, 173, 0.2), rgba(142, 68, 173, 0.05));
+            border: 1px solid rgba(142, 68, 173, 0.3);
+        }
+
+        .ability-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .ability-desc {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .ability-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ability-level {
+            display: flex;
+            gap: 4px;
+        }
+
+        .level-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .level-dot.active {
+            background: var(--primary);
+            box-shadow: 0 0 8px rgba(192, 57, 43, 0.5);
+        }
+
+        .ability-power {
+            font-size: 0.85rem;
+            color: var(--primary-glow);
+            font-weight: 600;
+        }
+
+        /* Weapons Section */
+        .weapons-section {
+            background: linear-gradient(180deg, transparent, rgba(10, 10, 15, 0.5), transparent);
+        }
+
+        .weapons-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .weapon-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .weapon-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: rgba(192, 57, 43, 0.2);
+        }
+
+        .weapon-emoji {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+            filter: drop-shadow(0 0 20px rgba(192, 57, 43, 0.3));
+        }
+
+        .weapon-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .weapon-type {
+            color: var(--primary-glow);
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+
+        .weapon-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .w-stat {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .w-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+        }
+
+        .w-stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* Progress Bars */
+        .progress-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .progress-item {
+            margin-bottom: 28px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-label { font-size: 1rem; font-weight: 600; }
+        .progress-value { font-size: 0.9rem; color: var(--primary-glow); font-weight: 600; }
+
+        .progress-bar {
+            height: 10px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            width: 0;
+            transition: width 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .pf-red { background: linear-gradient(90deg, var(--primary), #e74c3c); }
+        .pf-gold { background: linear-gradient(90deg, #d4a017, #f39c12); }
+        .pf-blue { background: linear-gradient(90deg, #2980b9, #3498db); }
+        .pf-purple { background: linear-gradient(90deg, #8e44ad, #9b59b6); }
+        .pf-green { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+
+        /* Timeline */
+        .timeline {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 20px;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--secondary), var(--primary));
+        }
+
+        .timeline-item {
+            padding-right: 60px;
+            padding-bottom: 40px;
+            position: relative;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.6s ease;
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            right: 12px;
+            top: 5px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--dark);
+            border: 3px solid var(--primary);
+            z-index: 1;
+        }
+
+        .timeline-dot::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        .timeline-date { font-size: 0.85rem; color: var(--primary-glow); font-weight: 600; margin-bottom: 8px; }
+        .timeline-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+        .timeline-desc { color: var(--text-dim); font-size: 0.95rem; line-height: 1.7; }
+
+        /* Gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 250px);
+            gap: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .gallery-item:hover { transform: scale(1.03); z-index: 2; }
+        .gallery-item:first-child { grid-row: span 2; }
+
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .gallery-item:hover .gallery-img { transform: scale(1.1); }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 30px 20px 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay { transform: translateY(0); }
+        .gallery-title { font-size: 1.1rem; font-weight: 700; }
+        .gallery-subtitle { font-size: 0.8rem; color: var(--text-dim); }
+
+        /* Contact */
+        .contact-section { max-width: 700px; margin: 0 auto; }
+
+        .contact-form {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dim);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.15);
+        }
+
+        .form-input::placeholder { color: rgba(255,255,255,0.2); }
+        textarea.form-input { min-height: 120px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        /* Footer */
+        .footer {
+            padding: 60px 5% 30px;
+            border-top: 1px solid var(--glass-border);
+            background: rgba(10, 10, 15, 0.5);
+            backdrop-filter: blur(20px);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto 40px;
+        }
+
+        .footer-brand p {
+            color: var(--text-dim);
+            line-height: 1.8;
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
+
+        .footer-title { font-size: 1rem; font-weight: 700; margin-bottom: 20px; }
+
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 12px; }
+
+        .footer-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-glow);
+            padding-right: 5px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
         /* Animations */
-        .pop-in { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Scroll to top */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(192, 57, 43, 0.4);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(192, 57, 43, 0.5);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1a1a2e;
+            border: 1px solid var(--glass-border);
+            border-right: 3px solid var(--primary);
+            border-radius: 12px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 11000;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+
+        .toast.show { transform: translateX(0); }
+
+        .toast-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(192, 57, 43, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .toast-text { font-size: 0.95rem; font-weight: 600; }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, rgba(42, 171, 238, 0.1), rgba(192, 57, 43, 0.1));
+            border: 1px solid rgba(42, 171, 238, 0.2);
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .welcome-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--telegram), #1E96D1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .welcome-text h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .welcome-text p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-visual { display: none; }
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(3, 200px);
+            }
+            .gallery-item:first-child { grid-row: span 1; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-toggle { display: flex; }
+            .nav-links.mobile-open {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%; left: 0; right: 0;
+                background: rgba(10, 10, 15, 0.95);
+                backdrop-filter: blur(20px);
+                padding: 20px;
+                border-bottom: 1px solid var(--glass-border);
+                gap: 16px;
+            }
+            .hero { padding: 160px 5% 60px; }
+            .hero-stats { gap: 24px; }
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+            .gallery-item { height: 200px; }
+            .form-row { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .weapons-showcase { grid-template-columns: 1fr; }
+            .user-profile-bar { padding: 8px 16px; }
+            .user-details { display: none; }
+            .profile-stats-grid { grid-template-columns: 1fr; }
+            .login-container { padding: 40px 24px; }
+        }
     </style>
 </head>
-<body class="h-screen w-full flex flex-col relative">
+<body>
+    <!-- Background -->
+    <div class="bg-container"></div>
+    <div class="bg-overlay"></div>
+    <div class="particles" id="particles"></div>
 
-    <!-- Background Effects -->
-    <div class="cyber-grid"></div>
-    <div class="orb" style="top: -10%; right: -10%; width: 300px; height: 300px; background: #3b82f6;"></div>
-    <div class="orb" style="bottom: -10%; left: -10%; width: 250px; height: 250px; background: #8b5cf6; animation-delay: -5s;"></div>
+    <!-- ===== TELEGRAM LOGIN SCREEN ===== -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-container">
+            <div class="login-shield">⚔️</div>
+            <h1 class="login-title">عالم كراتوس</h1>
+            <p class="login-subtitle">الدخول محمي. سجّل دخولك عبر بوت تلغرام للوصول إلى عالم الأساطير</p>
 
-    <!-- MAIN DASHBOARD -->
-    <div id="dashboard" class="flex-1 flex flex-col items-center justify-center p-6 z-10 transition-opacity duration-500">
-        <div class="glass-panel p-8 rounded-3xl w-full max-w-md text-center pop-in">
-            <div class="w-24 h-24 mx-auto bg-gradient-to-tr from-blue-600 to-purple-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30 mb-6 animate-pulse">
-                <i class="fa-solid fa-gamepad text-4xl text-white"></i>
-            </div>
-            
-            <h1 class="text-3xl font-black text-white mb-2 neon-text">سايبر كاتشر</h1>
-            <p class="text-gray-400 text-sm mb-8 leading-relaxed">
-                مهمة لجمع البيانات المشفرة.<br>تجنب الفيروسات الحمراء واجمع الماس الأزرق!
-            </p>
-
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="bg-slate-800/50 p-4 rounded-2xl border border-white/5">
-                    <span class="block text-xs text-gray-500 mb-1">أعلى نتيجة</span>
-                    <span id="highScoreDisplay" class="text-xl font-bold text-yellow-400">0</span>
-                </div>
-                <div class="bg-slate-800/50 p-4 rounded-2xl border border-white/5">
-                    <span class="block text-xs text-gray-500 mb-1">الحالة</span>
-                    <span class="text-xl font-bold text-green-400">متصل</span>
-                </div>
+            <div class="login-telegram-section">
+                <span class="tg-icon">📨</span>
+                <h3 class="tg-title">تسجيل الدخول عبر تلغرام</h3>
+                <p class="tg-desc">اضغط على الزر أدناه لبدء عملية المصادقة عبر بوت تلغرام الخاص بالموقع</p>
+                <button class="tg-login-btn" id="tgLoginBtn" onclick="startTelegramAuth()">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                    تسجيل الدخول بتلغرام
+                </button>
             </div>
 
-            <button onclick="openGame()" class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-600/30 transform transition-all active:scale-95 flex items-center justify-center gap-3 group">
-                <span>ابدأ المهمة</span>
-                <i class="fa-solid fa-rocket group-hover:-translate-y-1 transition-transform"></i>
+            <div class="login-note">
+                🔒 بياناتك محمية ومشفرة بالكامل
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TELEGRAM AUTH MODAL ===== -->
+    <div class="tg-auth-modal" id="tgAuthModal">
+        <div class="tg-auth-box">
+            <span class="tg-icon">📨</span>
+            <h3>المصادقة عبر تلغرام</h3>
+            <p id="tgAuthStep">أدخل رقم هاتفك المرتبط بحساب تلغرام</p>
+
+            <div id="phoneStep">
+                <input type="tel" class="tg-phone-input" id="tgPhone" placeholder="+966 5XX XXX XXX" maxlength="15">
+                <button class="tg-submit-btn" onclick="sendTelegramCode()">إرسال رمز التحقق</button>
+            </div>
+
+            <div id="codeStep" style="display: none;">
+                <p style="font-size: 0.85rem; margin-bottom: 16px; color: var(--text-dim);">أدخل رمز التحقق المرسل إلى تلغرام</p>
+                <div class="tg-code-inputs">
+                    <input type="text" class="tg-code-input" maxlength="1" data-idx="0" oninput="handleCodeInput(this, 0)" onkeydown="handleCodeKeydown(event, 0)">
+                    <input type="text" class="tg-code-input" maxlength="1" data-idx="1" oninput="handleCodeInput(this, 1)" onkeydown="handleCodeKeydown(event, 1)">
+                    <input type="text" class="tg-code-input" maxlength="1" data-idx="2" oninput="handleCodeInput(this, 2)" onkeydown="handleCodeKeydown(event, 2)">
+                    <input type="text" class="tg-code-input" maxlength="1" data-idx="3" oninput="handleCodeInput(this, 3)" onkeydown="handleCodeKeydown(event, 3)">
+                    <input type="text" class="tg-code-input" maxlength="1" data-idx="4" oninput="handleCodeInput(this, 4)" onkeydown="handleCodeKeydown(event, 4)">
+                </div>
+                <button class="tg-submit-btn" onclick="verifyTelegramCode()">تأكيد الدخول</button>
+            </div>
+
+            <button class="tg-cancel-btn" onclick="closeTelegramAuth()">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- ===== USER PROFILE BAR ===== -->
+    <div class="user-profile-bar" id="userProfileBar">
+        <div class="user-profile-info" onclick="openProfileModal()" style="cursor: pointer;">
+            <div class="user-avatar" id="userAvatar">
+                <span class="avatar-placeholder" id="avatarInitial">👤</span>
+            </div>
+            <div class="user-details">
+                <span class="user-name" id="displayName">المستخدم</span>
+                <span class="user-username" id="displayUsername">@username</span>
+            </div>
+        </div>
+        <div class="user-actions">
+            <div class="user-status">
+                <span class="status-dot"></span>
+                متصل
+            </div>
+            <button class="logout-btn" onclick="logoutUser()">
+                🚪 تسجيل الخروج
             </button>
         </div>
     </div>
 
-    <!-- GAME OVERLAY -->
-    <div id="gameOverlay" class="fixed inset-0 z-50 bg-[#0f172a] hidden-content flex flex-col">
-        <!-- HUD -->
-        <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-start z-20 pointer-events-none">
-            <div class="flex flex-col">
-                <span class="text-[10px] text-gray-400 uppercase tracking-widest">النقاط</span>
-                <span id="scoreEl" class="text-4xl font-black text-white neon-text">0</span>
-            </div>
-            
-            <!-- Health Bar -->
-            <div class="w-32 mt-2">
-                <div class="flex justify-between text-[10px] text-gray-400 mb-1">
-                    <span>الدرع</span>
-                    <span id="healthText">100%</span>
+    <!-- ===== PROFILE MODAL ===== -->
+    <div class="profile-modal-overlay" id="profileModalOverlay" onclick="closeProfileModal(event)">
+        <div class="profile-modal" onclick="event.stopPropagation()">
+            <button class="profile-close" onclick="closeProfileModalDirect()">✕</button>
+            <div class="profile-header">
+                <div class="profile-avatar-large" id="profileAvatarLarge">
+                    <span id="profileInitial">👤</span>
                 </div>
-                <div class="h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
-                    <div id="healthBar" class="h-full bg-gradient-to-l from-green-400 to-emerald-500 w-full transition-all duration-200"></div>
+                <h2 class="profile-name" id="profileName">اسم المستخدم</h2>
+                <p class="profile-username" id="profileUsername">@username</p>
+                <p class="profile-id" id="profileId">ID: 000000000</p>
+            </div>
+
+            <div class="profile-stats-grid">
+                <div class="profile-stat">
+                    <div class="profile-stat-value" id="statVisits">0</div>
+                    <div class="profile-stat-label">زيارات</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value" id="statLevel">1</div>
+                    <div class="profile-stat-label">المستوى</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value" id="statPoints">0</div>
+                    <div class="profile-stat-label">نقاط</div>
                 </div>
             </div>
 
-            <button onclick="closeGame()" class="pointer-events-auto w-10 h-10 rounded-full bg-white/10 backdrop-blur flex items-center justify-center hover:bg-white/20 transition-colors border border-white/10">
-                <i class="fa-solid fa-pause text-white"></i>
-            </button>
+            <ul class="profile-info-list">
+                <li class="profile-info-item">
+                    <span class="profile-info-label">📱 رقم الهاتف</span>
+                    <span class="profile-info-value" id="profilePhone" style="direction:ltr;">---</span>
+                </li>
+                <li class="profile-info-item">
+                    <span class="profile-info-label">📨 تلغرام</span>
+                    <span class="profile-info-value tg-verified">✓ تم التحقق</span>
+                </li>
+                <li class="profile-info-item">
+                    <span class="profile-info-label">📅 تاريخ الانضمام</span>
+                    <span class="profile-info-value" id="profileJoinDate">---</span>
+                </li>
+                <li class="profile-info-item">
+                    <span class="profile-info-label"> اللغة</span>
+                    <span class="profile-info-value">العربية</span>
+                </li>
+                <li class="profile-info-item">
+                    <span class="profile-info-label"> الحالة</span>
+                    <span class="profile-info-value" style="color: #4ade80;">نشط - محارب</span>
+                </li>
+            </ul>
         </div>
+    </div>
 
-        <!-- Game Area -->
-        <div class="flex-1 relative overflow-hidden p-4 flex items-center justify-center">
-            <canvas id="gameCanvas"></canvas>
+    <!-- ===== MAIN SITE ===== -->
+    <div class="main-site" id="mainSite">
+        <!-- Navigation -->
+        <nav class="navbar" id="navbar">
+            <div class="nav-logo" onclick="scrollToSection('hero')">
+                <div class="logo-icon">Ω</div>
+                <span class="logo-text">KRATOS</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#hero" class="active" onclick="scrollToSection('hero')">الرئيسية</a></li>
+                <li><a href="#abilities" onclick="scrollToSection('abilities')">القدرات</a></li>
+                <li><a href="#weapons" onclick="scrollToSection('weapons')">الأسلحة</a></li>
+                <li><a href="#timeline" onclick="scrollToSection('timeline')">القصة</a></li>
+                <li><a href="#gallery" onclick="scrollToSection('gallery')">المعرض</a></li>
+                <li><a href="#contact" onclick="scrollToSection('contact')">تواصل</a></li>
+            </ul>
+            <button class="nav-btn" onclick="openAdventureModal()">ابدأ المغامرة</button>
+            <div class="mobile-toggle" id="mobileToggle" onclick="toggleMobile()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
 
-            <!-- Start Screen inside Canvas -->
-            <div id="startScreen" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 backdrop-blur-sm z-30">
-                <div class="text-center pop-in">
-                    <i class="fa-solid fa-shield-halved text-6xl text-blue-500 mb-4 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"></i>
-                    <h2 class="text-2xl font-bold text-white mb-6">هل أنت جاهز؟</h2>
-                    <button onclick="startGame()" class="px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold shadow-[0_0_20px_rgba(37,99,235,0.5)] transition-all transform hover:scale-105 active:scale-95">
-                        اضغط للبدء
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <div class="welcome-banner" id="welcomeBanner">
+                    <div class="welcome-avatar" id="welcomeAvatar"></div>
+                    <div class="welcome-text">
+                        <h4 id="welcomeText">مرحباً بك يا محارب!</h4>
+                        <p>لقد سجّلت دخولك بنجاح عبر تلغرام. استكشف عالم كراتوس الآن.</p>
+                    </div>
+                </div>
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    إله الحرب - الأسطورة الخالدة
+                </div>
+                <h1 class="hero-title">
+                    كراتوس
+                    <br>
+                    <span class="highlight">قاتل الآلهة</span>
+                </h1>
+                <p class="hero-desc">
+                    من شبح إسبرطة إلى إله الحرب، رحلة كراتوس الأسطورية عبر عوالم الأساطير اليونانية والإسكندنافية. اكتشف قوى لا حدود لها في عالم مليء بالتحديات والمعارك الملحمية.
+                </p>
+                <div class="hero-actions">
+                    <button class="btn-primary" onclick="openAdventureModal()">
+                        ⚔️ ابدأ الرحلة
+                    </button>
+                    <button class="btn-secondary" onclick="scrollToSection('abilities')">
+                        📖 اكتشف القدرات
                     </button>
                 </div>
-            </div>
-
-            <!-- Game Over Screen -->
-            <div id="gameOverScreen" class="hidden-content absolute inset-0 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-md z-40">
-                <div class="text-center pop-in">
-                    <div class="text-6xl mb-4 animate-bounce">💀</div>
-                    <h2 class="text-3xl font-black text-white mb-2">فشلت المهمة</h2>
-                    <div class="my-6 bg-slate-800/50 p-4 rounded-2xl border border-white/5">
-                        <p class="text-gray-400 text-xs uppercase tracking-wider">النتيجة النهائية</p>
-                        <p id="finalScore" class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mt-2">0</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number"><span class="counter" data-target="9">0</span></div>
+                        <div class="stat-label">آلهة مهزومة</div>
                     </div>
-                    <div class="flex gap-3 justify-center mt-6">
-                        <button onclick="closeGame()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors">خروج</button>
-                        <button onclick="startGame()" class="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:bg-blue-500 transition-colors">إعادة</button>
+                    <div class="stat-item">
+                        <div class="stat-number"><span class="counter" data-target="50">0</span>+</div>
+                        <div class="stat-label">مهمة مكتملة</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number"><span class="counter" data-target="100">0</span></div>
+                        <div class="stat-label">مستوى القوة</div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div class="hero-visual">
+                <div class="float-card">
+                    <div class="float-card-header">
+                        <div class="fc-icon red">⚔️</div>
+                        <span class="fc-title">قوة الهجوم</span>
+                    </div>
+                    <div class="fc-value" style="color: #e74c3c;">9,850</div>
+                    <div class="fc-bar">
+                        <div class="fc-bar-fill pf-red" style="width: 92%;"></div>
+                    </div>
+                </div>
+                <div class="float-card">
+                    <div class="float-card-header">
+                        <div class="fc-icon gold">️</div>
+                        <span class="fc-title">الدفاع</span>
+                    </div>
+                    <div class="fc-value" style="color: #f39c12;">8,720</div>
+                    <div class="fc-bar">
+                        <div class="fc-bar-fill pf-gold" style="width: 85%;"></div>
+                    </div>
+                </div>
+                <div class="float-card">
+                    <div class="float-card-header">
+                        <div class="fc-icon blue">✨</div>
+                        <span class="fc-title">القوة السحرية</span>
+                    </div>
+                    <div class="fc-value" style="color: #3498db;">7,430</div>
+                    <div class="fc-bar">
+                        <div class="fc-bar-fill pf-blue" style="width: 78%;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Abilities Section -->
+        <section class="section" id="abilities">
+            <div class="section-header fade-in">
+                <span class="section-tag">القدرات القتالية</span>
+                <h2 class="section-title">قدرات كراتوس الأسطورية</h2>
+                <p class="section-desc">تتميز كل قدرة بقوة فريدة تميز كراتوس في ساحة المعركة وتجعله لا يُقهر</p>
+            </div>
+            <div class="abilities-grid">
+                <div class="ability-card fade-in" onclick="showToast('⚔️ فوري كراتوس!')">
+                    <div class="ability-icon red">🔥</div>
+                    <h3 class="ability-name">غضب كراتوس</h3>
+                    <p class="ability-desc">قوة غضب لا تُقاوم تزيد من قوة الهجوم بنسبة 300% وتطلق موجة طاقة مدمرة</p>
+                    <div class="ability-stats">
+                        <div class="ability-level">
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                        </div>
+                        <span class="ability-power">MAX</span>
+                    </div>
+                </div>
+                <div class="ability-card fade-in" onclick="showToast('🛡️ درع أثينا!')">
+                    <div class="ability-icon gold">⚡</div>
+                    <h3 class="ability-name">برق زيوس</h3>
+                    <p class="ability-desc">تحكم في قوة البرق والرعد لتوجيه صاعقات مدمرة نحو الأعداء</p>
+                    <div class="ability-stats">
+                        <div class="ability-level">
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot"></span>
+                        </div>
+                        <span class="ability-power">85%</span>
+                    </div>
+                </div>
+                <div class="ability-card fade-in" onclick="showToast('❄️ جليد الشمال!')">
+                    <div class="ability-icon blue">❄️</div>
+                    <h3 class="ability-name">جليد فايمب</h3>
+                    <p class="ability-desc">قوة الجليد الشمالية التي تجمد الأعداء وتخلق حواجز جليدية واقية</p>
+                    <div class="ability-stats">
+                        <div class="ability-level">
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot"></span>
+                        </div>
+                        <span class="ability-power">80%</span>
+                    </div>
+                </div>
+                <div class="ability-card fade-in" onclick="showToast('🌀 قوة الفوضى!')">
+                    <div class="ability-icon purple">🌀</div>
+                    <h3 class="ability-name">سلاسل الفوضى</h3>
+                    <p class="ability-desc">سلاسل ملتهبة مربوطة بالذراعين تضرب الأعداء عن بعد بقوة هائلة</p>
+                    <div class="ability-stats">
+                        <div class="ability-level">
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                        </div>
+                        <span class="ability-power">MAX</span>
+                    </div>
+                </div>
+                <div class="ability-card fade-in" onclick="showToast('💀 هجوم الفناء!')">
+                    <div class="ability-icon red">💀</div>
+                    <h3 class="ability-name">لمسة الفناء</h3>
+                    <p class="ability-desc">هجوم قاتل يتسبب في ضرر فوري مع تأثير تسمم يستنزف صحة العدو</p>
+                    <div class="ability-stats">
+                        <div class="ability-level">
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot"></span>
+                            <span class="level-dot"></span>
+                        </div>
+                        <span class="ability-power">65%</span>
+                    </div>
+                </div>
+                <div class="ability-card fade-in" onclick="showToast(' قوة الإله!')">
+                    <div class="ability-icon gold">🌟</div>
+                    <h3 class="ability-name">قوة الإله</h3>
+                    <p class="ability-desc">القدرة الخالصة التي يمتلكها كراتوس كإله، تمنحه خلوداً مؤقتاً</p>
+                    <div class="ability-stats">
+                        <div class="ability-level">
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                            <span class="level-dot active"></span>
+                        </div>
+                        <span class="ability-power">∞</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Weapons Section -->
+        <section class="section weapons-section" id="weapons">
+            <div class="section-header fade-in">
+                <span class="section-tag">ترسانة الأسلحة</span>
+                <h2 class="section-title">أسلحة كراتوس</h2>
+                <p class="section-desc">كل سلاح يحمل قصة وقوة فريدة في يد أقوى محارب عرفته الأساطير</p>
+            </div>
+            <div class="weapons-showcase">
+                <div class="weapon-card fade-in">
+                    <span class="weapon-emoji"></span>
+                    <h3 class="weapon-name">فأس ليفياثان</h3>
+                    <p class="weapon-type">سلاح إسكندنافي</p>
+                    <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.7;">فأس جليدية سحرية يمكن إلقاؤها واستدعاؤها، مصنوعة من الجليد الخالد</p>
+                    <div class="weapon-stats-grid">
+                        <div class="w-stat">
+                            <div class="w-stat-label">الضرر</div>
+                            <div class="w-stat-value" style="color: #e74c3c;">920</div>
+                        </div>
+                        <div class="w-stat">
+                            <div class="w-stat-label">السرعة</div>
+                            <div class="w-stat-value" style="color: #3498db;">85</div>
+                        </div>
+                        <div class="w-stat">
+                            <div class="w-stat-label">المدى</div>
+                            <div class="w-stat-value" style="color: #f39c12;">78</div>
+                        </div>
+                        <div class="w-stat">
+                            <div class="w-stat-label">السحر</div>
+                            <div class="w-stat-value" style="color: #9b59b6;">90</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weapon-card fade-in">
+                    <span class="weapon-emoji">🔥</span>
+                    <h3 class="weapon-name">شفرة الفوضى</h3>
+                    <p class="weapon-type">سلاح يوناني</p>
+                    <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.7;">شفرتان ملتهبتان مربوطتان بسلاسل، أخطر سلاح عرفه عالم الأساطير اليونانية</p>
+                    <div class="weapon-stats-grid">
+                        <div class="w-stat">
+                            <div class="w-stat-label">الضرر</div>
+                            <div class="w-stat-value" style="color: #e74c3c;">980</div>
+                        </div>
+                        <div class="w-stat">
+                            <div class="w-stat-label">السرعة</div>
+                            <div class="w-stat-value" style="color: #3498db;">95</div>
+                        </div>
+                        <div class="w-stat">
+                            <div class="w-stat-label">المدى</div>
+                            <div class="w-stat-value" style="color: #f39c12;">92</div>
+                        </div>
+                        <div class="w-stat">
+                            <div class="w-stat-label">السحر</div>
+                            <div class="w-stat-value" style="color: #9b59b6;">88</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="section" id="stats">
+            <div class="section-header fade-in">
+                <span class="section-tag">إحصائيات القوة</span>
+                <h2 class="section-title">مستويات كراتوس</h2>
+            </div>
+            <div class="progress-section fade-in">
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-label">⚔️ القوة الجسدية</span>
+                        <span class="progress-value">97%</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill pf-red" data-width="97"></div></div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-label">🧠 الحكمة</span>
+                        <span class="progress-value">82%</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill pf-gold" data-width="82"></div></div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-label">✨ القوة السحرية</span>
+                        <span class="progress-value">88%</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill pf-blue" data-width="88"></div></div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-label">🛡️ التحمل</span>
+                        <span class="progress-value">95%</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill pf-purple" data-width="95"></div></div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-label">💨 السرعة</span>
+                        <span class="progress-value">79%</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill pf-green" data-width="79"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline Section -->
+        <section class="section" id="timeline">
+            <div class="section-header fade-in">
+                <span class="section-tag">رحلة الأسطورة</span>
+                <h2 class="section-title">قصة كراتوس</h2>
+                <p class="section-desc">رحلة ملحمية من إسبرطة إلى أسكارد، عبر عوالم الآلهة والشياطين</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item" data-delay="0">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">عصر إسبرطة</div>
+                    <h3 class="timeline-title">مقاتل إسبرطة</h3>
+                    <p class="timeline-desc">بدأ كراتوس حياته كمقاتل بشري في إسبرطة، يقود جيشه في معارك لا تنتهي.</p>
+                </div>
+                <div class="timeline-item" data-delay="200">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">لعنة الآلهة</div>
+                    <h3 class="timeline-title">قتل عائلته</h3>
+                    <p class="timeline-desc">خدع آريس كراتوس لقتل زوجته وابنته. هذا الحدث حوّله إلى "شبح إسبرطة".</p>
+                </div>
+                <div class="timeline-item" data-delay="400">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">انتقام الآلهة</div>
+                    <h3 class="timeline-title">سقوط أوليمبوس</h3>
+                    <p class="timeline-desc">قاد كراتوس حرباً شرسة ضد آلهة اليونان وأبادهم واحداً تلو الآخر.</p>
+                </div>
+                <div class="timeline-item" data-delay="600">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">عصر الشمال</div>
+                    <h3 class="timeline-title">أب جديد</h3>
+                    <p class="timeline-desc">انتقل كراتوس إلى أراضي الإسكندنافيين حيث أصبح أباً لأتريوس.</p>
+                </div>
+                <div class="timeline-item" data-delay="800">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">راغناروك</div>
+                    <h3 class="timeline-title">نهاية العالم</h3>
+                    <p class="timeline-desc">واجه كراتوس أودين وأثور في معركة راغناروك الملحمية.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section class="section" id="gallery">
+            <div class="section-header fade-in">
+                <span class="section-tag">معرض الصور</span>
+                <h2 class="section-title">لحظات ملحمية</h2>
+            </div>
+            <div class="gallery-grid fade-in">
+                <div class="gallery-item" onclick="showToast('️ كراتوس')">
+                    <img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Kratos">
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">كراتوس - إله الحرب</div>
+                        <div class="gallery-subtitle">God of War (2018)</div>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="showToast('🪓 فأس ليفياثان')">
+                    <img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Axe" style="filter: hue-rotate(180deg) brightness(0.8);">
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">فأس ليفياثان</div>
+                        <div class="gallery-subtitle">سلاح الجليد</div>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="showToast('⚔️ معركة أوليمبوس')">
+                    <img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Battle" style="filter: hue-rotate(30deg) brightness(0.7);">
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">معركة أوليمبوس</div>
+                        <div class="gallery-subtitle">سقوط الآلهة</div>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="showToast('🌲 عالم الشمال')">
+                    <img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Nordic" style="filter: hue-rotate(200deg) brightness(0.6);">
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">عالم الشمال</div>
+                        <div class="gallery-subtitle">ميدغارد</div>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="showToast('👦 أتريوس')">
+                    <img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Atreus" style="filter: hue-rotate(100deg) brightness(0.75);">
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">أتريوس وبو</div>
+                        <div class="gallery-subtitle">رحلة الأب والابن</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="section" id="contact">
+            <div class="section-header fade-in">
+                <span class="section-tag">تواصل معنا</span>
+                <h2 class="section-title">انضم إلى الرحلة</h2>
+                <p class="section-desc">شاركنا رأيك واكتشف المزيد عن عالم كراتوس</p>
+            </div>
+            <div class="contact-section fade-in">
+                <form class="contact-form" onsubmit="handleSubmit(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">الاسم الأول</label>
+                            <input type="text" class="form-input" placeholder="أدخل اسمك" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">الاسم الأخير</label>
+                            <input type="text" class="form-input" placeholder="أدخل اسم عائلتك">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">البريد الإلكتروني</label>
+                        <input type="email" class="form-input" placeholder="example@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رسالتك</label>
+                        <textarea class="form-input" placeholder="اكتب رسالتك هنا..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                        📨 إرسال الرسالة
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="nav-logo" style="margin-bottom: 8px;">
+                        <div class="logo-icon">Ω</div>
+                        <span class="logo-text">KRATOS</span>
+                    </div>
+                    <p>موقع تفاعلي مخصص لعالم God of War الأسطوري. استكشف قصة كراتوس واكتشف قدراته.</p>
+                    <div class="social-links">
+                        <div class="social-link" onclick="showToast('🐦 تويتر')">🐦</div>
+                        <div class="social-link" onclick="showToast('📸 انستغرام')">📸</div>
+                        <div class="social-link" onclick="showToast('🎮 Discord')">🎮</div>
+                        <div class="social-link" onclick="showToast(' يوتيوب')">📺</div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="footer-title">روابط سريعة</h4>
+                    <ul class="footer-links">
+                        <li><a href="#hero" onclick="scrollToSection('hero')">الرئيسية</a></li>
+                        <li><a href="#abilities" onclick="scrollToSection('abilities')">القدرات</a></li>
+                        <li><a href="#weapons" onclick="scrollToSection('weapons')">الأسلحة</a></li>
+                        <li><a href="#timeline" onclick="scrollToSection('timeline')">القصة</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">العوالم</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">ميدغارد</a></li>
+                        <li><a href="#">ألفهايم</a></li>
+                        <li><a href="#">هيلمهايم</a></li>
+                        <li><a href="#">أسكارد</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">الدعم</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">الأسئلة الشائعة</a></li>
+                        <li><a href="#">سياسة الخصوصية</a></li>
+                        <li><a href="#">شروط الاستخدام</a></li>
+                        <li><a href="#">تواصل معنا</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Kratos Fan Site — جميع الحقوق محفوظة. صُنع بـ ❤️ لمحبي God of War</p>
+            </div>
+        </footer>
+
+        <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">⚔️</div>
+        <span class="toast-text" id="toastText">رسالة</span>
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        
-        // --- INITIALIZATION ---
-        function init() {
-            tg.expand();
-            tg.ready();
-            // Load High Score
-            const savedScore = localStorage.getItem('cyberCatcher_highScore');
-            if(savedScore) document.getElementById('highScoreDisplay').innerText = savedScore;
+        // ===== PARTICLES =====
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (Math.random() * 8 + 6) + 's';
+            particle.style.animationDelay = (Math.random() * 5) + 's';
+            const size = (Math.random() * 3 + 1) + 'px';
+            particle.style.width = size;
+            particle.style.height = size;
+            particlesContainer.appendChild(particle);
         }
-        init();
 
-        // --- AUDIO SYSTEM (Procedural Sound Synthesis) ---
-        // لا يحتاج لملفات خارجية، يولد الصوت باستخدام المتصفح
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        function playSound(type) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            const now = audioCtx.currentTime;
-            
-            if (type === 'coin') {
-                // صوت عملة معدنية نقي
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(1200, now);
-                osc.frequency.exponentialRampToValueAtTime(1800, now + 0.1);
-                gainNode.gain.setValueAtTime(0.2, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                osc.start(now);
-                osc.stop(now + 0.1);
-            } else if (type === 'hit') {
-                // صوت ضرر خشن
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, now);
-                osc.frequency.exponentialRampToValueAtTime(50, now + 0.3);
-                gainNode.gain.setValueAtTime(0.3, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                osc.start(now);
-                osc.stop(now + 0.3);
-            } else if (type === 'over') {
-                // صوت نهاية اللعبة
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.linearRampToValueAtTime(50, now + 0.6);
-                gainNode.gain.setValueAtTime(0.4, now);
-                gainNode.gain.linearRampToValueAtTime(0.01, now + 0.6);
-                osc.start(now);
-                osc.stop(now + 0.6);
+        // ===== TELEGRAM AUTH SYSTEM =====
+        let currentUser = null;
+
+        // Check if user is already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('kratos_tg_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                loginSuccess(currentUser);
             }
+        });
+
+        function startTelegramAuth() {
+            document.getElementById('tgAuthModal').classList.add('active');
+            document.getElementById('phoneStep').style.display = 'block';
+            document.getElementById('codeStep').style.display = 'none';
+            document.getElementById('tgAuthStep').textContent = 'أدخل رقم هاتفك المرتبط بحساب تلغرام';
+            document.getElementById('tgPhone').value = '';
+            document.getElementById('tgPhone').focus();
         }
 
-        // --- GAME ENGINE ---
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const scoreEl = document.getElementById('scoreEl');
-        const finalScoreEl = document.getElementById('finalScore');
-        const healthBar = document.getElementById('healthBar');
-        const healthText = document.getElementById('healthText');
-        
-        let gameState = {
-            isPlaying: false,
-            score: 0,
-            health: 100,
-            frames: 0,
-            difficulty: 1,
-            width: 0,
-            height: 0
-        };
-
-        let player = { x: 0, y: 0, width: 70, targetX: 0 };
-        let items = [];
-        let particles = [];
-        let animationId;
-
-        // Resize Handling
-        function resize() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            gameState.width = canvas.width;
-            gameState.height = canvas.height;
-            player.y = canvas.height - 60;
-            player.x = canvas.width / 2;
-            player.targetX = canvas.width / 2;
+        function closeTelegramAuth() {
+            document.getElementById('tgAuthModal').classList.remove('active');
         }
-        window.addEventListener('resize', resize);
 
-        // Input Handling
-        function handleInput(clientX) {
-            const rect = canvas.getBoundingClientRect();
-            player.targetX = clientX - rect.left;
-        }
-        canvas.addEventListener('mousemove', e => handleInput(e.clientX));
-        canvas.addEventListener('touchmove', e => {
-            e.preventDefault(); // Prevent scrolling
-            handleInput(e.touches[0].clientX);
-        }, { passive: false });
-
-        // --- CLASSES ---
-        class Particle {
-            constructor(x, y, color, speed) {
-                this.x = x;
-                this.y = y;
-                this.color = color;
-                const angle = Math.random() * Math.PI * 2;
-                const velocity = Math.random() * speed;
-                this.vx = Math.cos(angle) * velocity;
-                this.vy = Math.sin(angle) * velocity;
-                this.life = 1.0;
-                this.decay = Math.random() * 0.03 + 0.02;
-                this.size = Math.random() * 3 + 1;
+        function sendTelegramCode() {
+            const phone = document.getElementById('tgPhone').value.trim();
+            if (!phone || phone.length < 8) {
+                showToast('⚠️ أدخل رقم هاتف صحيح');
+                return;
             }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.life -= this.decay;
-                this.size *= 0.95;
-            }
-            draw(ctx) {
-                ctx.globalAlpha = this.life;
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.globalAlpha = 1.0;
+
+            // Simulate sending code
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = 'جاري الإرسال...';
+
+            setTimeout(() => {
+                document.getElementById('phoneStep').style.display = 'none';
+                document.getElementById('codeStep').style.display = 'block';
+                document.getElementById('tgAuthStep').textContent = 'أدخل رمز التحقق المكون من 5 أرقام';
+                btn.disabled = false;
+                btn.textContent = 'إرسال رمز التحقق';
+                document.querySelector('.tg-code-input[data-idx="0"]').focus();
+            }, 1500);
+        }
+
+        function handleCodeInput(input, index) {
+            if (input.value.length === 1) {
+                const nextInput = document.querySelector(`.tg-code-input[data-idx="${index + 1}"]`);
+                if (nextInput) nextInput.focus();
             }
         }
 
-        class Item {
-            constructor() {
-                this.radius = 15;
-                this.x = Math.random() * (gameState.width - 40) + 20;
-                this.y = -30;
-                // Physics with randomness
-                this.speedY = (Math.random() * 2 + 3) + (gameState.difficulty * 0.4);
-                this.rotation = 0;
-                this.rotSpeed = (Math.random() - 0.5) * 0.1;
-                
-                // 25% chance for bomb, increases with difficulty
-                this.isBomb = Math.random() < Math.min(0.25 + (gameState.difficulty * 0.02), 0.45);
+        function handleCodeKeydown(e, index) {
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                const prevInput = document.querySelector(`.tg-code-input[data-idx="${index - 1}"]`);
+                if (prevInput) prevInput.focus();
+            }
+        }
+
+        function verifyTelegramCode() {
+            const inputs = document.querySelectorAll('.tg-code-input');
+            let code = '';
+            inputs.forEach(input => code += input.value);
+
+            if (code.length !== 5) {
+                showToast('⚠️ أدخل رمز التحقق كاملاً');
+                return;
             }
 
-            update() {
-                this.y += this.speedY;
-                this.rotation += this.rotSpeed;
+            // Simulate verification
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = 'جاري التحقق...';
+
+            setTimeout(() => {
+                // Create mock user
+                const phone = document.getElementById('tgPhone').value.trim();
+                const mockUsers = [
+                    { name: 'أحمد المحارب', username: '@ahmed_warrior', id: 847291038 },
+                    { name: 'سارة الفاتحة', username: '@sara_conqueror', id: 593847201 },
+                    { name: 'خالد الأسد', username: '@khaled_lion', id: 128394756 },
+                    { name: 'نور البطل', username: '@noor_hero', id: 937482015 },
+                    { name: 'ليلى النجمة', username: '@layla_star', id: 482937106 },
+                ];
+                const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+
+                currentUser = {
+                    ...randomUser,
+                    phone: phone,
+                    joinDate: new Date().toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' }),
+                    visits: Math.floor(Math.random() * 50) + 1,
+                    level: Math.floor(Math.random() * 10) + 1,
+                    points: Math.floor(Math.random() * 5000) + 500,
+                    avatarUrl: null
+                };
+
+                localStorage.setItem('kratos_tg_user', JSON.stringify(currentUser));
+                loginSuccess(currentUser);
+            }, 2000);
+        }
+
+        function loginSuccess(user) {
+            // Hide login screen
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('tgAuthModal').classList.remove('active');
+
+            // Show main site
+            document.getElementById('mainSite').classList.add('visible');
+            document.getElementById('userProfileBar').classList.add('visible');
+
+            // Update user info in profile bar
+            const initial = user.name.charAt(0);
+            document.getElementById('avatarInitial').textContent = initial;
+            document.getElementById('displayName').textContent = user.name;
+            document.getElementById('displayUsername').textContent = user.username;
+
+            // Update welcome banner
+            document.getElementById('welcomeAvatar').textContent = initial;
+            document.getElementById('welcomeText').textContent = `مرحباً ${user.name}!`;
+
+            // Update profile modal
+            document.getElementById('profileName').textContent = user.name;
+            document.getElementById('profileUsername').textContent = user.username;
+            document.getElementById('profileId').textContent = `ID: ${user.id}`;
+            document.getElementById('profilePhone').textContent = user.phone;
+            document.getElementById('profileJoinDate').textContent = user.joinDate;
+            document.getElementById('profileInitial').textContent = initial;
+            document.getElementById('profileAvatarLarge').innerHTML = `<span style="font-size:36px;color:white;font-weight:700;">${initial}</span>`;
+
+            // Update stats
+            document.getElementById('statVisits').textContent = user.visits;
+            document.getElementById('statLevel').textContent = user.level;
+            document.getElementById('statPoints').textContent = user.points.toLocaleString();
+
+            // Adjust navbar position
+            document.getElementById('navbar').style.top = '58px';
+
+            showToast('✅ تم تسجيل الدخول بنجاح! مرحباً بك يا محارب');
+
+            // Initialize site animations
+            setTimeout(initSiteAnimations, 500);
+        }
+
+        function logoutUser() {
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                localStorage.removeItem('kratos_tg_user');
+                currentUser = null;
+
+                // Hide main site
+                document.getElementById('mainSite').classList.remove('visible');
+                document.getElementById('userProfileBar').classList.remove('visible');
+
+                // Show login screen
+                document.getElementById('loginScreen').classList.remove('hidden');
+
+                showToast('👋 تم تسجيل الخروج بنجاح');
             }
+        }
 
-            draw(ctx) {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation);
+        // ===== PROFILE MODAL =====
+        function openProfileModal() {
+            document.getElementById('profileModalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
 
-                // Glow Effect
-                ctx.shadowBlur = 15;
-                
-                if (this.isBomb) {
-                    // Draw Bomb (Red Triangle)
-                    ctx.shadowColor = '#ef4444';
-                    ctx.fillStyle = '#ef4444';
-                    ctx.beginPath();
-                    ctx.moveTo(0, -12);
-                    ctx.lineTo(10, 8);
-                    ctx.lineTo(-10, 8);
-                    ctx.closePath();
-                    ctx.fill();
-                    
-                    // Inner Detail
-                    ctx.fillStyle = '#fff';
-                    ctx.beginPath();
-                    ctx.arc(0, 2, 3, 0, Math.PI*2);
-                    ctx.fill();
+        function closeProfileModal(event) {
+            if (event.target === event.currentTarget) {
+                closeProfileModalDirect();
+            }
+        }
+
+        function closeProfileModalDirect() {
+            document.getElementById('profileModalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // ===== SITE ANIMATIONS =====
+        function initSiteAnimations() {
+            // Navbar scroll
+            const navbar = document.getElementById('navbar');
+            const scrollTopBtn = document.getElementById('scrollTop');
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 80) {
+                    navbar.classList.add('scrolled');
                 } else {
-                    // Draw Diamond (Blue Gem)
-                    ctx.shadowColor = '#3b82f6';
-                    ctx.fillStyle = '#3b82f6';
-                    ctx.beginPath();
-                    ctx.moveTo(0, -14);
-                    ctx.lineTo(12, 0);
-                    ctx.lineTo(0, 14);
-                    ctx.lineTo(-12, 0);
-                    ctx.closePath();
-                    ctx.fill();
-                    
-                    // Shine
-                    ctx.fillStyle = '#bfdbfe';
-                    ctx.beginPath();
-                    ctx.moveTo(0, -14);
-                    ctx.lineTo(4, -6);
-                    ctx.lineTo(0, -2);
-                    ctx.lineTo(-4, -6);
-                    ctx.closePath();
-                    ctx.fill();
+                    navbar.classList.remove('scrolled');
                 }
-                ctx.restore();
-            }
-        }
+                if (window.scrollY > 500) {
+                    scrollTopBtn.classList.add('visible');
+                } else {
+                    scrollTopBtn.classList.remove('visible');
+                }
 
-        // --- CORE FUNCTIONS ---
-        function createExplosion(x, y, color) {
-            for(let i=0; i<15; i++) {
-                particles.push(new Particle(x, y, color, 4));
-            }
-        }
-
-        function shakeScreen() {
-            canvas.style.transform = `translate(${Math.random()*10-5}px, ${Math.random()*10-5}px)`;
-            setTimeout(() => canvas.style.transform = 'none', 50);
-        }
-
-        function startGame() {
-            resize();
-            gameState.isPlaying = true;
-            gameState.score = 0;
-            gameState.health = 100;
-            gameState.difficulty = 1;
-            gameState.frames = 0;
-            items = [];
-            particles = [];
-            
-            scoreEl.innerText = '0';
-            updateHealthUI();
-            
-            document.getElementById('startScreen').classList.add('hidden-content');
-            document.getElementById('gameOverScreen').classList.add('hidden-content');
-            
-            // Haptic Start
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            
-            loop();
-        }
-
-        function endGame() {
-            gameState.isPlaying = false;
-            cancelAnimationFrame(animationId);
-            playSound('over');
-            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-            
-            finalScoreEl.innerText = gameState.score;
-            
-            // Save High Score
-            const currentHigh = localStorage.getItem('cyberCatcher_highScore') || 0;
-            if(gameState.score > currentHigh) {
-                localStorage.setItem('cyberCatcher_highScore', gameState.score);
-                document.getElementById('highScoreDisplay').innerText = gameState.score;
-            }
-
-            document.getElementById('gameOverScreen').classList.remove('hidden-content');
-        }
-
-        function updateHealthUI() {
-            healthBar.style.width = Math.max(0, gameState.health) + '%';
-            healthText.innerText = Math.max(0, gameState.health) + '%';
-            
-            if(gameState.health > 50) healthBar.className = "h-full w-full transition-all duration-200 bg-gradient-to-l from-green-400 to-emerald-500";
-            else if(gameState.health > 25) healthBar.className = "h-full w-full transition-all duration-200 bg-gradient-to-l from-yellow-400 to-orange-500";
-            else healthBar.className = "h-full w-full transition-all duration-200 bg-red-600 animate-pulse";
-        }
-
-        function openGame() {
-            document.getElementById('gameOverlay').classList.remove('hidden-content');
-            document.getElementById('gameOverlay').style.display = 'flex';
-            resize();
-        }
-
-        function closeGame() {
-            gameState.isPlaying = false;
-            cancelAnimationFrame(animationId);
-            document.getElementById('gameOverlay').classList.add('hidden-content');
-            document.getElementById('gameOverlay').style.display = 'none';
-        }
-
-        function loop() {
-            if (!gameState.isPlaying) return;
-
-            // Clear Canvas with Trail Effect
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.2)'; // Creates trails
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Update Player (Smooth Movement)
-            player.x += (player.targetX - player.x) * 0.15;
-            
-            // Draw Player (Futuristic Paddle)
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = '#6366f1';
-            ctx.fillStyle = '#6366f1';
-            ctx.beginPath();
-            ctx.roundRect(player.x - 35, player.y, 70, 12, 6);
-            ctx.fill();
-            
-            // Engine Glow
-            ctx.fillStyle = '#a5b4fc';
-            ctx.fillRect(player.x - 25, player.y + 12, 50, 4);
-            ctx.shadowBlur = 0;
-
-            // Spawn Items
-            if (gameState.frames % Math.max(20, 60 - gameState.difficulty * 2) === 0) {
-                items.push(new Item());
-            }
-
-            // Update & Draw Items
-            for (let i = items.length - 1; i >= 0; i--) {
-                let item = items[i];
-                item.update();
-                item.draw(ctx);
-
-                // Collision Detection
-                let dx = item.x - player.x;
-                let dy = item.y - (player.y + 5);
-                let distance = Math.sqrt(dx*dx + dy*dy);
-
-                if (distance < item.radius + 30 && item.y > player.y - 10 && item.y < player.y + 20) {
-                    // Hit!
-                    if (item.isBomb) {
-                        gameState.health -= 25;
-                        playSound('hit');
-                        shakeScreen();
-                        createExplosion(item.x, item.y, '#ef4444');
-                        if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
-                        
-                        updateHealthUI();
-                        if (gameState.health <= 0) { endGame(); return; }
-                    } else {
-                        gameState.score += 10;
-                        scoreEl.innerText = gameState.score;
-                        playSound('coin');
-                        createExplosion(item.x, item.y, '#3b82f6');
-                        if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-                        
-                        // Increase Difficulty every 50 points
-                        if (gameState.score % 50 === 0) gameState.difficulty++;
+                const sections = document.querySelectorAll('section[id]');
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 250;
+                    if (window.scrollY >= sectionTop) {
+                        current = section.getAttribute('id');
                     }
-                    items.splice(i, 1);
-                    continue;
-                }
+                });
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
 
-                // Remove if out of screen
-                if (item.y > canvas.height) {
-                    items.splice(i, 1);
-                }
-            }
+            // Fade in observer
+            const fadeObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        const bars = entry.target.querySelectorAll('.progress-fill');
+                        bars.forEach(bar => {
+                            setTimeout(() => {
+                                bar.style.width = bar.getAttribute('data-width') + '%';
+                            }, 300);
+                        });
+                        const timelineItems = entry.target.querySelectorAll('.timeline-item');
+                        timelineItems.forEach((item) => {
+                            const delay = parseInt(item.getAttribute('data-delay')) || 0;
+                            setTimeout(() => item.classList.add('visible'), delay);
+                        });
+                    }
+                });
+            }, { threshold: 0.1 });
 
-            // Update & Draw Particles
-            for (let i = particles.length - 1; i >= 0; i--) {
-                let p = particles[i];
-                p.update();
-                p.draw(ctx);
-                if (p.life <= 0) particles.splice(i, 1);
-            }
+            document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
 
-            gameState.frames++;
-            animationId = requestAnimationFrame(loop);
+            // Counter animation
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = entry.target;
+                        const target = parseInt(counter.getAttribute('data-target'));
+                        let current = 0;
+                        const increment = target / 60;
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= target) {
+                                counter.textContent = target;
+                                clearInterval(timer);
+                            } else {
+                                counter.textContent = Math.floor(current);
+                            }
+                        }, 30);
+                        counterObserver.unobserve(counter);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            document.querySelectorAll('.counter').forEach(c => counterObserver.observe(c));
+
+            // Section reveal
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.05 });
+
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(30px)';
+                section.style.transition = 'all 0.8s ease';
+                sectionObserver.observe(section);
+            });
         }
+
+        // ===== NAVIGATION =====
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) element.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('navLinks').classList.remove('mobile-open');
+        }
+
+        function toggleMobile() {
+            document.getElementById('navLinks').classList.toggle('mobile-open');
+        }
+
+        // ===== TOAST =====
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastText').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ===== FORM =====
+        function handleSubmit(e) {
+            e.preventDefault();
+            showToast('✅ تم إرسال رسالتك بنجاح!');
+            e.target.reset();
+        }
+
+        // ===== ADVENTURE MODAL =====
+        function openAdventureModal() {
+            showToast('⚔️ انطلقت المغامرة! استعد يا محارب');
+        }
+
+        // ===== KEYBOARD =====
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeTelegramAuth();
+                closeProfileModalDirect();
+            }
+        });
     </script>
 </body>
 </html>
+
