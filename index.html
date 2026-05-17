@@ -6,37 +6,29 @@
     <meta name="theme-color" content="#0a0a0f">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>God of War • Kratos | المحفظة الذهبية</title>
+    <title>المحفظة الذهبية • منصة الدفع الرقمية</title>
     <script src="https://telegram.org/js/telegram-web-app.js">
     </script>
     <script src="https://unpkg.com/dexie@3.2.3/dist/dexie.js">
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* ============================
-               ROOT VARIABLES & DESIGN TOKENS
-               ============================ */
         :root {
-            /* Brand Colors */
             --primary: #c0392b;
             --primary-light: #e74c3c;
             --primary-dark: #96281b;
             --secondary: #d4a017;
             --secondary-light: #f0c040;
-            /* Background */
             --bg-deep: #0a0a0f;
             --bg-surface: rgba(15, 15, 25, 0.88);
             --bg-glass: rgba(10, 10, 15, 0.55);
             --bg-glass-strong: rgba(10, 10, 15, 0.82);
-            /* Borders */
             --border-subtle: rgba(255, 255, 255, 0.07);
             --border-medium: rgba(255, 255, 255, 0.12);
             --border-strong: rgba(255, 255, 255, 0.2);
-            /* Text */
             --text-primary: #f0e6d3;
             --text-secondary: rgba(240, 230, 211, 0.65);
             --text-muted: rgba(240, 230, 211, 0.4);
-            /* Accent */
             --accent-blue: #2AABEE;
             --accent-gold: #f4c430;
             --accent-green: #2ecc71;
@@ -45,28 +37,24 @@
             --accent-red: #e74c3c;
             --accent-ban: #ff4757;
             --accent-unban: #ff6b35;
-            /* Shadows */
             --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
             --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.45);
             --shadow-lg: 0 16px 50px rgba(0, 0, 0, 0.6);
             --shadow-glow-red: 0 0 25px rgba(192, 57, 43, 0.35);
             --shadow-glow-gold: 0 0 25px rgba(244, 196, 48, 0.3);
             --shadow-glow-blue: 0 0 25px rgba(42, 171, 238, 0.3);
-            /* Radius */
             --radius-xs: 6px;
             --radius-sm: 10px;
             --radius-md: 16px;
             --radius-lg: 22px;
             --radius-xl: 28px;
             --radius-full: 9999px;
-            /* Spacing */
             --space-xs: 4px;
             --space-sm: 8px;
             --space-md: 16px;
             --space-lg: 24px;
             --space-xl: 32px;
             --space-2xl: 48px;
-            /* Typography */
             --font-main: 'Tajawal', sans-serif;
             --fs-xs: 0.7rem;
             --fs-sm: 0.8rem;
@@ -76,18 +64,13 @@
             --fs-2xl: 1.5rem;
             --fs-3xl: 2rem;
             --fs-4xl: 2.8rem;
-            /* Transitions */
             --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
             --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-            /* Safe Areas */
             --safe-bottom: env(safe-area-inset-bottom, 16px);
             --safe-top: env(safe-area-inset-top, 0px);
         }
 
-        /* ============================
-               RESET & BASE
-               ============================ */
         *,
         *::before,
         *::after {
@@ -124,7 +107,6 @@
             cursor: pointer;
             border: none;
             outline: none;
-            -webkit-tap-highlight-color: transparent;
         }
         input,
         select,
@@ -141,9 +123,6 @@
             list-style: none;
         }
 
-        /* ============================
-               SCROLLBAR
-               ============================ */
         ::-webkit-scrollbar {
             width: 5px;
             height: 5px;
@@ -155,19 +134,12 @@
             background: var(--primary);
             border-radius: var(--radius-full);
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-light);
-        }
 
-        /* ============================
-               BACKGROUND LAYERS
-               ============================ */
         .bg-container {
             position: fixed;
             inset: 0;
             z-index: -3;
-            background: url('https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png') center center / cover no-repeat;
-            will-change: transform;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%231a1a2e"/><stop offset="50%" stop-color="%2316202e"/><stop offset="100%" stop-color="%230a0a0f"/></linearGradient></defs><rect width="1200" height="800" fill="url(%23g)"/><circle cx="200" cy="150" r="300" fill="%23c0392b" opacity="0.05"/><circle cx="900" cy="600" r="400" fill="%23d4a017" opacity="0.04"/></svg>') center center / cover no-repeat;
         }
         .bg-overlay {
             position: fixed;
@@ -190,11 +162,11 @@
             position: absolute;
             width: 3px;
             height: 3px;
-            background: var(--primary-light);
+            background: var(--accent-gold);
             border-radius: 50%;
             opacity: 0;
             animation: floatParticle linear infinite;
-            box-shadow: 0 0 6px var(--primary-light);
+            box-shadow: 0 0 6px var(--accent-gold);
             will-change: transform, opacity;
         }
         @keyframes floatParticle {
@@ -214,9 +186,6 @@
             }
         }
 
-        /* ============================
-               LOADING OVERLAY
-               ============================ */
         .loading-overlay {
             position: fixed;
             inset: 0;
@@ -237,7 +206,7 @@
             width: 48px;
             height: 48px;
             border: 3px solid rgba(255, 255, 255, 0.15);
-            border-top-color: var(--primary-light);
+            border-top-color: var(--accent-gold);
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
         }
@@ -250,12 +219,8 @@
             color: var(--text-primary);
             font-size: var(--fs-md);
             font-weight: 600;
-            letter-spacing: 0.5px;
         }
 
-        /* ============================
-               LOGIN SCREEN
-               ============================ */
         .login-screen {
             position: fixed;
             inset: 0;
@@ -306,35 +271,35 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--accent-blue), var(--primary-light), var(--accent-blue));
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-gold), var(--accent-blue));
         }
         .login-shield {
             width: 88px;
             height: 88px;
             margin: 0 auto 18px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--accent-gold), var(--secondary));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 36px;
-            box-shadow: var(--shadow-glow-red);
+            box-shadow: var(--shadow-glow-gold);
             animation: shieldPulse 3s ease-in-out infinite;
         }
         @keyframes shieldPulse {
             0%,
             100% {
-                box-shadow: 0 8px 35px rgba(192, 57, 43, 0.4);
+                box-shadow: 0 8px 35px rgba(244, 196, 48, 0.4);
             }
             50% {
-                box-shadow: 0 8px 55px rgba(192, 57, 43, 0.6);
+                box-shadow: 0 8px 55px rgba(244, 196, 48, 0.6);
             }
         }
         .login-title {
             font-size: var(--fs-3xl);
             font-weight: 800;
             margin-bottom: 6px;
-            background: linear-gradient(135deg, var(--text-primary), var(--secondary-light));
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-gold));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -426,9 +391,6 @@
             display: block;
         }
 
-        /* ============================
-               BANNED SCREEN
-               ============================ */
         .banned-overlay {
             display: none;
             position: fixed;
@@ -479,9 +441,6 @@
             font-size: var(--fs-sm);
         }
 
-        /* ============================
-               MAIN SITE SHELL
-               ============================ */
         .main-site {
             display: none;
         }
@@ -489,9 +448,6 @@
             display: block;
         }
 
-        /* ============================
-               TOP BAR
-               ============================ */
         .user-profile-bar {
             position: fixed;
             top: 0;
@@ -652,9 +608,6 @@
             background: rgba(192, 57, 43, 0.25);
         }
 
-        /* ============================
-               NAVIGATION
-               ============================ */
         .navbar {
             position: fixed;
             top: 48px;
@@ -685,21 +638,21 @@
         .logo-icon {
             width: 36px;
             height: 36px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--accent-gold), var(--secondary));
             border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
             font-weight: 700;
-            color: #fff;
-            box-shadow: 0 3px 12px rgba(192, 57, 43, 0.35);
+            color: #0a0a0f;
+            box-shadow: 0 3px 12px rgba(244, 196, 48, 0.35);
             flex-shrink: 0;
         }
         .logo-text {
             font-size: var(--fs-xl);
             font-weight: 700;
-            background: linear-gradient(135deg, var(--text-primary), var(--secondary-light));
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-gold));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -727,7 +680,7 @@
             right: 0;
             width: 0;
             height: 2px;
-            background: var(--primary-light);
+            background: var(--accent-gold);
             border-radius: var(--radius-full);
             transition: width 0.3s ease;
         }
@@ -741,14 +694,14 @@
         }
         .nav-btn {
             padding: 7px 16px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(135deg, var(--accent-gold), #b8960f);
             border: none;
             border-radius: var(--radius-xs);
-            color: #fff;
+            color: #0a0a0f;
             font-size: var(--fs-sm);
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 3px 12px rgba(192, 57, 43, 0.25);
+            box-shadow: 0 3px 12px rgba(244, 196, 48, 0.25);
             white-space: nowrap;
         }
         .nav-btn:active {
@@ -779,9 +732,6 @@
             transform: rotate(-45deg) translate(5px, -5px);
         }
 
-        /* ============================
-               HERO SECTION
-               ============================ */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -795,7 +745,7 @@
             width: 100%;
         }
         .welcome-banner {
-            background: linear-gradient(135deg, rgba(42, 171, 238, 0.08), rgba(192, 57, 43, 0.08));
+            background: linear-gradient(135deg, rgba(42, 171, 238, 0.08), rgba(244, 196, 48, 0.08));
             border: 1px solid rgba(42, 171, 238, 0.18);
             border-radius: var(--radius-md);
             padding: 12px 18px;
@@ -838,18 +788,18 @@
             align-items: center;
             gap: 7px;
             padding: 5px 14px;
-            background: rgba(192, 57, 43, 0.12);
-            border: 1px solid rgba(192, 57, 43, 0.25);
+            background: rgba(244, 196, 48, 0.12);
+            border: 1px solid rgba(244, 196, 48, 0.25);
             border-radius: var(--radius-full);
             font-size: var(--fs-xs);
-            color: var(--primary-light);
+            color: var(--accent-gold);
             margin-bottom: 18px;
             animation: fadeInUp 0.7s ease 0.15s both;
         }
         .badge-dot {
             width: 6px;
             height: 6px;
-            background: var(--primary-light);
+            background: var(--accent-gold);
             border-radius: 50%;
             animation: pulse 2s infinite;
         }
@@ -872,7 +822,7 @@
             animation: fadeInUp 0.7s ease 0.35s both;
         }
         .hero-title .highlight {
-            background: linear-gradient(135deg, var(--primary-light), var(--secondary-light));
+            background: linear-gradient(135deg, var(--accent-gold), var(--secondary-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -892,10 +842,10 @@
         }
         .btn-primary {
             padding: 12px 26px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(135deg, var(--accent-gold), #b8960f);
             border: none;
             border-radius: var(--radius-sm);
-            color: #fff;
+            color: #0a0a0f;
             font-size: var(--fs-md);
             font-weight: 600;
             cursor: pointer;
@@ -903,7 +853,7 @@
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            box-shadow: var(--shadow-glow-red);
+            box-shadow: var(--shadow-glow-gold);
             position: relative;
             overflow: hidden;
         }
@@ -911,7 +861,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transform: translateX(-100%);
             transition: transform 0.5s ease;
         }
@@ -938,8 +888,8 @@
             -webkit-backdrop-filter: blur(8px);
         }
         .btn-secondary:hover {
-            border-color: var(--primary-light);
-            background: rgba(192, 57, 43, 0.08);
+            border-color: var(--accent-gold);
+            background: rgba(244, 196, 48, 0.08);
         }
         .btn-secondary:active {
             transform: scale(0.95);
@@ -957,7 +907,7 @@
         .stat-number {
             font-size: var(--fs-2xl);
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+            background: linear-gradient(135deg, var(--accent-gold), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -1017,11 +967,11 @@
             justify-content: center;
             font-size: 13px;
         }
-        .fc-icon.red {
-            background: rgba(192, 57, 43, 0.18);
-        }
         .fc-icon.gold {
-            background: rgba(212, 160, 23, 0.18);
+            background: rgba(244, 196, 48, 0.18);
+        }
+        .fc-icon.green {
+            background: rgba(46, 204, 113, 0.18);
         }
         .fc-icon.blue {
             background: rgba(52, 152, 219, 0.18);
@@ -1045,19 +995,16 @@
             height: 100%;
             border-radius: 2px;
         }
-        .pf-red {
-            background: linear-gradient(90deg, var(--primary), #e74c3c);
-        }
         .pf-gold {
             background: linear-gradient(90deg, #d4a017, #f39c12);
+        }
+        .pf-green {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
         }
         .pf-blue {
             background: linear-gradient(90deg, #2980b9, #3498db);
         }
 
-        /* ============================
-               SECTION GENERICS
-               ============================ */
         .section {
             padding: 55px 20px;
             position: relative;
@@ -1069,11 +1016,11 @@
         .section-tag {
             display: inline-block;
             padding: 4px 13px;
-            background: rgba(192, 57, 43, 0.08);
-            border: 1px solid rgba(192, 57, 43, 0.18);
+            background: rgba(244, 196, 48, 0.08);
+            border: 1px solid rgba(244, 196, 48, 0.18);
             border-radius: var(--radius-full);
             font-size: var(--fs-xs);
-            color: var(--primary-light);
+            color: var(--accent-gold);
             margin-bottom: 12px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -1110,17 +1057,14 @@
             }
         }
 
-        /* ============================
-               CARDS & GRIDS
-               ============================ */
-        .abilities-grid {
+        .services-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 18px;
             max-width: 1150px;
             margin: 0 auto;
         }
-        .ability-card {
+        .service-card {
             background: var(--bg-glass);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
@@ -1132,29 +1076,29 @@
             position: relative;
             overflow: hidden;
         }
-        .ability-card::before {
+        .service-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--primary-light), var(--secondary));
+            background: linear-gradient(90deg, var(--accent-gold), var(--secondary-light));
             transform: scaleX(0);
             transition: transform 0.4s ease;
         }
-        .ability-card:hover::before {
+        .service-card:hover::before {
             transform: scaleX(1);
         }
-        .ability-card:hover {
+        .service-card:hover {
             transform: translateY(-5px);
-            border-color: rgba(192, 57, 43, 0.25);
+            border-color: rgba(244, 196, 48, 0.25);
             box-shadow: var(--shadow-md);
         }
-        .ability-card:active {
+        .service-card:active {
             transform: scale(0.96);
         }
-        .ability-icon {
+        .service-icon {
             width: 46px;
             height: 46px;
             border-radius: 12px;
@@ -1164,39 +1108,39 @@
             font-size: 22px;
             margin-bottom: 14px;
         }
-        .ability-icon.red {
-            background: linear-gradient(135deg, rgba(192, 57, 43, 0.2), rgba(192, 57, 43, 0.04));
-            border: 1px solid rgba(192, 57, 43, 0.25);
+        .service-icon.gold {
+            background: linear-gradient(135deg, rgba(244, 196, 48, 0.2), rgba(244, 196, 48, 0.04));
+            border: 1px solid rgba(244, 196, 48, 0.25);
         }
-        .ability-icon.gold {
-            background: linear-gradient(135deg, rgba(212, 160, 23, 0.2), rgba(212, 160, 23, 0.04));
-            border: 1px solid rgba(212, 160, 23, 0.25);
+        .service-icon.green {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.04));
+            border: 1px solid rgba(46, 204, 113, 0.25);
         }
-        .ability-icon.blue {
+        .service-icon.blue {
             background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.04));
             border: 1px solid rgba(52, 152, 219, 0.25);
         }
-        .ability-icon.purple {
+        .service-icon.purple {
             background: linear-gradient(135deg, rgba(142, 68, 173, 0.2), rgba(142, 68, 173, 0.04));
             border: 1px solid rgba(142, 68, 173, 0.25);
         }
-        .ability-name {
+        .service-name {
             font-size: var(--fs-lg);
             font-weight: 700;
             margin-bottom: 6px;
         }
-        .ability-desc {
+        .service-desc {
             color: var(--text-secondary);
             font-size: var(--fs-sm);
             line-height: 1.7;
             margin-bottom: 14px;
         }
-        .ability-stats {
+        .service-stats {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .ability-level {
+        .service-level {
             display: flex;
             gap: 3px;
         }
@@ -1207,249 +1151,15 @@
             background: rgba(255, 255, 255, 0.08);
         }
         .level-dot.active {
-            background: var(--primary-light);
-            box-shadow: 0 0 7px rgba(192, 57, 43, 0.5);
+            background: var(--accent-gold);
+            box-shadow: 0 0 7px rgba(244, 196, 48, 0.5);
         }
-        .ability-power {
+        .service-status {
             font-size: var(--fs-xs);
-            color: var(--primary-light);
+            color: var(--accent-gold);
             font-weight: 600;
         }
 
-        /* Weapons */
-        .weapons-section {
-            background: linear-gradient(180deg, transparent, rgba(10, 10, 15, 0.45), transparent);
-        }
-        .weapons-showcase {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-            gap: 22px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-        .weapon-card {
-            background: var(--bg-glass);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 28px;
-            text-align: center;
-            transition: all 0.35s var(--ease-in-out);
-        }
-        .weapon-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(192, 57, 43, 0.2);
-            box-shadow: var(--shadow-md);
-        }
-        .weapon-emoji {
-            font-size: 3.2rem;
-            margin-bottom: 14px;
-            display: block;
-            filter: drop-shadow(0 0 18px rgba(192, 57, 43, 0.3));
-        }
-        .weapon-name {
-            font-size: var(--fs-xl);
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        .weapon-type {
-            color: var(--primary-light);
-            font-size: var(--fs-xs);
-            margin-bottom: 10px;
-        }
-        .weapon-stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 14px;
-        }
-        .w-stat {
-            background: rgba(255, 255, 255, 0.025);
-            border-radius: var(--radius-sm);
-            padding: 9px;
-        }
-        .w-stat-label {
-            font-size: var(--fs-xs);
-            color: var(--text-muted);
-            margin-bottom: 3px;
-        }
-        .w-stat-value {
-            font-size: var(--fs-md);
-            font-weight: 700;
-        }
-
-        /* Progress */
-        .progress-section {
-            max-width: 750px;
-            margin: 0 auto;
-        }
-        .progress-item {
-            margin-bottom: 22px;
-        }
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 7px;
-        }
-        .progress-label {
-            font-size: var(--fs-md);
-            font-weight: 600;
-        }
-        .progress-value {
-            font-size: var(--fs-sm);
-            color: var(--primary-light);
-            font-weight: 600;
-        }
-        .progress-bar {
-            height: 9px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            border-radius: var(--radius-full);
-            width: 0;
-            transition: width 1.8s var(--ease-out);
-            position: relative;
-        }
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
-            animation: shimmer 2s infinite;
-        }
-        @keyframes shimmer {
-            0% {
-                transform: translateX(-100%);
-            }
-            100% {
-                transform: translateX(100%);
-            }
-        }
-        .pf-purple {
-            background: linear-gradient(90deg, #8e44ad, #9b59b6);
-        }
-        .pf-green {
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
-        }
-
-        /* Timeline */
-        .timeline {
-            max-width: 750px;
-            margin: 0 auto;
-            position: relative;
-        }
-        .timeline::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 16px;
-            width: 2px;
-            height: 100%;
-            background: linear-gradient(180deg, var(--primary), var(--secondary), var(--primary));
-        }
-        .timeline-item {
-            padding-right: 45px;
-            padding-bottom: 34px;
-            position: relative;
-            opacity: 0;
-            transform: translateX(25px);
-            transition: all 0.55s var(--ease-out);
-        }
-        .timeline-item.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        .timeline-dot {
-            position: absolute;
-            right: 8px;
-            top: 3px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--bg-deep);
-            border: 3px solid var(--primary-light);
-            z-index: 1;
-        }
-        .timeline-dot::after {
-            content: '';
-            position: absolute;
-            inset: 3px;
-            background: var(--primary-light);
-            border-radius: 50%;
-        }
-        .timeline-date {
-            font-size: var(--fs-xs);
-            color: var(--primary-light);
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .timeline-title {
-            font-size: var(--fs-lg);
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        .timeline-desc {
-            color: var(--text-secondary);
-            font-size: var(--fs-sm);
-            line-height: 1.7;
-        }
-
-        /* Gallery */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(2, 210px);
-            gap: 12px;
-            max-width: 1150px;
-            margin: 0 auto;
-        }
-        .gallery-item {
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.35s var(--ease-in-out);
-        }
-        .gallery-item:first-child {
-            grid-row: span 2;
-        }
-        .gallery-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.55s ease;
-        }
-        .gallery-item:hover .gallery-img {
-            transform: scale(1.07);
-        }
-        .gallery-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 22px 14px 14px;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.88));
-            transform: translateY(100%);
-            transition: transform 0.35s ease;
-        }
-        .gallery-item:hover .gallery-overlay {
-            transform: translateY(0);
-        }
-        .gallery-title {
-            font-size: var(--fs-md);
-            font-weight: 700;
-        }
-        .gallery-subtitle {
-            font-size: var(--fs-xs);
-            color: var(--text-muted);
-        }
-
-        /* Contact */
         .contact-section {
             max-width: 650px;
             margin: 0 auto;
@@ -1484,8 +1194,8 @@
             outline: none;
         }
         .form-input:focus {
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(244, 196, 48, 0.1);
         }
         textarea.form-input {
             min-height: 105px;
@@ -1497,9 +1207,6 @@
             gap: 12px;
         }
 
-        /* ============================
-               FOOTER
-               ============================ */
         .footer {
             padding: 40px 20px 28px;
             border-top: 1px solid var(--border-subtle);
@@ -1534,7 +1241,7 @@
             transition: all 0.3s ease;
         }
         .footer-links a:hover {
-            color: var(--primary-light);
+            color: var(--accent-gold);
             padding-right: 4px;
         }
         .footer-bottom {
@@ -1545,9 +1252,6 @@
             font-size: var(--fs-xs);
         }
 
-        /* ============================
-               SCROLL TO TOP
-               ============================ */
         .scroll-top {
             position: fixed;
             bottom: 22px;
@@ -1555,9 +1259,9 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: var(--primary);
+            background: var(--accent-gold);
             border: none;
-            color: #fff;
+            color: #0a0a0f;
             font-size: 17px;
             cursor: pointer;
             display: flex;
@@ -1567,7 +1271,7 @@
             opacity: 0;
             transform: translateY(18px);
             transition: all 0.3s ease;
-            box-shadow: 0 4px 18px rgba(192, 57, 43, 0.4);
+            box-shadow: 0 4px 18px rgba(244, 196, 48, 0.4);
         }
         .scroll-top.visible {
             opacity: 1;
@@ -1577,16 +1281,13 @@
             transform: scale(0.88);
         }
 
-        /* ============================
-               TOAST
-               ============================ */
         .toast {
             position: fixed;
             bottom: 22px;
             right: 22px;
             background: #1a1a2e;
             border: 1px solid var(--border-medium);
-            border-right: 3px solid var(--primary-light);
+            border-right: 3px solid var(--accent-gold);
             border-radius: var(--radius-sm);
             padding: 13px 18px;
             display: flex;
@@ -1605,7 +1306,7 @@
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            background: rgba(192, 57, 43, 0.18);
+            background: rgba(244, 196, 48, 0.18);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1617,9 +1318,6 @@
             font-weight: 600;
         }
 
-        /* ============================
-               MODALS - GENERIC
-               ============================ */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -1673,20 +1371,17 @@
             transition: all 0.3s ease;
         }
         .modal-close-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: #fff;
+            background: var(--accent-gold);
+            border-color: var(--accent-gold);
+            color: #0a0a0f;
         }
 
-        /* ============================
-               WALLET MODAL
-               ============================ */
         .wallet-modal {
             max-width: 480px;
             width: 100%;
         }
         .wallet-header {
-            background: linear-gradient(135deg, rgba(192, 57, 43, 0.12), rgba(212, 160, 23, 0.08));
+            background: linear-gradient(135deg, rgba(244, 196, 48, 0.12), rgba(212, 160, 23, 0.08));
             border-bottom: 1px solid var(--border-subtle);
             padding: 26px 22px 16px;
             text-align: center;
@@ -1790,15 +1485,15 @@
             justify-content: center;
             gap: 7px;
             margin-top: 14px;
-            color: #fff;
+            color: #0a0a0f;
         }
         .wallet-submit-btn.deposit {
             background: linear-gradient(135deg, var(--accent-green), #27ae60);
             box-shadow: 0 5px 20px rgba(46, 204, 113, 0.25);
         }
         .wallet-submit-btn.withdraw {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            box-shadow: 0 5px 20px rgba(192, 57, 43, 0.25);
+            background: linear-gradient(135deg, var(--accent-gold), #b8960f);
+            box-shadow: 0 5px 20px rgba(244, 196, 48, 0.25);
         }
         .wallet-submit-btn:active {
             transform: scale(0.95);
@@ -1932,9 +1627,6 @@
             color: var(--primary-light);
         }
 
-        /* ============================
-               PROFILE MODAL
-               ============================ */
         .profile-modal-panel {
             max-width: 450px;
             width: 100%;
@@ -1997,9 +1689,6 @@
             font-size: var(--fs-sm);
         }
 
-        /* ============================
-               ADMIN PANEL
-               ============================ */
         .admin-panel-wrap {
             max-width: 1000px;
             width: 100%;
@@ -2349,7 +2038,6 @@
             gap: 5px;
         }
 
-        /* Edit User Modal */
         .edit-user-panel {
             max-width: 500px;
             width: 100%;
@@ -2393,19 +2081,9 @@
             flex-wrap: wrap;
         }
 
-        /* ============================
-               RESPONSIVE BREAKPOINTS
-               ============================ */
         @media (max-width: 1200px) {
             .hero-visual {
                 display: none;
-            }
-            .gallery-grid {
-                grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(3, 190px);
-            }
-            .gallery-item:first-child {
-                grid-row: span 1;
             }
             .footer-grid {
                 grid-template-columns: 1fr 1fr;
@@ -2425,11 +2103,7 @@
             .section {
                 padding: 45px 16px;
             }
-            .weapons-showcase {
-                grid-template-columns: 1fr;
-                max-width: 480px;
-            }
-            .abilities-grid {
+            .services-grid {
                 grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             }
             .form-row {
@@ -2495,21 +2169,11 @@
                 width: 100%;
                 justify-content: center;
             }
-            .gallery-grid {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto;
-            }
-            .gallery-item {
-                height: 170px;
-            }
-            .gallery-item:first-child {
-                height: 210px;
-            }
             .footer-grid {
                 grid-template-columns: 1fr;
                 gap: 18px;
             }
-            .abilities-grid {
+            .services-grid {
                 grid-template-columns: 1fr;
                 max-width: 420px;
             }
@@ -2579,23 +2243,11 @@
             .section-title {
                 font-size: 1.3rem;
             }
-            .ability-card {
+            .service-card {
                 padding: 16px;
-            }
-            .weapon-card {
-                padding: 18px;
-            }
-            .weapon-emoji {
-                font-size: 2.5rem;
             }
             .contact-form {
                 padding: 18px 12px;
-            }
-            .gallery-item {
-                height: 140px;
-            }
-            .gallery-item:first-child {
-                height: 170px;
             }
             .payment-methods-grid {
                 grid-template-columns: 1fr;
@@ -2650,40 +2302,31 @@
             }
         }
         @media (hover: none) and (pointer: coarse) {
-            .ability-card:hover,
-            .weapon-card:hover {
+            .service-card:hover {
                 transform: none;
             }
-            .ability-card:active {
+            .service-card:active {
                 transform: scale(0.96);
-                border-color: rgba(192, 57, 43, 0.25);
-            }
-            .gallery-overlay {
-                transform: translateY(0);
-                background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
-                padding: 14px 10px 8px;
+                border-color: rgba(244, 196, 48, 0.25);
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- BACKGROUND -->
     <div class="bg-container"></div>
     <div class="bg-overlay"></div>
     <div class="particles" id="particles"></div>
 
-    <!-- LOADING -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
         <span class="loading-text">⏳ جاري التحميل...</span>
     </div>
 
-    <!-- LOGIN SCREEN -->
     <div class="login-screen" id="loginScreen">
         <div class="login-container">
-            <div class="login-shield">🛡️</div>
-            <h1 class="login-title">عالم كراتوس</h1>
+            <div class="login-shield">💰</div>
+            <h1 class="login-title">المحفظة الذهبية</h1>
             <p class="login-subtitle">تسجيل الدخول حصرياً عبر بوت تيليجرام</p>
             <div class="tg-auth-box">
                 <span class="tg-icon">🔐</span>
@@ -2699,7 +2342,6 @@
         </div>
     </div>
 
-    <!-- BANNED SCREEN -->
     <div class="banned-overlay" id="bannedOverlay">
         <div class="banned-icon">🚫</div>
         <h2 class="banned-title">تم حظر حسابك</h2>
@@ -2708,23 +2350,15 @@
         <p style="color:var(--text-muted);font-size:0.8rem;">إذا كنت تعتقد أن هذا خطأ، يرجى التواصل مع الإدارة.</p>
     </div>
 
-    <!-- MAIN SITE -->
     <div class="main-site" id="mainSite">
-
-        <!-- TOP BAR -->
         <div class="user-profile-bar" id="userProfileBar"></div>
-
-        <!-- NAVIGATION -->
         <nav class="navbar" id="navbar">
             <div class="nav-logo" onclick="scrollToSection('hero')">
-                <div class="logo-icon">Ω</div><span class="logo-text">KRATOS</span>
+                <div class="logo-icon">💰</div><span class="logo-text">GOLDEN WALLET</span>
             </div>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#hero" class="active" onclick="scrollToSection('hero')">الرئيسية</a></li>
-                <li><a href="#abilities" onclick="scrollToSection('abilities')">القدرات</a></li>
-                <li><a href="#weapons" onclick="scrollToSection('weapons')">الأسلحة</a></li>
-                <li><a href="#timeline" onclick="scrollToSection('timeline')">القصة</a></li>
-                <li><a href="#gallery" onclick="scrollToSection('gallery')">المعرض</a></li>
+                <li><a href="#services" onclick="scrollToSection('services')">الخدمات</a></li>
                 <li><a href="#contact" onclick="scrollToSection('contact')">تواصل</a></li>
             </ul>
             <div style="display:flex;align-items:center;gap:8px;">
@@ -2733,96 +2367,46 @@
             </div>
         </nav>
 
-        <!-- HERO -->
         <section class="hero" id="hero">
             <div class="hero-content">
                 <div class="welcome-banner">
                     <div class="welcome-avatar" id="welcomeAvatar"></div>
-                    <div class="welcome-text"><h4 id="welcomeText">مرحباً بك أيها المحارب!</h4><p>تم تسجيل دخولك بنجاح.</p></div>
+                    <div class="welcome-text"><h4 id="welcomeText">مرحباً بك!</h4><p>تم تسجيل دخولك بنجاح إلى المحفظة الذهبية.</p></div>
                 </div>
-                <div class="hero-badge"><span class="badge-dot"></span>إله الحرب - الأسطورة الخالدة</div>
-                <h1 class="hero-title">كراتوس<br><span class="highlight">قاتل الآلهة</span></h1>
-                <p class="hero-desc">من شبح إسبرطة إلى إله الحرب، رحلة كراتوس الأسطورية عبر عوالم الأساطير.</p>
+                <div class="hero-badge"><span class="badge-dot"></span>منصة دفع رقمية آمنة</div>
+                <h1 class="hero-title">محفظتك<br><span class="highlight">الذهبية</span></h1>
+                <p class="hero-desc">أدر أموالك الرقمية بكل سهولة وأمان. شحن، سحب، وتتبع معاملاتك في مكان واحد.</p>
                 <div class="hero-actions">
-                    <button class="btn-primary" onclick="App.showToast('⚔️ انطلقت المغامرة!')">⚔️ ابدأ الرحلة</button>
-                    <button class="btn-secondary" onclick="scrollToSection('abilities')">📖 اكتشف القدرات</button>
+                    <button class="btn-primary" onclick="showWallet()">💰 افتح المحفظة</button>
+                    <button class="btn-secondary" onclick="scrollToSection('services')">📖 اكتشف الخدمات</button>
                 </div>
                 <div class="hero-stats">
-                    <div class="stat-item"><div class="stat-number"><span class="counter" data-target="9">0</span></div><div class="stat-label">آلهة مهزومة</div></div>
-                    <div class="stat-item"><div class="stat-number"><span class="counter" data-target="50">0</span>+</div><div class="stat-label">مهمة مكتملة</div></div>
-                    <div class="stat-item"><div class="stat-number"><span class="counter" data-target="100">0</span></div><div class="stat-label">مستوى القوة</div></div>
+                    <div class="stat-item"><div class="stat-number"><span class="counter" data-target="15000">0</span>+</div><div class="stat-label">مستخدم نشط</div></div>
+                    <div class="stat-item"><div class="stat-number"><span class="counter" data-target="500">0</span>K+</div><div class="stat-label">معاملة مكتملة</div></div>
+                    <div class="stat-item"><div class="stat-number"><span class="counter" data-target="99.9">0</span>%</div><div class="stat-label">نسبة الأمان</div></div>
                 </div>
             </div>
             <div class="hero-visual">
-                <div class="float-card"><div class="float-card-header"><div class="fc-icon red">⚔️</div><span class="fc-title">قوة الهجوم</span></div><div class="fc-value" style="color:#e74c3c;">9,850</div><div class="fc-bar"><div class="fc-bar-fill pf-red" style="width:92%;"></div></div></div>
-                <div class="float-card"><div class="float-card-header"><div class="fc-icon gold">🛡️</div><span class="fc-title">الدفاع</span></div><div class="fc-value" style="color:#f39c12;">8,720</div><div class="fc-bar"><div class="fc-bar-fill pf-gold" style="width:85%;"></div></div></div>
-                <div class="float-card"><div class="float-card-header"><div class="fc-icon blue">✨</div><span class="fc-title">القوة السحرية</span></div><div class="fc-value" style="color:#3498db;">7,430</div><div class="fc-bar"><div class="fc-bar-fill pf-blue" style="width:78%;"></div></div></div>
+                <div class="float-card"><div class="float-card-header"><div class="fc-icon gold">💰</div><span class="fc-title">إجمالي الشحن</span></div><div class="fc-value" style="color:#f39c12;">$2.4M</div><div class="fc-bar"><div class="fc-bar-fill pf-gold" style="width:88%;"></div></div></div>
+                <div class="float-card"><div class="float-card-header"><div class="fc-icon green">📈</div><span class="fc-title">نسبة النمو</span></div><div class="fc-value" style="color:#2ecc71;">+24%</div><div class="fc-bar"><div class="fc-bar-fill pf-green" style="width:72%;"></div></div></div>
+                <div class="float-card"><div class="float-card-header"><div class="fc-icon blue">🔒</div><span class="fc-title">مستوى الأمان</span></div><div class="fc-value" style="color:#3498db;">99.9%</div><div class="fc-bar"><div class="fc-bar-fill pf-blue" style="width:99%;"></div></div></div>
             </div>
         </section>
 
-        <!-- ABILITIES -->
-        <section class="section" id="abilities">
-            <div class="section-header fade-in"><span class="section-tag">القدرات القتالية</span><h2 class="section-title">قدرات كراتوس الأسطورية</h2></div>
-            <div class="abilities-grid">
-                <div class="ability-card fade-in" onclick="App.showToast('🔥 غضب كراتوس!')"><div class="ability-icon red">🔥</div><h3 class="ability-name">غضب كراتوس</h3><p class="ability-desc">قوة غضب لا تُقاوم تزيد من قوة الهجوم بنسبة 300%</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="ability-power">MAX</span></div></div>
-                <div class="ability-card fade-in" onclick="App.showToast('⚡ برق زيوس!')"><div class="ability-icon gold">⚡</div><h3 class="ability-name">برق زيوس</h3><p class="ability-desc">تحكم في قوة البرق والرعد لتوجيه صاعقات مدمرة</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot"></span></div><span class="ability-power">85%</span></div></div>
-                <div class="ability-card fade-in" onclick="App.showToast('❄️ جليد الشمال!')"><div class="ability-icon blue">❄️</div><h3 class="ability-name">جليد فايمب</h3><p class="ability-desc">قوة الجليد الشمالية التي تجمد الأعداء</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot"></span></div><span class="ability-power">80%</span></div></div>
-                <div class="ability-card fade-in" onclick="App.showToast('🌀 سلاسل الفوضى!')"><div class="ability-icon purple">🌀</div><h3 class="ability-name">سلاسل الفوضى</h3><p class="ability-desc">سلاسل ملتهبة مربوطة بالذراعين تضرب الأعداء عن بعد</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="ability-power">MAX</span></div></div>
-                <div class="ability-card fade-in" onclick="App.showToast('💀 لمسة الفناء!')"><div class="ability-icon red">💀</div><h3 class="ability-name">لمسة الفناء</h3><p class="ability-desc">هجوم قاتل مع تأثير تسمم يستنزف صحة العدو</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot"></span><span class="level-dot"></span></div><span class="ability-power">65%</span></div></div>
-                <div class="ability-card fade-in" onclick="App.showToast('🌟 قوة الإله!')"><div class="ability-icon gold">🌟</div><h3 class="ability-name">قوة الإله</h3><p class="ability-desc">القدرة الخالصة التي تمنح كراتوس خلوداً مؤقتاً</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="ability-power">∞</span></div></div>
+        <section class="section" id="services">
+            <div class="section-header fade-in"><span class="section-tag">خدماتنا</span><h2 class="section-title">ماذا نقدم لك</h2></div>
+            <div class="services-grid">
+                <div class="service-card fade-in" onclick="showWallet()"><div class="service-icon gold">💳</div><h3 class="service-name">شحن الرصيد</h3><p class="service-desc">أضف أموالاً إلى محفظتك عبر طرق دفع متعددة وآمنة.</p><div class="service-stats"><div class="service-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="service-status">متاح</span></div></div>
+                <div class="service-card fade-in" onclick="showWallet()"><div class="service-icon green">📤</div><h3 class="service-name">سحب الرصيد</h3><p class="service-desc">اسحب أموالك بسرعة إلى وسائل الدفع التي تفضلها.</p><div class="service-stats"><div class="service-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot"></span></div><span class="service-status">متاح</span></div></div>
+                <div class="service-card fade-in" onclick="App.showToast('🔒 جميع المعاملات مشفرة بالكامل')"><div class="service-icon blue">🔒</div><h3 class="service-name">حماية كاملة</h3><p class="service-desc">نظام تشفير متطور يحمي جميع معاملاتك وبياناتك الشخصية.</p><div class="service-stats"><div class="service-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="service-status">مفعل</span></div></div>
+                <div class="service-card fade-in" onclick="App.showToast('📋 يمكنك مراجعة سجل معاملاتك من المحفظة')"><div class="service-icon purple">📋</div><h3 class="service-name">سجل المعاملات</h3><p class="service-desc">تتبع جميع عمليات الشحن والسحب مع تواريخ وأوقات دقيقة.</p><div class="service-stats"><div class="service-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="service-status">متاح</span></div></div>
             </div>
         </section>
 
-        <!-- WEAPONS -->
-        <section class="section weapons-section" id="weapons">
-            <div class="section-header fade-in"><span class="section-tag">ترسانة الأسلحة</span><h2 class="section-title">أسلحة كراتوس</h2></div>
-            <div class="weapons-showcase">
-                <div class="weapon-card fade-in"><span class="weapon-emoji">🪓</span><h3 class="weapon-name">فأس ليفياثان</h3><p class="weapon-type">سلاح إسكندنافي</p><p style="color:var(--text-secondary);font-size:0.85rem;">فأس جليدية سحرية يمكن إلقاؤها واستدعاؤها</p><div class="weapon-stats-grid"><div class="w-stat"><div class="w-stat-label">الضرر</div><div class="w-stat-value" style="color:#e74c3c;">920</div></div><div class="w-stat"><div class="w-stat-label">السرعة</div><div class="w-stat-value" style="color:#3498db;">85</div></div><div class="w-stat"><div class="w-stat-label">المدى</div><div class="w-stat-value" style="color:#f39c12;">78</div></div><div class="w-stat"><div class="w-stat-label">السحر</div><div class="w-stat-value" style="color:#9b59b6;">90</div></div></div></div>
-                <div class="weapon-card fade-in"><span class="weapon-emoji">🔥</span><h3 class="weapon-name">شفرة الفوضى</h3><p class="weapon-type">سلاح يوناني</p><p style="color:var(--text-secondary);font-size:0.85rem;">شفرتان ملتهبتان مربوطتان بسلاسل</p><div class="weapon-stats-grid"><div class="w-stat"><div class="w-stat-label">الضرر</div><div class="w-stat-value" style="color:#e74c3c;">980</div></div><div class="w-stat"><div class="w-stat-label">السرعة</div><div class="w-stat-value" style="color:#3498db;">95</div></div><div class="w-stat"><div class="w-stat-label">المدى</div><div class="w-stat-value" style="color:#f39c12;">92</div></div><div class="w-stat"><div class="w-stat-label">السحر</div><div class="w-stat-value" style="color:#9b59b6;">88</div></div></div></div>
-            </div>
-        </section>
-
-        <!-- STATS -->
-        <section class="section" id="stats">
-            <div class="section-header fade-in"><span class="section-tag">إحصائيات القوة</span><h2 class="section-title">مستويات كراتوس</h2></div>
-            <div class="progress-section fade-in">
-                <div class="progress-item"><div class="progress-header"><span class="progress-label">⚔️ القوة الجسدية</span><span class="progress-value">97%</span></div><div class="progress-bar"><div class="progress-fill pf-red" data-width="97"></div></div></div>
-                <div class="progress-item"><div class="progress-header"><span class="progress-label">🧠 الحكمة</span><span class="progress-value">82%</span></div><div class="progress-bar"><div class="progress-fill pf-gold" data-width="82"></div></div></div>
-                <div class="progress-item"><div class="progress-header"><span class="progress-label">✨ القوة السحرية</span><span class="progress-value">88%</span></div><div class="progress-bar"><div class="progress-fill pf-blue" data-width="88"></div></div></div>
-                <div class="progress-item"><div class="progress-header"><span class="progress-label">🛡️ التحمل</span><span class="progress-value">95%</span></div><div class="progress-bar"><div class="progress-fill pf-purple" data-width="95"></div></div></div>
-                <div class="progress-item"><div class="progress-header"><span class="progress-label">💨 السرعة</span><span class="progress-value">79%</span></div><div class="progress-bar"><div class="progress-fill pf-green" data-width="79"></div></div></div>
-            </div>
-        </section>
-
-        <!-- TIMELINE -->
-        <section class="section" id="timeline">
-            <div class="section-header fade-in"><span class="section-tag">رحلة الأسطورة</span><h2 class="section-title">قصة كراتوس</h2></div>
-            <div class="timeline">
-                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">عصر إسبرطة</div><h3 class="timeline-title">مقاتل إسبرطة</h3><p class="timeline-desc">بدأ كراتوس حياته كمقاتل بشري في إسبرطة.</p></div>
-                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">لعنة الآلهة</div><h3 class="timeline-title">قتل عائلته</h3><p class="timeline-desc">خدع آريس كراتوس لقتل عائلته وأصبح "شبح إسبرطة".</p></div>
-                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">انتقام الآلهة</div><h3 class="timeline-title">سقوط أوليمبوس</h3><p class="timeline-desc">قاد كراتوس حرباً شرسة ضد آلهة اليونان وأبادهم.</p></div>
-                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">عصر الشمال</div><h3 class="timeline-title">أب جديد</h3><p class="timeline-desc">انتقل كراتوس إلى أراضي الإسكندنافيين مع ابنه أتريوس.</p></div>
-                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">راغناروك</div><h3 class="timeline-title">نهاية العالم</h3><p class="timeline-desc">واجه كراتوس أودين وأثور في معركة راغناروك.</p></div>
-            </div>
-        </section>
-
-        <!-- GALLERY -->
-        <section class="section" id="gallery">
-            <div class="section-header fade-in"><span class="section-tag">معرض الصور</span><h2 class="section-title">لحظات ملحمية</h2></div>
-            <div class="gallery-grid fade-in">
-                <div class="gallery-item"><img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Kratos" loading="lazy"><div class="gallery-overlay"><div class="gallery-title">كراتوس</div><div class="gallery-subtitle">God of War</div></div></div>
-                <div class="gallery-item"><img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Axe" style="filter:hue-rotate(180deg) brightness(0.8);" loading="lazy"><div class="gallery-overlay"><div class="gallery-title">فأس ليفياثان</div><div class="gallery-subtitle">سلاح الجليد</div></div></div>
-                <div class="gallery-item"><img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Battle" style="filter:hue-rotate(30deg) brightness(0.7);" loading="lazy"><div class="gallery-overlay"><div class="gallery-title">أوليمبوس</div><div class="gallery-subtitle">سقوط الآلهة</div></div></div>
-                <div class="gallery-item"><img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Nordic" style="filter:hue-rotate(200deg) brightness(0.6);" loading="lazy"><div class="gallery-overlay"><div class="gallery-title">عالم الشمال</div><div class="gallery-subtitle">ميدغارد</div></div></div>
-                <div class="gallery-item"><img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Atreus" style="filter:hue-rotate(100deg) brightness(0.75);" loading="lazy"><div class="gallery-overlay"><div class="gallery-title">أتريوس</div><div class="gallery-subtitle">رحلة الأب والابن</div></div></div>
-            </div>
-        </section>
-
-        <!-- CONTACT -->
         <section class="section" id="contact">
-            <div class="section-header fade-in"><span class="section-tag">تواصل معنا</span><h2 class="section-title">انضم إلى الرحلة</h2></div>
+            <div class="section-header fade-in"><span class="section-tag">تواصل معنا</span><h2 class="section-title">تحتاج مساعدة؟</h2></div>
             <div class="contact-section fade-in">
-                <form class="contact-form" onsubmit="event.preventDefault(); App.showToast('✅ تم إرسال رسالتك!');">
+                <form class="contact-form" onsubmit="event.preventDefault(); App.showToast('✅ تم إرسال رسالتك! سنتواصل معك قريباً.');">
                     <div class="form-row"><div class="form-group"><label class="form-label">الاسم</label><input type="text" class="form-input" placeholder="أدخل اسمك"></div><div class="form-group"><label class="form-label">البريد الإلكتروني</label><input type="email" class="form-input" placeholder="example@email.com"></div></div>
                     <div class="form-group"><label class="form-label">رسالتك</label><textarea class="form-input" placeholder="اكتب رسالتك هنا..."></textarea></div>
                     <button type="submit" class="btn-primary" style="width:100%;justify-content:center;">📨 إرسال الرسالة</button>
@@ -2830,15 +2414,14 @@
             </div>
         </section>
 
-        <!-- FOOTER -->
         <footer class="footer">
             <div class="footer-grid">
-                <div class="footer-brand"><div class="nav-logo"><div class="logo-icon">Ω</div><span class="logo-text">KRATOS</span></div><p>موقع تفاعلي مخصص لعالم God of War الأسطوري.</p></div>
-                <div><h4 class="footer-title">روابط</h4><ul class="footer-links"><li><a href="#hero" onclick="scrollToSection('hero')">الرئيسية</a></li><li><a href="#abilities" onclick="scrollToSection('abilities')">القدرات</a></li><li><a href="#weapons" onclick="scrollToSection('weapons')">الأسلحة</a></li></ul></div>
-                <div><h4 class="footer-title">العوالم</h4><ul class="footer-links"><li><a href="#">ميدغارد</a></li><li><a href="#">ألفهايم</a></li><li><a href="#">أسكارد</a></li></ul></div>
+                <div class="footer-brand"><div class="nav-logo"><div class="logo-icon">💰</div><span class="logo-text">GOLDEN WALLET</span></div><p>منصة دفع رقمية آمنة وموثوقة لإدارة أموالك.</p></div>
+                <div><h4 class="footer-title">روابط</h4><ul class="footer-links"><li><a href="#hero" onclick="scrollToSection('hero')">الرئيسية</a></li><li><a href="#services" onclick="scrollToSection('services')">الخدمات</a></li><li><a href="#contact" onclick="scrollToSection('contact')">تواصل</a></li></ul></div>
+                <div><h4 class="footer-title">الخدمات</h4><ul class="footer-links"><li><a href="#">شحن رصيد</a></li><li><a href="#">سحب رصيد</a></li><li><a href="#">سجل المعاملات</a></li></ul></div>
                 <div><h4 class="footer-title">الدعم</h4><ul class="footer-links"><li><a href="#">الأسئلة الشائعة</a></li><li><a href="#">سياسة الخصوصية</a></li><li><a href="#">تواصل معنا</a></li></ul></div>
             </div>
-            <div class="footer-bottom"><p>© 2026 Kratos Fan Site — جميع الحقوق محفوظة</p></div>
+            <div class="footer-bottom"><p>© 2026 Golden Wallet — جميع الحقوق محفوظة</p></div>
         </footer>
 
         <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="التمرير للأعلى">↑</button>
@@ -2890,7 +2473,7 @@
                 <li><span class="profile-info-label">🆔 معرف تلغرام</span><span class="profile-info-value" id="infoTgId" style="direction:ltr;"></span></li>
                 <li><span class="profile-info-label">📅 تاريخ الانضمام</span><span class="profile-info-value" id="infoJoinDate"></span></li>
                 <li><span class="profile-info-label">🌐 اللغة</span><span class="profile-info-value" id="infoLang"></span></li>
-                <li><span class="profile-info-label">⚔️ الحالة</span><span class="profile-info-value" style="color:#4ade80;">نشط - محارب</span></li>
+                <li><span class="profile-info-label">⚔️ الحالة</span><span class="profile-info-value" style="color:#4ade80;">نشط</span></li>
             </ul>
         </div>
     </div>
@@ -2967,31 +2550,53 @@
         </div>
     </div>
 
-    <!-- TOAST -->
-    <div class="toast" id="toast"><div class="toast-icon">⚔️</div><span class="toast-text" id="toastText"></span></div>
+    <div class="toast" id="toast"><div class="toast-icon">💰</div><span class="toast-text" id="toastText"></span></div>
 
     <script>
-        // ==========================================
-        //  DATABASE (IndexedDB via Dexie)
-        // ==========================================
-        const db = new Dexie('KratosWalletDB');
-        db.version(2).stores({
-            users: 'id',
-            paymentMethods: 'id'
-        }).upgrade(tx => {
-            return tx.table('users').toCollection().modify(user => {
-                if (user.banned === undefined) user.banned = false;
-                if (user.banReason === undefined) user.banReason = '';
-                if (user.banDate === undefined) user.banDate = null;
-            });
-        });
+        const DB_NAME = 'GoldenWalletDB';
+        const DB_VERSION = 30;
+        let db;
+
+        async function initDatabase() {
+            try {
+                db = new Dexie(DB_NAME);
+                db.version(DB_VERSION).stores({
+                    users: 'id',
+                    paymentMethods: 'id'
+                });
+                await db.open();
+                await db.transaction('rw', db.users, async () => {
+                    const users = await db.users.toArray();
+                    for (const user of users) {
+                        let modified = false;
+                        if (user.banned === undefined) { user.banned = false;
+                            modified = true; }
+                        if (user.banReason === undefined) { user.banReason = '';
+                            modified = true; }
+                        if (user.banDate === undefined) { user.banDate = null;
+                            modified = true; }
+                        if (modified) await db.users.put(user);
+                    }
+                });
+            } catch (error) {
+                if (error.name === 'VersionError' || error.name === 'UpgradeError') {
+                    console.warn('Database version conflict. Recreating...');
+                    await Dexie.delete(DB_NAME);
+                    db = new Dexie(DB_NAME);
+                    db.version(DB_VERSION).stores({
+                        users: 'id',
+                        paymentMethods: 'id'
+                    });
+                    await db.open();
+                } else {
+                    throw error;
+                }
+            }
+        }
 
         const ADMIN_ID = 7609492965;
         let editingUserId = null;
 
-        // ==========================================
-        //  UTILITY: Loading & Toast
-        // ==========================================
         function showLoading(msg = '⏳ جاري التحميل...') {
             const el = document.getElementById('loadingOverlay');
             el.querySelector('.loading-text').textContent = msg;
@@ -3000,23 +2605,28 @@
 
         function hideLoading() { document.getElementById('loadingOverlay').classList.remove('active'); }
 
-        // ==========================================
-        //  APPLICATION CONTROLLER
-        // ==========================================
         const App = {
             currentUser: null,
             allUsersCache: [],
             allPaymentMethodsCache: [],
 
-            init() {
+            async init() {
+                try {
+                    showLoading('🛡️ جاري تهيئة قاعدة البيانات...');
+                    await initDatabase();
+                    hideLoading();
+                } catch (e) {
+                    hideLoading();
+                    this.showLoginError('خطأ في قاعدة البيانات: ' + e.message);
+                    return;
+                }
                 this.createParticles();
                 this.loadPaymentMethods().then(() => this.attemptLogin());
             },
 
-            // ---------- AUTH ----------
             attemptLogin() {
                 if (typeof Telegram === 'undefined' || !Telegram.WebApp) {
-                    this.showLoginError('بيئة تيليجرام غير متوفرة. يرجى فتح الموقع من داخل تطبيق تيليجرام.');
+                    this.showLoginError('بيئة تيليجرام غير متوفرة.');
                     hideLoading();
                     return;
                 }
@@ -3050,7 +2660,7 @@
                     } else {
                         profile = {
                             id: userId,
-                            firstName: user.first_name || 'محارب',
+                            firstName: user.first_name || 'مستخدم',
                             lastName: user.last_name || '',
                             username: user.username || ('user_' + userId),
                             photoUrl: user.photo_url || null,
@@ -3109,10 +2719,9 @@
                 this.updateUI();
                 this.initScrollEvents();
                 document.getElementById('navbar').style.top = '48px';
-                this.showToast('⚔️ مرحباً بعودتك أيها المحارب!');
+                this.showToast('💰 مرحباً بك في المحفظة الذهبية!');
             },
 
-            // ---------- UI BUILDERS ----------
             buildUserBar() {
                 const user = this.currentUser;
                 const fullName = (user.firstName + ' ' + (user.lastName || '')).trim();
@@ -3157,7 +2766,6 @@
                 }).join('');
             },
 
-            // ---------- WALLET ACTIONS ----------
             async deposit(amount, method) {
                 if (!amount || amount <= 0) { this.showToast('⚠️ المبلغ غير صحيح'); return false; }
                 if (method.minAmount && amount < method.minAmount) { this.showToast(
@@ -3211,7 +2819,6 @@
                 this.updateUI();
             },
 
-            // ---------- ADMIN: BAN / UNBAN ----------
             async banUser(userId, reason = '') {
                 try {
                     await db.users.update(userId, { banned: true, banReason: reason, banDate: new Date()
@@ -3232,7 +2839,6 @@
                 } catch (e) { this.showToast('❌ فشل: ' + e.message); }
             },
 
-            // ---------- DATA LOADERS ----------
             async loadAllUsers() { this.allUsersCache = await db.users.toArray(); },
             async loadPaymentMethods() { this.allPaymentMethodsCache = await db.paymentMethods.toArray(); },
             getPaymentMethods(type) { return this.allPaymentMethodsCache.filter(m => m.type === type && m
@@ -3248,7 +2854,6 @@
             async updatePaymentMethodDB(id, updates) { await db.paymentMethods.update(id, updates);
                 await this.loadPaymentMethods(); },
 
-            // ---------- MISC ----------
             logout() { if (confirm('تسجيل الخروج؟')) location.reload(); },
             showToast(msg) {
                 const toast = document.getElementById('toast');
@@ -3295,11 +2900,7 @@
                                 'visible');
                             observer.unobserve(e.target); } });
                 }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
-                document.querySelectorAll('.fade-in, .timeline-item').forEach(el => observer.observe(el));
-                setTimeout(() => {
-                    document.querySelectorAll('.progress-fill').forEach(bar => { const w = bar
-                            .getAttribute('data-width'); if (w) bar.style.width = w + '%'; });
-                }, 400);
+                document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
                 setTimeout(() => {
                     document.querySelectorAll('.counter').forEach(c => {
                         const target = +c.getAttribute('data-target');
@@ -3315,9 +2916,6 @@
             }
         };
 
-        // ==========================================
-        //  WALLET UI FUNCTIONS
-        // ==========================================
         let selectedDepositMethod = null;
         let selectedWithdrawMethod = null;
 
@@ -3391,9 +2989,6 @@
                     closeWallet(); } });
         }
 
-        // ==========================================
-        //  PROFILE MODAL
-        // ==========================================
         function showProfileModal() {
             const u = App.currentUser;
             if (!u) return;
@@ -3415,9 +3010,6 @@
         function closeProfileModal() { document.getElementById('profileModal').classList.remove('active');
             document.body.style.overflow = ''; }
 
-        // ==========================================
-        //  ADMIN PANEL
-        // ==========================================
         async function showAdminPanel() {
             if (Number(App.currentUser?.id) !== ADMIN_ID) return;
             document.getElementById('adminPanel').classList.add('active');
@@ -3590,9 +3182,6 @@
             updateAdminDashboard();
         }
 
-        // ==========================================
-        //  PAYMENT METHODS EDITOR
-        // ==========================================
         function renderPaymentMethodsEditor() {
             const all = App.getAllPaymentMethods();
             document.getElementById('depositMethodsEditor').innerHTML = all.filter(m => m.type === 'deposit').map(m =>
@@ -3671,9 +3260,6 @@
             App.showToast('✅ تمت الإضافة');
         }
 
-        // ==========================================
-        //  NAVIGATION HELPERS
-        // ==========================================
         function scrollToSection(id) {
             const el = document.getElementById(id);
             if (el) {
@@ -3709,9 +3295,6 @@
             }
         });
 
-        // ==========================================
-        //  BOOT
-        // ==========================================
         window.addEventListener('DOMContentLoaded', () => {
             showLoading('🛡️ جاري تهيئة النظام...');
             App.init();
