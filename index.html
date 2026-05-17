@@ -6,11 +6,7 @@
     <title>God of War - Kratos | المحفظة الذهبية</title>
     <script src="https://telegram.org/js/telegram-web-app.js">
     </script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js">
+    <script src="https://unpkg.com/dexie@3.2.3/dist/dexie.js">
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -2063,6 +2059,7 @@
             border: 1px solid var(--glass-border);
             margin: 4px;
             background: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
         }
         .upload-btn {
             padding: 8px 14px;
@@ -2518,27 +2515,17 @@
     <div class="toast" id="toast"><div class="toast-icon">⚔️</div><span class="toast-text" id="toastText"></span></div>
 
     <script>
-        // ==================== إعدادات Firebase ====================
-        // ⚠️ قم بتغيير هذه القيم إلى بيانات مشروعك على Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyD-XXXXXXXXXXXXXXXXXXXXXXXXXX",
-            authDomain: "your-project.firebaseapp.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "000000000000",
-            appId: "1:000000000000:web:xxxxxxxxxxxxxxxxxxxx"
-        };
-
-        // تهيئة Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const storage = firebase.storage();
-        db.settings({ merge: true });
+        // ==================== قاعدة البيانات المحلية (Dexie.js) ====================
+        const db = new Dexie('KratosWalletDB');
+        db.version(1).stores({
+            users: 'id', // المفتاح الأساسي هو معرف المستخدم
+            paymentMethods: 'id' // المفتاح الأساسي هو معرف الطريقة
+        });
 
         // ==================== ثوابت ====================
-        const ADMIN_ID = 7609492965; // غير إلى معرفك
+        const ADMIN_ID = 7609492965; // معرف المشرف
 
-        // ==================== دوال مساعدة لعرض التحميل ====================
+        // ==================== دوال مساعدة ====================
         function showLoading(msg = '⏳ جاري التحميل...') {
             document.getElementById('loadingOverlay').querySelector('.loading-text').textContent = msg;
             document.getElementById('loadingOverlay').classList.add('active');
@@ -2548,18 +2535,15 @@
             document.getElementById('loadingOverlay').classList.remove('active');
         }
 
-        // ==================== نظام المستخدمين (Firebase) ====================
+        // ==================== نظام المستخدمين (محلي) ====================
         class UserManager {
             static currentUser = null;
             static allUsersCache = [];
             static allPaymentMethodsCache = [];
-            static unsubscribeUser = null;
 
             static init() {
                 this.createParticles();
-                this.loadPaymentMethodsFromFirebase().then(() => {
-                    this.attemptLogin();
-                }).catch(() => {
+                this.loadPaymentMethods().then(() => {
                     this.attemptLogin();
                 });
             }
@@ -2582,12 +2566,11 @@
                 const userId = String(user.id);
                 showLoading('🛡️ جاري المصادقة...');
 
-                // البحث عن المستخدم في Firestore
-                db.collection('users').doc(userId).get().then(doc => {
-                    let userProfile;
+                db.users.get(userId).then(async (existingUser) => {
                     const now = new Date().toISOString();
-                    if (doc.exists) {
-                        userProfile = doc.data();
+                    let userProfile;
+                    if (existingUser) {
+                        userProfile = existingUser;
                         userProfile.visits = (userProfile.visits || 0) + 1;
                         userProfile.points = (userProfile.points || 0) + 50;
                         if (userProfile.points >= 500) userProfile.level = Math.floor(userProfile.points / 500) + 1;
@@ -2617,25 +2600,15 @@
                             role: 'user'
                         };
                     }
-                    // حفظ في Firestore
-                    return db.collection('users').doc(userId).set(userProfile, { merge: true }).then(() => {
-                        return userProfile;
-                    });
-                }).then(userProfile => {
+                    await db.users.put(userProfile);
                     this.currentUser = userProfile;
-                    // الاستماع للتغييرات على بيانات المستخدم
-                    if (this.unsubscribeUser) this.unsubscribeUser();
-                    this.unsubscribeUser = db.collection('users').doc(userId).onSnapshot(snap => {
-                        if (snap.exists) {
-                            this.currentUser = snap.data();
-                            this.updateUI();
-                        }
-                    });
+                    // تحميل قائمة المستخدمين للوحة التحكم
+                    this.loadAllUsers();
                     this.onLoginSuccess();
                     hideLoading();
                 }).catch(err => {
-                    console.error('Firebase error:', err);
-                    this.showLoginError('خطأ في الاتصال بقاعدة البيانات: ' + err.message);
+                    console.error('DB error:', err);
+                    this.showLoginError('خطأ في قاعدة البيانات: ' + err.message);
                     hideLoading();
                 });
             }
@@ -2654,8 +2627,6 @@
                 this.updateUI();
                 this.initScrollEvents();
                 document.getElementById('navbar').style.top = '58px';
-                // تحميل كل المستخدمين للوحة التحكم
-                this.loadAllUsers();
                 this.showToast('⚔️ مرحباً بعودتك أيها المحارب!');
             }
 
@@ -2684,6 +2655,13 @@
                         <div class="user-status"><span class="status-dot"></span>متصل</div>
                         <button class="logout-btn" onclick="UserManager.logout()">خروج</button>
                     </div>`;
+            }
+
+            static async refreshCurrentUser() {
+                if (!this.currentUser) return;
+                const user = await db.users.get(this.currentUser.id);
+                if (user) this.currentUser = user;
+                this.updateUI();
             }
 
             static updateUI() {
@@ -2715,10 +2693,10 @@
                 }
                 showLoading('💰 جاري معالجة الشحن...');
                 try {
-                    const userRef = db.collection('users').doc(this.currentUser.id);
-                    const newBalance = (this.currentUser.balance || 0) + amount;
-                    const newTotalDeposited = (this.currentUser.totalDeposited || 0) + amount;
-                    const newPoints = (this.currentUser.points || 0) + Math.floor(amount * 10);
+                    const user = await db.users.get(this.currentUser.id);
+                    const newBalance = (user.balance || 0) + amount;
+                    const newTotalDeposited = (user.totalDeposited || 0) + amount;
+                    const newPoints = (user.points || 0) + Math.floor(amount * 10);
                     const newLevel = Math.floor(newPoints / 500) + 1;
                     const tx = {
                         type: 'deposit',
@@ -2728,13 +2706,15 @@
                         title: 'شحن رصيد',
                         date: new Date().toISOString()
                     };
-                    await userRef.update({
+                    const transactions = [...(user.transactions || []), tx];
+                    await db.users.update(user.id, {
                         balance: newBalance,
                         totalDeposited: newTotalDeposited,
                         points: newPoints,
                         level: newLevel,
-                        transactions: firebase.firestore.FieldValue.arrayUnion(tx)
+                        transactions: transactions
                     });
+                    await this.refreshCurrentUser();
                     hideLoading();
                     this.showToast(`✅ تم شحن $${amount.toFixed(2)} بنجاح`);
                     return true;
@@ -2747,12 +2727,12 @@
 
             static async withdraw(amount, method) {
                 if (!amount || amount <= 0) { this.showToast('⚠️ المبلغ غير صحيح'); return false; }
-                if (amount > (this.currentUser.balance || 0)) { this.showToast('⚠️ الرصيد غير كافٍ'); return false; }
+                const user = await db.users.get(this.currentUser.id);
+                if (amount > (user.balance || 0)) { this.showToast('⚠️ الرصيد غير كافٍ'); return false; }
                 showLoading('📤 جاري معالجة السحب...');
                 try {
-                    const userRef = db.collection('users').doc(this.currentUser.id);
-                    const newBalance = (this.currentUser.balance || 0) - amount;
-                    const newTotalWithdrawn = (this.currentUser.totalWithdrawn || 0) + amount;
+                    const newBalance = (user.balance || 0) - amount;
+                    const newTotalWithdrawn = (user.totalWithdrawn || 0) + amount;
                     const tx = {
                         type: 'withdraw',
                         amount,
@@ -2761,11 +2741,13 @@
                         title: 'سحب رصيد',
                         date: new Date().toISOString()
                     };
-                    await userRef.update({
+                    const transactions = [...(user.transactions || []), tx];
+                    await db.users.update(user.id, {
                         balance: newBalance,
                         totalWithdrawn: newTotalWithdrawn,
-                        transactions: firebase.firestore.FieldValue.arrayUnion(tx)
+                        transactions: transactions
                     });
+                    await this.refreshCurrentUser();
                     hideLoading();
                     this.showToast(`✅ تم سحب $${amount.toFixed(2)} بنجاح`);
                     return true;
@@ -2776,28 +2758,12 @@
                 }
             }
 
-            static loadAllUsers() {
-                db.collection('users').onSnapshot(snapshot => {
-                    this.allUsersCache = [];
-                    snapshot.forEach(doc => {
-                        this.allUsersCache.push(doc.data());
-                    });
-                    if (document.getElementById('adminPanel').classList.contains('active')) {
-                        updateAdminDashboard();
-                    }
-                });
+            static async loadAllUsers() {
+                this.allUsersCache = await db.users.toArray();
             }
 
-            static async loadPaymentMethodsFromFirebase() {
-                try {
-                    const snap = await db.collection('paymentMethods').get();
-                    this.allPaymentMethodsCache = [];
-                    snap.forEach(doc => {
-                        this.allPaymentMethodsCache.push({ id: doc.id, ...doc.data() });
-                    });
-                } catch (e) {
-                    console.log('Using cached methods or defaults');
-                }
+            static async loadPaymentMethods() {
+                this.allPaymentMethodsCache = await db.paymentMethods.toArray();
             }
 
             static getPaymentMethods(type) {
@@ -2810,28 +2776,26 @@
 
             static async savePaymentMethod(method) {
                 if (method.id) {
-                    await db.collection('paymentMethods').doc(method.id).set(method, { merge: true });
+                    await db.paymentMethods.put(method);
                 } else {
-                    const newId = Date.now().toString();
-                    method.id = newId;
-                    await db.collection('paymentMethods').doc(newId).set(method);
+                    method.id = Date.now().toString();
+                    await db.paymentMethods.put(method);
                 }
-                await this.loadPaymentMethodsFromFirebase();
+                await this.loadPaymentMethods();
             }
 
             static async deletePaymentMethodDB(id) {
-                await db.collection('paymentMethods').doc(id).delete();
-                await this.loadPaymentMethodsFromFirebase();
+                await db.paymentMethods.delete(id);
+                await this.loadPaymentMethods();
             }
 
             static async updatePaymentMethodDB(id, updates) {
-                await db.collection('paymentMethods').doc(id).update(updates);
-                await this.loadPaymentMethodsFromFirebase();
+                await db.paymentMethods.update(id, updates);
+                await this.loadPaymentMethods();
             }
 
             static logout() {
                 if (confirm('تسجيل الخروج؟')) {
-                    if (this.unsubscribeUser) this.unsubscribeUser();
                     location.reload();
                 }
             }
@@ -2871,14 +2835,12 @@
                             'visible'); });
                 }, { threshold: 0.1 });
                 document.querySelectorAll('.fade-in, .timeline-item').forEach(el => observer.observe(el));
-                // تحريك أشرطة التقدم
                 setTimeout(() => {
                     document.querySelectorAll('.progress-fill').forEach(bar => {
                         const w = bar.getAttribute('data-width');
                         if (w) bar.style.width = w + '%';
                     });
                 }, 500);
-                // تحريك العدادات
                 setTimeout(() => {
                     document.querySelectorAll('.counter').forEach(counter => {
                         const target = +counter.getAttribute('data-target');
@@ -3007,10 +2969,11 @@
             document.body.style.overflow = ''; }
 
         // ==================== لوحة تحكم المشرف ====================
-        function showAdminPanel() {
+        async function showAdminPanel() {
             if (Number(UserManager.currentUser?.id) !== ADMIN_ID) return;
             document.getElementById('adminPanel').classList.add('active');
             document.body.style.overflow = 'hidden';
+            await UserManager.loadAllUsers();
             updateAdminDashboard();
             renderPaymentMethodsEditor();
         }
@@ -3046,32 +3009,37 @@
             }).join('') || '<p>لا توجد معاملات</p>';
         }
 
-        function editUserBalance(userId) {
+        async function editUserBalance(userId) {
             const user = UserManager.allUsersCache.find(u => String(u.id) === String(userId));
             if (!user) return;
             const newBal = prompt('الرصيد الجديد لـ ' + (user.firstName || ''), (user.balance || 0).toFixed(2));
             if (newBal !== null && !isNaN(newBal) && parseFloat(newBal) >= 0) {
                 showLoading('💾 جاري تحديث الرصيد...');
-                db.collection('users').doc(String(userId)).update({ balance: parseFloat(newBal) }).then(() => {
+                try {
+                    await db.users.update(String(userId), { balance: parseFloat(newBal) });
+                    await UserManager.loadAllUsers();
+                    updateAdminDashboard();
+                    if (UserManager.currentUser && UserManager.currentUser.id === String(userId)) {
+                        await UserManager.refreshCurrentUser();
+                    }
                     hideLoading();
                     UserManager.showToast('✅ تم تحديث الرصيد');
-                }).catch(err => {
+                } catch (err) {
                     hideLoading();
                     UserManager.showToast('❌ فشل التحديث: ' + err.message);
-                });
+                }
             }
         }
 
-        // ==================== محرر طرق الدفع مع رفع الصور ====================
+        // ==================== محرر طرق الدفع مع رفع الصور (base64) ====================
         function renderPaymentMethodsEditor() {
             const allMethods = UserManager.getAllPaymentMethods();
             const depositMethods = allMethods.filter(m => m.type === 'deposit');
             const withdrawMethods = allMethods.filter(m => m.type === 'withdraw');
-            document.getElementById('depositMethodsEditor').innerHTML = depositMethods.map(m =>
-                methodEditorHTML(m, 'deposit')).join('');
+            document.getElementById('depositMethodsEditor').innerHTML = depositMethods.map(m => methodEditorHTML(m,
+                'deposit')).join('');
             document.getElementById('withdrawMethodsEditor').innerHTML = withdrawMethods.map(m => methodEditorHTML(m,
                 'withdraw')).join('');
-            // إضافة مستمعي الأحداث لأزرار الرفع والتبديل
             attachEditorEventListeners();
         }
 
@@ -3084,14 +3052,12 @@
                     <img src="${method.image||''}" class="upload-preview" data-preview="image" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22><rect fill=%22%23333%22 width=%2280%22 height=%2280%22/><text fill=%22%23888%22 x=%2230%22 y=%2245%22 font-size=%2210%22>لا صورة</text></svg>'" style="cursor:pointer;" title="اضغط لتغيير الصورة">
                     <input type="file" accept="image/*" style="display:none;" data-upload="image">
                     <button class="upload-btn" data-btn="image">📷 رفع صورة</button>
-                    <div class="upload-progress" data-progress="image"><div class="upload-progress-bar"></div></div>
                 </div>
                 <div class="editor-row">
                     <label>الباركود</label>
                     <img src="${method.barcode||''}" class="upload-preview" data-preview="barcode" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22><rect fill=%22%23333%22 width=%2280%22 height=%2280%22/><text fill=%22%23888%22 x=%2225%22 y=%2245%22 font-size=%2210%22>لا باركود</text></svg>'" style="cursor:pointer;" title="اضغط لتغيير الباركود">
                     <input type="file" accept="image/*" style="display:none;" data-upload="barcode">
                     <button class="upload-btn" data-btn="barcode">📱 رفع باركود</button>
-                    <div class="upload-progress" data-progress="barcode"><div class="upload-progress-bar"></div></div>
                 </div>
                 <div class="editor-row"><label>عنوان المحفظة</label><input type="text" value="${method.address||''}" data-field="address"></div>
                 <div class="editor-row"><label>الحد الأدنى</label><input type="number" value="${method.minAmount||1}" step="0.01" data-field="minAmount"></div>
@@ -3153,13 +3119,35 @@
                     });
                 });
 
-                // مدخلات الملفات
+                // مدخلات الملفات (تحويل إلى base64)
                 editor.querySelectorAll('[data-upload]').forEach(fileInput => {
                     fileInput.addEventListener('change', function() {
                         const file = this.files[0];
                         if (!file) return;
+                        if (!file.type.startsWith('image/')) {
+                            UserManager.showToast('⚠️ يرجى اختيار ملف صورة فقط');
+                            return;
+                        }
+                        if (file.size > 5 * 1024 * 1024) {
+                            UserManager.showToast('⚠️ حجم الملف كبير جداً (الحد الأقصى 5 ميجابايت)');
+                            return;
+                        }
                         const uploadType = this.dataset.upload;
-                        uploadMethodImage(methodId, type, uploadType, file, editor);
+                        const preview = editor.querySelector(
+                            `[data-preview="${uploadType}"]`);
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const base64 = e.target.result;
+                            preview.src = base64;
+                            const updateData = {};
+                            updateData[uploadType] = base64;
+                            saveMethodUpdate(methodId, updateData);
+                            UserManager.showToast('✅ تم رفع الصورة بنجاح');
+                        };
+                        reader.onerror = function() {
+                            UserManager.showToast('❌ فشل قراءة الصورة');
+                        };
+                        reader.readAsDataURL(file);
                     });
                 });
 
@@ -3175,48 +3163,6 @@
             });
         }
 
-        function uploadMethodImage(methodId, type, uploadType, file, editor) {
-            if (!file.type.startsWith('image/')) {
-                UserManager.showToast('⚠️ يرجى اختيار ملف صورة فقط');
-                return;
-            }
-            if (file.size > 5 * 1024 * 1024) {
-                UserManager.showToast('⚠️ حجم الملف كبير جداً (الحد الأقصى 5 ميجابايت)');
-                return;
-            }
-            const progressDiv = editor.querySelector(`[data-progress="${uploadType}"]`);
-            const progressBar = progressDiv.querySelector('.upload-progress-bar');
-            const preview = editor.querySelector(`[data-preview="${uploadType}"]`);
-            progressDiv.style.display = 'block';
-            progressBar.style.width = '0%';
-            showLoading('📤 جاري رفع الصورة...');
-
-            const storagePath = `payment_methods/${type}/${methodId}_${uploadType}_${Date.now()}.${file.name.split('.').pop()}`;
-            const uploadTask = storage.ref(storagePath).put(file);
-
-            uploadTask.on('state_changed',
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    progressBar.style.width = progress + '%';
-                },
-                (error) => {
-                    hideLoading();
-                    progressDiv.style.display = 'none';
-                    UserManager.showToast('❌ فشل رفع الصورة: ' + error.message);
-                },
-                async () => {
-                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                    const updateData = {};
-                    updateData[uploadType] = downloadURL;
-                    await saveMethodUpdate(methodId, updateData);
-                    preview.src = downloadURL;
-                    progressDiv.style.display = 'none';
-                    hideLoading();
-                    UserManager.showToast('✅ تم رفع الصورة بنجاح');
-                }
-            );
-        }
-
         async function saveMethodUpdate(methodId, updates) {
             await UserManager.updatePaymentMethodDB(methodId, updates);
             renderPaymentMethodsEditor();
@@ -3227,7 +3173,7 @@
             }
         }
 
-        function addPaymentMethod(type) {
+        async function addPaymentMethod(type) {
             const newMethod = {
                 type: type,
                 name: 'طريقة جديدة',
@@ -3240,11 +3186,10 @@
                 id: Date.now().toString()
             };
             showLoading('➕ جاري إضافة طريقة جديدة...');
-            UserManager.savePaymentMethod(newMethod).then(() => {
-                hideLoading();
-                renderPaymentMethodsEditor();
-                UserManager.showToast('✅ تمت الإضافة');
-            });
+            await UserManager.savePaymentMethod(newMethod);
+            hideLoading();
+            renderPaymentMethodsEditor();
+            UserManager.showToast('✅ تمت الإضافة');
         }
 
         // ==================== مساعدات ====================
@@ -3260,10 +3205,9 @@
             showLoading('🛡️ جاري تهيئة النظام...');
             UserManager.init();
             document.getElementById('loginButton').addEventListener('click', () => UserManager.attemptLogin());
-            // إخفاء التحميل بعد فترة إذا لم يحدث شيء
             setTimeout(() => {
-                if (!UserManager.currentUser && document.getElementById('loginScreen').classList.contains(
-                        'hidden') === false) {
+                if (!UserManager.currentUser && !document.getElementById('loginScreen').classList.contains(
+                        'hidden')) {
                     hideLoading();
                 }
             }, 5000);
