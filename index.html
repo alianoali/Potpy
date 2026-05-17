@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>God of War - Kratos | المحفظة الذهبية</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js">
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -24,353 +31,2261 @@
             --error: #e74c3c;
             --success: #2ecc71;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Tajawal', sans-serif; background: var(--dark); color: var(--text); overflow-x: hidden; min-height: 100vh; }
-        .bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: url('https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png') center center / cover no-repeat; }
-        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(180deg, rgba(10,10,15,0.4) 0%, rgba(10,10,15,0.6) 40%, rgba(10,10,15,0.85) 100%); }
-        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden; }
-        .particle { position: absolute; width: 3px; height: 3px; background: var(--primary); border-radius: 50%; opacity: 0; animation: floatParticle linear infinite; box-shadow: 0 0 6px var(--primary); }
-        @keyframes floatParticle { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.3; } 100% { transform: translateY(-10vh) scale(1); opacity: 0; } }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--dark); }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
-
-        .login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-        .login-screen.hidden { opacity: 0; pointer-events: none; transform: scale(1.05); }
-        .login-container { background: rgba(15,15,25,0.85); backdrop-filter: blur(30px); border: 1px solid var(--glass-border); border-radius: 28px; padding: 50px 40px; max-width: 480px; width: 100%; text-align: center; position: relative; overflow: hidden; animation: loginSlideIn 0.8s ease; }
-        @keyframes loginSlideIn { from { transform: translateY(50px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
-        .login-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--tg-blue), var(--primary), var(--tg-blue)); }
-        .login-shield { width: 100px; height: 100px; margin: 0 auto 24px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 42px; box-shadow: 0 8px 40px rgba(192,57,43,0.4); animation: shieldPulse 3s ease-in-out infinite; }
-        @keyframes shieldPulse { 0%,100% { box-shadow: 0 8px 40px rgba(192,57,43,0.4); } 50% { box-shadow: 0 8px 60px rgba(192,57,43,0.6); } }
-        .login-title { font-size: 2rem; font-weight: 700; margin-bottom: 8px; background: linear-gradient(135deg, var(--text), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .login-subtitle { color: var(--text-dim); font-size: 1rem; margin-bottom: 32px; line-height: 1.6; }
-        .tg-auth-box { background: rgba(42,171,238,0.08); border: 1px solid rgba(42,171,238,0.2); border-radius: 16px; padding: 28px; margin-bottom: 24px; }
-        .tg-auth-box .tg-icon { font-size: 2.5rem; margin-bottom: 12px; display: block; }
-        .tg-auth-box .auth-title { font-size: 1.2rem; font-weight: 700; color: var(--tg-blue); margin-bottom: 8px; }
-        .tg-auth-box .auth-desc { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 20px; line-height: 1.6; }
-        .tg-login-btn { width: 100%; padding: 14px 24px; background: linear-gradient(135deg, #2AABEE, #229ED9); border: none; border-radius: 12px; color: white; font-family: 'Tajawal', sans-serif; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 6px 25px rgba(42,171,238,0.3); position: relative; overflow: hidden; }
-        .tg-login-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease; }
-        .tg-login-btn:hover::before { left: 100%; }
-        .tg-login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 35px rgba(42,171,238,0.5); }
-        .login-note { font-size: 0.8rem; color: var(--text-dim); margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .login-error { display: none; background: rgba(231,76,60,0.15); border: 1px solid rgba(231,76,60,0.4); border-radius: 12px; padding: 14px; margin-top: 16px; color: var(--error); font-size: 0.9rem; }
-        .login-error.show { display: block; animation: fadeInUp 0.3s ease; }
-        .main-site { display: none; }
-        .main-site.visible { display: block; }
-        .user-profile-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 1001; background: rgba(15,15,25,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); padding: 8px 2rem; display: none; align-items: center; justify-content: space-between; }
-        .user-profile-bar.visible { display: flex; }
-        .user-profile-info { display: flex; align-items: center; gap: 14px; cursor: pointer; }
-        .user-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--tg-blue), #1E96D1); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; border: 2px solid rgba(42,171,238,0.4); overflow: hidden; flex-shrink: 0; }
-        .user-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-        .user-details { display: flex; flex-direction: column; }
-        .user-name { font-size: 0.95rem; font-weight: 700; color: var(--text); }
-        .user-username { font-size: 0.8rem; color: var(--tg-blue); }
-        .user-tg-id { font-size: 0.7rem; color: var(--text-dim); direction: ltr; }
-        .user-actions { display: flex; align-items: center; gap: 10px; }
-        .user-status { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #4ade80; }
-        .status-dot { width: 6px; height: 6px; background: #4ade80; border-radius: 50%; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.5); } }
-        .wallet-balance-bar { display: flex; align-items: center; gap: 8px; background: rgba(244,196,48,0.1); border: 1px solid rgba(244,196,48,0.25); border-radius: 10px; padding: 6px 14px; cursor: pointer; transition: all 0.3s ease; }
-        .wallet-balance-bar:hover { background: rgba(244,196,48,0.2); border-color: var(--wallet-gold); }
-        .wallet-balance-bar .wb-icon { font-size: 18px; }
-        .wallet-balance-bar .wb-amount { font-size: 0.9rem; font-weight: 700; color: var(--wallet-gold); }
-        .admin-badge-bar { display: flex; align-items: center; gap: 8px; background: linear-gradient(135deg, rgba(155,89,182,0.15), rgba(52,152,219,0.15)); border: 1px solid rgba(155,89,182,0.3); border-radius: 10px; padding: 6px 14px; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
-        .admin-badge-bar::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(155,89,182,0.1), transparent); animation: adminShimmer 3s infinite; }
-        @keyframes adminShimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-        .admin-badge-bar:hover { background: rgba(155,89,182,0.25); border-color: var(--admin-purple); transform: scale(1.03); }
-        .admin-badge-bar .ab-icon { font-size: 18px; }
-        .admin-badge-bar .ab-text { font-size: 0.8rem; font-weight: 700; color: var(--admin-purple); }
-        .logout-btn { padding: 8px 14px; background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.3); border-radius: 10px; color: var(--primary-glow); font-family: 'Tajawal', sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px; }
-        .logout-btn:hover { background: rgba(192,57,43,0.3); border-color: var(--primary); }
-        .navbar { position: fixed; top: 58px; left: 0; right: 0; z-index: 1000; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; background: rgba(10,10,15,0.3); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); transition: all 0.4s ease; }
-        .navbar.scrolled { background: rgba(10,10,15,0.85); padding: 0.6rem 2rem; }
-        .nav-logo { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .logo-icon { width: 45px; height: 45px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: white; box-shadow: 0 4px 15px rgba(192,57,43,0.4); }
-        .logo-text { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, var(--text), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; }
-        .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 1rem; font-weight: 500; transition: all 0.3s ease; position: relative; padding: 5px 0; }
-        .nav-links a::after { content: ''; position: absolute; bottom: 0; right: 0; width: 0; height: 2px; background: var(--primary); transition: width 0.3s ease; }
-        .nav-links a:hover { color: var(--text); }
-        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
-        .nav-links a.active { color: var(--text); }
-        .nav-btn { padding: 10px 24px; background: linear-gradient(135deg, var(--primary), #a93226); border: none; border-radius: 8px; color: white; font-family: 'Tajawal', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(192,57,43,0.3); }
-        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(192,57,43,0.5); }
-        .mobile-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; }
-        .mobile-toggle span { width: 28px; height: 2.5px; background: var(--text); border-radius: 2px; transition: all 0.3s ease; }
-
-        .hero { min-height: 100vh; display: flex; align-items: center; padding: 180px 5% 80px; position: relative; }
-        .hero-content { max-width: 650px; z-index: 1; }
-        .welcome-banner { background: linear-gradient(135deg, rgba(42,171,238,0.1), rgba(192,57,43,0.1)); border: 1px solid rgba(42,171,238,0.2); border-radius: 16px; padding: 16px 24px; margin-bottom: 30px; display: flex; align-items: center; gap: 14px; animation: fadeInUp 0.8s ease 0.3s both; }
-        .welcome-avatar { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--tg-blue), #1E96D1); display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; font-weight: 700; flex-shrink: 0; overflow: hidden; }
-        .welcome-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-        .welcome-text h4 { font-size: 1.1rem; font-weight: 700; }
-        .welcome-text p { font-size: 0.85rem; color: var(--text-dim); }
-        .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.3); border-radius: 50px; font-size: 0.85rem; color: var(--primary-glow); margin-bottom: 24px; animation: fadeInUp 0.8s ease; }
-        .badge-dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: pulse 2s infinite; }
-        .hero-title { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; line-height: 1.1; margin-bottom: 24px; animation: fadeInUp 0.8s ease 0.2s both; }
-        .hero-title .highlight { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero-desc { font-size: 1.15rem; line-height: 1.8; color: var(--text-dim); margin-bottom: 40px; animation: fadeInUp 0.8s ease 0.4s both; }
-        .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; animation: fadeInUp 0.8s ease 0.6s both; }
-        .btn-primary { padding: 14px 36px; background: linear-gradient(135deg, var(--primary), #a93226); border: none; border-radius: 12px; color: white; font-family: 'Tajawal', sans-serif; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 30px rgba(192,57,43,0.35); position: relative; overflow: hidden; }
-        .btn-primary::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); transition: left 0.5s ease; }
-        .btn-primary:hover::before { left: 100%; }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(192,57,43,0.5); }
-        .btn-secondary { padding: 14px 36px; background: transparent; border: 1.5px solid var(--glass-border); border-radius: 12px; color: var(--text); font-family: 'Tajawal', sans-serif; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 10px; }
-        .btn-secondary:hover { border-color: var(--primary); background: rgba(192,57,43,0.1); transform: translateY(-3px); }
-        .hero-stats { display: flex; gap: 40px; margin-top: 60px; animation: fadeInUp 0.8s ease 0.8s both; }
-        .stat-item { text-align: center; }
-        .stat-number { font-size: 2.2rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .stat-label { font-size: 0.85rem; color: var(--text-dim); margin-top: 4px; }
-        .hero-visual { position: absolute; left: 5%; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 16px; }
-        .float-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px 24px; min-width: 220px; animation: floatCard 6s ease-in-out infinite; }
-        .float-card:nth-child(2) { animation-delay: -2s; }
-        .float-card:nth-child(3) { animation-delay: -4s; }
-        @keyframes floatCard { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .fc-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .fc-icon.red { background: rgba(192,57,43,0.2); }
-        .fc-icon.gold { background: rgba(212,160,23,0.2); }
-        .fc-icon.blue { background: rgba(52,152,219,0.2); }
-        .fc-title { font-size: 0.85rem; color: var(--text-dim); }
-        .fc-value { font-size: 1.3rem; font-weight: 700; }
-        .fc-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 10px; overflow: hidden; }
-        .fc-bar-fill { height: 100%; border-radius: 2px; }
-        .pf-red { background: linear-gradient(90deg, var(--primary), #e74c3c); }
-        .pf-gold { background: linear-gradient(90deg, #d4a017, #f39c12); }
-        .pf-blue { background: linear-gradient(90deg, #2980b9, #3498db); }
-
-        .section { padding: 100px 5%; position: relative; }
-        .section-header { text-align: center; margin-bottom: 60px; }
-        .section-tag { display: inline-block; padding: 6px 16px; background: rgba(192,57,43,0.1); border: 1px solid rgba(192,57,43,0.2); border-radius: 50px; font-size: 0.8rem; color: var(--primary-glow); margin-bottom: 16px; letter-spacing: 2px; }
-        .section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 16px; }
-        .section-desc { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.7; }
-        .abilities-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; }
-        .ability-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 32px; transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden; }
-        .ability-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), var(--secondary)); transform: scaleX(0); transition: transform 0.4s ease; }
-        .ability-card:hover::before { transform: scaleX(1); }
-        .ability-card:hover { transform: translateY(-8px); border-color: rgba(192,57,43,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-        .ability-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; }
-        .ability-icon.red { background: linear-gradient(135deg, rgba(192,57,43,0.2), rgba(192,57,43,0.05)); border: 1px solid rgba(192,57,43,0.3); }
-        .ability-icon.gold { background: linear-gradient(135deg, rgba(212,160,23,0.2), rgba(212,160,23,0.05)); border: 1px solid rgba(212,160,23,0.3); }
-        .ability-icon.blue { background: linear-gradient(135deg, rgba(52,152,219,0.2), rgba(52,152,219,0.05)); border: 1px solid rgba(52,152,219,0.3); }
-        .ability-icon.purple { background: linear-gradient(135deg, rgba(142,68,173,0.2), rgba(142,68,173,0.05)); border: 1px solid rgba(142,68,173,0.3); }
-        .ability-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; }
-        .ability-desc { color: var(--text-dim); font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px; }
-        .ability-stats { display: flex; justify-content: space-between; align-items: center; }
-        .ability-level { display: flex; gap: 4px; }
-        .level-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.1); }
-        .level-dot.active { background: var(--primary); box-shadow: 0 0 8px rgba(192,57,43,0.5); }
-        .ability-power { font-size: 0.85rem; color: var(--primary-glow); font-weight: 600; }
-        .weapons-section { background: linear-gradient(180deg, transparent, rgba(10,10,15,0.5), transparent); }
-        .weapons-showcase { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
-        .weapon-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 40px; text-align: center; transition: all 0.4s ease; position: relative; overflow: hidden; }
-        .weapon-card:hover { transform: translateY(-5px) scale(1.02); border-color: rgba(192,57,43,0.2); }
-        .weapon-emoji { font-size: 4rem; margin-bottom: 20px; display: block; filter: drop-shadow(0 0 20px rgba(192,57,43,0.3)); }
-        .weapon-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
-        .weapon-type { color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 16px; }
-        .weapon-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        .w-stat { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; }
-        .w-stat-label { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 4px; }
-        .w-stat-value { font-size: 1.1rem; font-weight: 700; }
-        .progress-section { max-width: 800px; margin: 0 auto; }
-        .progress-item { margin-bottom: 28px; }
-        .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .progress-label { font-size: 1rem; font-weight: 600; }
-        .progress-value { font-size: 0.9rem; color: var(--primary-glow); font-weight: 600; }
-        .progress-bar { height: 10px; background: rgba(255,255,255,0.06); border-radius: 5px; overflow: hidden; }
-        .progress-fill { height: 100%; border-radius: 5px; width: 0; transition: width 2s cubic-bezier(0.25, 0.46, 0.45, 0.94); position: relative; }
-        .progress-fill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); animation: shimmer 2s infinite; }
-        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-        .pf-purple { background: linear-gradient(90deg, #8e44ad, #9b59b6); }
-        .pf-green { background: linear-gradient(90deg, #27ae60, #2ecc71); }
-        .timeline { max-width: 800px; margin: 0 auto; position: relative; }
-        .timeline::before { content: ''; position: absolute; top: 0; right: 20px; width: 2px; height: 100%; background: linear-gradient(180deg, var(--primary), var(--secondary), var(--primary)); }
-        .timeline-item { padding-right: 60px; padding-bottom: 40px; position: relative; opacity: 0; transform: translateX(30px); transition: all 0.6s ease; }
-        .timeline-item.visible { opacity: 1; transform: translateX(0); }
-        .timeline-dot { position: absolute; right: 12px; top: 5px; width: 18px; height: 18px; border-radius: 50%; background: var(--dark); border: 3px solid var(--primary); z-index: 1; }
-        .timeline-dot::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
-        .timeline-date { font-size: 0.85rem; color: var(--primary-glow); font-weight: 600; margin-bottom: 8px; }
-        .timeline-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
-        .timeline-desc { color: var(--text-dim); font-size: 0.95rem; line-height: 1.7; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 250px); gap: 16px; max-width: 1200px; margin: 0 auto; }
-        .gallery-item { border-radius: 16px; overflow: hidden; position: relative; cursor: pointer; transition: all 0.4s ease; }
-        .gallery-item:hover { transform: scale(1.03); z-index: 2; }
-        .gallery-item:first-child { grid-row: span 2; }
-        .gallery-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
-        .gallery-item:hover .gallery-img { transform: scale(1.1); }
-        .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 30px 20px 20px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); transform: translateY(100%); transition: transform 0.4s ease; }
-        .gallery-item:hover .gallery-overlay { transform: translateY(0); }
-        .gallery-title { font-size: 1.1rem; font-weight: 700; }
-        .gallery-subtitle { font-size: 0.8rem; color: var(--text-dim); }
-        .contact-section { max-width: 700px; margin: 0 auto; }
-        .contact-form { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 40px; }
-        .form-group { margin-bottom: 20px; }
-        .form-label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-dim); }
-        .form-input { width: 100%; padding: 14px 18px; background: rgba(255,255,255,0.04); border: 1.5px solid var(--glass-border); border-radius: 12px; color: var(--text); font-family: 'Tajawal', sans-serif; font-size: 1rem; transition: all 0.3s ease; outline: none; }
-        .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(192,57,43,0.15); }
-        textarea.form-input { min-height: 120px; resize: vertical; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .footer { padding: 60px 5% 30px; border-top: 1px solid var(--glass-border); background: rgba(10,10,15,0.5); backdrop-filter: blur(20px); }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto 40px; }
-        .footer-brand p { color: var(--text-dim); line-height: 1.8; margin-top: 16px; font-size: 0.9rem; }
-        .footer-title { font-size: 1rem; font-weight: 700; margin-bottom: 20px; }
-        .footer-links { list-style: none; }
-        .footer-links li { margin-bottom: 12px; }
-        .footer-links a { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; transition: all 0.3s ease; }
-        .footer-links a:hover { color: var(--primary-glow); padding-right: 5px; }
-        .footer-bottom { text-align: center; padding-top: 30px; border-top: 1px solid var(--glass-border); color: var(--text-dim); font-size: 0.85rem; }
-        .scroll-top { position: fixed; bottom: 30px; left: 30px; width: 48px; height: 48px; border-radius: 50%; background: var(--primary); border: none; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(192,57,43,0.4); }
-        .scroll-top.visible { opacity: 1; transform: translateY(0); }
-        .scroll-top:hover { transform: translateY(-3px); box-shadow: 0 6px 30px rgba(192,57,43,0.5); }
-        .toast { position: fixed; bottom: 30px; right: 30px; background: #1a1a2e; border: 1px solid var(--glass-border); border-right: 3px solid var(--primary); border-radius: 12px; padding: 16px 24px; display: flex; align-items: center; gap: 12px; z-index: 11000; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-        .toast.show { transform: translateX(0); }
-        .toast-icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(192,57,43,0.2); display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .toast-text { font-size: 0.95rem; font-weight: 600; }
-        .fade-in { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-        .fade-in.visible { opacity: 1; transform: translateY(0); }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        .payment-methods-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
-        .payment-method-card { background: rgba(255,255,255,0.03); border: 1.5px solid var(--glass-border); border-radius: 14px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.3s ease; }
-        .payment-method-card:hover { border-color: var(--wallet-gold); background: rgba(244,196,48,0.05); }
-        .payment-method-card.selected { border-color: var(--wallet-gold); background: rgba(244,196,48,0.1); box-shadow: 0 0 15px rgba(244,196,48,0.2); }
-        .payment-method-card img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; border-radius: 8px; }
-        .payment-method-card .method-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
-        .payment-method-card .method-desc { font-size: 0.7rem; color: var(--text-dim); }
-        .payment-details { margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 10px; display: none; }
-        .payment-details.active { display: block; }
-        .barcode-img { max-width: 150px; margin: 10px auto; display: block; border-radius: 8px; }
-        .wallet-address { direction: ltr; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; font-family: monospace; word-break: break-all; margin: 10px 0; font-size: 0.8rem; }
-        .min-amount-badge { display: inline-block; background: rgba(244,196,48,0.2); color: var(--wallet-gold); padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; margin-top: 5px; }
-
-        .wallet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10002; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); }
-        .wallet-overlay.active { display: flex; }
-        .wallet-modal { background: rgba(12, 12, 20, 0.97); border: 1px solid var(--glass-border); border-radius: 28px; max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto; animation: walletIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; }
-        @keyframes walletIn { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
-        .wallet-close { position: absolute; top: 16px; left: 16px; z-index: 10; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
-        .wallet-close:hover { background: var(--primary); border-color: var(--primary); }
-        .wallet-header { background: linear-gradient(135deg, rgba(192,57,43,0.15), rgba(212,160,23,0.1)); border-bottom: 1px solid var(--glass-border); padding: 30px 30px 20px; text-align: center; position: relative; overflow: hidden; }
-        .wallet-header-icon { width: 70px; height: 70px; margin: 0 auto 16px; background: linear-gradient(135deg, var(--wallet-gold), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 8px 30px rgba(244,196,48,0.3); }
-        .wallet-balance-label { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 4px; }
-        .wallet-balance-amount { font-size: 2.8rem; font-weight: 700; background: linear-gradient(135deg, var(--wallet-gold), #ffd700, var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .wallet-currency { font-size: 1.2rem; color: var(--text-dim); }
-        .wallet-tabs { display: flex; gap: 4px; padding: 16px 24px 0; background: rgba(15,15,25,0.5); }
-        .wallet-tab { flex: 1; padding: 12px 8px; background: transparent; border: none; border-radius: 12px 12px 0 0; color: var(--text-dim); font-family: 'Tajawal', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .wallet-tab.active { background: rgba(244,196,48,0.1); color: var(--wallet-gold); border-bottom: 2px solid var(--wallet-gold); }
-        .wallet-tab:hover:not(.active) { background: rgba(255,255,255,0.03); }
-        .wallet-content { padding: 20px 24px 24px; }
-        .wallet-tab-content { display: none; animation: fadeInUp 0.4s ease; }
-        .wallet-tab-content.active { display: block; }
-        .wallet-form-group { margin-bottom: 18px; }
-        .wallet-form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-dim); margin-bottom: 8px; }
-        .wallet-amount-input { width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.04); border: 1.5px solid var(--glass-border); border-radius: 14px; color: var(--text); font-family: 'Tajawal', sans-serif; font-size: 1.4rem; font-weight: 700; outline: none; direction: ltr; text-align: center; }
-        .wallet-amount-input::placeholder { color: rgba(255,255,255,0.15); font-weight: 400; }
-        .wallet-submit-btn { width: 100%; padding: 14px; border: none; border-radius: 14px; font-family: 'Tajawal', sans-serif; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 20px; }
-        .wallet-submit-btn.deposit { background: linear-gradient(135deg, var(--wallet-green), #27ae60); color: white; box-shadow: 0 6px 25px rgba(46,204,113,0.3); }
-        .wallet-submit-btn.deposit:hover { transform: translateY(-2px); box-shadow: 0 8px 35px rgba(46,204,113,0.45); }
-        .wallet-submit-btn.withdraw { background: linear-gradient(135deg, var(--primary), #a93226); color: white; box-shadow: 0 6px 25px rgba(192,57,43,0.3); }
-        .wallet-submit-btn.withdraw:hover { transform: translateY(-2px); box-shadow: 0 8px 35px rgba(192,57,43,0.45); }
-        .wallet-transactions { max-height: 340px; overflow-y: auto; }
-        .wallet-transaction { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 14px; margin-bottom: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); transition: all 0.3s ease; }
-        .wallet-transaction:hover { background: rgba(255,255,255,0.05); }
-        .tx-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-        .tx-icon.deposit { background: rgba(46,204,113,0.15); }
-        .tx-icon.withdraw { background: rgba(231,76,60,0.15); }
-        .tx-info { flex: 1; }
-        .tx-title { font-size: 0.9rem; font-weight: 600; }
-        .tx-date { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
-        .tx-amount { font-size: 1rem; font-weight: 700; text-align: left; direction: ltr; }
-        .tx-amount.positive { color: var(--wallet-green); }
-        .tx-amount.negative { color: var(--primary-glow); }
-        .wallet-empty { text-align: center; padding: 40px 20px; color: var(--text-dim); }
-
-        .admin-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10003; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); }
-        .admin-overlay.active { display: flex; }
-        .admin-panel { width: 100%; max-width: 1100px; animation: adminIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); overflow-y: auto; max-height: 90vh; background: rgba(10,10,15,0.95); border-radius: 20px; }
-        @keyframes adminIn { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .admin-header { background: linear-gradient(135deg, rgba(155,89,182,0.15), rgba(52,152,219,0.1)); border: 1px solid rgba(155,89,182,0.25); border-radius: 20px 20px 0 0; padding: 24px 30px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .admin-header-left { display: flex; align-items: center; gap: 16px; }
-        .admin-header-icon { width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, var(--admin-purple), var(--admin-blue)); display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 6px 20px rgba(155,89,182,0.3); }
-        .admin-header-title { font-size: 1.4rem; font-weight: 700; }
-        .admin-close-btn { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
-        .admin-close-btn:hover { background: var(--primary); border-color: var(--primary); }
-        .admin-tabs { display: flex; gap: 4px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px; padding: 6px; margin: 0 20px 20px; overflow-x: auto; }
-        .admin-tab { flex: 1; padding: 12px 16px; background: transparent; border: none; border-radius: 12px; color: var(--text-dim); font-family: 'Tajawal', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; min-width: 80px; }
-        .admin-tab.active { background: linear-gradient(135deg, rgba(155,89,182,0.2), rgba(52,152,219,0.15)); color: var(--admin-purple); border: 1px solid rgba(155,89,182,0.3); }
-        .admin-tab:hover:not(.active) { background: rgba(255,255,255,0.03); }
-        .admin-content { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 0 0 20px 20px; padding: 24px; min-height: 400px; margin: 0 20px 20px; }
-        .admin-tab-content { display: none; animation: fadeInUp 0.4s ease; }
-        .admin-tab-content.active { display: block; }
-        .admin-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
-        .admin-table thead th { padding: 12px 16px; text-align: right; font-size: 0.8rem; color: var(--text-dim); font-weight: 600; border-bottom: 1px solid var(--glass-border); }
-        .admin-table tbody tr { background: rgba(255,255,255,0.02); transition: all 0.3s ease; }
-        .admin-table tbody tr:hover { background: rgba(255,255,255,0.06); }
-        .admin-table tbody td { padding: 14px 16px; font-size: 0.9rem; border-bottom: 1px solid var(--glass-border); }
-        .admin-action-btn { padding: 6px 14px; border-radius: 8px; border: none; font-family: 'Tajawal', sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin: 0 2px; }
-        .admin-action-btn.edit { background: rgba(155,89,182,0.15); color: var(--admin-purple); }
-        .admin-action-btn.edit:hover { background: rgba(155,89,182,0.3); }
-        .admin-action-btn.delete { background: rgba(231,76,60,0.15); color: var(--primary-glow); }
-        .admin-action-btn.delete:hover { background: rgba(231,76,60,0.3); }
-        .admin-search-bar { display: flex; gap: 10px; margin-bottom: 16px; }
-        .admin-search-input { flex: 1; padding: 12px 16px; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); border-radius: 12px; color: var(--text); font-family: 'Tajawal', sans-serif; font-size: 0.9rem; outline: none; }
-        .admin-search-input:focus { border-color: var(--admin-purple); }
-        .admin-tx-item { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 14px; margin-bottom: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); transition: all 0.3s ease; }
-        .admin-tx-item:hover { background: rgba(255,255,255,0.05); }
-        .admin-tx-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .admin-tx-icon.deposit { background: rgba(46,204,113,0.15); }
-        .admin-tx-icon.withdraw { background: rgba(231,76,60,0.15); }
-        .admin-tx-info { flex: 1; }
-        .admin-tx-title { font-size: 0.85rem; font-weight: 600; }
-        .admin-tx-user { font-size: 0.75rem; color: var(--text-dim); }
-        .admin-tx-amount { font-size: 1rem; font-weight: 700; text-align: left; direction: ltr; }
-        .admin-tx-amount.positive { color: var(--wallet-green); }
-        .admin-tx-amount.negative { color: var(--primary-glow); }
-        .admin-settings-group { margin-bottom: 24px; }
-        .admin-settings-title { font-size: 1rem; font-weight: 700; margin-bottom: 14px; }
-        .payment-method-editor { background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
-        .editor-row { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
-        .editor-row input, .editor-row select { flex: 1; min-width: 120px; padding: 10px; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); border-radius: 8px; color: var(--text); font-family: 'Tajawal', sans-serif; }
-        .editor-row label { min-width: 80px; font-size: 0.85rem; color: var(--text-dim); }
-        .toggle-switch { width: 44px; height: 24px; border-radius: 12px; background: rgba(255,255,255,0.2); cursor: pointer; position: relative; transition: all 0.3s; }
-        .toggle-switch.active { background: var(--success); }
-        .toggle-switch::after { content: ''; position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; border-radius: 50%; background: white; transition: all 0.3s; }
-        .toggle-switch.active::after { right: 22px; }
-
-        .profile-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10001; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); }
-        .profile-modal-overlay.active { display: flex; }
-        .profile-modal { background: rgba(15,15,25,0.95); border: 1px solid var(--glass-border); border-radius: 28px; padding: 40px; max-width: 500px; width: 100%; animation: modalIn 0.4s ease; position: relative; }
-        .profile-close { position: absolute; top: 16px; left: 16px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
-        .profile-close:hover { background: var(--primary); }
-        .profile-header { text-align: center; margin-bottom: 30px; }
-        .profile-avatar-large { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--tg-blue), #1E96D1); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 36px; color: white; border: 3px solid rgba(42,171,238,0.4); overflow: hidden; box-shadow: 0 8px 30px rgba(42,171,238,0.3); }
-        .profile-avatar-large img { width: 100%; height: 100%; object-fit: cover; }
-        .profile-name { font-size: 1.5rem; font-weight: 700; }
-        .profile-username { color: var(--tg-blue); font-size: 1rem; }
-        .profile-tg-id { color: var(--text-dim); font-size: 0.85rem; margin-top: 4px; direction: ltr; }
-        .profile-info-list { list-style: none; }
-        .profile-info-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--glass-border); }
-        .profile-info-item:last-child { border-bottom: none; }
-        .profile-info-label { color: var(--text-dim); font-size: 0.9rem; }
-        .profile-info-value { font-weight: 600; font-size: 0.9rem; }
-        .tg-verified { color: var(--tg-blue); }
-
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: url('https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png') center center / cover no-repeat;
+        }
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(180deg, rgba(10, 10, 15, 0.4) 0%, rgba(10, 10, 15, 0.6) 40%, rgba(10, 10, 15, 0.85) 100%);
+        }
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatParticle linear infinite;
+            box-shadow: 0 0 6px var(--primary);
+        }
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .login-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.05);
+        }
+        .login-container {
+            background: rgba(15, 15, 25, 0.85);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px 40px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: loginSlideIn 0.8s ease;
+        }
+        @keyframes loginSlideIn {
+            from {
+                transform: translateY(50px) scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--tg-blue), var(--primary), var(--tg-blue));
+        }
+        .login-shield {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            box-shadow: 0 8px 40px rgba(192, 57, 43, 0.4);
+            animation: shieldPulse 3s ease-in-out infinite;
+        }
+        @keyframes shieldPulse {
+            0%,
+            100% {
+                box-shadow: 0 8px 40px rgba(192, 57, 43, 0.4);
+            }
+            50% {
+                box-shadow: 0 8px 60px rgba(192, 57, 43, 0.6);
+            }
+        }
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--text), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .login-subtitle {
+            color: var(--text-dim);
+            font-size: 1rem;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+        .tg-auth-box {
+            background: rgba(42, 171, 238, 0.08);
+            border: 1px solid rgba(42, 171, 238, 0.2);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+        .tg-auth-box .tg-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .tg-auth-box .auth-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--tg-blue);
+            margin-bottom: 8px;
+        }
+        .tg-auth-box .auth-desc {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .tg-login-btn {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #2AABEE, #229ED9);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 25px rgba(42, 171, 238, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .tg-login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        .tg-login-btn:hover::before {
+            left: 100%;
+        }
+        .tg-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 35px rgba(42, 171, 238, 0.5);
+        }
+        .login-note {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .login-error {
+            display: none;
+            background: rgba(231, 76, 60, 0.15);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 16px;
+            color: var(--error);
+            font-size: 0.9rem;
+        }
+        .login-error.show {
+            display: block;
+            animation: fadeInUp 0.3s ease;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .loading-overlay.active {
+            display: flex;
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .loading-text {
+            color: var(--text);
+            font-size: 1rem;
+        }
+        .main-site {
+            display: none;
+        }
+        .main-site.visible {
+            display: block;
+        }
+        .user-profile-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            background: rgba(15, 15, 25, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 8px 2rem;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .user-profile-bar.visible {
+            display: flex;
+        }
+        .user-profile-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+        }
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--tg-blue), #1E96D1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            border: 2px solid rgba(42, 171, 238, 0.4);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+        .user-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .user-username {
+            font-size: 0.8rem;
+            color: var(--tg-blue);
+        }
+        .user-tg-id {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            direction: ltr;
+        }
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: #4ade80;
+        }
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.5);
+            }
+        }
+        .wallet-balance-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(244, 196, 48, 0.1);
+            border: 1px solid rgba(244, 196, 48, 0.25);
+            border-radius: 10px;
+            padding: 6px 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .wallet-balance-bar:hover {
+            background: rgba(244, 196, 48, 0.2);
+            border-color: var(--wallet-gold);
+        }
+        .wallet-balance-bar .wb-icon {
+            font-size: 18px;
+        }
+        .wallet-balance-bar .wb-amount {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--wallet-gold);
+        }
+        .admin-badge-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(52, 152, 219, 0.15));
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 10px;
+            padding: 6px 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .admin-badge-bar::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(155, 89, 182, 0.1), transparent);
+            animation: adminShimmer 3s infinite;
+        }
+        @keyframes adminShimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        .admin-badge-bar:hover {
+            background: rgba(155, 89, 182, 0.25);
+            border-color: var(--admin-purple);
+            transform: scale(1.03);
+        }
+        .admin-badge-bar .ab-icon {
+            font-size: 18px;
+        }
+        .admin-badge-bar .ab-text {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--admin-purple);
+        }
+        .logout-btn {
+            padding: 8px 14px;
+            background: rgba(192, 57, 43, 0.15);
+            border: 1px solid rgba(192, 57, 43, 0.3);
+            border-radius: 10px;
+            color: var(--primary-glow);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .logout-btn:hover {
+            background: rgba(192, 57, 43, 0.3);
+            border-color: var(--primary);
+        }
+        .navbar {
+            position: fixed;
+            top: 58px;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 15, 0.3);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.4s ease;
+        }
+        .navbar.scrolled {
+            background: rgba(10, 10, 15, 0.85);
+            padding: 0.6rem 2rem;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 4px 15px rgba(192, 57, 43, 0.4);
+        }
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 0;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover {
+            color: var(--text);
+        }
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+        .nav-links a.active {
+            color: var(--text);
+        }
+        .nav-btn {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, var(--primary), #a93226);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(192, 57, 43, 0.3);
+        }
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(192, 57, 43, 0.5);
+        }
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .mobile-toggle span {
+            width: 28px;
+            height: 2.5px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 180px 5% 80px;
+            position: relative;
+        }
+        .hero-content {
+            max-width: 650px;
+            z-index: 1;
+        }
+        .welcome-banner {
+            background: linear-gradient(135deg, rgba(42, 171, 238, 0.1), rgba(192, 57, 43, 0.1));
+            border: 1px solid rgba(42, 171, 238, 0.2);
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+        .welcome-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--tg-blue), #1E96D1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            font-weight: 700;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .welcome-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .welcome-text h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .welcome-text p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(192, 57, 43, 0.15);
+            border: 1px solid rgba(192, 57, 43, 0.3);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--primary-glow);
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease;
+        }
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        .hero-title .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-desc {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--text-dim);
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+        .btn-primary {
+            padding: 14px 36px;
+            background: linear-gradient(135deg, var(--primary), #a93226);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 30px rgba(192, 57, 43, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transition: left 0.5s ease;
+        }
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(192, 57, 43, 0.5);
+        }
+        .btn-secondary {
+            padding: 14px 36px;
+            background: transparent;
+            border: 1.5px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            background: rgba(192, 57, 43, 0.1);
+            transform: translateY(-3px);
+        }
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 60px;
+            animation: fadeInUp 0.8s ease 0.8s both;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .hero-visual {
+            position: absolute;
+            left: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .float-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            min-width: 220px;
+            animation: floatCard 6s ease-in-out infinite;
+        }
+        .float-card:nth-child(2) {
+            animation-delay: -2s;
+        }
+        .float-card:nth-child(3) {
+            animation-delay: -4s;
+        }
+        @keyframes floatCard {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        .fc-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .fc-icon.red {
+            background: rgba(192, 57, 43, 0.2);
+        }
+        .fc-icon.gold {
+            background: rgba(212, 160, 23, 0.2);
+        }
+        .fc-icon.blue {
+            background: rgba(52, 152, 219, 0.2);
+        }
+        .fc-title {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        .fc-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        .fc-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .fc-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+        }
+        .pf-red {
+            background: linear-gradient(90deg, var(--primary), #e74c3c);
+        }
+        .pf-gold {
+            background: linear-gradient(90deg, #d4a017, #f39c12);
+        }
+        .pf-blue {
+            background: linear-gradient(90deg, #2980b9, #3498db);
+        }
+        .section {
+            padding: 100px 5%;
+            position: relative;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(192, 57, 43, 0.1);
+            border: 1px solid rgba(192, 57, 43, 0.2);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--primary-glow);
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .section-desc {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        .abilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .ability-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .ability-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        .ability-card:hover::before {
+            transform: scaleX(1);
+        }
+        .ability-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(192, 57, 43, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+        .ability-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .ability-icon.red {
+            background: linear-gradient(135deg, rgba(192, 57, 43, 0.2), rgba(192, 57, 43, 0.05));
+            border: 1px solid rgba(192, 57, 43, 0.3);
+        }
+        .ability-icon.gold {
+            background: linear-gradient(135deg, rgba(212, 160, 23, 0.2), rgba(212, 160, 23, 0.05));
+            border: 1px solid rgba(212, 160, 23, 0.3);
+        }
+        .ability-icon.blue {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.05));
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+        .ability-icon.purple {
+            background: linear-gradient(135deg, rgba(142, 68, 173, 0.2), rgba(142, 68, 173, 0.05));
+            border: 1px solid rgba(142, 68, 173, 0.3);
+        }
+        .ability-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .ability-desc {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        .ability-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ability-level {
+            display: flex;
+            gap: 4px;
+        }
+        .level-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .level-dot.active {
+            background: var(--primary);
+            box-shadow: 0 0 8px rgba(192, 57, 43, 0.5);
+        }
+        .ability-power {
+            font-size: 0.85rem;
+            color: var(--primary-glow);
+            font-weight: 600;
+        }
+        .weapons-section {
+            background: linear-gradient(180deg, transparent, rgba(10, 10, 15, 0.5), transparent);
+        }
+        .weapons-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .weapon-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .weapon-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: rgba(192, 57, 43, 0.2);
+        }
+        .weapon-emoji {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+            filter: drop-shadow(0 0 20px rgba(192, 57, 43, 0.3));
+        }
+        .weapon-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .weapon-type {
+            color: var(--primary-glow);
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+        .weapon-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .w-stat {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .w-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+        }
+        .w-stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .progress-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .progress-item {
+            margin-bottom: 28px;
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .progress-label {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .progress-value {
+            font-size: 0.9rem;
+            color: var(--primary-glow);
+            font-weight: 600;
+        }
+        .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            width: 0;
+            transition: width 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+        }
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        .pf-purple {
+            background: linear-gradient(90deg, #8e44ad, #9b59b6);
+        }
+        .pf-green {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+        }
+        .timeline {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 20px;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--secondary), var(--primary));
+        }
+        .timeline-item {
+            padding-right: 60px;
+            padding-bottom: 40px;
+            position: relative;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.6s ease;
+        }
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .timeline-dot {
+            position: absolute;
+            right: 12px;
+            top: 5px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--dark);
+            border: 3px solid var(--primary);
+            z-index: 1;
+        }
+        .timeline-dot::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--primary-glow);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .timeline-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .timeline-desc {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 250px);
+            gap: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .gallery-item {
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+        .gallery-item:hover {
+            transform: scale(1.03);
+            z-index: 2;
+        }
+        .gallery-item:first-child {
+            grid-row: span 2;
+        }
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.1);
+        }
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px 20px 20px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+        }
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+        .gallery-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .gallery-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+        .contact-section {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .contact-form {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dim);
+        }
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.15);
+        }
+        textarea.form-input {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .footer {
+            padding: 60px 5% 30px;
+            border-top: 1px solid var(--glass-border);
+            background: rgba(10, 10, 15, 0.5);
+            backdrop-filter: blur(20px);
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto 40px;
+        }
+        .footer-brand p {
+            color: var(--text-dim);
+            line-height: 1.8;
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
+        .footer-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        .footer-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        .footer-links a:hover {
+            color: var(--primary-glow);
+            padding-right: 5px;
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(192, 57, 43, 0.4);
+        }
+        .scroll-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .scroll-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(192, 57, 43, 0.5);
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1a1a2e;
+            border: 1px solid var(--glass-border);
+            border-right: 3px solid var(--primary);
+            border-radius: 12px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 11000;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+        .toast.show {
+            transform: translateX(0);
+        }
+        .toast-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(192, 57, 43, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .toast-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .payment-methods-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .payment-method-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .payment-method-card:hover {
+            border-color: var(--wallet-gold);
+            background: rgba(244, 196, 48, 0.05);
+        }
+        .payment-method-card.selected {
+            border-color: var(--wallet-gold);
+            background: rgba(244, 196, 48, 0.1);
+            box-shadow: 0 0 15px rgba(244, 196, 48, 0.2);
+        }
+        .payment-method-card img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-bottom: 8px;
+            border-radius: 8px;
+        }
+        .payment-method-card .method-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .payment-method-card .method-desc {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+        .payment-details {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            display: none;
+        }
+        .payment-details.active {
+            display: block;
+        }
+        .barcode-img {
+            max-width: 150px;
+            margin: 10px auto;
+            display: block;
+            border-radius: 8px;
+        }
+        .wallet-address {
+            direction: ltr;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+            font-size: 0.8rem;
+        }
+        .min-amount-badge {
+            display: inline-block;
+            background: rgba(244, 196, 48, 0.2);
+            color: var(--wallet-gold);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-top: 5px;
+        }
+        .wallet-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10002;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+        }
+        .wallet-overlay.active {
+            display: flex;
+        }
+        .wallet-modal {
+            background: rgba(12, 12, 20, 0.97);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            max-width: 520px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: walletIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+        @keyframes walletIn {
+            from {
+                transform: translateY(40px) scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+        .wallet-close {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 10;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .wallet-close:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        .wallet-header {
+            background: linear-gradient(135deg, rgba(192, 57, 43, 0.15), rgba(212, 160, 23, 0.1));
+            border-bottom: 1px solid var(--glass-border);
+            padding: 30px 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .wallet-header-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, var(--wallet-gold), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 8px 30px rgba(244, 196, 48, 0.3);
+        }
+        .wallet-balance-label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+        }
+        .wallet-balance-amount {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--wallet-gold), #ffd700, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .wallet-currency {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+        }
+        .wallet-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 16px 24px 0;
+            background: rgba(15, 15, 25, 0.5);
+        }
+        .wallet-tab {
+            flex: 1;
+            padding: 12px 8px;
+            background: transparent;
+            border: none;
+            border-radius: 12px 12px 0 0;
+            color: var(--text-dim);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .wallet-tab.active {
+            background: rgba(244, 196, 48, 0.1);
+            color: var(--wallet-gold);
+            border-bottom: 2px solid var(--wallet-gold);
+        }
+        .wallet-tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .wallet-content {
+            padding: 20px 24px 24px;
+        }
+        .wallet-tab-content {
+            display: none;
+            animation: fadeInUp 0.4s ease;
+        }
+        .wallet-tab-content.active {
+            display: block;
+        }
+        .wallet-form-group {
+            margin-bottom: 18px;
+        }
+        .wallet-form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .wallet-amount-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 14px;
+            color: var(--text);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            outline: none;
+            direction: ltr;
+            text-align: center;
+        }
+        .wallet-amount-input::placeholder {
+            color: rgba(255, 255, 255, 0.15);
+            font-weight: 400;
+        }
+        .wallet-submit-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        .wallet-submit-btn.deposit {
+            background: linear-gradient(135deg, var(--wallet-green), #27ae60);
+            color: white;
+            box-shadow: 0 6px 25px rgba(46, 204, 113, 0.3);
+        }
+        .wallet-submit-btn.deposit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 35px rgba(46, 204, 113, 0.45);
+        }
+        .wallet-submit-btn.withdraw {
+            background: linear-gradient(135deg, var(--primary), #a93226);
+            color: white;
+            box-shadow: 0 6px 25px rgba(192, 57, 43, 0.3);
+        }
+        .wallet-submit-btn.withdraw:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 35px rgba(192, 57, 43, 0.45);
+        }
+        .wallet-transactions {
+            max-height: 340px;
+            overflow-y: auto;
+        }
+        .wallet-transaction {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+        .wallet-transaction:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .tx-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .tx-icon.deposit {
+            background: rgba(46, 204, 113, 0.15);
+        }
+        .tx-icon.withdraw {
+            background: rgba(231, 76, 60, 0.15);
+        }
+        .tx-info {
+            flex: 1;
+        }
+        .tx-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .tx-date {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+        .tx-amount {
+            font-size: 1rem;
+            font-weight: 700;
+            text-align: left;
+            direction: ltr;
+        }
+        .tx-amount.positive {
+            color: var(--wallet-green);
+        }
+        .tx-amount.negative {
+            color: var(--primary-glow);
+        }
+        .wallet-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-dim);
+        }
+        .admin-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10003;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+        }
+        .admin-overlay.active {
+            display: flex;
+        }
+        .admin-panel {
+            width: 100%;
+            max-width: 1100px;
+            animation: adminIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow-y: auto;
+            max-height: 90vh;
+            background: rgba(10, 10, 15, 0.95);
+            border-radius: 20px;
+        }
+        @keyframes adminIn {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .admin-header {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(52, 152, 219, 0.1));
+            border: 1px solid rgba(155, 89, 182, 0.25);
+            border-radius: 20px 20px 0 0;
+            padding: 24px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .admin-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .admin-header-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--admin-purple), var(--admin-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 6px 20px rgba(155, 89, 182, 0.3);
+        }
+        .admin-header-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .admin-close-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .admin-close-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        .admin-tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 6px;
+            margin: 0 20px 20px;
+            overflow-x: auto;
+        }
+        .admin-tab {
+            flex: 1;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 12px;
+            color: var(--text-dim);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+            min-width: 80px;
+        }
+        .admin-tab.active {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(52, 152, 219, 0.15));
+            color: var(--admin-purple);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+        }
+        .admin-tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .admin-content {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 0 0 20px 20px;
+            padding: 24px;
+            min-height: 400px;
+            margin: 0 20px 20px;
+        }
+        .admin-tab-content {
+            display: none;
+            animation: fadeInUp 0.4s ease;
+        }
+        .admin-tab-content.active {
+            display: block;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        .admin-table thead th {
+            padding: 12px 16px;
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 600;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .admin-table tbody tr {
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+        }
+        .admin-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .admin-table tbody td {
+            padding: 14px 16px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .admin-action-btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: none;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 2px;
+        }
+        .admin-action-btn.edit {
+            background: rgba(155, 89, 182, 0.15);
+            color: var(--admin-purple);
+        }
+        .admin-action-btn.edit:hover {
+            background: rgba(155, 89, 182, 0.3);
+        }
+        .admin-action-btn.delete {
+            background: rgba(231, 76, 60, 0.15);
+            color: var(--primary-glow);
+        }
+        .admin-action-btn.delete:hover {
+            background: rgba(231, 76, 60, 0.3);
+        }
+        .admin-search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .admin-search-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .admin-search-input:focus {
+            border-color: var(--admin-purple);
+        }
+        .admin-tx-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+        .admin-tx-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .admin-tx-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .admin-tx-icon.deposit {
+            background: rgba(46, 204, 113, 0.15);
+        }
+        .admin-tx-icon.withdraw {
+            background: rgba(231, 76, 60, 0.15);
+        }
+        .admin-tx-info {
+            flex: 1;
+        }
+        .admin-tx-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .admin-tx-user {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+        .admin-tx-amount {
+            font-size: 1rem;
+            font-weight: 700;
+            text-align: left;
+            direction: ltr;
+        }
+        .admin-tx-amount.positive {
+            color: var(--wallet-green);
+        }
+        .admin-tx-amount.negative {
+            color: var(--primary-glow);
+        }
+        .admin-settings-group {
+            margin-bottom: 24px;
+        }
+        .admin-settings-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+        .payment-method-editor {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .editor-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .editor-row input,
+        .editor-row select {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'Tajawal', sans-serif;
+        }
+        .editor-row label {
+            min-width: 80px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        .toggle-switch.active {
+            background: var(--success);
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            transition: all 0.3s;
+        }
+        .toggle-switch.active::after {
+            right: 22px;
+        }
+        .upload-preview {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            margin: 4px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .upload-btn {
+            padding: 8px 14px;
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid rgba(52, 152, 219, 0.4);
+            border-radius: 8px;
+            color: #3498db;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .upload-btn:hover {
+            background: rgba(52, 152, 219, 0.35);
+        }
+        .upload-btn input[type="file"] {
+            display: none;
+        }
+        .upload-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 6px;
+            overflow: hidden;
+            display: none;
+        }
+        .upload-progress-bar {
+            height: 100%;
+            background: var(--admin-blue);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+        .toggle-active {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .profile-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+        }
+        .profile-modal-overlay.active {
+            display: flex;
+        }
+        .profile-modal {
+            background: rgba(15, 15, 25, 0.95);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            animation: modalIn 0.4s ease;
+            position: relative;
+        }
+        @keyframes modalIn {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .profile-close {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .profile-close:hover {
+            background: var(--primary);
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .profile-avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--tg-blue), #1E96D1);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+            border: 3px solid rgba(42, 171, 238, 0.4);
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(42, 171, 238, 0.3);
+        }
+        .profile-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .profile-username {
+            color: var(--tg-blue);
+            font-size: 1rem;
+        }
+        .profile-tg-id {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin-top: 4px;
+            direction: ltr;
+        }
+        .profile-info-list {
+            list-style: none;
+        }
+        .profile-info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .profile-info-item:last-child {
+            border-bottom: none;
+        }
+        .profile-info-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        .profile-info-value {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .tg-verified {
+            color: var(--tg-blue);
+        }
         @media (max-width: 1024px) {
-            .hero-visual { display: none; }
-            .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 200px); }
-            .gallery-item:first-child { grid-row: span 1; }
-            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .hero-visual {
+                display: none;
+            }
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(3, 200px);
+            }
+            .gallery-item:first-child {
+                grid-row: span 1;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
         @media (max-width: 768px) {
-            .nav-links { display: none; }
-            .mobile-toggle { display: flex; }
-            .nav-links.mobile-open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(10,10,15,0.95); padding: 20px; border-bottom: 1px solid var(--glass-border); gap: 16px; }
-            .hero { padding: 160px 5% 60px; }
-            .gallery-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
-            .gallery-item { height: 200px; }
-            .form-row { grid-template-columns: 1fr; }
-            .footer-grid { grid-template-columns: 1fr; }
-            .weapons-showcase { grid-template-columns: 1fr; }
-            .user-profile-bar { padding: 8px 10px; }
-            .user-details { display: none; }
+            .nav-links {
+                display: none;
+            }
+            .mobile-toggle {
+                display: flex;
+            }
+            .nav-links.mobile-open {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(10, 10, 15, 0.95);
+                padding: 20px;
+                border-bottom: 1px solid var(--glass-border);
+                gap: 16px;
+            }
+            .hero {
+                padding: 160px 5% 60px;
+            }
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+            .gallery-item {
+                height: 200px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+            .weapons-showcase {
+                grid-template-columns: 1fr;
+            }
+            .user-profile-bar {
+                padding: 8px 10px;
+            }
+            .user-details {
+                display: none;
+            }
+            .payment-methods-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -378,6 +2293,12 @@
     <div class="bg-container"></div>
     <div class="bg-overlay"></div>
     <div class="particles" id="particles"></div>
+
+    <!-- مؤشر التحميل -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <span class="loading-text">⏳ جاري التحميل...</span>
+    </div>
 
     <!-- شاشة الدخول -->
     <div class="login-screen" id="loginScreen">
@@ -597,33 +2518,56 @@
     <div class="toast" id="toast"><div class="toast-icon">⚔️</div><span class="toast-text" id="toastText"></span></div>
 
     <script>
+        // ==================== إعدادات Firebase ====================
+        // ⚠️ قم بتغيير هذه القيم إلى بيانات مشروعك على Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-XXXXXXXXXXXXXXXXXXXXXXXXXX",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "000000000000",
+            appId: "1:000000000000:web:xxxxxxxxxxxxxxxxxxxx"
+        };
+
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        db.settings({ merge: true });
+
         // ==================== ثوابت ====================
-        const APP_PREFIX = 'gow_kratos_';
         const ADMIN_ID = 7609492965; // غير إلى معرفك
 
-        // ==================== نظام المستخدمين ====================
+        // ==================== دوال مساعدة لعرض التحميل ====================
+        function showLoading(msg = '⏳ جاري التحميل...') {
+            document.getElementById('loadingOverlay').querySelector('.loading-text').textContent = msg;
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        // ==================== نظام المستخدمين (Firebase) ====================
         class UserManager {
             static currentUser = null;
+            static allUsersCache = [];
+            static allPaymentMethodsCache = [];
+            static unsubscribeUser = null;
 
             static init() {
                 this.createParticles();
-                const savedUserId = localStorage.getItem(APP_PREFIX + 'session');
-                if (savedUserId) {
-                    const userData = localStorage.getItem(APP_PREFIX + 'user_' + savedUserId);
-                    if (userData) {
-                        try {
-                            this.currentUser = JSON.parse(userData);
-                            this.onLoginSuccess();
-                            return;
-                        } catch (e) { localStorage.removeItem(APP_PREFIX + 'session'); }
-                    }
-                }
-                document.getElementById('loginScreen').classList.remove('hidden');
+                this.loadPaymentMethodsFromFirebase().then(() => {
+                    this.attemptLogin();
+                }).catch(() => {
+                    this.attemptLogin();
+                });
             }
 
             static attemptLogin() {
                 if (typeof Telegram === 'undefined' || !Telegram.WebApp) {
                     this.showLoginError('بيئة تيليجرام غير متوفرة.');
+                    hideLoading();
                     return;
                 }
                 Telegram.WebApp.ready();
@@ -631,41 +2575,69 @@
                 const initDataUnsafe = Telegram.WebApp.initDataUnsafe;
                 if (!initDataUnsafe || !initDataUnsafe.user) {
                     this.showLoginError('تعذر الحصول على بيانات المستخدم.');
+                    hideLoading();
                     return;
                 }
                 const user = initDataUnsafe.user;
-                const userId = user.id;
-                let userProfile = localStorage.getItem(APP_PREFIX + 'user_' + userId);
-                if (!userProfile) {
-                    userProfile = {
-                        id: userId,
-                        firstName: user.first_name || 'محارب',
-                        lastName: user.last_name || '',
-                        username: user.username || ('user_' + userId),
-                        photoUrl: user.photo_url || null,
-                        language: user.language_code || 'ar',
-                        isPremium: user.is_premium || false,
-                        joinDate: new Date().toISOString(),
-                        visits: 0, level: 1, points: 0,
-                        balance: 0, transactions: [],
-                        totalDeposited: 0, totalWithdrawn: 0,
-                        lastLogin: null
-                    };
-                } else {
-                    userProfile = JSON.parse(userProfile);
-                }
-                userProfile.visits = (userProfile.visits || 0) + 1;
-                userProfile.points = (userProfile.points || 0) + 50;
-                if (userProfile.points >= 500) userProfile.level = Math.floor(userProfile.points / 500) + 1;
-                userProfile.lastLogin = new Date().toISOString();
-                userProfile.firstName = user.first_name || userProfile.firstName;
-                userProfile.lastName = user.last_name || userProfile.lastName;
-                userProfile.username = user.username || userProfile.username;
-                userProfile.photoUrl = user.photo_url || userProfile.photoUrl;
-                localStorage.setItem(APP_PREFIX + 'user_' + userId, JSON.stringify(userProfile));
-                localStorage.setItem(APP_PREFIX + 'session', userId);
-                this.currentUser = userProfile;
-                this.onLoginSuccess();
+                const userId = String(user.id);
+                showLoading('🛡️ جاري المصادقة...');
+
+                // البحث عن المستخدم في Firestore
+                db.collection('users').doc(userId).get().then(doc => {
+                    let userProfile;
+                    const now = new Date().toISOString();
+                    if (doc.exists) {
+                        userProfile = doc.data();
+                        userProfile.visits = (userProfile.visits || 0) + 1;
+                        userProfile.points = (userProfile.points || 0) + 50;
+                        if (userProfile.points >= 500) userProfile.level = Math.floor(userProfile.points / 500) + 1;
+                        userProfile.lastLogin = now;
+                        userProfile.firstName = user.first_name || userProfile.firstName;
+                        userProfile.lastName = user.last_name || userProfile.lastName;
+                        userProfile.username = user.username || userProfile.username;
+                        userProfile.photoUrl = user.photo_url || userProfile.photoUrl;
+                    } else {
+                        userProfile = {
+                            id: userId,
+                            firstName: user.first_name || 'محارب',
+                            lastName: user.last_name || '',
+                            username: user.username || ('user_' + userId),
+                            photoUrl: user.photo_url || null,
+                            language: user.language_code || 'ar',
+                            isPremium: user.is_premium || false,
+                            joinDate: now,
+                            visits: 1,
+                            level: 1,
+                            points: 50,
+                            balance: 0,
+                            transactions: [],
+                            totalDeposited: 0,
+                            totalWithdrawn: 0,
+                            lastLogin: now,
+                            role: 'user'
+                        };
+                    }
+                    // حفظ في Firestore
+                    return db.collection('users').doc(userId).set(userProfile, { merge: true }).then(() => {
+                        return userProfile;
+                    });
+                }).then(userProfile => {
+                    this.currentUser = userProfile;
+                    // الاستماع للتغييرات على بيانات المستخدم
+                    if (this.unsubscribeUser) this.unsubscribeUser();
+                    this.unsubscribeUser = db.collection('users').doc(userId).onSnapshot(snap => {
+                        if (snap.exists) {
+                            this.currentUser = snap.data();
+                            this.updateUI();
+                        }
+                    });
+                    this.onLoginSuccess();
+                    hideLoading();
+                }).catch(err => {
+                    console.error('Firebase error:', err);
+                    this.showLoginError('خطأ في الاتصال بقاعدة البيانات: ' + err.message);
+                    hideLoading();
+                });
             }
 
             static showLoginError(msg) {
@@ -682,6 +2654,8 @@
                 this.updateUI();
                 this.initScrollEvents();
                 document.getElementById('navbar').style.top = '58px';
+                // تحميل كل المستخدمين للوحة التحكم
+                this.loadAllUsers();
                 this.showToast('⚔️ مرحباً بعودتك أيها المحارب!');
             }
 
@@ -690,8 +2664,11 @@
                 const fullName = (user.firstName + ' ' + (user.lastName || '')).trim();
                 const displayUsername = '@' + user.username;
                 const initial = fullName.charAt(0);
-                const avatarHTML = user.photoUrl ? `<img src="${user.photoUrl}" alt="${fullName}">` : `<span>${initial}</span>`;
-                const adminButton = user.id === ADMIN_ID ? `<div class="admin-badge-bar" onclick="showAdminPanel()"><span class="ab-icon">👑</span><span class="ab-text">الإدارة</span></div>` : '';
+                const avatarHTML = user.photoUrl ?
+                    `<img src="${user.photoUrl}" alt="${fullName}">` : `<span>${initial}</span>`;
+                const adminButton = Number(user.id) === ADMIN_ID ?
+                    `<div class="admin-badge-bar" onclick="showAdminPanel()"><span class="ab-icon">👑</span><span class="ab-text">الإدارة</span></div>` :
+                    '';
                 document.getElementById('userProfileBar').innerHTML = `
                     <div class="user-profile-info" onclick="showProfileModal()">
                         <div class="user-avatar">${avatarHTML}</div>
@@ -711,71 +2688,158 @@
 
             static updateUI() {
                 if (!this.currentUser) return;
-                document.getElementById('barBalance').textContent = this.currentUser.balance.toFixed(2);
-                document.getElementById('walletBalanceDisplay').textContent = this.currentUser.balance.toFixed(2);
+                const bal = (this.currentUser.balance || 0).toFixed(2);
+                document.getElementById('barBalance').textContent = bal;
+                document.getElementById('walletBalanceDisplay').textContent = bal;
                 document.getElementById('walletTransactions').innerHTML = this.renderTransactions();
             }
 
             static renderTransactions() {
                 const txs = this.currentUser.transactions || [];
-                if (txs.length === 0) return '<div class="wallet-empty"><span class="wallet-empty-icon">📭</span><p>لا توجد معاملات</p></div>';
-                return [...txs].reverse().map(tx => {
+                if (txs.length === 0)
+                    return '<div class="wallet-empty"><span class="wallet-empty-icon">📭</span><p>لا توجد معاملات</p></div>';
+                return [...txs].reverse().slice(0, 50).map(tx => {
                     const isDep = tx.type === 'deposit';
                     const sign = isDep ? '+' : '-';
-                    const date = new Date(tx.date).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-                    return `<div class="wallet-transaction"><div class="tx-icon ${isDep?'deposit':'withdraw'}">${isDep?'📥':'📤'}</div><div class="tx-info"><div class="tx-title">${tx.title}</div><div class="tx-date">${date} • ${tx.methodName||''}</div></div><div class="tx-amount ${isDep?'positive':'negative'}">${sign}$${Math.abs(tx.amount).toFixed(2)}</div></div>`;
+                    const date = tx.date ? new Date(tx.date).toLocaleDateString('ar-SA', { year: 'numeric',
+                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+                    return `<div class="wallet-transaction"><div class="tx-icon ${isDep?'deposit':'withdraw'}">${isDep?'📥':'📤'}</div><div class="tx-info"><div class="tx-title">${tx.title||''}</div><div class="tx-date">${date} • ${tx.methodName||''}</div></div><div class="tx-amount ${isDep?'positive':'negative'}">${sign}$${Math.abs(tx.amount||0).toFixed(2)}</div></div>`;
                 }).join('');
             }
 
-            static deposit(amount, method) {
+            static async deposit(amount, method) {
                 if (!amount || amount <= 0) { this.showToast('⚠️ المبلغ غير صحيح'); return false; }
                 if (method.minAmount && amount < method.minAmount) {
-                    this.showToast(`⚠️ أقل مبلغ للشحن هو $${method.minAmount.toFixed(2)}`); return false;
+                    this.showToast(`⚠️ أقل مبلغ للشحن هو $${method.minAmount.toFixed(2)}`);
+                    return false;
                 }
-                this.currentUser.balance += amount;
-                this.currentUser.totalDeposited += amount;
-                this.currentUser.points += Math.floor(amount * 10);
-                this.currentUser.level = Math.floor(this.currentUser.points / 500) + 1;
-                this.currentUser.transactions.push({
-                    type: 'deposit', amount, methodId: method.id,
-                    methodName: method.name, title: 'شحن رصيد', date: new Date().toISOString()
-                });
-                this.saveUserData();
-                this.updateUI();
-                this.showToast(`✅ تم شحن $${amount.toFixed(2)} بنجاح`);
-                return true;
+                showLoading('💰 جاري معالجة الشحن...');
+                try {
+                    const userRef = db.collection('users').doc(this.currentUser.id);
+                    const newBalance = (this.currentUser.balance || 0) + amount;
+                    const newTotalDeposited = (this.currentUser.totalDeposited || 0) + amount;
+                    const newPoints = (this.currentUser.points || 0) + Math.floor(amount * 10);
+                    const newLevel = Math.floor(newPoints / 500) + 1;
+                    const tx = {
+                        type: 'deposit',
+                        amount,
+                        methodId: method.id,
+                        methodName: method.name,
+                        title: 'شحن رصيد',
+                        date: new Date().toISOString()
+                    };
+                    await userRef.update({
+                        balance: newBalance,
+                        totalDeposited: newTotalDeposited,
+                        points: newPoints,
+                        level: newLevel,
+                        transactions: firebase.firestore.FieldValue.arrayUnion(tx)
+                    });
+                    hideLoading();
+                    this.showToast(`✅ تم شحن $${amount.toFixed(2)} بنجاح`);
+                    return true;
+                } catch (err) {
+                    hideLoading();
+                    this.showToast('❌ فشل الشحن: ' + err.message);
+                    return false;
+                }
             }
 
-            static withdraw(amount, method) {
+            static async withdraw(amount, method) {
                 if (!amount || amount <= 0) { this.showToast('⚠️ المبلغ غير صحيح'); return false; }
-                if (amount > this.currentUser.balance) { this.showToast('⚠️ الرصيد غير كافٍ'); return false; }
-                this.currentUser.balance -= amount;
-                this.currentUser.totalWithdrawn += amount;
-                this.currentUser.transactions.push({
-                    type: 'withdraw', amount, methodId: method.id,
-                    methodName: method.name, title: 'سحب رصيد', date: new Date().toISOString()
-                });
-                this.saveUserData();
-                this.updateUI();
-                this.showToast(`✅ تم سحب $${amount.toFixed(2)} بنجاح`);
-                return true;
+                if (amount > (this.currentUser.balance || 0)) { this.showToast('⚠️ الرصيد غير كافٍ'); return false; }
+                showLoading('📤 جاري معالجة السحب...');
+                try {
+                    const userRef = db.collection('users').doc(this.currentUser.id);
+                    const newBalance = (this.currentUser.balance || 0) - amount;
+                    const newTotalWithdrawn = (this.currentUser.totalWithdrawn || 0) + amount;
+                    const tx = {
+                        type: 'withdraw',
+                        amount,
+                        methodId: method.id,
+                        methodName: method.name,
+                        title: 'سحب رصيد',
+                        date: new Date().toISOString()
+                    };
+                    await userRef.update({
+                        balance: newBalance,
+                        totalWithdrawn: newTotalWithdrawn,
+                        transactions: firebase.firestore.FieldValue.arrayUnion(tx)
+                    });
+                    hideLoading();
+                    this.showToast(`✅ تم سحب $${amount.toFixed(2)} بنجاح`);
+                    return true;
+                } catch (err) {
+                    hideLoading();
+                    this.showToast('❌ فشل السحب: ' + err.message);
+                    return false;
+                }
             }
 
-            static saveUserData() {
-                localStorage.setItem(APP_PREFIX + 'user_' + this.currentUser.id, JSON.stringify(this.currentUser));
+            static loadAllUsers() {
+                db.collection('users').onSnapshot(snapshot => {
+                    this.allUsersCache = [];
+                    snapshot.forEach(doc => {
+                        this.allUsersCache.push(doc.data());
+                    });
+                    if (document.getElementById('adminPanel').classList.contains('active')) {
+                        updateAdminDashboard();
+                    }
+                });
+            }
+
+            static async loadPaymentMethodsFromFirebase() {
+                try {
+                    const snap = await db.collection('paymentMethods').get();
+                    this.allPaymentMethodsCache = [];
+                    snap.forEach(doc => {
+                        this.allPaymentMethodsCache.push({ id: doc.id, ...doc.data() });
+                    });
+                } catch (e) {
+                    console.log('Using cached methods or defaults');
+                }
+            }
+
+            static getPaymentMethods(type) {
+                return this.allPaymentMethodsCache.filter(m => m.type === type && m.active !== false);
+            }
+
+            static getAllPaymentMethods() {
+                return [...this.allPaymentMethodsCache];
+            }
+
+            static async savePaymentMethod(method) {
+                if (method.id) {
+                    await db.collection('paymentMethods').doc(method.id).set(method, { merge: true });
+                } else {
+                    const newId = Date.now().toString();
+                    method.id = newId;
+                    await db.collection('paymentMethods').doc(newId).set(method);
+                }
+                await this.loadPaymentMethodsFromFirebase();
+            }
+
+            static async deletePaymentMethodDB(id) {
+                await db.collection('paymentMethods').doc(id).delete();
+                await this.loadPaymentMethodsFromFirebase();
+            }
+
+            static async updatePaymentMethodDB(id, updates) {
+                await db.collection('paymentMethods').doc(id).update(updates);
+                await this.loadPaymentMethodsFromFirebase();
             }
 
             static logout() {
                 if (confirm('تسجيل الخروج؟')) {
-                    localStorage.removeItem(APP_PREFIX + 'session');
+                    if (this.unsubscribeUser) this.unsubscribeUser();
                     location.reload();
                 }
             }
 
-            static showToast(msg, type = 'info') {
+            static showToast(msg) {
                 const toast = document.getElementById('toast');
                 document.getElementById('toastText').textContent = msg;
-                toast.className = 'toast ' + type;
+                toast.className = 'toast';
                 toast.classList.add('show');
                 setTimeout(() => toast.classList.remove('show'), 3000);
             }
@@ -783,11 +2847,14 @@
             static createParticles() {
                 const container = document.getElementById('particles');
                 for (let i = 0; i < 30; i++) {
-                    const p = document.createElement('div'); p.className = 'particle';
+                    const p = document.createElement('div');
+                    p.className = 'particle';
                     p.style.left = Math.random() * 100 + '%';
                     p.style.animationDuration = (Math.random() * 8 + 6) + 's';
                     p.style.animationDelay = (Math.random() * 5) + 's';
-                    const size = (Math.random() * 3 + 1) + 'px'; p.style.width = size; p.style.height = size;
+                    const size = (Math.random() * 3 + 1) + 'px';
+                    p.style.width = size;
+                    p.style.height = size;
                     container.appendChild(p);
                 }
             }
@@ -800,45 +2867,35 @@
                     scrollTopBtn.classList.toggle('visible', window.scrollY > 500);
                 });
                 const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+                    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add(
+                            'visible'); });
                 }, { threshold: 0.1 });
                 document.querySelectorAll('.fade-in, .timeline-item').forEach(el => observer.observe(el));
-            }
-        }
-
-        // ==================== إدارة طرق الدفع ====================
-        class PaymentMethodManager {
-            static getMethods(type) {
-                const data = localStorage.getItem(APP_PREFIX + 'payment_methods');
-                const methods = data ? JSON.parse(data) : [];
-                return methods.filter(m => m.type === type && m.active);
-            }
-
-            static getAllMethods() {
-                const data = localStorage.getItem(APP_PREFIX + 'payment_methods');
-                return data ? JSON.parse(data) : [];
-            }
-
-            static saveMethods(methods) {
-                localStorage.setItem(APP_PREFIX + 'payment_methods', JSON.stringify(methods));
-            }
-
-            static addMethod(method) {
-                const methods = this.getAllMethods();
-                method.id = Date.now().toString();
-                methods.push(method);
-                this.saveMethods(methods);
-            }
-
-            static updateMethod(id, updates) {
-                const methods = this.getAllMethods();
-                const index = methods.findIndex(m => m.id === id);
-                if (index !== -1) { methods[index] = { ...methods[index], ...updates }; this.saveMethods(methods); }
-            }
-
-            static deleteMethod(id) {
-                const methods = this.getAllMethods().filter(m => m.id !== id);
-                this.saveMethods(methods);
+                // تحريك أشرطة التقدم
+                setTimeout(() => {
+                    document.querySelectorAll('.progress-fill').forEach(bar => {
+                        const w = bar.getAttribute('data-width');
+                        if (w) bar.style.width = w + '%';
+                    });
+                }, 500);
+                // تحريك العدادات
+                setTimeout(() => {
+                    document.querySelectorAll('.counter').forEach(counter => {
+                        const target = +counter.getAttribute('data-target');
+                        let count = 0;
+                        const speed = target / 60;
+                        const update = () => {
+                            if (count < target) {
+                                count += speed;
+                                counter.textContent = Math.ceil(count);
+                                requestAnimationFrame(update);
+                            } else {
+                                counter.textContent = target;
+                            }
+                        };
+                        update();
+                    });
+                }, 800);
             }
         }
 
@@ -854,61 +2911,77 @@
             renderPaymentMethods('withdraw');
             switchWalletTab(0);
         }
-        function closeWallet() { document.getElementById('walletOverlay').classList.remove('active'); document.body.style.overflow = ''; }
+
+        function closeWallet() { document.getElementById('walletOverlay').classList.remove('active');
+            document.body.style.overflow = ''; }
+
         function switchWalletTab(index) {
-            document.querySelectorAll('.wallet-tab').forEach((t,i)=> t.classList.toggle('active', i===index));
-            document.querySelectorAll('.wallet-tab-content').forEach((c,i)=> c.classList.toggle('active', i===index));
+            document.querySelectorAll('.wallet-tab').forEach((t, i) => t.classList.toggle('active', i === index));
+            document.querySelectorAll('.wallet-tab-content').forEach((c, i) => c.classList.toggle('active', i ===
+                index));
         }
+
         function renderPaymentMethods(type) {
-            const container = document.getElementById(type==='deposit'?'depositMethodsContainer':'withdrawMethodsContainer');
-            const methods = PaymentMethodManager.getMethods(type);
-            if (methods.length===0) { container.innerHTML='<p style="color:var(--text-dim); text-align:center; padding:20px;">لا توجد طرق متاحة حالياً</p>'; return; }
-            container.innerHTML = methods.map(m=>`
+            const container = document.getElementById(type === 'deposit' ? 'depositMethodsContainer' :
+                'withdrawMethodsContainer');
+            const methods = UserManager.getPaymentMethods(type);
+            if (methods.length === 0) { container.innerHTML =
+                '<p style="color:var(--text-dim); text-align:center; padding:20px;">لا توجد طرق متاحة حالياً</p>'; return; }
+            container.innerHTML = methods.map(m => `
                 <div class="payment-method-card ${(type==='deposit'?selectedDepositMethod:selectedWithdrawMethod)?.id===m.id?'selected':''}" 
                      onclick="selectPaymentMethod('${type}','${m.id}')">
-                    ${m.image?`<img src="${m.image}" alt="${m.name}">`:'<span style="font-size:2rem;">💳</span>'}
+                    ${m.image?`<img src="${m.image}" alt="${m.name}" onerror="this.style.display='none'">`:'<span style="font-size:2rem;">💳</span>'}
                     <div class="method-name">${m.name}</div>
                     <div class="method-desc">${m.description||''}</div>
                     ${m.minAmount?`<div class="min-amount-badge">الحد الأدنى: $${m.minAmount}</div>`:''}
                 </div>`).join('');
-            const sel = type==='deposit'?selectedDepositMethod:selectedWithdrawMethod;
+            const sel = type === 'deposit' ? selectedDepositMethod : selectedWithdrawMethod;
             showMethodDetails(type, sel);
         }
+
         function selectPaymentMethod(type, id) {
-            const methods = PaymentMethodManager.getMethods(type);
-            const method = methods.find(m=>m.id===id);
-            if (type==='deposit') selectedDepositMethod=method;
-            else selectedWithdrawMethod=method;
+            const methods = UserManager.getPaymentMethods(type);
+            const method = methods.find(m => m.id === id);
+            if (type === 'deposit') selectedDepositMethod = method;
+            else selectedWithdrawMethod = method;
             renderPaymentMethods(type);
         }
+
         function showMethodDetails(type, method) {
-            const detailsDiv = document.getElementById(type==='deposit'?'depositMethodDetails':'withdrawMethodDetails');
+            const detailsDiv = document.getElementById(type === 'deposit' ? 'depositMethodDetails' :
+                'withdrawMethodDetails');
             if (!method) { detailsDiv.classList.remove('active'); return; }
             detailsDiv.classList.add('active');
             detailsDiv.innerHTML = `
                 <h4 style="margin-bottom:8px;">${method.name}</h4>
-                ${method.image?`<img src="${method.image}" style="max-width:80px; border-radius:8px; margin-bottom:8px;">`:''}
-                ${method.barcode?`<img src="${method.barcode}" class="barcode-img" alt="باركود"><p style="text-align:center; font-size:0.7rem; color:var(--text-dim);">امسح الباركود للدفع</p>`:''}
+                ${method.image?`<img src="${method.image}" style="max-width:80px; border-radius:8px; margin-bottom:8px;" onerror="this.style.display='none'">`:''}
+                ${method.barcode?`<img src="${method.barcode}" class="barcode-img" alt="باركود" onerror="this.style.display='none'"><p style="text-align:center; font-size:0.7rem; color:var(--text-dim);">امسح الباركود للدفع</p>`:''}
                 ${method.address?`<div class="wallet-address">${method.address}</div>`:''}
                 ${method.minAmount?`<p class="min-amount-badge">الحد الأدنى: $${method.minAmount}</p>`:''}
                 <p style="font-size:0.8rem; color:var(--text-dim); margin-top:6px;">${method.description||''}</p>
             `;
         }
+
         function processDeposit() {
             const amount = parseFloat(document.getElementById('depositAmount').value);
             if (!selectedDepositMethod) { UserManager.showToast('⚠️ اختر طريقة الدفع أولاً'); return; }
-            if (UserManager.deposit(amount, selectedDepositMethod)) {
-                document.getElementById('depositAmount').value = '';
-                closeWallet();
-            }
+            UserManager.deposit(amount, selectedDepositMethod).then(success => {
+                if (success) {
+                    document.getElementById('depositAmount').value = '';
+                    closeWallet();
+                }
+            });
         }
+
         function processWithdraw() {
             const amount = parseFloat(document.getElementById('withdrawAmount').value);
             if (!selectedWithdrawMethod) { UserManager.showToast('⚠️ اختر طريقة السحب أولاً'); return; }
-            if (UserManager.withdraw(amount, selectedWithdrawMethod)) {
-                document.getElementById('withdrawAmount').value = '';
-                closeWallet();
-            }
+            UserManager.withdraw(amount, selectedWithdrawMethod).then(success => {
+                if (success) {
+                    document.getElementById('withdrawAmount').value = '';
+                    closeWallet();
+                }
+            });
         }
 
         // ==================== ملف شخصي ====================
@@ -917,102 +2990,283 @@
             if (!user) return;
             document.getElementById('profileModal').classList.add('active');
             document.body.style.overflow = 'hidden';
-            const fullName = (user.firstName+' '+(user.lastName||'')).trim();
-            document.getElementById('profileAvatarLarge').innerHTML = user.photoUrl?`<img src="${user.photoUrl}">`:fullName.charAt(0);
+            const fullName = (user.firstName + ' ' + (user.lastName || '')).trim();
+            document.getElementById('profileAvatarLarge').innerHTML = user.photoUrl ?
+                `<img src="${user.photoUrl}" onerror="this.innerHTML='${fullName.charAt(0)}'">` : fullName.charAt(0);
             document.getElementById('profileName').textContent = fullName;
-            document.getElementById('profileUsername').textContent = '@'+user.username;
-            document.getElementById('profileTgId').textContent = 'Telegram ID: '+user.id;
-            document.getElementById('profileWalletBalance').textContent = '$'+user.balance.toFixed(2);
+            document.getElementById('profileUsername').textContent = '@' + user.username;
+            document.getElementById('profileTgId').textContent = 'Telegram ID: ' + user.id;
+            document.getElementById('profileWalletBalance').textContent = '$' + (user.balance || 0).toFixed(2);
             document.getElementById('infoTgId').textContent = user.id;
-            document.getElementById('infoJoinDate').textContent = new Date(user.joinDate).toLocaleDateString('ar-SA');
-            document.getElementById('infoLang').textContent = user.language==='ar'?'العربية':user.language;
+            document.getElementById('infoJoinDate').textContent = user.joinDate ? new Date(user.joinDate)
+                .toLocaleDateString('ar-SA') : '-';
+            document.getElementById('infoLang').textContent = user.language === 'ar' ? 'العربية' : (user.language || '-');
         }
-        function closeProfileModal() { document.getElementById('profileModal').classList.remove('active'); document.body.style.overflow=''; }
+
+        function closeProfileModal() { document.getElementById('profileModal').classList.remove('active');
+            document.body.style.overflow = ''; }
 
         // ==================== لوحة تحكم المشرف ====================
         function showAdminPanel() {
-            if (UserManager.currentUser?.id !== ADMIN_ID) return;
+            if (Number(UserManager.currentUser?.id) !== ADMIN_ID) return;
             document.getElementById('adminPanel').classList.add('active');
-            document.body.style.overflow='hidden';
+            document.body.style.overflow = 'hidden';
             updateAdminDashboard();
             renderPaymentMethodsEditor();
         }
-        function closeAdminPanel() { document.getElementById('adminPanel').classList.remove('active'); document.body.style.overflow=''; }
+
+        function closeAdminPanel() { document.getElementById('adminPanel').classList.remove('active');
+            document.body.style.overflow = ''; }
+
         function switchAdminTab(index) {
-            document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',i===index));
-            document.querySelectorAll('.admin-tab-content').forEach((c,i)=>c.classList.toggle('active',i===index));
+            document.querySelectorAll('.admin-tab').forEach((t, i) => t.classList.toggle('active', i === index));
+            document.querySelectorAll('.admin-tab-content').forEach((c, i) => c.classList.toggle('active', i ===
+                index));
+            if (index === 0 || index === 1) updateAdminDashboard();
+            if (index === 2) renderPaymentMethodsEditor();
         }
+
         function updateAdminDashboard() {
-            const users = getAllUsers();
-            const search = document.querySelector('.admin-search-input')?.value.toLowerCase()||'';
-            const filtered = users.filter(u=>!search || u.firstName.toLowerCase().includes(search) || String(u.id).includes(search));
+            const users = UserManager.allUsersCache;
+            const search = document.querySelector('.admin-search-input')?.value.toLowerCase() || '';
+            const filtered = users.filter(u => !search || (u.firstName || '').toLowerCase().includes(search) || String(
+                u.id).includes(search));
             const tbody = document.getElementById('adminUsersTable');
-            tbody.innerHTML = filtered.map(u=>`<tr><td>${u.firstName} ${u.lastName||''} (${u.id})</td><td style="color:var(--wallet-gold);">$${u.balance.toFixed(2)}</td><td>${u.level}</td><td><button class="admin-action-btn edit" onclick="editUserBalance('${u.id}')">✏️ تعديل</button></td></tr>`).join('')||'<tr><td colspan="4">لا يوجد مستخدمون</td></tr>';
-            const allTx = users.flatMap(u=>(u.transactions||[]).map(tx=>({...tx, userName:u.firstName})));
-            allTx.sort((a,b)=>new Date(b.date)-new Date(a.date));
-            document.getElementById('adminAllTransactions').innerHTML = allTx.slice(0,30).map(tx=>{
-                const isDep = tx.type==='deposit';
-                return `<div class="admin-tx-item"><div class="admin-tx-icon ${isDep?'deposit':'withdraw'}">${isDep?'📥':'📤'}</div><div class="admin-tx-info"><div class="admin-tx-title">${tx.title}</div><div class="admin-tx-user">${tx.userName} • ${tx.methodName||''}</div></div><div class="admin-tx-amount ${isDep?'positive':'negative'}">${isDep?'+':'-'}$${Math.abs(tx.amount).toFixed(2)}</div></div>`;
-            }).join('')||'<p>لا توجد معاملات</p>';
+            tbody.innerHTML = filtered.map(u =>
+                `<tr><td>${u.firstName||''} ${u.lastName||''} (${u.id})</td><td style="color:var(--wallet-gold);">$${(u.balance||0).toFixed(2)}</td><td>${u.level||1}</td><td><button class="admin-action-btn edit" onclick="editUserBalance('${u.id}')">✏️ تعديل</button></td></tr>`
+            ).join('') || '<tr><td colspan="4">لا يوجد مستخدمون</td></tr>';
+            const allTx = users.flatMap(u => (u.transactions || []).map(tx => ({ ...tx, userName: u.firstName || '',
+                userId: u.id })));
+            allTx.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+            document.getElementById('adminAllTransactions').innerHTML = allTx.slice(0, 50).map(tx => {
+                const isDep = tx.type === 'deposit';
+                const date = tx.date ? new Date(tx.date).toLocaleDateString('ar-SA', { year: 'numeric',
+                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+                return `<div class="admin-tx-item"><div class="admin-tx-icon ${isDep?'deposit':'withdraw'}">${isDep?'📥':'📤'}</div><div class="admin-tx-info"><div class="admin-tx-title">${tx.title||''}</div><div class="admin-tx-user">${tx.userName} (${tx.userId}) • ${tx.methodName||''} • ${date}</div></div><div class="admin-tx-amount ${isDep?'positive':'negative'}">${isDep?'+':'-'}$${Math.abs(tx.amount||0).toFixed(2)}</div></div>`;
+            }).join('') || '<p>لا توجد معاملات</p>';
         }
-        function getAllUsers() {
-            const users=[];
-            for(let i=0;i<localStorage.length;i++){
-                const key=localStorage.key(i);
-                if(key&&key.startsWith(APP_PREFIX+'user_')) try{users.push(JSON.parse(localStorage.getItem(key)))}catch(e){}
-            }
-            return users;
-        }
+
         function editUserBalance(userId) {
-            const user=JSON.parse(localStorage.getItem(APP_PREFIX+'user_'+userId));
-            if(!user)return;
-            const newBal=prompt('الرصيد الجديد لـ '+user.firstName,user.balance);
-            if(newBal!==null&&!isNaN(newBal)&&newBal>=0){
-                user.balance=parseFloat(newBal);
-                localStorage.setItem(APP_PREFIX+'user_'+userId,JSON.stringify(user));
-                updateAdminDashboard();
+            const user = UserManager.allUsersCache.find(u => String(u.id) === String(userId));
+            if (!user) return;
+            const newBal = prompt('الرصيد الجديد لـ ' + (user.firstName || ''), (user.balance || 0).toFixed(2));
+            if (newBal !== null && !isNaN(newBal) && parseFloat(newBal) >= 0) {
+                showLoading('💾 جاري تحديث الرصيد...');
+                db.collection('users').doc(String(userId)).update({ balance: parseFloat(newBal) }).then(() => {
+                    hideLoading();
+                    UserManager.showToast('✅ تم تحديث الرصيد');
+                }).catch(err => {
+                    hideLoading();
+                    UserManager.showToast('❌ فشل التحديث: ' + err.message);
+                });
             }
         }
+
+        // ==================== محرر طرق الدفع مع رفع الصور ====================
         function renderPaymentMethodsEditor() {
-            const allMethods=PaymentMethodManager.getAllMethods();
-            const depositMethods=allMethods.filter(m=>m.type==='deposit');
-            const withdrawMethods=allMethods.filter(m=>m.type==='withdraw');
-            document.getElementById('depositMethodsEditor').innerHTML=depositMethods.map(methodEditorHTML).join('');
-            document.getElementById('withdrawMethodsEditor').innerHTML=withdrawMethods.map(methodEditorHTML).join('');
-            document.querySelectorAll('.toggle-switch').forEach(el=>{
-                el.addEventListener('click',function(){
-                    this.classList.toggle('active');
-                    PaymentMethodManager.updateMethod(this.dataset.id,{active:this.classList.contains('active')});
-                    renderPaymentMethodsEditor();
+            const allMethods = UserManager.getAllPaymentMethods();
+            const depositMethods = allMethods.filter(m => m.type === 'deposit');
+            const withdrawMethods = allMethods.filter(m => m.type === 'withdraw');
+            document.getElementById('depositMethodsEditor').innerHTML = depositMethods.map(m =>
+                methodEditorHTML(m, 'deposit')).join('');
+            document.getElementById('withdrawMethodsEditor').innerHTML = withdrawMethods.map(m => methodEditorHTML(m,
+                'withdraw')).join('');
+            // إضافة مستمعي الأحداث لأزرار الرفع والتبديل
+            attachEditorEventListeners();
+        }
+
+        function methodEditorHTML(method, type) {
+            return `
+            <div class="payment-method-editor" data-method-id="${method.id}" data-type="${type}">
+                <div class="editor-row"><label>الاسم</label><input type="text" value="${method.name||''}" data-field="name"></div>
+                <div class="editor-row">
+                    <label>الصورة</label>
+                    <img src="${method.image||''}" class="upload-preview" data-preview="image" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22><rect fill=%22%23333%22 width=%2280%22 height=%2280%22/><text fill=%22%23888%22 x=%2230%22 y=%2245%22 font-size=%2210%22>لا صورة</text></svg>'" style="cursor:pointer;" title="اضغط لتغيير الصورة">
+                    <input type="file" accept="image/*" style="display:none;" data-upload="image">
+                    <button class="upload-btn" data-btn="image">📷 رفع صورة</button>
+                    <div class="upload-progress" data-progress="image"><div class="upload-progress-bar"></div></div>
+                </div>
+                <div class="editor-row">
+                    <label>الباركود</label>
+                    <img src="${method.barcode||''}" class="upload-preview" data-preview="barcode" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22><rect fill=%22%23333%22 width=%2280%22 height=%2280%22/><text fill=%22%23888%22 x=%2225%22 y=%2245%22 font-size=%2210%22>لا باركود</text></svg>'" style="cursor:pointer;" title="اضغط لتغيير الباركود">
+                    <input type="file" accept="image/*" style="display:none;" data-upload="barcode">
+                    <button class="upload-btn" data-btn="barcode">📱 رفع باركود</button>
+                    <div class="upload-progress" data-progress="barcode"><div class="upload-progress-bar"></div></div>
+                </div>
+                <div class="editor-row"><label>عنوان المحفظة</label><input type="text" value="${method.address||''}" data-field="address"></div>
+                <div class="editor-row"><label>الحد الأدنى</label><input type="number" value="${method.minAmount||1}" step="0.01" data-field="minAmount"></div>
+                <div class="editor-row"><label>الوصف</label><input type="text" value="${method.description||''}" data-field="description"></div>
+                <div class="editor-row">
+                    <div class="toggle-active"><span>نشط</span><div class="toggle-switch ${method.active!==false?'active':''}" data-toggle="active"></div></div>
+                    <button class="admin-action-btn delete" data-delete>🗑️ حذف</button>
+                </div>
+            </div>`;
+        }
+
+        function attachEditorEventListeners() {
+            document.querySelectorAll('.payment-method-editor').forEach(editor => {
+                const methodId = editor.dataset.methodId;
+                const type = editor.dataset.type;
+
+                // حقول النص
+                editor.querySelectorAll('[data-field]').forEach(input => {
+                    input.addEventListener('change', function() {
+                        const field = this.dataset.field;
+                        const value = field === 'minAmount' ? parseFloat(this.value) || 0 : this
+                            .value;
+                        saveMethodUpdate(methodId, { [field]: value });
+                    });
+                });
+
+                // التبديل
+                const toggle = editor.querySelector('[data-toggle]');
+                if (toggle) {
+                    toggle.addEventListener('click', function() {
+                        this.classList.toggle('active');
+                        saveMethodUpdate(methodId, { active: this.classList.contains(
+                                'active') });
+                    });
+                }
+
+                // الحذف
+                const deleteBtn = editor.querySelector('[data-delete]');
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', function() {
+                        if (confirm('هل أنت متأكد من حذف طريقة الدفع هذه؟')) {
+                            showLoading('🗑️ جاري الحذف...');
+                            UserManager.deletePaymentMethodDB(methodId).then(() => {
+                                hideLoading();
+                                renderPaymentMethodsEditor();
+                                UserManager.showToast('✅ تم الحذف');
+                            });
+                        }
+                    });
+                }
+
+                // أزرار رفع الصور
+                editor.querySelectorAll('[data-btn]').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const uploadType = this.dataset.btn;
+                        const fileInput = editor.querySelector(
+                            `[data-upload="${uploadType}"]`);
+                        fileInput.click();
+                    });
+                });
+
+                // مدخلات الملفات
+                editor.querySelectorAll('[data-upload]').forEach(fileInput => {
+                    fileInput.addEventListener('change', function() {
+                        const file = this.files[0];
+                        if (!file) return;
+                        const uploadType = this.dataset.upload;
+                        uploadMethodImage(methodId, type, uploadType, file, editor);
+                    });
+                });
+
+                // النقر على preview للتحميل
+                editor.querySelectorAll('[data-preview]').forEach(preview => {
+                    preview.addEventListener('click', function() {
+                        const uploadType = this.dataset.preview;
+                        const fileInput = editor.querySelector(
+                            `[data-upload="${uploadType}"]`);
+                        fileInput.click();
+                    });
                 });
             });
         }
-        function methodEditorHTML(method) {
-            return `<div class="payment-method-editor">
-                <div class="editor-row"><label>الاسم</label><input type="text" value="${method.name}" onchange="updateMethodField('${method.id}','name',this.value)"></div>
-                <div class="editor-row"><label>الصورة (رابط)</label><input type="text" value="${method.image||''}" onchange="updateMethodField('${method.id}','image',this.value)"></div>
-                <div class="editor-row"><label>الباركود (رابط)</label><input type="text" value="${method.barcode||''}" onchange="updateMethodField('${method.id}','barcode',this.value)"></div>
-                <div class="editor-row"><label>عنوان المحفظة</label><input type="text" value="${method.address||''}" onchange="updateMethodField('${method.id}','address',this.value)"></div>
-                <div class="editor-row"><label>الحد الأدنى</label><input type="number" value="${method.minAmount||0}" step="0.01" onchange="updateMethodField('${method.id}','minAmount',parseFloat(this.value))"></div>
-                <div class="editor-row"><label>الوصف</label><input type="text" value="${method.description||''}" onchange="updateMethodField('${method.id}','description',this.value)"></div>
-                <div class="editor-row"><div class="toggle-active"><span>نشط</span><div class="toggle-switch ${method.active?'active':''}" data-id="${method.id}"></div></div><button class="admin-action-btn delete" onclick="deletePaymentMethod('${method.id}')">🗑️ حذف</button></div>
-            </div>`;
+
+        function uploadMethodImage(methodId, type, uploadType, file, editor) {
+            if (!file.type.startsWith('image/')) {
+                UserManager.showToast('⚠️ يرجى اختيار ملف صورة فقط');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                UserManager.showToast('⚠️ حجم الملف كبير جداً (الحد الأقصى 5 ميجابايت)');
+                return;
+            }
+            const progressDiv = editor.querySelector(`[data-progress="${uploadType}"]`);
+            const progressBar = progressDiv.querySelector('.upload-progress-bar');
+            const preview = editor.querySelector(`[data-preview="${uploadType}"]`);
+            progressDiv.style.display = 'block';
+            progressBar.style.width = '0%';
+            showLoading('📤 جاري رفع الصورة...');
+
+            const storagePath = `payment_methods/${type}/${methodId}_${uploadType}_${Date.now()}.${file.name.split('.').pop()}`;
+            const uploadTask = storage.ref(storagePath).put(file);
+
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    progressBar.style.width = progress + '%';
+                },
+                (error) => {
+                    hideLoading();
+                    progressDiv.style.display = 'none';
+                    UserManager.showToast('❌ فشل رفع الصورة: ' + error.message);
+                },
+                async () => {
+                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                    const updateData = {};
+                    updateData[uploadType] = downloadURL;
+                    await saveMethodUpdate(methodId, updateData);
+                    preview.src = downloadURL;
+                    progressDiv.style.display = 'none';
+                    hideLoading();
+                    UserManager.showToast('✅ تم رفع الصورة بنجاح');
+                }
+            );
         }
-        function addPaymentMethod(type) {
-            PaymentMethodManager.addMethod({type,name:'طريقة جديدة',image:'',barcode:'',address:'',minAmount:1,description:'',active:true});
+
+        async function saveMethodUpdate(methodId, updates) {
+            await UserManager.updatePaymentMethodDB(methodId, updates);
             renderPaymentMethodsEditor();
+            // تحديث عرض المحفظة إذا كانت مفتوحة
+            if (document.getElementById('walletOverlay').classList.contains('active')) {
+                renderPaymentMethods('deposit');
+                renderPaymentMethods('withdraw');
+            }
         }
-        function updateMethodField(id,field,value) { PaymentMethodManager.updateMethod(id,{[field]:value}); }
-        function deletePaymentMethod(id) { if(confirm('حذف؟')){PaymentMethodManager.deleteMethod(id);renderPaymentMethodsEditor();} }
+
+        function addPaymentMethod(type) {
+            const newMethod = {
+                type: type,
+                name: 'طريقة جديدة',
+                image: '',
+                barcode: '',
+                address: '',
+                minAmount: 1,
+                description: '',
+                active: true,
+                id: Date.now().toString()
+            };
+            showLoading('➕ جاري إضافة طريقة جديدة...');
+            UserManager.savePaymentMethod(newMethod).then(() => {
+                hideLoading();
+                renderPaymentMethodsEditor();
+                UserManager.showToast('✅ تمت الإضافة');
+            });
+        }
 
         // ==================== مساعدات ====================
-        function scrollToSection(id) { document.getElementById(id)?.scrollIntoView({behavior:'smooth'}); document.getElementById('navLinks').classList.remove('mobile-open'); }
+        function scrollToSection(id) {
+            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('navLinks').classList.remove('mobile-open');
+        }
+
         function toggleMobileMenu() { document.getElementById('navLinks').classList.toggle('mobile-open'); }
 
         // ==================== بدء التشغيل ====================
-        window.addEventListener('DOMContentLoaded',()=>{
+        window.addEventListener('DOMContentLoaded', () => {
+            showLoading('🛡️ جاري تهيئة النظام...');
             UserManager.init();
-            document.getElementById('loginButton').addEventListener('click',()=>UserManager.attemptLogin());
+            document.getElementById('loginButton').addEventListener('click', () => UserManager.attemptLogin());
+            // إخفاء التحميل بعد فترة إذا لم يحدث شيء
+            setTimeout(() => {
+                if (!UserManager.currentUser && document.getElementById('loginScreen').classList.contains(
+                        'hidden') === false) {
+                    hideLoading();
+                }
+            }, 5000);
         });
     </script>
 </body>
