@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0a0a0f">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>God of War • Kratos | المحفظة الذهبية | صناديق الحظ</title>
+    <title>God of War • Kratos | المحفظة الذهبية</title>
     <script src="https://telegram.org/js/telegram-web-app.js">
     </script>
     <script src="https://unpkg.com/dexie@3.2.3/dist/dexie.js">
@@ -43,6 +43,7 @@
             --shadow-glow-red: 0 0 25px rgba(192, 57, 43, 0.35);
             --shadow-glow-gold: 0 0 25px rgba(244, 196, 48, 0.3);
             --shadow-glow-blue: 0 0 25px rgba(42, 171, 238, 0.3);
+            --shadow-glow-green: 0 0 25px rgba(46, 204, 113, 0.3);
             --radius-xs: 6px;
             --radius-sm: 10px;
             --radius-md: 16px;
@@ -122,7 +123,6 @@
         ul {
             list-style: none;
         }
-
         ::-webkit-scrollbar {
             width: 5px;
             height: 5px;
@@ -609,6 +609,36 @@
             background: rgba(192, 57, 43, 0.25);
         }
 
+        .generate-account-btn {
+            padding: 5px 10px;
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(39, 174, 96, 0.1));
+            border: 1px solid rgba(46, 204, 113, 0.35);
+            border-radius: var(--radius-xs);
+            color: var(--accent-green);
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            animation: glowPulse 2.5s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%,
+            100% {
+                box-shadow: 0 0 8px rgba(46, 204, 113, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 18px rgba(46, 204, 113, 0.45);
+            }
+        }
+        .generate-account-btn:active {
+            transform: scale(0.92);
+            background: rgba(46, 204, 113, 0.28);
+        }
+
         .navbar {
             position: fixed;
             top: 48px;
@@ -894,6 +924,47 @@
         }
         .btn-secondary:active {
             transform: scale(0.95);
+        }
+        .btn-generate {
+            padding: 12px 26px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: #fff;
+            font-size: var(--fs-md);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            box-shadow: var(--shadow-glow-green);
+            position: relative;
+            overflow: hidden;
+            animation: glowPulseBtn 2.5s ease-in-out infinite;
+        }
+        @keyframes glowPulseBtn {
+            0%,
+            100% {
+                box-shadow: 0 0 18px rgba(46, 204, 113, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(46, 204, 113, 0.55);
+            }
+        }
+        .btn-generate::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+        .btn-generate:hover::after {
+            transform: translateX(100%);
+        }
+        .btn-generate:active {
+            transform: scale(0.94);
         }
         .hero-stats {
             display: flex;
@@ -2311,426 +2382,592 @@
             flex-wrap: wrap;
         }
 
-        /* ============================
-               LOOT BOX GAME STYLES
-               ============================ */
-        .lootbox-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 10003;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.92);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-        .lootbox-overlay.active {
-            display: flex;
-        }
-        .lootbox-panel {
-            background: rgba(10, 10, 18, 0.97);
-            border: 2px solid rgba(212, 160, 23, 0.4);
-            border-radius: var(--radius-xl);
-            max-width: 700px;
+        /* ========== ACCOUNT GENERATION MODAL STYLES ========== */
+        .generate-modal {
+            max-width: 520px;
             width: 100%;
-            max-height: 95vh;
-            overflow-y: auto;
-            animation: lootboxIn 0.6s var(--ease-bounce);
-            box-shadow: 0 0 60px rgba(212, 160, 23, 0.2), 0 0 120px rgba(192, 57, 43, 0.15);
-            position: relative;
         }
-        @keyframes lootboxIn {
-            from {
-                transform: translateY(60px) scale(0.85);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
-        .lootbox-header {
-            background: linear-gradient(180deg, rgba(212, 160, 23, 0.15), rgba(192, 57, 43, 0.1));
-            border-bottom: 1px solid rgba(212, 160, 23, 0.25);
-            padding: 24px 20px;
+        .generate-header {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.14), rgba(39, 174, 96, 0.06));
+            border-bottom: 1px solid rgba(46, 204, 113, 0.18);
+            padding: 22px 22px 16px;
             text-align: center;
-            position: relative;
         }
-        .lootbox-header-icon {
-            width: 70px;
-            height: 70px;
+        .generate-header-icon {
+            width: 56px;
+            height: 56px;
             margin: 0 auto 10px;
-            background: linear-gradient(135deg, #d4a017, #c0392b);
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            box-shadow: 0 0 30px rgba(212, 160, 23, 0.5);
-            animation: boxGlow 2s ease-in-out infinite;
+            font-size: 28px;
+            box-shadow: var(--shadow-glow-green);
         }
-        @keyframes boxGlow {
-            0%,
-            100% {
-                box-shadow: 0 0 30px rgba(212, 160, 23, 0.5);
-            }
-            50% {
-                box-shadow: 0 0 50px rgba(212, 160, 23, 0.8), 0 0 80px rgba(192, 57, 43, 0.3);
-            }
-        }
-        .lootbox-title {
-            font-size: var(--fs-3xl);
-            font-weight: 900;
-            background: linear-gradient(135deg, #ffd700, #f0c040, #d4a017);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 1px;
-        }
-        .lootbox-subtitle {
-            color: var(--text-secondary);
-            font-size: var(--fs-sm);
-            margin-top: 4px;
-        }
-        .lootbox-rtp {
-            display: inline-block;
-            background: rgba(46, 204, 113, 0.15);
-            color: var(--accent-green);
-            padding: 3px 12px;
-            border-radius: var(--radius-full);
-            font-size: var(--fs-xs);
-            margin-top: 8px;
-            font-weight: 600;
-        }
-        .lootbox-body {
-            padding: 20px;
-        }
-        .lootbox-balance {
-            background: rgba(244, 196, 48, 0.08);
-            border: 1px solid rgba(244, 196, 48, 0.2);
-            border-radius: var(--radius-md);
-            padding: 12px 18px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .lootbox-balance-label {
-            font-size: var(--fs-xs);
-            color: var(--text-muted);
-        }
-        .lootbox-balance-amount {
-            font-size: var(--fs-2xl);
-            font-weight: 700;
-            color: var(--accent-gold);
-        }
-        .lootbox-bet-tiers {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        .lootbox-tier {
-            background: rgba(255, 255, 255, 0.03);
-            border: 2px solid var(--border-medium);
-            border-radius: var(--radius-md);
-            padding: 14px 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .lootbox-tier:hover {
-            border-color: var(--accent-gold);
-            background: rgba(244, 196, 48, 0.08);
-            transform: translateY(-3px);
-        }
-        .lootbox-tier.selected {
-            border-color: var(--accent-gold);
-            background: rgba(244, 196, 48, 0.15);
-            box-shadow: 0 0 25px rgba(244, 196, 48, 0.3);
-            animation: selectedPulse 1.5s ease-in-out infinite;
-        }
-        @keyframes selectedPulse {
-            0%,
-            100% {
-                box-shadow: 0 0 25px rgba(244, 196, 48, 0.3);
-            }
-            50% {
-                box-shadow: 0 0 40px rgba(244, 196, 48, 0.5);
-            }
-        }
-        .lootbox-tier.disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-        .lootbox-tier-icon {
-            font-size: 1.8rem;
-            margin-bottom: 6px;
-            display: block;
-        }
-        .lootbox-tier-amount {
-            font-size: var(--fs-lg);
-            font-weight: 700;
-            color: var(--accent-gold);
-        }
-        .lootbox-tier-label {
-            font-size: var(--fs-xs);
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-        .lootbox-chests {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        .lootbox-chest {
-            width: 90px;
-            height: 110px;
-            background: linear-gradient(180deg, rgba(212, 160, 23, 0.2), rgba(192, 57, 43, 0.15));
-            border: 2px solid rgba(212, 160, 23, 0.3);
-            border-radius: var(--radius-md);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .lootbox-chest:hover {
-            transform: scale(1.05);
-            border-color: var(--accent-gold);
-            box-shadow: 0 0 30px rgba(212, 160, 23, 0.3);
-        }
-        .lootbox-chest.opening {
-            animation: chestShake 0.5s ease-in-out;
-        }
-        @keyframes chestShake {
-            0%,
-            100% {
-                transform: rotate(0);
-            }
-            25% {
-                transform: rotate(-8deg);
-            }
-            50% {
-                transform: rotate(8deg);
-            }
-            75% {
-                transform: rotate(-4deg);
-            }
-        }
-        .lootbox-chest-icon {
-            font-size: 2.5rem;
-            transition: all 0.3s ease;
-        }
-        .lootbox-chest.opening .lootbox-chest-icon {
-            animation: iconBounce 0.5s ease-in-out;
-        }
-        @keyframes iconBounce {
-            0%,
-            100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.3);
-            }
-        }
-        .lootbox-chest-name {
-            font-size: var(--fs-xs);
-            font-weight: 600;
-            margin-top: 4px;
-            color: var(--text-secondary);
-        }
-        .lootbox-result {
-            display: none;
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(212, 160, 23, 0.5);
-            border-radius: var(--radius-lg);
-            padding: 20px;
-            text-align: center;
-            margin-top: 16px;
-            animation: resultIn 0.5s var(--ease-bounce);
-        }
-        @keyframes resultIn {
-            from {
-                transform: scale(0.5);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-        .lootbox-result.win {
-            border-color: var(--accent-green);
-            box-shadow: 0 0 40px rgba(46, 204, 113, 0.3);
-        }
-        .lootbox-result.lose {
-            border-color: var(--accent-red);
-            box-shadow: 0 0 40px rgba(231, 76, 60, 0.3);
-        }
-        .lootbox-result.multiplier {
-            font-size: 3rem;
-            font-weight: 900;
-        }
-        .lootbox-result.multiplier.win {
-            color: var(--accent-green);
-        }
-        .lootbox-result.multiplier.lose {
-            color: var(--accent-red);
-        }
-        .lootbox-result-amount {
+        .generate-header-title {
             font-size: var(--fs-xl);
             font-weight: 700;
-            margin-top: 4px;
+            margin-bottom: 4px;
         }
-        .lootbox-result-text {
-            font-size: var(--fs-md);
+        .generate-header-desc {
+            font-size: var(--fs-xs);
+            color: var(--text-muted);
+        }
+        .generate-body {
+            padding: 18px 22px 20px;
+        }
+        .generate-input-group {
+            margin-bottom: 14px;
+        }
+        .generate-input-group label {
+            display: block;
+            font-size: var(--fs-xs);
+            font-weight: 600;
             color: var(--text-secondary);
-            margin-top: 6px;
+            margin-bottom: 5px;
         }
-        .lootbox-history {
-            margin-top: 20px;
-            max-height: 200px;
-            overflow-y: auto;
+        .generate-input-group input {
+            width: 100%;
+            padding: 10px 13px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1.5px solid var(--border-medium);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: var(--fs-md);
+            direction: ltr;
+            transition: all 0.3s ease;
         }
-        .lootbox-history-title {
+        .generate-input-group input:focus {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.08);
+        }
+        .generate-input-group .hint {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+        .generate-result-box {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 16px;
+            margin-top: 16px;
+            display: none;
+        }
+        .generate-result-box.active {
+            display: block;
+            animation: fadeInUp 0.4s ease;
+        }
+        .result-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--border-subtle);
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .result-row:last-child {
+            border-bottom: none;
+        }
+        .result-label {
+            font-size: var(--fs-xs);
+            color: var(--text-muted);
+            font-weight: 600;
+            min-width: 80px;
+            flex-shrink: 0;
+        }
+        .result-value {
             font-size: var(--fs-md);
             font-weight: 700;
-            margin-bottom: 8px;
-            text-align: center;
+            direction: ltr;
+            word-break: break-all;
+            flex: 1;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+            min-width: 140px;
+        }
+        .result-value.username {
+            color: var(--accent-blue);
+        }
+        .result-value.email {
+            color: var(--accent-gold);
+        }
+        .result-value.password {
+            color: var(--accent-green);
+            letter-spacing: 1px;
+        }
+        .copy-btn {
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-medium);
+            border-radius: 6px;
             color: var(--text-secondary);
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
-        .lootbox-history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 0;
-            border-bottom: 1px solid var(--border-subtle);
-            font-size: var(--fs-xs);
-        }
-        .lootbox-history-item .win {
+        .copy-btn:hover {
+            background: rgba(46, 204, 113, 0.15);
+            border-color: var(--accent-green);
             color: var(--accent-green);
         }
-        .lootbox-history-item .lose {
-            color: var(--accent-red);
+        .copy-btn:active {
+            transform: scale(0.9);
         }
-        .lootbox-open-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #d4a017, #c0392b);
-            border: none;
-            border-radius: var(--radius-md);
+        .copy-btn.copied {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
             color: #fff;
-            font-size: var(--fs-lg);
+        }
+        .generate-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .btn-generate-now {
+            flex: 1;
+            min-width: 120px;
+            padding: 11px 16px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: var(--fs-md);
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 6px;
+            box-shadow: 0 4px 18px rgba(46, 204, 113, 0.3);
+        }
+        .btn-generate-now:active {
+            transform: scale(0.94);
+        }
+        .btn-save-account {
+            flex: 1;
+            min-width: 120px;
+            padding: 11px 16px;
+            background: rgba(42, 171, 238, 0.1);
+            border: 1.5px solid rgba(42, 171, 238, 0.3);
+            border-radius: 10px;
+            color: var(--accent-blue);
+            font-size: var(--fs-md);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-save-account:active {
+            transform: scale(0.94);
+            background: rgba(42, 171, 238, 0.2);
+        }
+        .btn-download-account {
+            width: 100%;
+            padding: 10px;
+            background: rgba(155, 89, 182, 0.1);
+            border: 1.5px solid rgba(155, 89, 182, 0.25);
+            border-radius: 10px;
+            color: var(--accent-purple);
+            font-size: var(--fs-sm);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .btn-download-account:active {
+            transform: scale(0.94);
+        }
+        .generated-accounts-list {
+            max-height: 260px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .generated-account-item {
+            display: flex;
+            align-items: center;
             gap: 8px;
-            box-shadow: 0 6px 30px rgba(212, 160, 23, 0.35);
-            position: relative;
+            padding: 8px 10px;
+            border-radius: 10px;
+            margin-bottom: 4px;
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid var(--border-subtle);
+            font-size: var(--fs-xs);
+            flex-wrap: wrap;
+        }
+        .generated-account-item .ga-username {
+            color: var(--accent-blue);
+            font-weight: 700;
+            direction: ltr;
+        }
+        .generated-account-item .ga-password {
+            color: var(--accent-green);
+            font-weight: 600;
+            direction: ltr;
+            font-family: monospace;
+        }
+        .generated-account-item .ga-date {
+            color: var(--text-muted);
+            font-size: 0.6rem;
+            margin-right: auto;
+        }
+        .password-strength-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 2px;
+            margin-top: 5px;
             overflow: hidden;
         }
-        .lootbox-open-btn::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.5s ease;
+        .password-strength-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.5s ease;
         }
-        .lootbox-open-btn:hover::after {
-            transform: translateX(100%);
+        .strength-weak {
+            background: #e74c3c;
+            width: 25%;
         }
-        .lootbox-open-btn:active {
-            transform: scale(0.95);
+        .strength-medium {
+            background: #f39c12;
+            width: 55%;
         }
-        .lootbox-open-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
+        .strength-strong {
+            background: #2ecc71;
+            width: 85%;
+        }
+        .strength-very-strong {
+            background: #27ae60;
+            width: 100%;
         }
 
+        @media (max-width: 1200px) {
+            .hero-visual {
+                display: none;
+            }
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(3, 190px);
+            }
+            .gallery-item:first-child {
+                grid-row: span 1;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 22px;
+            }
+        }
+        @media (max-width: 900px) {
+            .nav-links {
+                gap: 0.7rem;
+            }
+            .nav-links a {
+                font-size: 0.7rem;
+            }
+            .hero {
+                padding: 120px 16px 50px;
+            }
+            .section {
+                padding: 45px 16px;
+            }
+            .weapons-showcase {
+                grid-template-columns: 1fr;
+                max-width: 480px;
+            }
+            .abilities-grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .edit-user-panel .form-row {
+                grid-template-columns: 1fr;
+            }
+            .admin-panel-wrap {
+                max-height: 95vh;
+                border-radius: 16px;
+            }
+            .admin-header {
+                border-radius: 16px 16px 0 0;
+                padding: 14px 16px;
+            }
+            .admin-content {
+                padding: 14px;
+                margin: 0 8px 8px;
+            }
+            .admin-tabs {
+                margin: 0 8px 10px;
+            }
+        }
         @media (max-width: 768px) {
-            .lootbox-bet-tiers {
-                grid-template-columns: repeat(3, 1fr);
+            .user-details {
+                display: none;
+            }
+            .user-profile-bar {
+                padding: 5px 10px;
+                gap: 5px;
+            }
+            .nav-links {
+                display: none;
+            }
+            .mobile-toggle {
+                display: flex;
+            }
+            .nav-links.mobile-open {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(10, 10, 15, 0.97);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                padding: 14px;
+                border-bottom: 1px solid var(--border-subtle);
+                gap: 10px;
+                z-index: 999;
+            }
+            .hero {
+                padding: 110px 14px 45px;
+            }
+            .hero-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .hero-actions .btn-primary,
+            .hero-actions .btn-secondary,
+            .hero-actions .btn-generate {
+                width: 100%;
+                justify-content: center;
+            }
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+            .gallery-item {
+                height: 170px;
+            }
+            .gallery-item:first-child {
+                height: 210px;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+            .abilities-grid {
+                grid-template-columns: 1fr;
+                max-width: 420px;
+            }
+            .payment-methods-grid {
+                grid-template-columns: 1fr 1fr;
                 gap: 6px;
             }
-            .lootbox-tier {
-                padding: 10px 6px;
+            .wallet-tabs {
+                padding: 10px 10px 0;
             }
-            .lootbox-tier-icon {
-                font-size: 1.4rem;
+            .wallet-tab {
+                font-size: 0.68rem;
+                padding: 7px 3px;
             }
-            .lootbox-tier-amount {
-                font-size: var(--fs-md);
+            .admin-table {
+                min-width: 480px;
             }
-            .lootbox-chest {
-                width: 70px;
-                height: 90px;
+            .admin-tab {
+                font-size: 0.62rem;
+                padding: 7px 6px;
+                min-width: 45px;
             }
-            .lootbox-chest-icon {
-                font-size: 2rem;
+            .admin-search-bar {
+                flex-direction: column;
             }
-            .lootbox-panel {
-                max-height: 98vh;
-                border-radius: var(--radius-lg);
+            .editor-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .editor-row label {
+                min-width: auto;
+            }
+            .generate-body {
+                padding: 14px 12px;
+            }
+            .result-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .result-value {
+                width: 100%;
+                text-align: left;
+            }
+            .generate-actions {
+                flex-direction: column;
             }
         }
         @media (max-width: 480px) {
-            .lootbox-bet-tiers {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 4px;
+            html {
+                font-size: 14px;
             }
-            .lootbox-tier {
-                padding: 8px 4px;
+            .login-container {
+                padding: 26px 14px;
+                border-radius: 20px;
             }
-            .lootbox-tier-icon {
-                font-size: 1.2rem;
+            .login-shield {
+                width: 66px;
+                height: 66px;
+                font-size: 28px;
             }
-            .lootbox-tier-amount {
-                font-size: var(--fs-sm);
+            .hero {
+                padding: 100px 10px 36px;
+                min-height: auto;
             }
-            .lootbox-chests {
-                gap: 8px;
-            }
-            .lootbox-chest {
-                width: 55px;
-                height: 75px;
-            }
-            .lootbox-chest-icon {
+            .hero-title {
                 font-size: 1.5rem;
             }
-            .lootbox-result.multiplier {
-                font-size: 2rem;
+            .hero-desc {
+                font-size: 0.82rem;
+            }
+            .hero-stats {
+                gap: 14px;
+                justify-content: center;
+            }
+            .stat-number {
+                font-size: 1.2rem;
+            }
+            .section {
+                padding: 36px 10px;
+            }
+            .section-title {
+                font-size: 1.3rem;
+            }
+            .ability-card {
+                padding: 16px;
+            }
+            .weapon-card {
+                padding: 18px;
+            }
+            .weapon-emoji {
+                font-size: 2.5rem;
+            }
+            .contact-form {
+                padding: 18px 12px;
+            }
+            .gallery-item {
+                height: 140px;
+            }
+            .gallery-item:first-child {
+                height: 170px;
+            }
+            .payment-methods-grid {
+                grid-template-columns: 1fr;
+            }
+            .wallet-balance-amount {
+                font-size: 1.6rem;
+            }
+            .wallet-modal {
+                max-height: 94vh;
+                border-radius: 18px;
+            }
+            .profile-modal-panel {
+                padding: 22px 14px;
+            }
+            .admin-panel-wrap {
+                border-radius: 12px;
+                max-height: 96vh;
+            }
+            .admin-table {
+                min-width: 380px;
+            }
+            .admin-table thead th,
+            .admin-table tbody td {
+                padding: 6px 7px;
+                font-size: 0.65rem;
+            }
+            .admin-action-btn {
+                font-size: 0.6rem;
+                padding: 3px 6px;
+            }
+            .btn-primary,
+            .btn-secondary,
+            .btn-generate {
+                font-size: 0.85rem;
+                padding: 10px 18px;
+            }
+            .scroll-top {
+                width: 36px;
+                height: 36px;
+                bottom: 14px;
+                left: 14px;
+                font-size: 14px;
+            }
+            .generate-modal {
+                max-height: 94vh;
+                border-radius: 18px;
+            }
+            .generate-header {
+                padding: 16px 14px 12px;
+            }
+            .generate-header-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 22px;
+            }
+        }
+        @media (max-height: 600px) {
+            .hero {
+                padding-top: 90px;
+                min-height: auto;
+            }
+            .wallet-modal,
+            .admin-panel-wrap,
+            .generate-modal {
+                max-height: 94vh;
+            }
+        }
+        @media (hover: none) and (pointer: coarse) {
+            .ability-card:hover,
+            .weapon-card:hover {
+                transform: none;
+            }
+            .ability-card:active {
+                transform: scale(0.96);
+                border-color: rgba(192, 57, 43, 0.25);
+            }
+            .gallery-overlay {
+                transform: translateY(0);
+                background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
+                padding: 14px 10px 8px;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- BACKGROUND -->
     <div class="bg-container"></div>
     <div class="bg-overlay"></div>
     <div class="particles" id="particles"></div>
 
-    <!-- LOADING -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
         <span class="loading-text">⏳ جاري التحميل...</span>
     </div>
 
-    <!-- LOGIN SCREEN -->
     <div class="login-screen" id="loginScreen">
         <div class="login-container">
             <div class="login-shield">🛡️</div>
@@ -2750,7 +2987,6 @@
         </div>
     </div>
 
-    <!-- BANNED SCREEN -->
     <div class="banned-overlay" id="bannedOverlay">
         <div class="banned-icon">🚫</div>
         <h2 class="banned-title">تم حظر حسابك</h2>
@@ -2759,11 +2995,12 @@
         <p style="color:var(--text-muted);font-size:0.8rem;">إذا كنت تعتقد أن هذا خطأ، يرجى التواصل مع الإدارة.</p>
     </div>
 
-    <!-- MAIN SITE -->
     <div class="main-site" id="mainSite">
         <div class="user-profile-bar" id="userProfileBar"></div>
         <nav class="navbar" id="navbar">
-            <div class="nav-logo" onclick="scrollToSection('hero')"><div class="logo-icon">Ω</div><span class="logo-text">KRATOS</span></div>
+            <div class="nav-logo" onclick="scrollToSection('hero')">
+                <div class="logo-icon">Ω</div><span class="logo-text">KRATOS</span>
+            </div>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#hero" class="active" onclick="scrollToSection('hero')">الرئيسية</a></li>
                 <li><a href="#abilities" onclick="scrollToSection('abilities')">القدرات</a></li>
@@ -2772,23 +3009,26 @@
                 <li><a href="#gallery" onclick="scrollToSection('gallery')">المعرض</a></li>
                 <li><a href="#contact" onclick="scrollToSection('contact')">تواصل</a></li>
             </ul>
-            <div style="display:flex;align-items:center;gap:6px;">
-                <button class="nav-btn" onclick="showLootbox()" style="background:linear-gradient(135deg,#d4a017,#c0392b);">🎁 صناديق الحظ</button>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="generate-account-btn" onclick="showGenerateAccountModal()" title="إنشاء حساب جديد">🔑 إنشاء حساب</button>
                 <button class="nav-btn" onclick="showWallet()">💰 المحفظة</button>
                 <div class="mobile-toggle" id="mobileToggle" onclick="toggleMobileMenu()"><span></span><span></span><span></span></div>
             </div>
         </nav>
 
-        <!-- HERO -->
         <section class="hero" id="hero">
             <div class="hero-content">
-                <div class="welcome-banner"><div class="welcome-avatar" id="welcomeAvatar"></div><div class="welcome-text"><h4 id="welcomeText">مرحباً بك أيها المحارب!</h4><p>تم تسجيل دخولك بنجاح. جرب حظك في صناديق الحظ!</p></div></div>
+                <div class="welcome-banner">
+                    <div class="welcome-avatar" id="welcomeAvatar"></div>
+                    <div class="welcome-text"><h4 id="welcomeText">مرحباً بك أيها المحارب!</h4><p>تم تسجيل دخولك بنجاح.</p></div>
+                </div>
                 <div class="hero-badge"><span class="badge-dot"></span>إله الحرب - الأسطورة الخالدة</div>
                 <h1 class="hero-title">كراتوس<br><span class="highlight">قاتل الآلهة</span></h1>
-                <p class="hero-desc">من شبح إسبرطة إلى إله الحرب، رحلة كراتوس الأسطورية. افتح صناديق الحظ واربح ثروات!</p>
+                <p class="hero-desc">من شبح إسبرطة إلى إله الحرب، رحلة كراتوس الأسطورية عبر عوالم الأساطير.</p>
                 <div class="hero-actions">
-                    <button class="btn-primary" onclick="showLootbox()">🎁 افتح صندوق الحظ</button>
+                    <button class="btn-primary" onclick="App.showToast('⚔️ انطلقت المغامرة!')">⚔️ ابدأ الرحلة</button>
                     <button class="btn-secondary" onclick="scrollToSection('abilities')">📖 اكتشف القدرات</button>
+                    <button class="btn-generate" onclick="showGenerateAccountModal()">🔑 إنشاء حساب جديد</button>
                 </div>
                 <div class="hero-stats">
                     <div class="stat-item"><div class="stat-number"><span class="counter" data-target="9">0</span></div><div class="stat-label">آلهة مهزومة</div></div>
@@ -2796,67 +3036,298 @@
                     <div class="stat-item"><div class="stat-number"><span class="counter" data-target="100">0</span></div><div class="stat-label">مستوى القوة</div></div>
                 </div>
             </div>
+            <div class="hero-visual">
+                <div class="float-card"><div class="float-card-header"><div class="fc-icon red">⚔️</div><span class="fc-title">قوة الهجوم</span></div><div class="fc-value" style="color:#e74c3c;">9,850</div><div class="fc-bar"><div class="fc-bar-fill pf-red" style="width:92%;"></div></div></div>
+                <div class="float-card"><div class="float-card-header"><div class="fc-icon gold">🛡️</div><span class="fc-title">الدفاع</span></div><div class="fc-value" style="color:#f39c12;">8,720</div><div class="fc-bar"><div class="fc-bar-fill pf-gold" style="width:85%;"></div></div></div>
+                <div class="float-card"><div class="float-card-header"><div class="fc-icon blue">✨</div><span class="fc-title">القوة السحرية</span></div><div class="fc-value" style="color:#3498db;">7,430</div><div class="fc-bar"><div class="fc-bar-fill pf-blue" style="width:78%;"></div></div></div>
+            </div>
         </section>
 
-        <!-- SECTIONS (ABILITIES, WEAPONS, STATS, TIMELINE, GALLERY, CONTACT, FOOTER) -->
-        <section class="section" id="abilities"><div class="section-header fade-in"><span class="section-tag">القدرات القتالية</span><h2 class="section-title">قدرات كراتوس الأسطورية</h2></div><div class="abilities-grid"><div class="ability-card fade-in"><div class="ability-icon red">🔥</div><h3 class="ability-name">غضب كراتوس</h3><p class="ability-desc">قوة غضب لا تُقاوم تزيد من قوة الهجوم بنسبة 300%</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="ability-power">MAX</span></div></div><div class="ability-card fade-in"><div class="ability-icon gold">⚡</div><h3 class="ability-name">برق زيوس</h3><p class="ability-desc">تحكم في قوة البرق والرعد لتوجيه صاعقات مدمرة</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot"></span></div><span class="ability-power">85%</span></div></div><div class="ability-card fade-in"><div class="ability-icon blue">❄️</div><h3 class="ability-name">جليد فايمب</h3><p class="ability-desc">قوة الجليد الشمالية التي تجمد الأعداء</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot"></span></div><span class="ability-power">80%</span></div></div><div class="ability-card fade-in"><div class="ability-icon purple">🌀</div><h3 class="ability-name">سلاسل الفوضى</h3><p class="ability-desc">سلاسل ملتهبة مربوطة بالذراعين تضرب الأعداء عن بعد</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="ability-power">MAX</span></div></div></div></section>
-        <section class="section weapons-section" id="weapons"><div class="section-header fade-in"><span class="section-tag">ترسانة الأسلحة</span><h2 class="section-title">أسلحة كراتوس</h2></div><div class="weapons-showcase"><div class="weapon-card fade-in"><span class="weapon-emoji">🪓</span><h3 class="weapon-name">فأس ليفياثان</h3><p class="weapon-type">سلاح إسكندنافي</p><p style="color:var(--text-secondary);font-size:0.85rem;">فأس جليدية سحرية يمكن إلقاؤها واستدعاؤها</p><div class="weapon-stats-grid"><div class="w-stat"><div class="w-stat-label">الضرر</div><div class="w-stat-value" style="color:#e74c3c;">920</div></div><div class="w-stat"><div class="w-stat-label">السرعة</div><div class="w-stat-value" style="color:#3498db;">85</div></div><div class="w-stat"><div class="w-stat-label">المدى</div><div class="w-stat-value" style="color:#f39c12;">78</div></div><div class="w-stat"><div class="w-stat-label">السحر</div><div class="w-stat-value" style="color:#9b59b6;">90</div></div></div></div><div class="weapon-card fade-in"><span class="weapon-emoji">🔥</span><h3 class="weapon-name">شفرة الفوضى</h3><p class="weapon-type">سلاح يوناني</p><p style="color:var(--text-secondary);font-size:0.85rem;">شفرتان ملتهبتان مربوطتان بسلاسل</p><div class="weapon-stats-grid"><div class="w-stat"><div class="w-stat-label">الضرر</div><div class="w-stat-value" style="color:#e74c3c;">980</div></div><div class="w-stat"><div class="w-stat-label">السرعة</div><div class="w-stat-value" style="color:#3498db;">95</div></div><div class="w-stat"><div class="w-stat-label">المدى</div><div class="w-stat-value" style="color:#f39c12;">92</div></div><div class="w-stat"><div class="w-stat-label">السحر</div><div class="w-stat-value" style="color:#9b59b6;">88</div></div></div></div></div></section>
-        <section class="section" id="stats"><div class="section-header fade-in"><span class="section-tag">إحصائيات القوة</span><h2 class="section-title">مستويات كراتوس</h2></div><div class="progress-section fade-in"><div class="progress-item"><div class="progress-header"><span class="progress-label">⚔️ القوة الجسدية</span><span class="progress-value">97%</span></div><div class="progress-bar"><div class="progress-fill pf-red" data-width="97"></div></div></div><div class="progress-item"><div class="progress-header"><span class="progress-label">🧠 الحكمة</span><span class="progress-value">82%</span></div><div class="progress-bar"><div class="progress-fill pf-gold" data-width="82"></div></div></div><div class="progress-item"><div class="progress-header"><span class="progress-label">✨ القوة السحرية</span><span class="progress-value">88%</span></div><div class="progress-bar"><div class="progress-fill pf-blue" data-width="88"></div></div></div></div></section>
-        <section class="section" id="timeline"><div class="section-header fade-in"><span class="section-tag">رحلة الأسطورة</span><h2 class="section-title">قصة كراتوس</h2></div><div class="timeline"><div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">عصر إسبرطة</div><h3 class="timeline-title">مقاتل إسبرطة</h3><p class="timeline-desc">بدأ كراتوس حياته كمقاتل بشري في إسبرطة.</p></div><div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">انتقام الآلهة</div><h3 class="timeline-title">سقوط أوليمبوس</h3><p class="timeline-desc">قاد كراتوس حرباً شرسة ضد آلهة اليونان وأبادهم.</p></div><div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">عصر الشمال</div><h3 class="timeline-title">أب جديد</h3><p class="timeline-desc">انتقل كراتوس إلى أراضي الإسكندنافيين مع ابنه أتريوس.</p></div></div></section>
-        <section class="section" id="gallery"><div class="section-header fade-in"><span class="section-tag">معرض الصور</span><h2 class="section-title">لحظات ملحمية</h2></div><div class="gallery-grid fade-in"><div class="gallery-item"><img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Kratos" loading="lazy"><div class="gallery-overlay"><div class="gallery-title">كراتوس</div><div class="gallery-subtitle">God of War</div></div></div><div class="gallery-item"><img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Axe" style="filter:hue-rotate(180deg) brightness(0.8);" loading="lazy"><div class="gallery-overlay"><div class="gallery-title">فأس ليفياثان</div><div class="gallery-subtitle">سلاح الجليد</div></div></div><div class="gallery-item"><img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Nordic" style="filter:hue-rotate(200deg) brightness(0.6);" loading="lazy"><div class="gallery-overlay"><div class="gallery-title">عالم الشمال</div><div class="gallery-subtitle">ميدغارد</div></div></div></div></section>
-        <section class="section" id="contact"><div class="section-header fade-in"><span class="section-tag">تواصل معنا</span><h2 class="section-title">انضم إلى الرحلة</h2></div><div class="contact-section fade-in"><form class="contact-form" onsubmit="event.preventDefault(); App.showToast('✅ تم إرسال رسالتك!');"><div class="form-row"><div class="form-group"><label class="form-label">الاسم</label><input type="text" class="form-input" placeholder="أدخل اسمك"></div><div class="form-group"><label class="form-label">البريد الإلكتروني</label><input type="email" class="form-input" placeholder="example@email.com"></div></div><div class="form-group"><label class="form-label">رسالتك</label><textarea class="form-input" placeholder="اكتب رسالتك هنا..."></textarea></div><button type="submit" class="btn-primary" style="width:100%;justify-content:center;">📨 إرسال الرسالة</button></form></div></section>
-        <footer class="footer"><div class="footer-grid"><div class="footer-brand"><div class="nav-logo"><div class="logo-icon">Ω</div><span class="logo-text">KRATOS</span></div><p>موقع تفاعلي مخصص لعالم God of War الأسطوري.</p></div><div><h4 class="footer-title">روابط</h4><ul class="footer-links"><li><a href="#hero">الرئيسية</a></li><li><a href="#abilities">القدرات</a></li><li><a href="#weapons">الأسلحة</a></li></ul></div><div><h4 class="footer-title">العوالم</h4><ul class="footer-links"><li><a href="#">ميدغارد</a></li><li><a href="#">ألفهايم</a></li><li><a href="#">أسكارد</a></li></ul></div><div><h4 class="footer-title">الدعم</h4><ul class="footer-links"><li><a href="#">الأسئلة الشائعة</a></li><li><a href="#">سياسة الخصوصية</a></li><li><a href="#">تواصل معنا</a></li></ul></div></div><div class="footer-bottom"><p>© 2026 Kratos Fan Site — جميع الحقوق محفوظة</p></div></footer>
-        <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+        <section class="section" id="abilities">
+            <div class="section-header fade-in"><span class="section-tag">القدرات القتالية</span><h2 class="section-title">قدرات كراتوس الأسطورية</h2></div>
+            <div class="abilities-grid">
+                <div class="ability-card fade-in" onclick="App.showToast('🔥 غضب كراتوس!')"><div class="ability-icon red">🔥</div><h3 class="ability-name">غضب كراتوس</h3><p class="ability-desc">قوة غضب لا تُقاوم تزيد من قوة الهجوم بنسبة 300%</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="ability-power">MAX</span></div></div>
+                <div class="ability-card fade-in" onclick="App.showToast('⚡ برق زيوس!')"><div class="ability-icon gold">⚡</div><h3 class="ability-name">برق زيوس</h3><p class="ability-desc">تحكم في قوة البرق والرعد لتوجيه صاعقات مدمرة</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot"></span></div><span class="ability-power">85%</span></div></div>
+                <div class="ability-card fade-in" onclick="App.showToast('❄️ جليد الشمال!')"><div class="ability-icon blue">❄️</div><h3 class="ability-name">جليد فايمب</h3><p class="ability-desc">قوة الجليد الشمالية التي تجمد الأعداء</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot"></span></div><span class="ability-power">80%</span></div></div>
+                <div class="ability-card fade-in" onclick="App.showToast('🌀 سلاسل الفوضى!')"><div class="ability-icon purple">🌀</div><h3 class="ability-name">سلاسل الفوضى</h3><p class="ability-desc">سلاسل ملتهبة مربوطة بالذراعين تضرب الأعداء عن بعد</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="ability-power">MAX</span></div></div>
+                <div class="ability-card fade-in" onclick="App.showToast('💀 لمسة الفناء!')"><div class="ability-icon red">💀</div><h3 class="ability-name">لمسة الفناء</h3><p class="ability-desc">هجوم قاتل مع تأثير تسمم يستنزف صحة العدو</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot"></span><span class="level-dot"></span></div><span class="ability-power">65%</span></div></div>
+                <div class="ability-card fade-in" onclick="App.showToast('🌟 قوة الإله!')"><div class="ability-icon gold">🌟</div><h3 class="ability-name">قوة الإله</h3><p class="ability-desc">القدرة الخالصة التي تمنح كراتوس خلوداً مؤقتاً</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="ability-power">∞</span></div></div>
+            </div>
+        </section>
+
+        <section class="section weapons-section" id="weapons">
+            <div class="section-header fade-in"><span class="section-tag">ترسانة الأسلحة</span><h2 class="section-title">أسلحة كراتوس</h2></div>
+            <div class="weapons-showcase">
+                <div class="weapon-card fade-in"><span class="weapon-emoji">🪓</span><h3 class="weapon-name">فأس ليفياثان</h3><p class="weapon-type">سلاح إسكندنافي</p><p style="color:var(--text-secondary);font-size:0.85rem;">فأس جليدية سحرية يمكن إلقاؤها واستدعاؤها</p><div class="weapon-stats-grid"><div class="w-stat"><div class="w-stat-label">الضرر</div><div class="w-stat-value" style="color:#e74c3c;">920</div></div><div class="w-stat"><div class="w-stat-label">السرعة</div><div class="w-stat-value" style="color:#3498db;">85</div></div><div class="w-stat"><div class="w-stat-label">المدى</div><div class="w-stat-value" style="color:#f39c12;">78</div></div><div class="w-stat"><div class="w-stat-label">السحر</div><div class="w-stat-value" style="color:#9b59b6;">90</div></div></div></div>
+                <div class="weapon-card fade-in"><span class="weapon-emoji">🔥</span><h3 class="weapon-name">شفرة الفوضى</h3><p class="weapon-type">سلاح يوناني</p><p style="color:var(--text-secondary);font-size:0.85rem;">شفرتان ملتهبتان مربوطتان بسلاسل</p><div class="weapon-stats-grid"><div class="w-stat"><div class="w-stat-label">الضرر</div><div class="w-stat-value" style="color:#e74c3c;">980</div></div><div class="w-stat"><div class="w-stat-label">السرعة</div><div class="w-stat-value" style="color:#3498db;">95</div></div><div class="w-stat"><div class="w-stat-label">المدى</div><div class="w-stat-value" style="color:#f39c12;">92</div></div><div class="w-stat"><div class="w-stat-label">السحر</div><div class="w-stat-value" style="color:#9b59b6;">88</div></div></div></div>
+            </div>
+        </section>
+
+        <section class="section" id="stats">
+            <div class="section-header fade-in"><span class="section-tag">إحصائيات القوة</span><h2 class="section-title">مستويات كراتوس</h2></div>
+            <div class="progress-section fade-in">
+                <div class="progress-item"><div class="progress-header"><span class="progress-label">⚔️ القوة الجسدية</span><span class="progress-value">97%</span></div><div class="progress-bar"><div class="progress-fill pf-red" data-width="97"></div></div></div>
+                <div class="progress-item"><div class="progress-header"><span class="progress-label">🧠 الحكمة</span><span class="progress-value">82%</span></div><div class="progress-bar"><div class="progress-fill pf-gold" data-width="82"></div></div></div>
+                <div class="progress-item"><div class="progress-header"><span class="progress-label">✨ القوة السحرية</span><span class="progress-value">88%</span></div><div class="progress-bar"><div class="progress-fill pf-blue" data-width="88"></div></div></div>
+                <div class="progress-item"><div class="progress-header"><span class="progress-label">🛡️ التحمل</span><span class="progress-value">95%</span></div><div class="progress-bar"><div class="progress-fill pf-purple" data-width="95"></div></div></div>
+                <div class="progress-item"><div class="progress-header"><span class="progress-label">💨 السرعة</span><span class="progress-value">79%</span></div><div class="progress-bar"><div class="progress-fill pf-green" data-width="79"></div></div></div>
+            </div>
+        </section>
+
+        <section class="section" id="timeline">
+            <div class="section-header fade-in"><span class="section-tag">رحلة الأسطورة</span><h2 class="section-title">قصة كراتوس</h2></div>
+            <div class="timeline">
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">عصر إسبرطة</div><h3 class="timeline-title">مقاتل إسبرطة</h3><p class="timeline-desc">بدأ كراتوس حياته كمقاتل بشري في إسبرطة.</p></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">لعنة الآلهة</div><h3 class="timeline-title">قتل عائلته</h3><p class="timeline-desc">خدع آريس كراتوس لقتل عائلته وأصبح "شبح إسبرطة".</p></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">انتقام الآلهة</div><h3 class="timeline-title">سقوط أوليمبوس</h3><p class="timeline-desc">قاد كراتوس حرباً شرسة ضد آلهة اليونان وأبادهم.</p></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">عصر الشمال</div><h3 class="timeline-title">أب جديد</h3><p class="timeline-desc">انتقل كراتوس إلى أراضي الإسكندنافيين مع ابنه أتريوس.</p></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">راغناروك</div><h3 class="timeline-title">نهاية العالم</h3><p class="timeline-desc">واجه كراتوس أودين وأثور في معركة راغناروك.</p></div>
+            </div>
+        </section>
+
+        <section class="section" id="gallery">
+            <div class="section-header fade-in"><span class="section-tag">معرض الصور</span><h2 class="section-title">لحظات ملحمية</h2></div>
+            <div class="gallery-grid fade-in">
+                <div class="gallery-item"><img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Kratos" loading="lazy"><div class="gallery-overlay"><div class="gallery-title">كراتوس</div><div class="gallery-subtitle">God of War</div></div></div>
+                <div class="gallery-item"><img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Axe" style="filter:hue-rotate(180deg) brightness(0.8);" loading="lazy"><div class="gallery-overlay"><div class="gallery-title">فأس ليفياثان</div><div class="gallery-subtitle">سلاح الجليد</div></div></div>
+                <div class="gallery-item"><img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Battle" style="filter:hue-rotate(30deg) brightness(0.7);" loading="lazy"><div class="gallery-overlay"><div class="gallery-title">أوليمبوس</div><div class="gallery-subtitle">سقوط الآلهة</div></div></div>
+                <div class="gallery-item"><img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Nordic" style="filter:hue-rotate(200deg) brightness(0.6);" loading="lazy"><div class="gallery-overlay"><div class="gallery-title">عالم الشمال</div><div class="gallery-subtitle">ميدغارد</div></div></div>
+                <div class="gallery-item"><img class="gallery-img" src="https://image.qwenlm.ai/public_source/40e9f89b-31bc-46b2-a098-6c907bada36a/18dd58d2b-29da-4e8a-a228-93ea79b5fcbd.png" alt="Atreus" style="filter:hue-rotate(100deg) brightness(0.75);" loading="lazy"><div class="gallery-overlay"><div class="gallery-title">أتريوس</div><div class="gallery-subtitle">رحلة الأب والابن</div></div></div>
+            </div>
+        </section>
+
+        <section class="section" id="contact">
+            <div class="section-header fade-in"><span class="section-tag">تواصل معنا</span><h2 class="section-title">انضم إلى الرحلة</h2></div>
+            <div class="contact-section fade-in">
+                <form class="contact-form" onsubmit="event.preventDefault(); App.showToast('✅ تم إرسال رسالتك!');">
+                    <div class="form-row"><div class="form-group"><label class="form-label">الاسم</label><input type="text" class="form-input" placeholder="أدخل اسمك"></div><div class="form-group"><label class="form-label">البريد الإلكتروني</label><input type="email" class="form-input" placeholder="example@email.com"></div></div>
+                    <div class="form-group"><label class="form-label">رسالتك</label><textarea class="form-input" placeholder="اكتب رسالتك هنا..."></textarea></div>
+                    <button type="submit" class="btn-primary" style="width:100%;justify-content:center;">📨 إرسال الرسالة</button>
+                </form>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-grid">
+                <div class="footer-brand"><div class="nav-logo"><div class="logo-icon">Ω</div><span class="logo-text">KRATOS</span></div><p>موقع تفاعلي مخصص لعالم God of War الأسطوري.</p></div>
+                <div><h4 class="footer-title">روابط</h4><ul class="footer-links"><li><a href="#hero" onclick="scrollToSection('hero')">الرئيسية</a></li><li><a href="#abilities" onclick="scrollToSection('abilities')">القدرات</a></li><li><a href="#weapons" onclick="scrollToSection('weapons')">الأسلحة</a></li></ul></div>
+                <div><h4 class="footer-title">العوالم</h4><ul class="footer-links"><li><a href="#">ميدغارد</a></li><li><a href="#">ألفهايم</a></li><li><a href="#">أسكارد</a></li></ul></div>
+                <div><h4 class="footer-title">الدعم</h4><ul class="footer-links"><li><a href="#">الأسئلة الشائعة</a></li><li><a href="#">سياسة الخصوصية</a></li><li><a href="#">تواصل معنا</a></li></ul></div>
+            </div>
+            <div class="footer-bottom"><p>© 2026 Kratos Fan Site — جميع الحقوق محفوظة</p></div>
+        </footer>
+
+        <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="التمرير للأعلى">↑</button>
     </div>
 
-    <!-- LOOTBOX MODAL -->
-    <div class="lootbox-overlay" id="lootboxOverlay" onclick="if(event.target===this)closeLootbox()">
-        <div class="lootbox-panel" onclick="event.stopPropagation()">
-            <button class="modal-close-btn" onclick="closeLootbox()" style="z-index:10;">✕</button>
-            <div class="lootbox-header">
-                <div class="lootbox-header-icon">🎁</div>
-                <h2 class="lootbox-title">صناديق حظ كراتوس</h2>
-                <p class="lootbox-subtitle">افتتح الصندوق واربح مضاعفات تصل إلى x10,000</p>
-                <span class="lootbox-rtp" id="lootboxRtp">🎯 RTP: 95%</span>
+    <!-- WALLET MODAL -->
+    <div class="modal-overlay" id="walletOverlay" onclick="if(event.target===this)closeWallet()">
+        <div class="modal-panel wallet-modal" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeWallet()">✕</button>
+            <div class="wallet-header">
+                <div class="wallet-header-icon">💰</div>
+                <div class="wallet-balance-label">رصيدك الحالي</div>
+                <div class="wallet-balance-amount"><span>$</span><span id="walletBalanceDisplay">0.00</span></div>
             </div>
-            <div class="lootbox-body">
-                <div class="lootbox-balance">
-                    <div class="lootbox-balance-label">💰 رصيدك الحالي</div>
-                    <div class="lootbox-balance-amount" id="lootboxBalance">$0.00</div>
+            <div class="wallet-tabs">
+                <button class="wallet-tab active" onclick="switchWalletTab(0)">💳 شحن</button>
+                <button class="wallet-tab" onclick="switchWalletTab(1)">📤 سحب</button>
+                <button class="wallet-tab" onclick="switchWalletTab(2)">📋 السجل</button>
+            </div>
+            <div class="wallet-content">
+                <div class="wallet-tab-content active" id="wContent0">
+                    <div class="wallet-form-group"><label class="wallet-form-label">💵 مبلغ الشحن</label><input type="number" class="wallet-amount-input" id="depositAmount" placeholder="0.00" min="0" step="0.01"></div>
+                    <div class="wallet-form-group"><label class="wallet-form-label">💳 اختر طريقة الدفع</label><div class="payment-methods-grid" id="depositMethodsContainer"></div><div class="payment-details" id="depositMethodDetails"></div></div>
+                    <button class="wallet-submit-btn deposit" onclick="processDeposit()">💰 شحن الآن</button>
                 </div>
-                <div class="lootbox-bet-tiers" id="lootboxBetTiers"></div>
-                <div class="lootbox-chests" id="lootboxChests"></div>
-                <div class="lootbox-result" id="lootboxResult">
-                    <div class="lootbox-result-multiplier" id="lootboxMultiplier"></div>
-                    <div class="lootbox-result-amount" id="lootboxResultAmount"></div>
-                    <div class="lootbox-result-text" id="lootboxResultText"></div>
+                <div class="wallet-tab-content" id="wContent1">
+                    <div class="wallet-form-group"><label class="wallet-form-label">💵 مبلغ السحب</label><input type="number" class="wallet-amount-input" id="withdrawAmount" placeholder="0.00" min="0" step="0.01"></div>
+                    <div class="wallet-form-group"><label class="wallet-form-label">📥 اختر طريقة السحب</label><div class="payment-methods-grid" id="withdrawMethodsContainer"></div><div class="payment-details" id="withdrawMethodDetails"></div></div>
+                    <button class="wallet-submit-btn withdraw" onclick="processWithdraw()">📤 سحب الآن</button>
                 </div>
-                <div class="lootbox-history" id="lootboxHistory"></div>
+                <div class="wallet-tab-content" id="wContent2"><div class="wallet-transactions" id="walletTransactions"></div></div>
             </div>
         </div>
     </div>
 
-    <!-- OTHER MODALS (WALLET, PROFILE, EDIT USER, ADMIN) - Same as before -->
-    <div class="modal-overlay" id="walletOverlay" onclick="if(event.target===this)closeWallet()"><div class="modal-panel wallet-modal" onclick="event.stopPropagation()"><button class="modal-close-btn" onclick="closeWallet()">✕</button><div class="wallet-header"><div class="wallet-header-icon">💰</div><div class="wallet-balance-label">رصيدك الحالي</div><div class="wallet-balance-amount"><span>$</span><span id="walletBalanceDisplay">0.00</span></div></div><div class="wallet-tabs"><button class="wallet-tab active" onclick="switchWalletTab(0)">💳 شحن</button><button class="wallet-tab" onclick="switchWalletTab(1)">📤 سحب</button><button class="wallet-tab" onclick="switchWalletTab(2)">📋 السجل</button></div><div class="wallet-content"><div class="wallet-tab-content active" id="wContent0"><div class="wallet-form-group"><label class="wallet-form-label">💵 مبلغ الشحن</label><input type="number" class="wallet-amount-input" id="depositAmount" placeholder="0.00" min="0" step="0.01"></div><div class="wallet-form-group"><label class="wallet-form-label">💳 اختر طريقة الدفع</label><div class="payment-methods-grid" id="depositMethodsContainer"></div><div class="payment-details" id="depositMethodDetails"></div></div><button class="wallet-submit-btn deposit" onclick="processDeposit()">💰 شحن الآن</button></div><div class="wallet-tab-content" id="wContent1"><div class="wallet-form-group"><label class="wallet-form-label">💵 مبلغ السحب</label><input type="number" class="wallet-amount-input" id="withdrawAmount" placeholder="0.00" min="0" step="0.01"></div><div class="wallet-form-group"><label class="wallet-form-label">📥 اختر طريقة السحب</label><div class="payment-methods-grid" id="withdrawMethodsContainer"></div><div class="payment-details" id="withdrawMethodDetails"></div></div><button class="wallet-submit-btn withdraw" onclick="processWithdraw()">📤 سحب الآن</button></div><div class="wallet-tab-content" id="wContent2"><div class="wallet-transactions" id="walletTransactions"></div></div></div></div></div>
-    <div class="modal-overlay" id="profileModal" onclick="if(event.target===this)closeProfileModal()"><div class="modal-panel profile-modal-panel" onclick="event.stopPropagation()"><button class="modal-close-btn" onclick="closeProfileModal()">✕</button><div class="profile-header"><div class="profile-avatar-large" id="profileAvatarLarge"></div><h2 class="profile-name" id="profileName"></h2><p class="profile-username" id="profileUsername"></p><p class="profile-tg-id" id="profileTgId"></p></div><ul class="profile-info-list"><li><span class="profile-info-label">💰 الرصيد</span><span class="profile-info-value" id="profileWalletBalance" style="color:var(--accent-gold);">$0.00</span></li><li><span class="profile-info-label">📱 منصة الدخول</span><span class="profile-info-value" style="color:var(--accent-blue);">✓ Telegram</span></li><li><span class="profile-info-label">🆔 معرف تلغرام</span><span class="profile-info-value" id="infoTgId" style="direction:ltr;"></span></li><li><span class="profile-info-label">📅 تاريخ الانضمام</span><span class="profile-info-value" id="infoJoinDate"></span></li><li><span class="profile-info-label">⚔️ الحالة</span><span class="profile-info-value" style="color:#4ade80;">نشط - محارب</span></li></ul></div></div>
-    <div class="modal-overlay" id="editUserModal" onclick="if(event.target===this)closeEditUserModal()"><div class="modal-panel edit-user-panel" onclick="event.stopPropagation()"><button class="modal-close-btn" onclick="closeEditUserModal()">✕</button><h3>✏️ تعديل بيانات المستخدم</h3><div class="form-row"><div class="form-group"><label>الاسم الأول</label><input type="text" id="editFirstName"></div><div class="form-group"><label>الاسم الأخير</label><input type="text" id="editLastName"></div></div><div class="form-row"><div class="form-group"><label>💰 الرصيد</label><input type="number" id="editBalance" step="0.01"></div><div class="form-group"><label>⭐ المستوى</label><input type="number" id="editLevel" min="1"></div></div><div class="form-row"><div class="form-group"><label>🎯 النقاط</label><input type="number" id="editPoints" min="0"></div><div class="form-group"><label>👤 اسم المستخدم</label><input type="text" id="editUsername"></div></div><div class="form-row"><div class="form-group"><label>إجمالي الإيداع</label><input type="number" id="editTotalDeposited" step="0.01"></div><div class="form-group"><label>إجمالي السحب</label><input type="number" id="editTotalWithdrawn" step="0.01"></div></div><div class="form-row"><div class="form-group"><label>🚫 محظور</label><select id="editBanned" style="width:100%;padding:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border-medium);border-radius:7px;color:var(--text-primary);"><option value="false">غير محظور</option><option value="true">محظور</option></select></div><div class="form-group"><label>سبب الحظر</label><input type="text" id="editBanReason"></div></div><div class="btn-row"><button class="admin-action-btn delete" onclick="closeEditUserModal()">إلغاء</button><button class="admin-action-btn success" id="saveEditUserBtn">💾 حفظ التعديلات</button></div></div></div>
-    <div class="modal-overlay" id="adminPanel" onclick="if(event.target===this)closeAdminPanel()"><div class="admin-panel-wrap" onclick="event.stopPropagation()"><div class="admin-header"><div class="admin-header-left"><div class="admin-header-icon">👑</div><div class="admin-header-title">لوحة تحكم المشرف</div></div><button class="modal-close-btn" onclick="closeAdminPanel()" style="position:static;">✕</button></div><div class="admin-tabs"><button class="admin-tab active" onclick="switchAdminTab(0)">👥 المستخدمين</button><button class="admin-tab" onclick="switchAdminTab(1)">📋 المعاملات</button><button class="admin-tab" onclick="switchAdminTab(2)">💳 طرق الدفع</button><button class="admin-tab" onclick="switchAdminTab(3)">🚫 المحظورين</button></div><div class="admin-content"><div class="admin-tab-content active" id="aContent0"><div class="admin-search-bar"><input type="text" class="admin-search-input" placeholder="🔍 بحث عن مستخدم..." oninput="updateAdminDashboard()"><button class="admin-action-btn success" onclick="addNewUser()">➕ إضافة مستخدم</button></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>المستخدم</th><th>الرصيد</th><th>المستوى</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="adminUsersTable"></tbody></table></div></div><div class="admin-tab-content" id="aContent1"><div class="admin-search-bar"><input type="text" class="admin-search-input" placeholder="🔍 بحث في المعاملات..." oninput="updateAdminDashboard()" id="txSearch"><select id="txUserFilter" onchange="updateAdminDashboard()" style="padding:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border-medium);border-radius:10px;color:var(--text-primary);"><option value="">كل المستخدمين</option></select></div><div id="adminAllTransactions" style="max-height:50vh;overflow-y:auto;"></div></div><div class="admin-tab-content" id="aContent2"><div class="admin-settings-group"><div class="admin-settings-title">💳 طرق الشحن</div><div id="depositMethodsEditor"></div><button class="admin-action-btn edit" onclick="addPaymentMethod('deposit')">➕ إضافة طريقة شحن</button></div><div class="admin-settings-group"><div class="admin-settings-title">📤 طرق السحب</div><div id="withdrawMethodsEditor"></div><button class="admin-action-btn edit" onclick="addPaymentMethod('withdraw')">➕ إضافة طريقة سحب</button></div></div><div class="admin-tab-content" id="aContent3"><div class="admin-search-bar"><input type="text" class="admin-search-input" placeholder="🔍 بحث عن محظور..." oninput="updateBannedList()" id="bannedSearch"></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>المستخدم</th><th>تاريخ الحظر</th><th>سبب الحظر</th><th>الإجراءات</th></tr></thead><tbody id="adminBannedTable"></tbody></table></div></div></div></div></div>
+    <!-- PROFILE MODAL -->
+    <div class="modal-overlay" id="profileModal" onclick="if(event.target===this)closeProfileModal()">
+        <div class="modal-panel profile-modal-panel" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeProfileModal()">✕</button>
+            <div class="profile-header">
+                <div class="profile-avatar-large" id="profileAvatarLarge"></div>
+                <h2 class="profile-name" id="profileName"></h2>
+                <p class="profile-username" id="profileUsername"></p>
+                <p class="profile-tg-id" id="profileTgId"></p>
+            </div>
+            <ul class="profile-info-list">
+                <li><span class="profile-info-label">💰 الرصيد</span><span class="profile-info-value" id="profileWalletBalance" style="color:var(--accent-gold);">$0.00</span></li>
+                <li><span class="profile-info-label">📱 منصة الدخول</span><span class="profile-info-value" style="color:var(--accent-blue);">✓ Telegram</span></li>
+                <li><span class="profile-info-label">🆔 معرف تلغرام</span><span class="profile-info-value" id="infoTgId" style="direction:ltr;"></span></li>
+                <li><span class="profile-info-label">📅 تاريخ الانضمام</span><span class="profile-info-value" id="infoJoinDate"></span></li>
+                <li><span class="profile-info-label">🌐 اللغة</span><span class="profile-info-value" id="infoLang"></span></li>
+                <li><span class="profile-info-label">⚔️ الحالة</span><span class="profile-info-value" style="color:#4ade80;">نشط - محارب</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- EDIT USER MODAL -->
+    <div class="modal-overlay" id="editUserModal" onclick="if(event.target===this)closeEditUserModal()">
+        <div class="modal-panel edit-user-panel" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeEditUserModal()">✕</button>
+            <h3>✏️ تعديل بيانات المستخدم</h3>
+            <div class="form-row">
+                <div class="form-group"><label>الاسم الأول</label><input type="text" id="editFirstName"></div>
+                <div class="form-group"><label>الاسم الأخير</label><input type="text" id="editLastName"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>💰 الرصيد</label><input type="number" id="editBalance" step="0.01"></div>
+                <div class="form-group"><label>⭐ المستوى</label><input type="number" id="editLevel" min="1"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>🎯 النقاط</label><input type="number" id="editPoints" min="0"></div>
+                <div class="form-group"><label>👤 اسم المستخدم</label><input type="text" id="editUsername"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>إجمالي الإيداع</label><input type="number" id="editTotalDeposited" step="0.01"></div>
+                <div class="form-group"><label>إجمالي السحب</label><input type="number" id="editTotalWithdrawn" step="0.01"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>🚫 محظور</label><select id="editBanned" style="width:100%;padding:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border-medium);border-radius:7px;color:var(--text-primary);"><option value="false">غير محظور</option><option value="true">محظور</option></select></div>
+                <div class="form-group"><label>سبب الحظر</label><input type="text" id="editBanReason"></div>
+            </div>
+            <div class="btn-row">
+                <button class="admin-action-btn delete" onclick="closeEditUserModal()">إلغاء</button>
+                <button class="admin-action-btn success" id="saveEditUserBtn">💾 حفظ التعديلات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div class="modal-overlay" id="adminPanel" onclick="if(event.target===this)closeAdminPanel()">
+        <div class="admin-panel-wrap" onclick="event.stopPropagation()">
+            <div class="admin-header">
+                <div class="admin-header-left"><div class="admin-header-icon">👑</div><div class="admin-header-title">لوحة تحكم المشرف</div></div>
+                <button class="modal-close-btn" onclick="closeAdminPanel()" style="position:static;">✕</button>
+            </div>
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab(0)">👥 المستخدمين</button>
+                <button class="admin-tab" onclick="switchAdminTab(1)">📋 المعاملات</button>
+                <button class="admin-tab" onclick="switchAdminTab(2)">💳 طرق الدفع</button>
+                <button class="admin-tab" onclick="switchAdminTab(3)">🚫 المحظورين</button>
+                <button class="admin-tab" onclick="switchAdminTab(4)">🔑 الحسابات</button>
+            </div>
+            <div class="admin-content">
+                <div class="admin-tab-content active" id="aContent0">
+                    <div class="admin-search-bar">
+                        <input type="text" class="admin-search-input" placeholder="🔍 بحث عن مستخدم..." oninput="updateAdminDashboard()">
+                        <button class="admin-action-btn success" onclick="addNewUser()">➕ إضافة مستخدم</button>
+                    </div>
+                    <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>المستخدم</th><th>الرصيد</th><th>المستوى</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="adminUsersTable"></tbody></table></div>
+                </div>
+                <div class="admin-tab-content" id="aContent1">
+                    <div class="admin-search-bar">
+                        <input type="text" class="admin-search-input" placeholder="🔍 بحث في المعاملات..." oninput="updateAdminDashboard()" id="txSearch">
+                        <select id="txUserFilter" onchange="updateAdminDashboard()" style="padding:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border-medium);border-radius:10px;color:var(--text-primary);"><option value="">كل المستخدمين</option></select>
+                    </div>
+                    <div id="adminAllTransactions" style="max-height:50vh;overflow-y:auto;"></div>
+                </div>
+                <div class="admin-tab-content" id="aContent2">
+                    <div class="admin-settings-group"><div class="admin-settings-title">💳 طرق الشحن</div><div id="depositMethodsEditor"></div><button class="admin-action-btn edit" onclick="addPaymentMethod('deposit')">➕ إضافة طريقة شحن</button></div>
+                    <div class="admin-settings-group"><div class="admin-settings-title">📤 طرق السحب</div><div id="withdrawMethodsEditor"></div><button class="admin-action-btn edit" onclick="addPaymentMethod('withdraw')">➕ إضافة طريقة سحب</button></div>
+                </div>
+                <div class="admin-tab-content" id="aContent3">
+                    <div class="admin-search-bar"><input type="text" class="admin-search-input" placeholder="🔍 بحث عن محظور..." oninput="updateBannedList()" id="bannedSearch"></div>
+                    <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>المستخدم</th><th>تاريخ الحظر</th><th>سبب الحظر</th><th>الإجراءات</th></tr></thead><tbody id="adminBannedTable"></tbody></table></div>
+                </div>
+                <div class="admin-tab-content" id="aContent4">
+                    <div class="admin-search-bar"><input type="text" class="admin-search-input" placeholder="🔍 بحث عن حساب مولّد..." oninput="updateGeneratedAccountsAdmin()" id="genAccountSearch"></div>
+                    <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>اسم المستخدم</th><th>الإيميل</th><th>كلمة المرور</th><th>تاريخ الإنشاء</th><th>الإجراءات</th></tr></thead><tbody id="adminGeneratedAccountsTable"></tbody></table></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GENERATE ACCOUNT MODAL -->
+    <div class="modal-overlay" id="generateAccountOverlay" onclick="if(event.target===this)closeGenerateAccountModal()">
+        <div class="modal-panel generate-modal" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeGenerateAccountModal()">✕</button>
+            <div class="generate-header">
+                <div class="generate-header-icon">🔑</div>
+                <h2 class="generate-header-title">إنشاء حساب جديد</h2>
+                <p class="generate-header-desc">نظام توليد الحسابات - iChanzy Style</p>
+            </div>
+            <div class="generate-body">
+                <div class="generate-input-group">
+                    <label>👤 أدخل اسم المستخدم المطلوب <span style="color:var(--accent-red);">*</span></label>
+                    <input type="text" id="genUsernameInput" placeholder="مثال: Ali" dir="ltr" maxlength="30" autocomplete="off">
+                    <span class="hint">📝 يجب أن يكون بالأحرف والرموز والأرقام الإنجليزية فقط (5 خانات على الأقل)</span>
+                </div>
+                <div class="generate-input-group">
+                    <label>🔒 كلمة المرور (اختياري - اتركه فارغاً للتوليد التلقائي)</label>
+                    <input type="text" id="genPasswordInput" placeholder="اتركه فارغاً للتوليد التلقائي" dir="ltr" maxlength="40" autocomplete="off">
+                    <span class="hint">🔐 يجب أن تحتوي على أحرف كبيرة وصغيرة وأرقام ورموز (11 خانة على الأقل)</span>
+                </div>
+                <div class="generate-actions">
+                    <button class="btn-generate-now" onclick="generateAccount()">⚡ توليد الحساب</button>
+                    <button class="btn-save-account" onclick="saveGeneratedAccount()" id="btnSaveAccount" disabled>💾 حفظ الحساب</button>
+                </div>
+                <div class="generate-result-box" id="generateResultBox">
+                    <h4 style="margin-bottom:10px;color:var(--accent-green);text-align:center;">✅ تم إنشاء الحساب بنجاح</h4>
+                    <div class="result-row">
+                        <span class="result-label">👤 الدخول:</span>
+                        <span class="result-value username" id="resultUsername">-</span>
+                        <button class="copy-btn" onclick="copyToClipboard('resultUsername',this)">📋 نسخ</button>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">📧 الإيميل:</span>
+                        <span class="result-value email" id="resultEmail">-</span>
+                        <button class="copy-btn" onclick="copyToClipboard('resultEmail',this)">📋 نسخ</button>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">🔑 كلمة السر:</span>
+                        <span class="result-value password" id="resultPassword">-</span>
+                        <button class="copy-btn" onclick="copyToClipboard('resultPassword',this)">📋 نسخ</button>
+                    </div>
+                    <div class="password-strength-bar"><div class="password-strength-fill" id="passwordStrengthFill"></div></div>
+                    <p style="font-size:0.6rem;color:var(--text-muted);margin-top:4px;text-align:center;" id="passwordStrengthLabel">قوة كلمة المرور</p>
+                    <button class="btn-download-account" onclick="downloadAccountInfo()">📥 تحميل معلومات الحساب</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"><div class="toast-icon">⚔️</div><span class="toast-text" id="toastText"></span></div>
 
     <script>
-        // ==========================================
-        //  DATABASE (IndexedDB via Dexie)
-        // ==========================================
         const DB_NAME = 'KratosWalletDB';
-        const DB_VERSION = 30;
+        const DB_VERSION = 33;
         let db;
+        const ADMIN_ID = 7609492965;
+        const SITE_DOMAIN = 'kratos-gate.com';
+        let editingUserId = null;
+        let currentGeneratedAccount = null;
+
+        const NAME_POOL = [
+            'Ali', 'Omar', 'Hassan', 'Karim', 'Kratos', 'Atreus', 'Thor', 'Odin', 'Zeus', 'Ares',
+            'Leon', 'Max', 'Rex', 'Blade', 'Shadow', 'Ghost', 'Storm', 'Frost', 'Flame', 'Wolf',
+            'Eagle', 'Hawk', 'Titan', 'Hercules', 'Achilles', 'Spartan', 'Nova', 'Phoenix', 'Raven',
+            'Viper', 'Cobra', 'Dragon', 'Knight', 'Hunter', 'Slayer', 'Warrior', 'Legend', 'Myth',
+            'Ragnar', 'Bjorn', 'Ivar', 'Rollo', 'Sigurd', 'Erik', 'Magnus', 'Valor', 'Fury', 'Wrath'
+        ];
+
+        const SPECIAL_CHARS = '@#$%!*&_-+=?';
+        const DIGITS = '0123456789';
+        const UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const LOWER = 'abcdefghijklmnopqrstuvwxyz';
 
         async function initDatabase() {
             try {
                 db = new Dexie(DB_NAME);
                 db.version(DB_VERSION).stores({
                     users: 'id',
-                    paymentMethods: 'id'
+                    paymentMethods: 'id',
+                    generatedAccounts: '++localId,id'
                 });
                 await db.open();
                 await db.transaction('rw', db.users, async () => {
@@ -2869,164 +3340,301 @@
                             modified = true; }
                         if (user.banDate === undefined) { user.banDate = null;
                             modified = true; }
-                        if (user.lootboxHistory === undefined) { user.lootboxHistory = [];
-                            modified = true; }
                         if (modified) await db.users.put(user);
                     }
                 });
             } catch (error) {
                 if (error.name === 'VersionError' || error.name === 'UpgradeError') {
+                    console.warn('Database version conflict. Deleting and recreating database...');
                     await Dexie.delete(DB_NAME);
                     db = new Dexie(DB_NAME);
                     db.version(DB_VERSION).stores({
                         users: 'id',
-                        paymentMethods: 'id'
+                        paymentMethods: 'id',
+                        generatedAccounts: '++localId,id'
                     });
                     await db.open();
                 } else { throw error; }
             }
         }
 
-        const ADMIN_ID = 7609492965;
-        let editingUserId = null;
-
-        function showLoading(msg = '⏳ جاري التحميل...') { const el = document.getElementById('loadingOverlay');
+        function showLoading(msg = '⏳ جاري التحميل...') {
+            const el = document.getElementById('loadingOverlay');
             el.querySelector('.loading-text').textContent = msg;
-            el.classList.add('active'); }
+            el.classList.add('active');
+        }
 
         function hideLoading() { document.getElementById('loadingOverlay').classList.remove('active'); }
 
-        // ==========================================
-        //  LOOTBOX GAME ENGINE
-        // ==========================================
-        const LootboxGame = {
-            // Default RTP (Return to Player) percentage - adjustable by admin
-            rtp: 0.95,
+        function generateRandomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
-            // Bet tiers: [amount, icon, label]
-            betTiers: [
-                { amount: 1, icon: '🥉', label: 'برونزي', chestIcon: '📦' },
-                { amount: 5, icon: '🥈', label: 'فضي', chestIcon: '🎁' },
-                { amount: 10, icon: '🥇', label: 'ذهبي', chestIcon: '💎' },
-                { amount: 50, icon: '👑', label: 'ملكي', chestIcon: '👑' },
-                { amount: 100, icon: '🐉', label: 'أسطوري', chestIcon: '🐉' }
-            ],
+        function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-            // Multiplier tiers with their weights (probability distribution)
-            multiplierTiers: [
-                { multiplier: 0, weight: 40, label: 'خسارة', color: 'lose' },
-                { multiplier: 0.5, weight: 25, label: 'نصف المبلغ', color: 'lose' },
-                { multiplier: 1, weight: 18, label: 'استرداد', color: 'win' },
-                { multiplier: 1.5, weight: 8, label: 'ربح 50%', color: 'win' },
-                { multiplier: 2, weight: 5, label: 'مضاعف x2', color: 'win' },
-                { multiplier: 5, weight: 2.5, label: 'مضاعف x5', color: 'win' },
-                { multiplier: 10, weight: 1, label: 'مضاعف x10', color: 'win' },
-                { multiplier: 50, weight: 0.3, label: 'مضاعف x50', color: 'win' },
-                { multiplier: 100, weight: 0.12, label: 'مضاعف x100', color: 'win' },
-                { multiplier: 500, weight: 0.05, label: 'مضاعف x500', color: 'win' },
-                { multiplier: 1000, weight: 0.02, label: 'مضاعف x1,000', color: 'win' },
-                { multiplier: 5000, weight: 0.008, label: 'مضاعف x5,000', color: 'win' },
-                { multiplier: 10000, weight: 0.002, label: 'مضاعف x10,000', color: 'win' }
-            ],
+        function shuffleString(str) { return str.split('').sort(() => Math.random() - 0.5).join(''); }
 
-            // RNG function using crypto for better randomness
-            rng() {
-                const array = new Uint32Array(1);
-                crypto.getRandomValues(array);
-                return array[0] / (0xFFFFFFFF + 1);
-            },
-
-            // Normalize weights to sum to 1
-            normalizeWeights(tiers) {
-                const total = tiers.reduce((sum, t) => sum + t.weight, 0);
-                return tiers.map(t => ({ ...t, probability: t.weight / total }));
-            },
-
-            // Select multiplier based on RNG and RTP-adjusted weights
-            selectMultiplier() {
-                const tiers = this.normalizeWeights(this.multiplierTiers);
-                // Adjust weights based on RTP
-                const adjusted = tiers.map(t => {
-                    if (t.multiplier > 1) {
-                        // Reduce high multiplier probabilities to maintain RTP
-                        return { ...t, probability: t.probability * this.rtp };
-                    } else if (t.multiplier === 0) {
-                        // Adjust loss probability
-                        return { ...t, probability: t.probability + (1 - this.rtp) * 0.3 };
-                    }
-                    return t;
-                });
-                // Re-normalize
-                const totalAdj = adjusted.reduce((sum, t) => sum + t.probability, 0);
-                const final = adjusted.map(t => ({ ...t, probability: t.probability / totalAdj }));
-
-                const roll = this.rng();
-                let cumulative = 0;
-                for (const tier of final) {
-                    cumulative += tier.probability;
-                    if (roll <= cumulative) return tier;
-                }
-                return final[final.length - 1];
-            },
-
-            // Open a chest
-            async openChest(betAmount) {
-                const user = App.currentUser;
-                if (!user) return { success: false, error: 'لم يتم تسجيل الدخول' };
-                if ((user.balance || 0) < betAmount) return { success: false, error: 'رصيد غير كافٍ' };
-
-                // Deduct bet amount
-                const newBalance = (user.balance || 0) - betAmount;
-                const tier = this.selectMultiplier();
-                const winAmount = betAmount * tier.multiplier;
-                const finalBalance = newBalance + winAmount;
-                const isWin = tier.multiplier >= 1;
-
-                const result = {
-                    bet: betAmount,
-                    multiplier: tier.multiplier,
-                    winAmount: winAmount,
-                    profit: winAmount - betAmount,
-                    isWin: isWin,
-                    tierLabel: tier.label,
-                    tierColor: tier.color,
-                    finalBalance: finalBalance,
-                    date: new Date().toISOString()
-                };
-
-                // Update user in database
-                try {
-                    const updatedUser = await db.users.get(user.id);
-                    const tx = {
-                        type: 'lootbox',
-                        bet: betAmount,
-                        multiplier: tier.multiplier,
-                        winAmount: winAmount,
-                        profit: winAmount - betAmount,
-                        title: `صندوق حظ - ${tier.label}`,
-                        date: result.date
-                    };
-                    await db.users.update(user.id, {
-                        balance: finalBalance,
-                        transactions: [...(updatedUser.transactions || []), tx],
-                        lootboxHistory: [...(updatedUser.lootboxHistory || []), result].slice(-50)
-                    });
-                    await App.refreshCurrentUser();
-                    return { success: true, result };
-                } catch (e) {
-                    return { success: false, error: 'خطأ في تحديث البيانات: ' + e.message };
-                }
-            },
-
-            // Get user's lootbox history
-            getHistory() {
-                return App.currentUser?.lootboxHistory || [];
+        function generatePassword(baseName) {
+            const minLength = 11;
+            const maxLength = 16;
+            const targetLength = generateRandomNumber(minLength, maxLength);
+            let passwordChars = [];
+            const nameLower = baseName.toLowerCase();
+            const nameCapitalized = nameLower.charAt(0).toUpperCase() + nameLower.slice(1);
+            passwordChars.push(...nameCapitalized.split(''));
+            const extraUpperCount = generateRandomNumber(2, 4);
+            for (let i = 0; i < extraUpperCount; i++) {
+                passwordChars.push(pickRandom(UPPER));
             }
-        };
+            const extraLowerCount = generateRandomNumber(1, 3);
+            for (let i = 0; i < extraLowerCount; i++) {
+                passwordChars.push(pickRandom(LOWER));
+            }
+            const digitCount = generateRandomNumber(1, 3);
+            for (let i = 0; i < digitCount; i++) {
+                passwordChars.push(pickRandom(DIGITS));
+            }
+            const specialCount = generateRandomNumber(1, 2);
+            for (let i = 0; i < specialCount; i++) {
+                passwordChars.push(pickRandom(SPECIAL_CHARS));
+            }
+            while (passwordChars.length < targetLength) {
+                const allChars = UPPER + LOWER + DIGITS + SPECIAL_CHARS;
+                passwordChars.push(pickRandom(allChars));
+            }
+            passwordChars = passwordChars.slice(0, targetLength);
+            const shuffled = shuffleString(passwordChars.join(''));
+            const hasUpper = /[A-Z]/.test(shuffled);
+            const hasLower = /[a-z]/.test(shuffled);
+            const hasDigit = /[0-9]/.test(shuffled);
+            const hasSpecial = new RegExp('[' + SPECIAL_CHARS.replace(/[-\\^\]\[]/g, '\\$&') + ']').test(shuffled);
+            if (!hasUpper || !hasLower || !hasDigit || !hasSpecial || shuffled.length < minLength) {
+                return generatePassword(baseName);
+            }
+            return shuffled;
+        }
 
-        // ==========================================
-        //  APPLICATION CONTROLLER
-        // ==========================================
+        function assessPasswordStrength(password) {
+            let score = 0;
+            if (password.length >= 11) score += 1;
+            if (password.length >= 14) score += 1;
+            if (/[A-Z]/.test(password)) score += 1;
+            if (/[a-z]/.test(password)) score += 1;
+            if (/[0-9]/.test(password)) score += 1;
+            if (/[^A-Za-z0-9]/.test(password)) score += 1;
+            if (password.length >= 16) score += 1;
+            if (score <= 2) return { level: 'weak', class: 'strength-weak', label: 'ضعيفة' };
+            if (score <= 4) return { level: 'medium', class: 'strength-medium', label: 'متوسطة' };
+            if (score <= 6) return { level: 'strong', class: 'strength-strong', label: 'قوية' };
+            return { level: 'very-strong', class: 'strength-very-strong', label: 'قوية جداً' };
+        }
+
+        function validateUsername(username) {
+            if (!username || username.length < 5) return { valid: false, msg: 'يجب أن يكون اسم المستخدم 5 خانات على الأقل' };
+            const englishPattern = /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]+$/;
+            if (!englishPattern.test(username)) return { valid: false,
+                msg: 'يجب استخدام الأحرف والرموز والأرقام الإنجليزية فقط' };
+            return { valid: true, msg: '' };
+        }
+
+        function validatePassword(password) {
+            if (!password || password.length < 11) return { valid: false, msg: 'يجب أن تكون كلمة المرور 11 خانة على الأقل' };
+            const hasUpper = /[A-Z]/.test(password);
+            const hasLower = /[a-z]/.test(password);
+            const hasDigit = /[0-9]/.test(password);
+            const hasSpecial = /[^A-Za-z0-9]/.test(password);
+            const englishPattern = /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]+$/;
+            if (!englishPattern.test(password)) return { valid: false,
+                msg: 'يجب استخدام الأحرف والرموز والأرقام الإنجليزية فقط' };
+            if (!hasUpper) return { valid: false, msg: 'يجب أن تحتوي على حرف كبير (A-Z) على الأقل' };
+            if (!hasLower) return { valid: false, msg: 'يجب أن تحتوي على حرف صغير (a-z) على الأقل' };
+            if (!hasDigit) return { valid: false, msg: 'يجب أن تحتوي على رقم (0-9) على الأقل' };
+            if (!hasSpecial) return { valid: false, msg: 'يجب أن تحتوي على رمز خاص (@#$%...)' };
+            return { valid: true, msg: '' };
+        }
+
+        function generateAccount() {
+            const usernameInput = document.getElementById('genUsernameInput').value.trim();
+            const passwordInput = document.getElementById('genPasswordInput').value.trim();
+            const validation = validateUsername(usernameInput);
+            if (!validation.valid) {
+                App.showToast('⚠️ ' + validation.msg);
+                return;
+            }
+            let finalPassword;
+            if (passwordInput) {
+                const passValidation = validatePassword(passwordInput);
+                if (!passValidation.valid) {
+                    App.showToast('⚠️ ' + passValidation.msg);
+                    return;
+                }
+                finalPassword = passwordInput;
+            } else {
+                finalPassword = generatePassword(usernameInput);
+            }
+            const randomNum = generateRandomNumber(1000, 9999);
+            const generatedUsername = usernameInput + '_' + randomNum;
+            const generatedEmail = generatedUsername + '@' + SITE_DOMAIN;
+            currentGeneratedAccount = {
+                id: 'GEN_' + Date.now(),
+                username: generatedUsername,
+                email: generatedEmail,
+                password: finalPassword,
+                baseName: usernameInput,
+                date: new Date().toISOString()
+            };
+            document.getElementById('resultUsername').textContent = generatedUsername;
+            document.getElementById('resultEmail').textContent = generatedEmail;
+            document.getElementById('resultPassword').textContent = finalPassword;
+            const strength = assessPasswordStrength(finalPassword);
+            const strengthFill = document.getElementById('passwordStrengthFill');
+            strengthFill.className = 'password-strength-fill ' + strength.class;
+            document.getElementById('passwordStrengthLabel').textContent = 'قوة كلمة المرور: ' + strength.label;
+            document.getElementById('generateResultBox').classList.add('active');
+            document.getElementById('btnSaveAccount').disabled = false;
+            App.showToast('✅ تم توليد الحساب بنجاح!');
+        }
+
+        async function saveGeneratedAccount() {
+            if (!currentGeneratedAccount) {
+                App.showToast('⚠️ قم بتوليد حساب أولاً');
+                return;
+            }
+            try {
+                await db.generatedAccounts.put(currentGeneratedAccount);
+                App.showToast('💾 تم حفظ الحساب في قاعدة البيانات');
+                document.getElementById('btnSaveAccount').disabled = true;
+                updateGeneratedAccountsAdmin();
+            } catch (e) {
+                App.showToast('❌ فشل الحفظ: ' + e.message);
+            }
+        }
+
+        function copyToClipboard(elementId, btn) {
+            const el = document.getElementById(elementId);
+            const text = el.textContent;
+            if (!text || text === '-') return;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.textContent = '✅ تم';
+                    btn.classList.add('copied');
+                    setTimeout(() => { btn.textContent = '📋 نسخ';
+                        btn.classList.remove('copied'); }, 1800);
+                }).catch(() => fallbackCopy(text, btn));
+            } else {
+                fallbackCopy(text, btn);
+            }
+        }
+
+        function fallbackCopy(text, btn) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            ta.style.top = '-9999px';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try { document.execCommand('copy');
+                btn.textContent = '✅ تم';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = '📋 نسخ';
+                    btn.classList.remove('copied'); }, 1800); } catch (e) { App.showToast('⚠️ فشل النسخ'); }
+            document.body.removeChild(ta);
+        }
+
+        function downloadAccountInfo() {
+            if (!currentGeneratedAccount) return;
+            const content =
+                `═══════════════════════════════\n` +
+                `  🔑 معلومات الحساب - Kratos Gate\n` +
+                `═══════════════════════════════\n` +
+                `👤 الدخول    : ${currentGeneratedAccount.username}\n` +
+                `📧 الإيميل   : ${currentGeneratedAccount.email}\n` +
+                `🔑 كلمة السر : ${currentGeneratedAccount.password}\n` +
+                `📅 التاريخ   : ${new Date(currentGeneratedAccount.date).toLocaleString('ar-SA')}\n` +
+                `═══════════════════════════════\n`;
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentGeneratedAccount.username + '_account.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            App.showToast('📥 تم تحميل ملف الحساب');
+        }
+
+        function showGenerateAccountModal() {
+            document.getElementById('generateAccountOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('genUsernameInput').value = '';
+            document.getElementById('genPasswordInput').value = '';
+            document.getElementById('generateResultBox').classList.remove('active');
+            document.getElementById('btnSaveAccount').disabled = true;
+            currentGeneratedAccount = null;
+            document.getElementById('resultUsername').textContent = '-';
+            document.getElementById('resultEmail').textContent = '-';
+            document.getElementById('resultPassword').textContent = '-';
+        }
+
+        function closeGenerateAccountModal() {
+            document.getElementById('generateAccountOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        async function updateGeneratedAccountsAdmin() {
+            const tableBody = document.getElementById('adminGeneratedAccountsTable');
+            if (!tableBody) return;
+            const search = (document.getElementById('genAccountSearch')?.value || '').toLowerCase();
+            let accounts = await db.generatedAccounts.toArray();
+            accounts.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+            if (search) {
+                accounts = accounts.filter(a =>
+                    (a.username || '').toLowerCase().includes(search) ||
+                    (a.email || '').toLowerCase().includes(search) ||
+                    (a.password || '').toLowerCase().includes(search) ||
+                    (a.baseName || '').toLowerCase().includes(search)
+                );
+            }
+            tableBody.innerHTML = accounts.slice(0, 100).map(a => `
+                <tr>
+                    <td style="color:var(--accent-blue);direction:ltr;font-weight:700;">${a.username||'-'}</td>
+                    <td style="color:var(--accent-gold);direction:ltr;">${a.email||'-'}</td>
+                    <td style="color:var(--accent-green);direction:ltr;font-family:monospace;">${a.password||'-'}</td>
+                    <td style="font-size:0.65rem;">${a.date?new Date(a.date).toLocaleDateString('ar-SA',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'-'}</td>
+                    <td>
+                        <button class="admin-action-btn info" onclick="copyAccountInfo('${a.username}','${a.email}','${a.password}')">📋</button>
+                        <button class="admin-action-btn delete" onclick="deleteGeneratedAccount(${a.localId})">🗑️</button>
+                    </td>
+                </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;">لا توجد حسابات مولّدة</td></tr>';
+        }
+
+        function copyAccountInfo(username, email, password) {
+            const text = `👤 الدخول: ${username}\n📧 الإيميل: ${email}\n🔑 كلمة السر: ${password}`;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => App.showToast('✅ تم نسخ معلومات الحساب'));
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.left = '-9999px';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                App.showToast('✅ تم نسخ معلومات الحساب');
+            }
+        }
+
+        async function deleteGeneratedAccount(localId) {
+            if (!confirm('حذف هذا الحساب المولّد؟')) return;
+            try {
+                await db.generatedAccounts.delete(localId);
+                updateGeneratedAccountsAdmin();
+                App.showToast('🗑️ تم الحذف');
+            } catch (e) { App.showToast('❌ فشل: ' + e.message); }
+        }
+
         const App = {
             currentUser: null,
             allUsersCache: [],
@@ -3048,7 +3656,7 @@
 
             attemptLogin() {
                 if (typeof Telegram === 'undefined' || !Telegram.WebApp) {
-                    this.showLoginError('بيئة تيليجرام غير متوفرة.');
+                    this.showLoginError('بيئة تيليجرام غير متوفرة. يرجى فتح الموقع من داخل تطبيق تيليجرام.');
                     hideLoading();
                     return;
                 }
@@ -3099,8 +3707,7 @@
                             role: 'user',
                             banned: false,
                             banReason: '',
-                            banDate: null,
-                            lootboxHistory: []
+                            banDate: null
                         };
                     }
                     await db.users.put(profile);
@@ -3110,7 +3717,7 @@
                     hideLoading();
                 }).catch(err => {
                     console.error('DB error:', err);
-                    this.showLoginError('خطأ: ' + err.message);
+                    this.showLoginError('خطأ في قاعدة البيانات: ' + err.message);
                     hideLoading();
                 });
             },
@@ -3126,10 +3733,10 @@
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('mainSite').classList.remove('visible');
                 document.getElementById('bannedOverlay').classList.add('active');
-                document.getElementById('bannedReasonText').textContent = user.banReason || 'تم حظر حسابك.';
-                document.getElementById('bannedDateText').textContent = user.banDate ? '📅 تاريخ الحظر: ' + new Date(user
-                    .banDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric',
-                    hour: '2-digit', minute: '2-digit' }) : '';
+                document.getElementById('bannedReasonText').textContent = user.banReason || 'تم حظر حسابك من قبل الإدارة.';
+                document.getElementById('bannedDateText').textContent = user.banDate ?
+                    '📅 تاريخ الحظر: ' + new Date(user.banDate).toLocaleDateString('ar-SA', { year: 'numeric',
+                        month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
             },
 
             onLoginSuccess() {
@@ -3155,8 +3762,16 @@
                     `<div class="admin-badge-bar" onclick="showAdminPanel()"><span class="ab-icon">👑</span><span class="ab-text">الإدارة</span></div>` :
                     '';
                 document.getElementById('userProfileBar').innerHTML = `
-                    <div class="user-profile-info" onclick="showProfileModal()"><div class="user-avatar">${avatarHTML}</div><div class="user-details"><span class="user-name">${fullName}</span><span class="user-username">@${user.username}</span></div></div>
-                    <div class="user-actions"><div class="wallet-balance-bar" onclick="showWallet()"><span class="wb-icon">💰</span><span class="wb-amount" id="barBalance">${(user.balance||0).toFixed(2)}</span></div>${adminBtn}<button class="logout-btn" onclick="App.logout()">🚪</button></div>`;
+                    <div class="user-profile-info" onclick="showProfileModal()">
+                        <div class="user-avatar">${avatarHTML}</div>
+                        <div class="user-details"><span class="user-name">${fullName}</span><span class="user-username">@${user.username}</span></div>
+                    </div>
+                    <div class="user-actions">
+                        <div class="wallet-balance-bar" onclick="showWallet()"><span class="wb-icon">💰</span><span class="wb-amount" id="barBalance">${(user.balance||0).toFixed(2)}</span></div>
+                        <button class="generate-account-btn" onclick="showGenerateAccountModal()" title="إنشاء حساب جديد">🔑</button>
+                        ${adminBtn}
+                        <button class="logout-btn" onclick="App.logout()">🚪</button>
+                    </div>`;
             },
 
             updateUI() {
@@ -3166,6 +3781,66 @@
                 if (barBal) barBal.textContent = bal;
                 const walBal = document.getElementById('walletBalanceDisplay');
                 if (walBal) walBal.textContent = bal;
+                const walTx = document.getElementById('walletTransactions');
+                if (walTx) walTx.innerHTML = this.renderTransactions();
+            },
+
+            renderTransactions() {
+                const txs = this.currentUser.transactions || [];
+                if (!txs.length)
+                    return '<div style="text-align:center;padding:25px;color:var(--text-muted);"><span style="font-size:2.2rem;">📭</span><p>لا توجد معاملات</p></div>';
+                return [...txs].reverse().slice(0, 50).map(tx => {
+                    const isDep = tx.type === 'deposit';
+                    const date = tx.date ? new Date(tx.date).toLocaleDateString('ar-SA', { year: 'numeric',
+                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+                    return `<div class="wallet-transaction"><div class="tx-icon ${isDep?'deposit':'withdraw'}">${isDep?'📥':'📤'}</div><div class="tx-info"><div class="tx-title">${tx.title||(isDep?'شحن':'سحب')}</div><div class="tx-date">${date} • ${tx.methodName||''}</div></div><div class="tx-amount ${isDep?'positive':'negative'}">${isDep?'+':'-'}$${Math.abs(tx.amount||0).toFixed(2)}</div></div>`;
+                }).join('');
+            },
+
+            async deposit(amount, method) {
+                if (!amount || amount <= 0) { this.showToast('⚠️ المبلغ غير صحيح'); return false; }
+                if (method.minAmount && amount < method.minAmount) { this.showToast(
+                        `⚠️ أقل مبلغ: $${method.minAmount.toFixed(2)}`); return false; }
+                showLoading('💰 جاري معالجة الشحن...');
+                try {
+                    const user = await db.users.get(this.currentUser.id);
+                    const newBalance = (user.balance || 0) + amount;
+                    const tx = { type: 'deposit', amount, methodId: method.id, methodName: method.name,
+                        title: 'شحن رصيد', date: new Date().toISOString() };
+                    await db.users.update(user.id, {
+                        balance: newBalance,
+                        totalDeposited: (user.totalDeposited || 0) + amount,
+                        points: (user.points || 0) + Math.floor(amount * 10),
+                        level: Math.floor(((user.points || 0) + Math.floor(amount * 10)) / 500) + 1,
+                        transactions: [...(user.transactions || []), tx]
+                    });
+                    await this.refreshCurrentUser();
+                    hideLoading();
+                    this.showToast(`✅ تم شحن $${amount.toFixed(2)} بنجاح`);
+                    return true;
+                } catch (e) { hideLoading();
+                    this.showToast('❌ فشل: ' + e.message); return false; }
+            },
+
+            async withdraw(amount, method) {
+                if (!amount || amount <= 0) { this.showToast('⚠️ المبلغ غير صحيح'); return false; }
+                const user = await db.users.get(this.currentUser.id);
+                if (amount > (user.balance || 0)) { this.showToast('⚠️ الرصيد غير كافٍ'); return false; }
+                showLoading('📤 جاري معالجة السحب...');
+                try {
+                    const tx = { type: 'withdraw', amount, methodId: method.id, methodName: method.name,
+                        title: 'سحب رصيد', date: new Date().toISOString() };
+                    await db.users.update(user.id, {
+                        balance: (user.balance || 0) - amount,
+                        totalWithdrawn: (user.totalWithdrawn || 0) + amount,
+                        transactions: [...(user.transactions || []), tx]
+                    });
+                    await this.refreshCurrentUser();
+                    hideLoading();
+                    this.showToast(`✅ تم سحب $${amount.toFixed(2)} بنجاح`);
+                    return true;
+                } catch (e) { hideLoading();
+                    this.showToast('❌ فشل: ' + e.message); return false; }
             },
 
             async refreshCurrentUser() {
@@ -3175,18 +3850,41 @@
                 this.updateUI();
             },
 
-            async deposit(amount, method) { /* ... same as before ... */ },
-            async withdraw(amount, method) { /* ... same as before ... */ },
-            async banUser(userId, reason = '') { /* ... same as before ... */ },
-            async unbanUser(userId) { /* ... same as before ... */ },
+            async banUser(userId, reason = '') {
+                try {
+                    await db.users.update(userId, { banned: true, banReason: reason, banDate: new Date()
+                        .toISOString() });
+                    await this.loadAllUsers();
+                    this.showToast('🚫 تم حظر المستخدم');
+                    updateAdminDashboard();
+                    updateBannedList();
+                } catch (e) { this.showToast('❌ فشل: ' + e.message); }
+            },
+            async unbanUser(userId) {
+                try {
+                    await db.users.update(userId, { banned: false, banReason: '', banDate: null });
+                    await this.loadAllUsers();
+                    this.showToast('✅ تم إلغاء الحظر');
+                    updateAdminDashboard();
+                    updateBannedList();
+                } catch (e) { this.showToast('❌ فشل: ' + e.message); }
+            },
+
             async loadAllUsers() { this.allUsersCache = await db.users.toArray(); },
             async loadPaymentMethods() { this.allPaymentMethodsCache = await db.paymentMethods.toArray(); },
-            getPaymentMethods(type) { return this.allPaymentMethodsCache.filter(m => m.type === type && m.active !==
-                    false); },
+            getPaymentMethods(type) { return this.allPaymentMethodsCache.filter(m => m.type === type && m
+                    .active !== false); },
             getAllPaymentMethods() { return [...this.allPaymentMethodsCache]; },
-            async savePaymentMethod(method) { /* ... */ },
-            async deletePaymentMethodDB(id) { /* ... */ },
-            async updatePaymentMethodDB(id, updates) { /* ... */ },
+            async savePaymentMethod(method) {
+                if (!method.id) method.id = Date.now().toString();
+                await db.paymentMethods.put(method);
+                await this.loadPaymentMethods();
+            },
+            async deletePaymentMethodDB(id) { await db.paymentMethods.delete(id);
+                await this.loadPaymentMethods(); },
+            async updatePaymentMethodDB(id, updates) { await db.paymentMethods.update(id, updates);
+                await this.loadPaymentMethods(); },
+
             logout() { if (confirm('تسجيل الخروج؟')) location.reload(); },
             showToast(msg) {
                 const toast = document.getElementById('toast');
@@ -3197,180 +3895,413 @@
                 clearTimeout(toast._timeout);
                 toast._timeout = setTimeout(() => toast.classList.remove('show'), 3000);
             },
-            createParticles() { /* ... same as before ... */ },
-            initScrollEvents() { /* ... same as before ... */ }
+            createParticles() {
+                const container = document.getElementById('particles');
+                const count = window.innerWidth < 480 ? 14 : 28;
+                for (let i = 0; i < count; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'particle';
+                    p.style.left = Math.random() * 100 + '%';
+                    p.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                    p.style.animationDelay = (Math.random() * 5) + 's';
+                    const s = (Math.random() * 3 + 1) + 'px';
+                    p.style.width = s;
+                    p.style.height = s;
+                    container.appendChild(p);
+                }
+            },
+            initScrollEvents() {
+                const navbar = document.getElementById('navbar');
+                const scrollBtn = document.getElementById('scrollTop');
+                const navLinks = document.querySelectorAll('.nav-links a');
+                const sections = [...navLinks].map(a => document.querySelector(a.getAttribute('href')))
+                    .filter(Boolean);
+                window.addEventListener('scroll', () => {
+                    const y = window.scrollY;
+                    navbar.classList.toggle('scrolled', y > 60);
+                    scrollBtn.classList.toggle('visible', y > 400);
+                    let current = '';
+                    sections.forEach(s => { if (y >= s.offsetTop - 130) current = s.getAttribute(
+                            'id'); });
+                    navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') ===
+                        '#' + current));
+                }, { passive: true });
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add(
+                                'visible');
+                            observer.unobserve(e.target); } });
+                }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+                document.querySelectorAll('.fade-in, .timeline-item').forEach(el => observer.observe(el));
+                setTimeout(() => {
+                    document.querySelectorAll('.progress-fill').forEach(bar => { const w = bar
+                            .getAttribute('data-width'); if (w) bar.style.width = w + '%'; });
+                }, 400);
+                setTimeout(() => {
+                    document.querySelectorAll('.counter').forEach(c => {
+                        const target = +c.getAttribute('data-target');
+                        let count = 0;
+                        const step = target / 90;
+                        const upd = () => { count += step; if (count < target) { c
+                                .textContent = Math.ceil(count);
+                                requestAnimationFrame(upd); } else c.textContent =
+                                target; };
+                        upd();
+                    });
+                }, 600);
+            }
         };
 
-        // ==========================================
-        //  LOOTBOX UI FUNCTIONS
-        // ==========================================
-        let selectedBetTier = 1;
+        let selectedDepositMethod = null;
+        let selectedWithdrawMethod = null;
 
-        function showLootbox() {
-            if (!App.currentUser) return;
-            document.getElementById('lootboxOverlay').classList.add('active');
+        function showWallet() { document.getElementById('walletOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
-            updateLootboxUI();
-            selectedBetTier = 1;
-            renderBetTiers();
-            renderChests();
-            document.getElementById('lootboxResult').style.display = 'none';
+            App.updateUI();
+            renderPaymentMethods('deposit');
+            renderPaymentMethods('withdraw');
+            switchWalletTab(0); }
+
+        function closeWallet() { document.getElementById('walletOverlay').classList.remove('active');
+            document.body.style.overflow = ''; }
+
+        function switchWalletTab(i) {
+            document.querySelectorAll('.wallet-tab').forEach((t, idx) => t.classList.toggle('active', idx === i));
+            document.querySelectorAll('.wallet-tab-content').forEach((c, idx) => c.classList.toggle('active', idx ===
+                i));
         }
 
-        function closeLootbox() {
-            document.getElementById('lootboxOverlay').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        function updateLootboxUI() {
-            const bal = (App.currentUser?.balance || 0).toFixed(2);
-            document.getElementById('lootboxBalance').textContent = '$' + bal;
-            document.getElementById('lootboxRtp').textContent = '🎯 RTP: ' + Math.round(LootboxGame.rtp * 100) + '%';
-            renderHistory();
-        }
-
-        function renderBetTiers() {
-            const container = document.getElementById('lootboxBetTiers');
-            const canAfford = (amount) => (App.currentUser?.balance || 0) >= amount;
-            container.innerHTML = LootboxGame.betTiers.map((tier, i) => `
-                <div class="lootbox-tier ${selectedBetTier === i ? 'selected' : ''} ${!canAfford(tier.amount) ? 'disabled' : ''}" onclick="selectBetTier(${i})">
-                    <span class="lootbox-tier-icon">${tier.icon}</span>
-                    <span class="lootbox-tier-amount">$${tier.amount}</span>
-                    <span class="lootbox-tier-label">${tier.label}</span>
+        function renderPaymentMethods(type) {
+            const container = document.getElementById(type === 'deposit' ? 'depositMethodsContainer' :
+                'withdrawMethodsContainer');
+            const methods = App.getPaymentMethods(type);
+            if (!methods.length) { container.innerHTML =
+                    '<p style="color:var(--text-muted);text-align:center;padding:18px;">لا توجد طرق متاحة</p>'; return; }
+            container.innerHTML = methods.map(m => `
+                <div class="payment-method-card ${(type==='deposit'?selectedDepositMethod:selectedWithdrawMethod)?.id===m.id?'selected':''}" onclick="selectPaymentMethod('${type}','${m.id}')">
+                    ${m.image?`<img src="${m.image}" alt="${m.name}" onerror="this.style.display='none'">`:'<span style="font-size:1.8rem;">💳</span>'}
+                    <div class="method-name">${m.name}</div>
+                    <div class="method-desc">${m.description||''}</div>
+                    ${m.minAmount?`<div class="min-amount-badge">الحد الأدنى: $${m.minAmount}</div>`:''}
                 </div>`).join('');
+            const sel = type === 'deposit' ? selectedDepositMethod : selectedWithdrawMethod;
+            showMethodDetails(type, sel);
         }
 
-        function selectBetTier(index) {
-            const tier = LootboxGame.betTiers[index];
-            if ((App.currentUser?.balance || 0) < tier.amount) {
-                App.showToast('⚠️ رصيدك غير كافٍ لهذا الصندوق');
-                return;
-            }
-            selectedBetTier = index;
-            renderBetTiers();
-            renderChests();
-            document.getElementById('lootboxResult').style.display = 'none';
+        function selectPaymentMethod(type, id) {
+            const m = App.getPaymentMethods(type).find(x => x.id === id);
+            if (type === 'deposit') selectedDepositMethod = m;
+            else selectedWithdrawMethod = m;
+            renderPaymentMethods(type);
         }
 
-        function renderChests() {
-            const container = document.getElementById('lootboxChests');
-            const tier = LootboxGame.betTiers[selectedBetTier];
-            const chests = [
-                { name: 'صندوق الغضب', icon: '🔥' },
-                { name: 'صندوق الفوضى', icon: '🌀' },
-                { name: 'صندوق القدر', icon: '⚡' },
-                { name: 'صندوق الأسطورة', icon: '👑' },
-                { name: 'صندوق الخلود', icon: '💀' }
-            ];
-            container.innerHTML = chests.map(c => `
-                <div class="lootbox-chest" onclick="openChest('${c.name}', '${c.icon}')">
-                    <span class="lootbox-chest-icon">${c.icon}</span>
-                    <span class="lootbox-chest-name">${c.name}</span>
-                </div>`).join('');
+        function showMethodDetails(type, method) {
+            const div = document.getElementById(type === 'deposit' ? 'depositMethodDetails' : 'withdrawMethodDetails');
+            if (!method) { div.classList.remove('active');
+                div.innerHTML = ''; return; }
+            div.classList.add('active');
+            div.innerHTML = `
+                <h4 style="margin-bottom:6px;">${method.name}</h4>
+                ${method.image?`<img src="${method.image}" style="max-width:65px;border-radius:7px;margin-bottom:6px;" onerror="this.style.display='none'">`:''}
+                ${method.barcode?`<img src="${method.barcode}" class="barcode-img" alt="باركود" onerror="this.style.display='none'"><p style="text-align:center;font-size:0.65rem;color:var(--text-muted);">امسح الباركود</p>`:''}
+                ${method.address?`<div class="wallet-address">${method.address}</div>`:''}
+                ${method.minAmount?`<p class="min-amount-badge">الحد الأدنى: $${method.minAmount}</p>`:''}
+                <p style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">${method.description||''}</p>`;
         }
 
-        async function openChest(chestName, chestIcon) {
-            const tier = LootboxGame.betTiers[selectedBetTier];
-            if ((App.currentUser?.balance || 0) < tier.amount) {
-                App.showToast('⚠️ رصيدك غير كافٍ');
-                return;
-            }
+        function processDeposit() {
+            const amt = parseFloat(document.getElementById('depositAmount').value);
+            if (!selectedDepositMethod) { App.showToast('⚠️ اختر طريقة الدفع'); return; }
+            App.deposit(amt, selectedDepositMethod).then(ok => { if (ok) { document.getElementById('depositAmount')
+                    .value = '';
+                    closeWallet(); } });
+        }
 
-            // Animate chest
-            const chests = document.querySelectorAll('.lootbox-chest');
-            chests.forEach(c => c.classList.add('opening'));
-            document.querySelector('.lootbox-open-btn')?.setAttribute('disabled', 'disabled');
+        function processWithdraw() {
+            const amt = parseFloat(document.getElementById('withdrawAmount').value);
+            if (!selectedWithdrawMethod) { App.showToast('⚠️ اختر طريقة السحب'); return; }
+            App.withdraw(amt, selectedWithdrawMethod).then(ok => { if (ok) { document.getElementById('withdrawAmount')
+                    .value = '';
+                    closeWallet(); } });
+        }
 
-            showLoading('🎁 جاري فتح الصندوق...');
+        function showProfileModal() {
+            const u = App.currentUser;
+            if (!u) return;
+            document.getElementById('profileModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            const fn = (u.firstName + ' ' + (u.lastName || '')).trim();
+            document.getElementById('profileAvatarLarge').innerHTML = u.photoUrl ?
+                `<img src="${u.photoUrl}" onerror="this.innerHTML='${fn.charAt(0)}'" alt="${fn}">` : fn.charAt(0);
+            document.getElementById('profileName').textContent = fn;
+            document.getElementById('profileUsername').textContent = '@' + u.username;
+            document.getElementById('profileTgId').textContent = 'ID: ' + u.id;
+            document.getElementById('profileWalletBalance').textContent = '$' + (u.balance || 0).toFixed(2);
+            document.getElementById('infoTgId').textContent = u.id;
+            document.getElementById('infoJoinDate').textContent = u.joinDate ? new Date(u.joinDate)
+                .toLocaleDateString('ar-SA') : '-';
+            document.getElementById('infoLang').textContent = u.language === 'ar' ? 'العربية' : (u.language || '-');
+        }
 
-            // Simulate anticipation
-            await new Promise(r => setTimeout(r, 1500));
+        function closeProfileModal() { document.getElementById('profileModal').classList.remove('active');
+            document.body.style.overflow = ''; }
 
-            const result = await LootboxGame.openChest(tier.amount);
+        async function showAdminPanel() {
+            if (Number(App.currentUser?.id) !== ADMIN_ID) return;
+            document.getElementById('adminPanel').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            await App.loadAllUsers();
+            populateTxUserFilter();
+            updateAdminDashboard();
+            updateBannedList();
+            renderPaymentMethodsEditor();
+            updateGeneratedAccountsAdmin();
+        }
 
+        function closeAdminPanel() { document.getElementById('adminPanel').classList.remove('active');
+            document.body.style.overflow = ''; }
+
+        function switchAdminTab(i) {
+            document.querySelectorAll('.admin-tab').forEach((t, idx) => t.classList.toggle('active', idx === i));
+            document.querySelectorAll('.admin-tab-content').forEach((c, idx) => c.classList.toggle('active', idx ===
+                i));
+            if (i === 0 || i === 1) { populateTxUserFilter();
+                updateAdminDashboard(); }
+            if (i === 2) renderPaymentMethodsEditor();
+            if (i === 3) updateBannedList();
+            if (i === 4) updateGeneratedAccountsAdmin();
+        }
+
+        function populateTxUserFilter() {
+            const sel = document.getElementById('txUserFilter');
+            if (!sel) return;
+            sel.innerHTML = '<option value="">كل المستخدمين</option>' + App.allUsersCache.map(u =>
+                `<option value="${u.id}">${u.firstName||''} ${u.lastName||''} (${u.id})</option>`).join('');
+        }
+
+        function updateAdminDashboard() {
+            const users = App.allUsersCache;
+            const search = document.querySelector('#aContent0 .admin-search-input')?.value.toLowerCase() || '';
+            const filtered = users.filter(u => !search || (u.firstName || '').toLowerCase().includes(search) || String(u
+                .id).includes(search));
+            document.getElementById('adminUsersTable').innerHTML = filtered.map(u => `
+                <tr class="${u.banned?'banned-row':''}">
+                    <td>${u.firstName||''} ${u.lastName||''} <small style="color:var(--text-muted)">(${u.id})</small>${u.banned?' <span class="ban-info-badge">🚫 محظور</span>':''}</td>
+                    <td style="color:var(--accent-gold);">$${(u.balance||0).toFixed(2)}</td>
+                    <td>${u.level||1}</td>
+                    <td>${u.banned?'<span class="ban-info-badge">🚫 محظور</span>':'<span style="color:#4ade80;">✅ نشط</span>'}</td>
+                    <td>
+                        <button class="admin-action-btn edit" onclick="openEditUserModal('${u.id}')">✏️</button>
+                        <button class="admin-action-btn info" onclick="viewUserTx('${u.id}')">📋</button>
+                        ${u.banned?`<button class="admin-action-btn unban" onclick="unbanUserConfirm('${u.id}')">🔓</button>`:`<button class="admin-action-btn ban" onclick="banUserPrompt('${u.id}')">🚫</button>`}
+                        <button class="admin-action-btn delete" onclick="deleteUser('${u.id}')">🗑️</button>
+                    </td>
+                </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;">لا يوجد مستخدمون</td></tr>';
+            const txSearch = document.getElementById('txSearch')?.value.toLowerCase() || '';
+            const txUser = document.getElementById('txUserFilter')?.value || '';
+            let allTx = users.flatMap(u => (u.transactions || []).map(tx => ({ ...tx, userName: u.firstName || '',
+                userId: u.id })));
+            if (txUser) allTx = allTx.filter(tx => tx.userId === txUser);
+            if (txSearch) allTx = allTx.filter(tx => (tx.title || '').toLowerCase().includes(txSearch) || (tx
+                .methodName || '').toLowerCase().includes(txSearch));
+            allTx.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+            document.getElementById('adminAllTransactions').innerHTML = allTx.slice(0, 100).map(tx => {
+                const isDep = tx.type === 'deposit';
+                const d = tx.date ? new Date(tx.date).toLocaleDateString('ar-SA', { year: 'numeric',
+                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+                return `<div class="admin-tx-item"><div class="admin-tx-icon ${isDep?'deposit':'withdraw'}">${isDep?'📥':'📤'}</div><div class="admin-tx-info"><div class="admin-tx-title">${tx.title||(isDep?'شحن':'سحب')}</div><div class="admin-tx-user">${tx.userName} (${tx.userId}) • ${tx.methodName||''} • ${d}</div></div><div class="admin-tx-amount ${isDep?'positive':'negative'}">${isDep?'+':'-'}$${Math.abs(tx.amount||0).toFixed(2)}</div></div>`;
+            }).join('') || '<p style="text-align:center;padding:18px;color:var(--text-muted);">لا توجد معاملات</p>';
+        }
+
+        function updateBannedList() {
+            const search = document.getElementById('bannedSearch')?.value.toLowerCase() || '';
+            const banned = App.allUsersCache.filter(u => u.banned && (!search || (u.firstName || '').toLowerCase()
+                .includes(search) || String(u.id).includes(search) || (u.banReason || '').toLowerCase().includes(
+                    search)));
+            document.getElementById('adminBannedTable').innerHTML = banned.map(u => `
+                <tr>
+                    <td>${u.firstName||''} ${u.lastName||''} <small style="color:var(--text-muted)">(${u.id})</small></td>
+                    <td>${u.banDate?new Date(u.banDate).toLocaleDateString('ar-SA',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'-'}</td>
+                    <td style="color:var(--accent-ban);">${u.banReason||'غير محدد'}</td>
+                    <td><button class="admin-action-btn unban" onclick="unbanUserConfirm('${u.id}')">🔓 فك الحظر</button></td>
+                </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;">لا يوجد محظورون 🎉</td></tr>';
+        }
+
+        function banUserPrompt(userId) {
+            const reason = prompt('سبب الحظر (اختياري):');
+            if (reason === null) return;
+            if (confirm(`حظر المستخدم ${userId}؟`)) { showLoading('🚫 جاري الحظر...');
+                App.banUser(userId, reason).then(() => hideLoading()); }
+        }
+
+        function unbanUserConfirm(userId) {
+            if (confirm(`فك حظر المستخدم ${userId}؟`)) { showLoading('🔓 جاري فك الحظر...');
+                App.unbanUser(userId).then(() => hideLoading()); }
+        }
+
+        function openEditUserModal(userId) {
+            const u = App.allUsersCache.find(x => String(x.id) === String(userId));
+            if (!u) return;
+            editingUserId = userId;
+            document.getElementById('editFirstName').value = u.firstName || '';
+            document.getElementById('editLastName').value = u.lastName || '';
+            document.getElementById('editBalance').value = u.balance || 0;
+            document.getElementById('editLevel').value = u.level || 1;
+            document.getElementById('editPoints').value = u.points || 0;
+            document.getElementById('editUsername').value = u.username || '';
+            document.getElementById('editTotalDeposited').value = u.totalDeposited || 0;
+            document.getElementById('editTotalWithdrawn').value = u.totalWithdrawn || 0;
+            document.getElementById('editBanned').value = u.banned ? 'true' : 'false';
+            document.getElementById('editBanReason').value = u.banReason || '';
+            document.getElementById('editUserModal').classList.add('active');
+        }
+
+        function closeEditUserModal() { document.getElementById('editUserModal').classList.remove('active');
+            editingUserId = null; }
+
+        document.getElementById('saveEditUserBtn').addEventListener('click', async () => {
+            if (!editingUserId) return;
+            const bannedVal = document.getElementById('editBanned').value === 'true';
+            const data = {
+                firstName: document.getElementById('editFirstName').value,
+                lastName: document.getElementById('editLastName').value,
+                balance: parseFloat(document.getElementById('editBalance').value) || 0,
+                level: parseInt(document.getElementById('editLevel').value) || 1,
+                points: parseInt(document.getElementById('editPoints').value) || 0,
+                username: document.getElementById('editUsername').value,
+                totalDeposited: parseFloat(document.getElementById('editTotalDeposited').value) || 0,
+                totalWithdrawn: parseFloat(document.getElementById('editTotalWithdrawn').value) || 0,
+                banned: bannedVal,
+                banReason: bannedVal ? document.getElementById('editBanReason').value : '',
+                banDate: bannedVal ? (App.allUsersCache.find(u => String(u.id) === editingUserId)?.banDate || new Date()
+                    .toISOString()) : null,
+            };
+            if (!bannedVal) { data.banReason = '';
+                data.banDate = null; }
+            try {
+                await db.users.update(editingUserId, data);
+                await App.loadAllUsers();
+                updateAdminDashboard();
+                updateBannedList();
+                if (App.currentUser && App.currentUser.id === editingUserId) await App.refreshCurrentUser();
+                App.showToast('✅ تم تحديث بيانات المستخدم');
+                closeEditUserModal();
+            } catch (e) { App.showToast('❌ فشل: ' + e.message); }
+        });
+
+        async function deleteUser(userId) {
+            if (!confirm('حذف المستخدم نهائياً؟')) return;
+            try { await db.users.delete(userId);
+                await App.loadAllUsers();
+                updateAdminDashboard();
+                updateBannedList();
+                App.showToast('✅ تم الحذف'); } catch (e) { App.showToast('❌ فشل: ' + e.message); }
+        }
+
+        async function addNewUser() {
+            const id = prompt('معرف المستخدم (رقم):');
+            if (!id) return;
+            if (await db.users.get(id)) { App.showToast('⚠️ المستخدم موجود مسبقاً'); return; }
+            const user = { id, firstName: 'مستخدم جديد', lastName: '', username: 'user_' + id, photoUrl: null,
+                language: 'ar', joinDate: new Date().toISOString(), visits: 0, level: 1, points: 0, balance: 0,
+                transactions: [], totalDeposited: 0, totalWithdrawn: 0, lastLogin: null, role: 'user', banned: false,
+                banReason: '', banDate: null };
+            await db.users.put(user);
+            await App.loadAllUsers();
+            updateAdminDashboard();
+            updateBannedList();
+            App.showToast('✅ تم إضافة المستخدم');
+        }
+
+        function viewUserTx(userId) {
+            document.getElementById('txUserFilter').value = userId;
+            switchAdminTab(1);
+            updateAdminDashboard();
+        }
+
+        function renderPaymentMethodsEditor() {
+            const all = App.getAllPaymentMethods();
+            document.getElementById('depositMethodsEditor').innerHTML = all.filter(m => m.type === 'deposit').map(m =>
+                methodEditorHTML(m, 'deposit')).join('');
+            document.getElementById('withdrawMethodsEditor').innerHTML = all.filter(m => m.type === 'withdraw').map(m =>
+                methodEditorHTML(m, 'withdraw')).join('');
+            attachEditorEvents();
+        }
+
+        function methodEditorHTML(m, type) {
+            return `<div class="payment-method-editor" data-method-id="${m.id}" data-type="${type}">
+                <div class="editor-row"><label>الاسم</label><input type="text" value="${m.name||''}" data-field="name"></div>
+                <div class="editor-row"><label>الصورة</label><img src="${m.image||''}" class="upload-preview" data-preview="image" onerror="this.style.display='none'" style="${m.image?'':'display:none;'}"><input type="file" accept="image/*" style="display:none;" data-upload="image"><button class="upload-btn" data-btn="image">📷 رفع</button></div>
+                <div class="editor-row"><label>الباركود</label><img src="${m.barcode||''}" class="upload-preview" data-preview="barcode" onerror="this.style.display='none'" style="${m.barcode?'':'display:none;'}"><input type="file" accept="image/*" style="display:none;" data-upload="barcode"><button class="upload-btn" data-btn="barcode">📱 رفع</button></div>
+                <div class="editor-row"><label>عنوان</label><input type="text" value="${m.address||''}" data-field="address"></div>
+                <div class="editor-row"><label>الحد الأدنى</label><input type="number" value="${m.minAmount||1}" step="0.01" data-field="minAmount"></div>
+                <div class="editor-row"><label>الوصف</label><input type="text" value="${m.description||''}" data-field="description"></div>
+                <div class="editor-row"><div class="toggle-active"><span>نشط</span><div class="toggle-switch ${m.active!==false?'active':''}" data-toggle="active"></div></div><button class="admin-action-btn delete" data-delete>🗑️ حذف</button></div>
+            </div>`;
+        }
+
+        function attachEditorEvents() {
+            document.querySelectorAll('.payment-method-editor').forEach(editor => {
+                const mid = editor.dataset.methodId;
+                editor.querySelectorAll('[data-field]').forEach(inp => inp.addEventListener('change',
+                    function() {
+                        const f = this.dataset.field;
+                        const v = f === 'minAmount' ? parseFloat(this.value) || 0 : this.value;
+                        saveMethodUpdate(mid, { [f]: v });
+                    }));
+                const toggle = editor.querySelector('[data-toggle]');
+                if (toggle) toggle.addEventListener('click', function() { this.classList.toggle(
+                        'active');
+                    saveMethodUpdate(mid, { active: this.classList.contains('active') }); });
+                editor.querySelector('[data-delete]')?.addEventListener('click', () => { if (confirm(
+                            'حذف طريقة الدفع؟')) { showLoading('🗑️ جاري الحذف...');
+                        App.deletePaymentMethodDB(mid).then(() => { hideLoading();
+                            renderPaymentMethodsEditor();
+                            App.showToast('✅ تم الحذف'); }); } });
+                editor.querySelectorAll('[data-btn]').forEach(btn => btn.addEventListener('click', function() {
+                    editor.querySelector(`[data-upload="${this.dataset.btn}"]`).click();
+                }));
+                editor.querySelectorAll('[data-upload]').forEach(fi => fi.addEventListener('change',
+                    function() {
+                        const file = this.files[0];
+                        if (!file) return;
+                        if (!file.type.startsWith('image/')) { App.showToast('⚠️ صورة فقط'); return; }
+                        if (file.size > 5 * 1024 * 1024) { App.showToast('⚠️ حجم كبير (5MB كحد أقصى)'); return; }
+                        const ut = this.dataset.upload;
+                        const prev = editor.querySelector(`[data-preview="${ut}"]`);
+                        const reader = new FileReader();
+                        reader.onload = e => { if (prev) { prev.src = e.target.result;
+                                prev.style.display = ''; }
+                            saveMethodUpdate(mid, { [ut]: e.target.result });
+                            App.showToast('✅ تم الرفع'); };
+                        reader.readAsDataURL(file);
+                    }));
+            });
+        }
+
+        async function saveMethodUpdate(mid, updates) {
+            await App.updatePaymentMethodDB(mid, updates);
+            renderPaymentMethodsEditor();
+            if (document.getElementById('walletOverlay').classList.contains('active')) { renderPaymentMethods(
+                    'deposit');
+                renderPaymentMethods('withdraw'); }
+        }
+
+        async function addPaymentMethod(type) {
+            const m = { type, name: 'طريقة جديدة', image: '', barcode: '', address: '', minAmount: 1, description: '',
+                active: true, id: Date.now().toString() };
+            showLoading('➕ جاري الإضافة...');
+            await App.savePaymentMethod(m);
             hideLoading();
-            chests.forEach(c => c.classList.remove('opening'));
-            document.querySelector('.lootbox-open-btn')?.removeAttribute('disabled');
-
-            if (!result.success) {
-                App.showToast('❌ ' + (result.error || 'فشل فتح الصندوق'));
-                return;
-            }
-
-            // Show result
-            const res = result.result;
-            const resultDiv = document.getElementById('lootboxResult');
-            const multiplierEl = document.getElementById('lootboxMultiplier');
-            const amountEl = document.getElementById('lootboxResultAmount');
-            const textEl = document.getElementById('lootboxResultText');
-
-            resultDiv.style.display = 'block';
-            resultDiv.className = 'lootbox-result ' + res.tierColor;
-
-            if (res.isWin) {
-                multiplierEl.className = 'lootbox-result-multiplier win';
-                multiplierEl.textContent = '🎉 x' + res.multiplier.toFixed(1);
-                amountEl.textContent = 'ربحت: $' + res.winAmount.toFixed(2);
-                textEl.textContent = res.tierLabel + ' | الربح الصافي: $' + res.profit.toFixed(2);
-                App.showToast('🎉 مبروك! ربحت $' + res.winAmount.toFixed(2));
-            } else if (res.multiplier === 0) {
-                multiplierEl.className = 'lootbox-result-multiplier lose';
-                multiplierEl.textContent = '💔 خسارة';
-                amountEl.textContent = 'خسرت: $' + res.bet.toFixed(2);
-                textEl.textContent = 'حظ أوفر في المرة القادمة';
-            } else {
-                multiplierEl.className = 'lootbox-result-multiplier lose';
-                multiplierEl.textContent = '😔 x' + res.multiplier.toFixed(1);
-                amountEl.textContent = 'استرداد: $' + res.winAmount.toFixed(2);
-                textEl.textContent = 'استرددت جزءاً من رهانك';
-            }
-
-            updateLootboxUI();
-            renderBetTiers();
+            renderPaymentMethodsEditor();
+            App.showToast('✅ تمت الإضافة');
         }
 
-        function renderHistory() {
-            const container = document.getElementById('lootboxHistory');
-            const history = LootboxGame.getHistory();
-            if (!history.length) {
-                container.innerHTML =
-                    '<p style="text-align:center;color:var(--text-muted);padding:10px;">لا توجد محاولات سابقة</p>';
-                return;
-            }
-            container.innerHTML = '<div class="lootbox-history-title">📋 سجل الصناديق</div>' + [...history].reverse().map(h => `
-                <div class="lootbox-history-item">
-                    <span>${new Date(h.date).toLocaleDateString('ar-SA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span>
-                    <span>رهان: $${h.bet.toFixed(2)}</span>
-                    <span class="${h.isWin?'win':'lose'}">${h.multiplier === 0 ? '💔 خسارة' : 'x'+h.multiplier.toFixed(1)}</span>
-                    <span class="${h.profit >= 0 ? 'win' : 'lose'}">${h.profit >= 0 ? '+' : ''}$${h.profit.toFixed(2)}</span>
-                </div>`).join('');
-        }
-
-        // ==========================================
-        //  WALLET & ADMIN & OTHER FUNCTIONS
-        // ==========================================
-        // (Same as previous complete code - included for completeness)
-        // ... [Wallet, Profile, Admin functions from previous complete code] ...
-
-        function showWallet() { /* ... */ }
-
-        function closeWallet() { /* ... */ }
-
-        function showProfileModal() { /* ... */ }
-
-        function closeProfileModal() { /* ... */ }
-
-        function showAdminPanel() { /* ... */ }
-
-        function closeAdminPanel() { /* ... */ }
-
-        // ==========================================
-        //  NAVIGATION
-        // ==========================================
         function scrollToSection(id) {
             const el = document.getElementById(id);
-            if (el) { const top = el.getBoundingClientRect().top + window.pageYOffset - 105;
-                window.scrollTo({ top, behavior: 'smooth' }); }
+            if (el) {
+                const top = el.getBoundingClientRect().top + window.pageYOffset - 105;
+                window.scrollTo({ top, behavior: 'smooth' });
+            }
             document.getElementById('navLinks')?.classList.remove('mobile-open');
             document.getElementById('mobileToggle')?.classList.remove('active');
         }
@@ -3380,12 +4311,42 @@
             document.getElementById('mobileToggle').classList.toggle('active');
         }
 
+        document.addEventListener('click', function(e) {
+            const nav = document.getElementById('navLinks');
+            const tog = document.getElementById('mobileToggle');
+            if (nav && nav.classList.contains('mobile-open') && !nav.contains(e.target) && !tog.contains(e.target)) {
+                nav.classList.remove('mobile-open');
+                tog.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (document.getElementById('adminPanel').classList.contains('active')) closeAdminPanel();
+                else if (document.getElementById('walletOverlay').classList.contains('active')) closeWallet();
+                else if (document.getElementById('profileModal').classList.contains('active'))
+                closeProfileModal();
+                else if (document.getElementById('editUserModal').classList.contains('active'))
+                closeEditUserModal();
+                else if (document.getElementById('generateAccountOverlay').classList.contains('active'))
+                    closeGenerateAccountModal();
+            }
+        });
+
+        document.getElementById('genUsernameInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') generateAccount();
+        });
+        document.getElementById('genPasswordInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') generateAccount();
+        });
+
         window.addEventListener('DOMContentLoaded', () => {
             showLoading('🛡️ جاري تهيئة النظام...');
             App.init();
             document.getElementById('loginButton').addEventListener('click', () => App.attemptLogin());
             setTimeout(() => { if (!App.currentUser && !document.getElementById('loginScreen').classList
                     .contains('hidden')) hideLoading(); }, 5000);
+            document.addEventListener('touchmove', function() {}, { passive: true });
         });
     </script>
 </body>
