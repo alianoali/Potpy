@@ -609,36 +609,6 @@
             background: rgba(192, 57, 43, 0.25);
         }
 
-        .generate-account-btn {
-            padding: 5px 10px;
-            background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(39, 174, 96, 0.1));
-            border: 1px solid rgba(46, 204, 113, 0.35);
-            border-radius: var(--radius-xs);
-            color: var(--accent-green);
-            font-size: var(--fs-xs);
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            white-space: nowrap;
-            animation: glowPulse 2.5s ease-in-out infinite;
-        }
-        @keyframes glowPulse {
-            0%,
-            100% {
-                box-shadow: 0 0 8px rgba(46, 204, 113, 0.2);
-            }
-            50% {
-                box-shadow: 0 0 18px rgba(46, 204, 113, 0.45);
-            }
-        }
-        .generate-account-btn:active {
-            transform: scale(0.92);
-            background: rgba(46, 204, 113, 0.28);
-        }
-
         .navbar {
             position: fixed;
             top: 48px;
@@ -828,84 +798,6 @@
             margin-bottom: 28px;
             animation: fadeInUp 0.7s ease 0.5s both;
         }
-        .hero-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.7s ease 0.65s both;
-        }
-        .btn-primary {
-            padding: 12px 26px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border: none;
-            border-radius: var(--radius-sm);
-            color: #fff;
-            font-size: var(--fs-md);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            box-shadow: var(--shadow-glow-red);
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-primary::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.5s ease;
-        }
-        .btn-primary:hover::after {
-            transform: translateX(100%);
-        }
-        .btn-primary:active {
-            transform: scale(0.95);
-        }
-        .btn-generate {
-            padding: 12px 26px;
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            border: none;
-            border-radius: var(--radius-sm);
-            color: #fff;
-            font-size: var(--fs-md);
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            box-shadow: var(--shadow-glow-green);
-            position: relative;
-            overflow: hidden;
-            animation: glowPulseBtn 2.5s ease-in-out infinite;
-        }
-        @keyframes glowPulseBtn {
-            0%,
-            100% {
-                box-shadow: 0 0 18px rgba(46, 204, 113, 0.3);
-            }
-            50% {
-                box-shadow: 0 0 35px rgba(46, 204, 113, 0.55);
-            }
-        }
-        .btn-generate::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.5s ease;
-        }
-        .btn-generate:hover::after {
-            transform: translateX(100%);
-        }
-        .btn-generate:active {
-            transform: scale(0.94);
-        }
         .hero-visual {
             position: absolute;
             left: 3%;
@@ -992,58 +884,6 @@
         }
         .pf-blue {
             background: linear-gradient(90deg, #2980b9, #3498db);
-        }
-
-        .section {
-            padding: 55px 20px;
-            position: relative;
-        }
-        .section-header {
-            text-align: center;
-            margin-bottom: 38px;
-        }
-        .section-tag {
-            display: inline-block;
-            padding: 4px 13px;
-            background: rgba(192, 57, 43, 0.08);
-            border: 1px solid rgba(192, 57, 43, 0.18);
-            border-radius: var(--radius-full);
-            font-size: var(--fs-xs);
-            color: var(--primary-light);
-            margin-bottom: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        .section-title {
-            font-size: clamp(1.5rem, 3.5vw, 2.4rem);
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        .section-desc {
-            color: var(--text-secondary);
-            font-size: var(--fs-md);
-            max-width: 580px;
-            margin: 0 auto;
-            line-height: 1.7;
-        }
-        .fade-in {
-            opacity: 0;
-            transform: translateY(35px);
-            transition: all 0.8s var(--ease-out);
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(28px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .footer {
@@ -1920,7 +1760,7 @@
             flex-wrap: wrap;
         }
 
-        /* ========== ACCOUNT GENERATION MODAL STYLES ========== */
+        /* ========== ACCOUNT GENERATION MODAL STYLES (hidden) ========== */
         .generate-modal {
             max-width: 520px;
             width: 100%;
@@ -2214,9 +2054,6 @@
             .hero {
                 padding: 120px 16px 50px;
             }
-            .section {
-                padding: 45px 16px;
-            }
             .form-row {
                 grid-template-columns: 1fr;
             }
@@ -2270,15 +2107,6 @@
             }
             .hero {
                 padding: 110px 14px 45px;
-            }
-            .hero-actions {
-                flex-direction: column;
-                gap: 8px;
-            }
-            .hero-actions .btn-primary,
-            .hero-actions .btn-generate {
-                width: 100%;
-                justify-content: center;
             }
             .footer-grid {
                 grid-template-columns: 1fr;
@@ -2351,12 +2179,6 @@
             }
             .hero-desc {
                 font-size: 0.82rem;
-            }
-            .section {
-                padding: 36px 10px;
-            }
-            .section-title {
-                font-size: 1.3rem;
             }
             .payment-methods-grid {
                 grid-template-columns: 1fr;
@@ -2469,18 +2291,15 @@
             <div class="nav-logo" onclick="scrollToSection('hero')">
                 <div class="logo-icon">Ω</div><span class="logo-text">KRATOS</span>
             </div>
-            <!-- قائمة التنقل بعد حذف الأقسام -->
             <ul class="nav-links" id="navLinks">
                 <li><a href="#hero" class="active" onclick="scrollToSection('hero')">الرئيسية</a></li>
             </ul>
             <div style="display:flex;align-items:center;gap:8px;">
-                <button class="generate-account-btn" onclick="showGenerateAccountModal()" title="إنشاء حساب جديد">🔑 إنشاء حساب</button>
                 <button class="nav-btn" onclick="showWallet()">💰 المحفظة</button>
                 <div class="mobile-toggle" id="mobileToggle" onclick="toggleMobileMenu()"><span></span><span></span><span></span></div>
             </div>
         </nav>
 
-        <!-- القسم الرئيسي فقط -->
         <section class="hero" id="hero">
             <div class="hero-content">
                 <div class="welcome-banner">
@@ -2489,10 +2308,6 @@
                 </div>
                 <h1 class="hero-title">كراتوس</h1>
                 <p class="hero-desc">من شبح إسبرطة إلى إله الحرب، رحلة كراتوس الأسطورية عبر عوالم الأساطير.</p>
-                <div class="hero-actions">
-                    <button class="btn-primary" onclick="App.showToast('⚔️ انطلقت المغامرة!')">⚔️ ابدأ الرحلة</button>
-                    <button class="btn-generate" onclick="showGenerateAccountModal()">🔑 إنشاء حساب جديد</button>
-                </div>
             </div>
             <div class="hero-visual">
                 <div class="float-card"><div class="float-card-header"><div class="fc-icon red">⚔️</div><span class="fc-title">قوة الهجوم</span></div><div class="fc-value" style="color:#e74c3c;">9,850</div><div class="fc-bar"><div class="fc-bar-fill pf-red" style="width:92%;"></div></div></div>
@@ -2642,7 +2457,7 @@
         </div>
     </div>
 
-    <!-- GENERATE ACCOUNT MODAL -->
+    <!-- GENERATE ACCOUNT MODAL (hidden, accessible only via admin or direct code) -->
     <div class="modal-overlay" id="generateAccountOverlay" onclick="if(event.target===this)closeGenerateAccountModal()">
         <div class="modal-panel generate-modal" onclick="event.stopPropagation()">
             <button class="modal-close-btn" onclick="closeGenerateAccountModal()">✕</button>
@@ -3162,7 +2977,6 @@
                     </div>
                     <div class="user-actions">
                         <div class="wallet-balance-bar" onclick="showWallet()"><span class="wb-icon">💰</span><span class="wb-amount" id="barBalance">${(user.balance||0).toFixed(2)}</span></div>
-                        <button class="generate-account-btn" onclick="showGenerateAccountModal()" title="إنشاء حساب جديد">🔑</button>
                         ${adminBtn}
                         <button class="logout-btn" onclick="App.logout()">🚪</button>
                     </div>`;
