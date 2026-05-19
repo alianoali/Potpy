@@ -1,1247 +1,706 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICHANCY BLACK BOT</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box
-        }
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #000;
-            font-family: 'Segoe UI', Arial, sans-serif
-        }
-        .scene {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background: #060e1f;
-            overflow: hidden
-        }
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1
-        }
-        .overlay {
-            position: absolute;
-            inset: 0;
-            z-index: 2;
-            pointer-events: none
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICHANCY BLACK BOT</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Segoe UI',Arial,sans-serif}
+  .scene{width:100%;height:100%;position:relative;background:#060e1f;overflow:hidden}
+  canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1}
+  .overlay{position:absolute;inset:0;z-index:2;pointer-events:none}
 
-        .top-logo {
-            position: absolute;
-            top: 22px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            gap: 6px
-        }
-        .bolt {
-            width: 18px;
-            height: 18px;
-            position: relative
-        }
-        .bolt svg {
-            width: 100%;
-            height: 100%
-        }
-        .top-logo span {
-            color: #fff;
-            font-size: 17px;
-            font-weight: 700;
-            letter-spacing: 0.5px
-        }
+  .top-logo{position:absolute;top:22px;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:6px}
+  .bolt{width:18px;height:18px;position:relative}
+  .bolt svg{width:100%;height:100%}
+  .top-logo span{color:#fff;font-size:17px;font-weight:700;letter-spacing:0.5px}
 
-        .dots-tr {
-            position: absolute;
-            top: 26px;
-            right: 32px;
-            z-index: 10;
-            display: flex;
-            gap: 7px;
-            transition: all 0.4s ease
-        }
-        .dots-bl {
-            position: absolute;
-            bottom: 26px;
-            left: 32px;
-            z-index: 10;
-            display: flex;
-            gap: 7px
-        }
-        .dot-w {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.55)
-        }
+  .dots-tr{position:absolute;top:26px;right:32px;z-index:10;display:flex;gap:7px}
+  .dots-bl{position:absolute;bottom:26px;left:32px;z-index:10;display:flex;gap:7px}
+  .dot-w{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.55)}
 
-        /* ── login trigger button ── */
-        .login-trigger {
-            position: absolute;
-            top: 20px;
-            right: 70px;
-            z-index: 11;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            padding: 7px 16px 7px 12px;
-            border-radius: 24px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 200, 0, 0.35);
-            transition: all 0.3s ease;
-            pointer-events: auto;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent
-        }
-        .login-trigger:hover {
-            background: rgba(255, 200, 0, 0.08);
-            border-color: rgba(255, 200, 0, 0.65);
-            box-shadow: 0 0 20px rgba(255, 180, 0, 0.15)
-        }
-        .login-trigger:active {
-            transform: scale(0.96)
-        }
-        .login-trigger .lt-icon {
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0
-        }
-        .login-trigger .lt-icon svg {
-            width: 100%;
-            height: 100%
-        }
-        .login-trigger .lt-label {
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.6px;
-            white-space: nowrap
-        }
+  .corner-tl{position:absolute;top:0;left:0;z-index:5;width:100px;height:180px}
+  .corner-tl::before{content:'';position:absolute;top:0;left:0;width:1px;height:120px;background:linear-gradient(to bottom,rgba(255,255,255,0.5),transparent);transform:rotate(25deg);transform-origin:top left}
+  .corner-br{position:absolute;bottom:0;right:0;z-index:5;width:100px;height:180px}
+  .corner-br::before{content:'';position:absolute;bottom:0;right:0;width:1px;height:100px;background:linear-gradient(to top,rgba(255,255,255,0.3),transparent);transform:rotate(-15deg);transform-origin:bottom right}
 
-        /* ── user badge (logged‑in) ── */
-        .user-badge {
-            position: absolute;
-            top: 18px;
-            right: 60px;
-            z-index: 11;
-            display: none;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            padding: 6px 14px 6px 6px;
-            border-radius: 26px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 200, 0, 0.3);
-            transition: all 0.3s ease;
-            pointer-events: auto;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent
-        }
-        .user-badge:hover {
-            background: rgba(255, 200, 0, 0.06);
-            border-color: rgba(255, 200, 0, 0.6);
-            box-shadow: 0 0 18px rgba(255, 180, 0, 0.12)
-        }
-        .user-badge .ub-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid rgba(255, 200, 0, 0.5);
-            flex-shrink: 0
-        }
-        .user-badge .ub-avatar-placeholder {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 38% 30%, #555, #222);
-            border: 2px solid rgba(255, 200, 0, 0.5);
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
-            color: #ffd000
-        }
-        .user-badge .ub-name {
-            color: #fff;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.4px;
-            max-width: 100px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap
-        }
+  .streak-y1{position:absolute;bottom:130px;left:70px;z-index:5;width:1.5px;height:35px;background:rgba(255,200,0,0.25);transform:rotate(-18deg)}
+  .streak-y2{position:absolute;top:90px;right:50px;z-index:5;width:50px;height:1.5px;background:rgba(255,200,0,0.15);transform:rotate(35deg)}
 
-        /* ── dropdown ── */
-        .user-dropdown {
-            position: absolute;
-            top: 58px;
-            right: 60px;
-            z-index: 12;
-            display: none;
-            flex-direction: column;
-            background: rgba(10, 16, 30, 0.95);
-            border: 1px solid rgba(255, 200, 0, 0.3);
-            border-radius: 12px;
-            padding: 8px 0;
-            min-width: 160px;
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 180, 0, 0.06);
-            pointer-events: auto
-        }
-        .user-dropdown.show {
-            display: flex
-        }
-        .user-dropdown .ud-item {
-            padding: 10px 18px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 13px;
-            cursor: pointer;
-            letter-spacing: 0.5px;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap
-        }
-        .user-dropdown .ud-item:hover {
-            background: rgba(255, 200, 0, 0.08);
-            color: #ffd000
-        }
-        .user-dropdown .ud-divider {
-            height: 1px;
-            background: rgba(255, 255, 255, 0.1);
-            margin: 4px 10px
-        }
+  .bot-area{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);z-index:10;display:flex;flex-direction:column;align-items:center}
 
-        /* ── modal overlay ── */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: opacity 0.35s ease, visibility 0.35s ease
-        }
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto
-        }
+  .ring-wrap{position:relative;width:280px;height:280px;display:flex;align-items:center;justify-content:center}
+  .ring-svg{position:absolute;width:280px;height:280px}
+  .ring-dot{position:absolute;width:11px;height:11px;border-radius:50%;top:50%;left:50%}
+  .rd-glow{background:radial-gradient(circle,#ffe89a,#f0c040,#e8a020);box-shadow:0 0 10px rgba(240,192,64,0.9),0 0 25px rgba(240,192,64,0.4)}
+  .rd-sm{background:radial-gradient(circle,#ffe070,#d8a830);box-shadow:0 0 8px rgba(216,168,48,0.7),0 0 18px rgba(216,168,48,0.3)}
 
-        /* ── modal card ── */
-        .modal-card {
-            background: rgba(8, 15, 28, 0.92);
-            border: 1px solid rgba(255, 200, 0, 0.25);
-            border-radius: 20px;
-            padding: 36px 28px 28px;
-            text-align: center;
-            max-width: 380px;
-            width: 90%;
-            position: relative;
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 60px rgba(255, 180, 0, 0.06);
-            transform: translateY(20px);
-            transition: transform 0.35s ease
-        }
-        .modal-overlay.active .modal-card {
-            transform: translateY(0)
-        }
-        .modal-close {
-            position: absolute;
-            top: 14px;
-            right: 18px;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.25s ease;
-            z-index: 5;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
-            -webkit-tap-highlight-color: transparent
-        }
-        .modal-close:hover {
-            background: rgba(255, 80, 50, 0.15);
-            border-color: rgba(255, 100, 60, 0.5);
-            color: #fff;
-            box-shadow: 0 0 14px rgba(255, 80, 50, 0.2)
-        }
-        .modal-icon {
-            width: 50px;
-            height: 50px;
-            margin: 0 auto 14px;
-            position: relative
-        }
-        .modal-icon svg {
-            width: 100%;
-            height: 100%
-        }
-        .modal-title {
-            color: #fff;
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 6px
-        }
-        .modal-subtitle {
-            color: rgba(255, 255, 255, 0.55);
-            font-size: 13px;
-            letter-spacing: 0.5px;
-            margin-bottom: 20px;
-            line-height: 1.5
-        }
-        .modal-subtitle strong {
-            color: #ffd000;
-            font-weight: 600
-        }
-        .tg-widget-wrap {
-            display: flex;
-            justify-content: center;
-            min-height: 48px;
-            align-items: center
-        }
-        .tg-widget-wrap .tg-fallback {
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 12px;
-            letter-spacing: 0.5px
-        }
-        .modal-note {
-            margin-top: 16px;
-            color: rgba(255, 255, 255, 0.35);
-            font-size: 10px;
-            letter-spacing: 0.4px;
-            line-height: 1.5
-        }
-        .modal-note a {
-            color: rgba(255, 200, 0, 0.7);
-            text-decoration: none
-        }
+  .head{width:190px;height:190px;border-radius:50%;position:relative;z-index:2;
+    background:radial-gradient(circle at 38% 30%,#333 0%,#1a1a1a 35%,#0d0d0d 65%,#050505 100%);
+    box-shadow:0 0 50px rgba(240,180,0,0.1),0 0 100px rgba(240,180,0,0.04),inset 0 -30px 50px rgba(0,0,0,0.9),inset 0 8px 25px rgba(80,80,80,0.2)}
 
-        .corner-tl {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 5;
-            width: 100px;
-            height: 180px
-        }
-        .corner-tl::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 1px;
-            height: 120px;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), transparent);
-            transform: rotate(25deg);
-            transform-origin: top left
-        }
-        .corner-br {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            z-index: 5;
-            width: 100px;
-            height: 180px
-        }
-        .corner-br::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 1px;
-            height: 100px;
-            background: linear-gradient(to top, rgba(255, 255, 255, 0.3), transparent);
-            transform: rotate(-15deg);
-            transform-origin: bottom right
-        }
+  .head::after{content:'';position:absolute;top:12%;left:22%;width:56%;height:30%;background:radial-gradient(ellipse,rgba(255,255,255,0.06),transparent);border-radius:50%}
 
-        .streak-y1 {
-            position: absolute;
-            bottom: 130px;
-            left: 70px;
-            z-index: 5;
-            width: 1.5px;
-            height: 35px;
-            background: rgba(255, 200, 0, 0.25);
-            transform: rotate(-18deg)
-        }
-        .streak-y2 {
-            position: absolute;
-            top: 90px;
-            right: 50px;
-            z-index: 5;
-            width: 50px;
-            height: 1.5px;
-            background: rgba(255, 200, 0, 0.15);
-            transform: rotate(35deg)
-        }
+  .eye{position:absolute;width:26px;height:46px;border-radius:13px;
+    background:radial-gradient(ellipse at 45% 40%,#fff5d0,#ffc840,#f0a020);
+    box-shadow:0 0 18px rgba(255,200,50,0.85),0 0 40px rgba(255,200,50,0.4),0 0 70px rgba(255,180,30,0.2);
+    top:50%;transform:translateY(-50%)}
+  .eye-l{left:35px}
+  .eye-r{right:35px}
+  .eye::after{content:'';position:absolute;top:3px;left:50%;transform:translateX(-50%);width:7px;height:10px;background:rgba(255,255,255,0.5);border-radius:50%;filter:blur(1.5px)}
 
-        .bot-area {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -55%);
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            pointer-events: none
-        }
+  .mouth{position:absolute;bottom:30%;left:50%;transform:translateX(-50%);width:52px;height:3.5px;border-radius:2px;
+    background:linear-gradient(90deg,transparent,#ffc840,#e8a020,#ffc840,transparent);
+    box-shadow:0 0 10px rgba(255,200,50,0.5)}
 
-        .ring-wrap {
-            position: relative;
-            width: 280px;
-            height: 280px;
-            display: flex;
-            align-items: center;
-            justify-content: center
-        }
-        .ring-svg {
-            position: absolute;
-            width: 280px;
-            height: 280px
-        }
-        .ring-dot {
-            position: absolute;
-            width: 11px;
-            height: 11px;
-            border-radius: 50%;
-            top: 50%;
-            left: 50%
-        }
-        .rd-glow {
-            background: radial-gradient(circle, #ffe89a, #f0c040, #e8a020);
-            box-shadow: 0 0 10px rgba(240, 192, 64, 0.9), 0 0 25px rgba(240, 192, 64, 0.4)
-        }
-        .rd-sm {
-            background: radial-gradient(circle, #ffe070, #d8a830);
-            box-shadow: 0 0 8px rgba(216, 168, 48, 0.7), 0 0 18px rgba(216, 168, 48, 0.3)
-        }
+  .ear{position:absolute;width:16px;height:55px;border-radius:8px;top:50%;transform:translateY(-50%);
+    background:linear-gradient(180deg,#1a1a1a,#0a0a0a);box-shadow:inset 0 0 8px rgba(0,0,0,0.9)}
+  .ear-l{left:-3px}
+  .ear-r{right:-3px}
 
-        .head {
-            width: 190px;
-            height: 190px;
-            border-radius: 50%;
-            position: relative;
-            z-index: 2;
-            background: radial-gradient(circle at 38% 30%, #333 0%, #1a1a1a 35%, #0d0d0d 65%, #050505 100%);
-            box-shadow: 0 0 50px rgba(240, 180, 0, 0.1), 0 0 100px rgba(240, 180, 0, 0.04), inset 0 -30px 50px rgba(0, 0, 0, 0.9), inset 0 8px 25px rgba(80, 80, 80, 0.2)
-        }
+  .title-area{text-align:center;margin-top:18px}
+  .t-main{font-size:50px;font-weight:900;color:#fff;letter-spacing:4px;line-height:1;text-transform:uppercase}
+  .t-sub{display:flex;align-items:center;justify-content:center;margin-top:3px}
+  .t-black{background:linear-gradient(180deg,#ffd600,#f0a000);color:#000;font-size:24px;font-weight:900;padding:1px 12px 3px;letter-spacing:2px;text-transform:uppercase;display:inline-block;border-radius:2px}
+  .t-bot{color:#fff;font-size:24px;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-left:4px}
 
-        .head::after {
-            content: '';
-            position: absolute;
-            top: 12%;
-            left: 22%;
-            width: 56%;
-            height: 30%;
-            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.06), transparent);
-            border-radius: 50%
-        }
+  .footer{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:5px}
+  .globe{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,200,0,0.55);position:relative;
+    background:radial-gradient(circle,rgba(255,200,0,0.08),transparent)}
+  .globe::before{content:'';position:absolute;top:3px;left:3px;right:3px;bottom:3px;border-radius:50%;border:1px solid rgba(255,200,0,0.25)}
+  .globe::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:100%;height:100%;border-radius:50%;border-left:1px solid rgba(255,200,0,0.25);border-right:1px solid rgba(255,200,0,0.25)}
+  .url{font-size:10px;color:rgba(255,255,255,0.65);letter-spacing:2.5px;text-transform:uppercase}
 
-        .eye {
-            position: absolute;
-            width: 26px;
-            height: 46px;
-            border-radius: 13px;
-            background: radial-gradient(ellipse at 45% 40%, #fff5d0, #ffc840, #f0a020);
-            box-shadow: 0 0 18px rgba(255, 200, 50, 0.85), 0 0 40px rgba(255, 200, 50, 0.4), 0 0 70px rgba(255, 180, 30, 0.2);
-            top: 50%;
-            transform: translateY(-50%)
-        }
-        .eye-l {
-            left: 35px
-        }
-        .eye-r {
-            right: 35px
-        }
-        .eye::after {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 7px;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            filter: blur(1.5px)
-        }
+  /* ========== LOCK SCREEN ========== */
+  #lockScreen{
+    position:fixed;inset:0;z-index:1000;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(4,8,20,0.97);
+    backdrop-filter:blur(30px);
+    transition:opacity 0.8s ease, transform 0.8s ease;
+  }
+  #lockScreen.unlocked{
+    opacity:0;transform:scale(1.1);pointer-events:none;
+  }
+  .lock-container{
+    width:100%;max-width:420px;padding:40px 30px;
+    text-align:center;
+  }
+  .lock-icon{
+    width:80px;height:80px;margin:0 auto 24px;
+    background:linear-gradient(135deg,#2AABEE,#1E96D1);
+    border-radius:24px;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 40px rgba(42,171,238,0.3);
+    animation:lockPulse 2s ease-in-out infinite;
+  }
+  @keyframes lockPulse{
+    0%,100%{box-shadow:0 10px 40px rgba(42,171,238,0.3)}
+    50%{box-shadow:0 10px 60px rgba(42,171,238,0.5)}
+  }
+  .lock-icon svg{width:44px;height:44px}
+  .lock-title{
+    font-size:26px;font-weight:800;color:#fff;margin-bottom:8px;
+  }
+  .lock-subtitle{
+    font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:32px;line-height:1.6;
+  }
+  .bot-link{
+    display:inline-flex;align-items:center;gap:8px;
+    background:linear-gradient(135deg,#2AABEE,#1E96D1);
+    color:#fff;text-decoration:none;
+    padding:14px 28px;border-radius:14px;
+    font-weight:700;font-size:16px;
+    margin-bottom:28px;
+    transition:transform 0.2s, box-shadow 0.2s;
+    cursor:pointer;border:none;
+  }
+  .bot-link:hover{
+    transform:scale(1.03);
+    box-shadow:0 8px 30px rgba(42,171,238,0.4);
+  }
+  .bot-link svg{width:22px;height:22px}
+  .steps{
+    text-align:right;margin-bottom:28px;
+    padding:20px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:16px;
+  }
+  .steps h3{
+    font-size:14px;color:rgba(255,255,255,0.7);margin-bottom:14px;font-weight:600;
+  }
+  .step{
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:10px;
+    font-size:13px;color:rgba(255,255,255,0.5);
+  }
+  .step:last-child{margin-bottom:0}
+  .step-num{
+    width:24px;height:24px;border-radius:8px;
+    background:rgba(42,171,238,0.15);
+    color:#2AABEE;font-size:12px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .code-section{
+    display:none;
+  }
+  .code-section.active{
+    display:block;
+  }
+  .code-input-wrap{
+    display:flex;gap:8px;justify-content:center;margin-bottom:16px;
+  }
+  .code-input{
+    width:48px;height:56px;
+    background:rgba(255,255,255,0.06);
+    border:2px solid rgba(255,255,255,0.1);
+    border-radius:14px;
+    color:#fff;font-size:22px;font-weight:700;
+    text-align:center;
+    outline:none;
+    transition:border-color 0.3s, box-shadow 0.3s;
+    font-family:'Segoe UI',Arial,sans-serif;
+  }
+  .code-input:focus{
+    border-color:#2AABEE;
+    box-shadow:0 0 20px rgba(42,171,238,0.2);
+  }
+  .code-input.error{
+    border-color:#ff4444;
+    animation:shake 0.4s ease;
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-6px)}
+    75%{transform:translateX(6px)}
+  }
+  .verify-btn{
+    width:100%;padding:14px;
+    background:linear-gradient(135deg,#2AABEE,#1E96D1);
+    color:#fff;border:none;border-radius:14px;
+    font-size:16px;font-weight:700;cursor:pointer;
+    font-family:'Segoe UI',Arial,sans-serif;
+    transition:transform 0.2s, box-shadow 0.2s;
+  }
+  .verify-btn:hover{
+    transform:scale(1.02);
+    box-shadow:0 8px 30px rgba(42,171,238,0.3);
+  }
+  .verify-btn:disabled{
+    opacity:0.4;cursor:not-allowed;transform:none;
+  }
+  .error-msg{
+    color:#ff4444;font-size:13px;margin-top:10px;
+    display:none;
+  }
+  .error-msg.show{display:block}
+  .success-msg{
+    color:#44ff88;font-size:14px;margin-top:12px;
+    display:none;
+  }
+  .success-msg.show{display:block}
+  .lock-footer{
+    margin-top:24px;
+    font-size:11px;color:rgba(255,255,255,0.25);
+  }
+  .spinner{
+    display:inline-block;width:18px;height:18px;
+    border:2px solid rgba(255,255,255,0.3);
+    border-top-color:#fff;border-radius:50%;
+    animation:spin 0.8s linear infinite;
+    vertical-align:middle;margin-left:8px;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
 
-        .mouth {
-            position: absolute;
-            bottom: 30%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 52px;
-            height: 3.5px;
-            border-radius: 2px;
-            background: linear-gradient(90deg, transparent, #ffc840, #e8a020, #ffc840, transparent);
-            box-shadow: 0 0 10px rgba(255, 200, 50, 0.5)
-        }
-
-        .ear {
-            position: absolute;
-            width: 16px;
-            height: 55px;
-            border-radius: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: linear-gradient(180deg, #1a1a1a, #0a0a0a);
-            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.9)
-        }
-        .ear-l {
-            left: -3px
-        }
-        .ear-r {
-            right: -3px
-        }
-
-        .title-area {
-            text-align: center;
-            margin-top: 18px
-        }
-        .t-main {
-            font-size: 50px;
-            font-weight: 900;
-            color: #fff;
-            letter-spacing: 4px;
-            line-height: 1;
-            text-transform: uppercase
-        }
-        .t-sub {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 3px
-        }
-        .t-black {
-            background: linear-gradient(180deg, #ffd600, #f0a000);
-            color: #000;
-            font-size: 24px;
-            font-weight: 900;
-            padding: 1px 12px 3px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            display: inline-block;
-            border-radius: 2px
-        }
-        .t-bot {
-            color: #fff;
-            font-size: 24px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-left: 4px
-        }
-
-        .footer {
-            position: absolute;
-            bottom: 18px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px
-        }
-        .globe {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            border: 1.5px solid rgba(255, 200, 0, 0.55);
-            position: relative;
-            background: radial-gradient(circle, rgba(255, 200, 0, 0.08), transparent)
-        }
-        .globe::before {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            right: 3px;
-            bottom: 3px;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 200, 0, 0.25)
-        }
-        .globe::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border-left: 1px solid rgba(255, 200, 0, 0.25);
-            border-right: 1px solid rgba(255, 200, 0, 0.25)
-        }
-        .url {
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.65);
-            letter-spacing: 2.5px;
-            text-transform: uppercase
-        }
-
-        /* ── toast ── */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            z-index: 200;
-            background: rgba(0, 0, 0, 0.85);
-            border: 1px solid rgba(255, 200, 0, 0.4);
-            color: #fff;
-            padding: 10px 22px;
-            border-radius: 24px;
-            font-size: 13px;
-            letter-spacing: 0.5px;
-            pointer-events: none;
-            transition: transform 0.35s ease;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px)
-        }
-        .toast.show {
-            transform: translateX(-50%) translateY(0)
-        }
-
-        @media (max-width: 600px) {
-            .login-trigger {
-                top: 12px;
-                right: 12px;
-                padding: 5px 10px 5px 8px;
-                gap: 4px;
-                border-radius: 20px
-            }
-            .login-trigger .lt-label {
-                font-size: 10px;
-                letter-spacing: 0.3px
-            }
-            .login-trigger .lt-icon {
-                width: 16px;
-                height: 16px
-            }
-            .user-badge {
-                top: 10px;
-                right: 8px;
-                padding: 4px 10px 4px 4px;
-                gap: 6px
-            }
-            .user-badge .ub-avatar,
-            .user-badge .ub-avatar-placeholder {
-                width: 24px;
-                height: 24px
-            }
-            .user-badge .ub-name {
-                font-size: 11px;
-                max-width: 70px
-            }
-            .user-dropdown {
-                top: 48px;
-                right: 8px;
-                min-width: 140px
-            }
-            .dots-tr {
-                right: 10px;
-                top: 44px;
-                gap: 4px
-            }
-            .dots-tr .dot-w {
-                width: 4px;
-                height: 4px
-            }
-            .t-main {
-                font-size: 32px;
-                letter-spacing: 2px
-            }
-            .t-black,
-            .t-bot {
-                font-size: 17px
-            }
-            .ring-wrap {
-                width: 220px;
-                height: 220px
-            }
-            .ring-svg {
-                width: 220px;
-                height: 220px
-            }
-            .head {
-                width: 150px;
-                height: 150px
-            }
-            .eye {
-                width: 20px;
-                height: 36px;
-                border-radius: 10px
-            }
-            .eye-l {
-                left: 26px
-            }
-            .eye-r {
-                right: 26px
-            }
-            .ear {
-                width: 13px;
-                height: 42px
-            }
-            .mouth {
-                width: 38px;
-                height: 2.8px;
-                bottom: 28%
-            }
-            .modal-card {
-                padding: 28px 16px 20px;
-                border-radius: 16px
-            }
-            .modal-title {
-                font-size: 18px
-            }
-            .modal-subtitle {
-                font-size: 11px
-            }
-        }
-    </style>
+  /* Success overlay */
+  #successOverlay{
+    position:fixed;inset:0;z-index:999;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(4,8,20,0.95);
+    opacity:0;pointer-events:none;
+    transition:opacity 0.5s ease;
+  }
+  #successOverlay.show{opacity:1;pointer-events:all}
+  .success-content{
+    text-align:center;
+    animation:successPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes successPop{
+    from{transform:scale(0.5);opacity:0}
+    to{transform:scale(1);opacity:1}
+  }
+  .check-circle{
+    width:80px;height:80px;border-radius:50%;
+    background:linear-gradient(135deg,#44ff88,#22cc66);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 20px;
+    box-shadow:0 10px 40px rgba(68,255,136,0.3);
+  }
+  .check-circle svg{width:40px;height:40px}
+  .success-text{color:#fff;font-size:22px;font-weight:700}
+  .success-sub{color:rgba(255,255,255,0.5);font-size:14px;margin-top:8px}
+</style>
 </head>
 <body>
-    <div class="scene">
-        <canvas id="c"></canvas>
-        <div class="overlay"></div>
 
-        <div class="top-logo">
-            <div class="bolt">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 10 10-12h-9l1-10z" fill="#ffd000"/></svg>
-            </div>
-            <span>ichancy</span>
-        </div>
+<!-- ===== LOCK SCREEN ===== -->
+<div id="lockScreen">
+  <div class="lock-container">
+    <!-- Step 1: Bot link -->
+    <div id="step1">
+      <div class="lock-icon">
+        <svg viewBox="0 0 24 24" fill="#fff">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.03-1.99 1.27-5.62 3.72-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.88.03-.24.37-.49 1.02-.75 3.98-1.73 6.64-2.87 7.97-3.43 3.8-1.58 4.59-1.86 5.1-1.87.11 0 .37.03.54.17.14.12.18.28.2.45-.01.06.01.24 0 .38z"/>
+        </svg>
+      </div>
+      <div class="lock-title">🔒 الموقع محمي</div>
+      <div class="lock-subtitle">تحتاج إلى تسجيل الدخول عبر بوت تلغرام للوصول إلى الموقع</div>
 
-        <div class="dots-tr" id="dotsTr">
-            <div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div>
-        </div>
-        <div class="dots-bl"><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div></div>
-        <div class="corner-tl"></div>
-        <div class="corner-br"></div>
-        <div class="streak-y1"></div>
-        <div class="streak-y2"></div>
+      <a id="botLink" class="bot-link" href="https://t.me/YOUR_BOT_USERNAME" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.03-1.99 1.27-5.62 3.72-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.88.03-.24.37-.49 1.02-.75 3.98-1.73 6.64-2.87 7.97-3.43 3.8-1.58 4.59-1.86 5.1-1.87.11 0 .37.03.54.17.14.12.18.28.2.45-.01.06.01.24 0 .38z"/>
+        </svg>
+        فتح بوت تلغرام
+      </a>
 
-        <!-- ── login trigger (logged‑out) ── -->
-        <div class="login-trigger" id="loginTrigger" title="Sign in with Telegram">
-            <div class="lt-icon">
-                <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#2AABEE"/><path d="M5.5 11.5c4.2-1.8 7-3 8.4-3.6 4-1.7 4.8-2 5.4-2 .1 0 .4 0 .6.2.2.1.3.3.3.5 0 .1 0 .4-.1.6-.5 2.7-1.6 9.2-2.3 12.2-.3 1.5-.8 2-1.4 2.1-1.2.1-2.1-.8-3.3-1.5-1.8-1.2-2.9-2-4.7-3.2-2.1-1.4-.7-2.1.5-3.4.3-.3 5.5-5 5.6-5.4 0-.1 0-.2-.1-.3-.1-.1-.3 0-.4 0-.2 0-3 1.9-8.5 5.6-.8.5-1.5.8-2.2.8-.7 0-2.1-.4-3.1-.7-1.3-.4-2.3-.7-2.2-1.4 0-.4.6-.8 1.7-1.2z" fill="#fff"/></svg>
-            </div>
-            <span class="lt-label">Login</span>
-        </div>
-
-        <!-- ── user badge (logged‑in) ── -->
-        <div class="user-badge" id="userBadge" title="Account">
-            <div class="ub-avatar-placeholder" id="ubAvatarPH">?</div>
-            <img class="ub-avatar" id="ubAvatar" src="" alt="" style="display:none">
-            <span class="ub-name" id="ubName">User</span>
-        </div>
-
-        <!-- ── user dropdown ── -->
-        <div class="user-dropdown" id="userDropdown">
-            <div class="ud-item" id="udProfile">👤 Profile</div>
-            <div class="ud-divider"></div>
-            <div class="ud-item" id="udLogout">🚪 Logout</div>
-        </div>
-
-        <div class="bot-area">
-            <div class="ring-wrap">
-                <svg class="ring-svg" viewBox="0 0 280 280">
-                    <circle cx="140" cy="140" r="128" fill="none" stroke="rgba(240,192,64,0.12)" stroke-width="1"/>
-                </svg>
-                <div id="rdots"></div>
-                <div class="head">
-                    <div class="ear ear-l"></div>
-                    <div class="ear ear-r"></div>
-                    <div class="eye eye-l"></div>
-                    <div class="eye eye-r"></div>
-                    <div class="mouth"></div>
-                </div>
-            </div>
-            <div class="title-area">
-                <div class="t-main">ICHANCY</div>
-                <div class="t-sub"><span class="t-black">BLACK</span><span class="t-bot">BOT</span></div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <div class="globe"></div>
-            <div class="url">www.ichancy.com</div>
-        </div>
+      <div class="steps">
+        <h3>خطوات التسجيل:</h3>
+        <div class="step"><span class="step-num">1</span> اضغط على زر "فتح بوت تلغرام"</div>
+        <div class="step"><span class="step-num">2</span> أرسل الأمر <strong style="color:#2AABEE;margin:0 4px">/login</strong> للبوت</div>
+        <div class="step"><span class="step-num">3</span> انسخ رمز التحقق المرسل لك</div>
+        <div class="step"><span class="step-num">4</span> أدخل الرمز هنا للدخول</div>
+      </div>
     </div>
 
-    <!-- ── login modal ── -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-card">
-            <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
-            <div class="modal-icon">
-                <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#2AABEE"/><path d="M5.5 11.5c4.2-1.8 7-3 8.4-3.6 4-1.7 4.8-2 5.4-2 .1 0 .4 0 .6.2.2.1.3.3.3.5 0 .1 0 .4-.1.6-.5 2.7-1.6 9.2-2.3 12.2-.3 1.5-.8 2-1.4 2.1-1.2.1-2.1-.8-3.3-1.5-1.8-1.2-2.9-2-4.7-3.2-2.1-1.4-.7-2.1.5-3.4.3-.3 5.5-5 5.6-5.4 0-.1 0-.2-.1-.3-.1-.1-.3 0-.4 0-.2 0-3 1.9-8.5 5.6-.8.5-1.5.8-2.2.8-.7 0-2.1-.4-3.1-.7-1.3-.4-2.3-.7-2.2-1.4 0-.4.6-.8 1.7-1.2z" fill="#fff"/></svg>
-            </div>
-            <div class="modal-title">Sign in with Telegram</div>
-            <div class="modal-subtitle">Use your <strong>Telegram</strong> account to access <strong>ICHANCY BLACK BOT</strong></div>
-            <div class="tg-widget-wrap" id="tgWidgetWrap">
-                <!-- Telegram login widget renders here -->
-                <span class="tg-fallback">Loading Telegram widget…</span>
-            </div>
-            <div class="modal-note">
-                By signing in you agree to our Terms &amp; Privacy Policy.<br>
-                Powered by <a href="https://telegram.org" target="_blank" rel="noopener">Telegram</a>
-            </div>
-        </div>
+    <!-- Step 2: Code verification -->
+    <div id="step2" class="code-section">
+      <div class="lock-icon">
+        <svg viewBox="0 0 24 24" fill="#fff" width="44" height="44">
+          <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+        </svg>
+      </div>
+      <div class="lock-title">أدخل رمز التحقق</div>
+      <div class="lock-subtitle">أدخل الرمز المكون من 6 أرقام الذي أرسله لك البوت</div>
+
+      <div class="code-input-wrap">
+        <input type="text" class="code-input" maxlength="1" data-index="0" inputmode="numeric">
+        <input type="text" class="code-input" maxlength="1" data-index="1" inputmode="numeric">
+        <input type="text" class="code-input" maxlength="1" data-index="2" inputmode="numeric">
+        <input type="text" class="code-input" maxlength="1" data-index="3" inputmode="numeric">
+        <input type="text" class="code-input" maxlength="1" data-index="4" inputmode="numeric">
+        <input type="text" class="code-input" maxlength="1" data-index="5" inputmode="numeric">
+      </div>
+
+      <button class="verify-btn" id="verifyBtn" onclick="verifyCode()">
+        تأكيد الدخول
+      </button>
+      <div class="error-msg" id="errorMsg">رمز التحقق غير صحيح، حاول مرة أخرى</div>
+      <div class="success-msg" id="successMsg">جاري التحقق...</div>
+      <div class="lock-footer">
+        لم تستلم الرمز؟ <a href="https://t.me/YOUR_BOT_USERNAME" target="_blank" style="color:#2AABEE;text-decoration:none">أعد إرسال /login</a>
+      </div>
     </div>
+  </div>
+</div>
 
-    <!-- ── toast ── -->
-    <div class="toast" id="toast"></div>
+<!-- Success Overlay -->
+<div id="successOverlay">
+  <div class="success-content">
+    <div class="check-circle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <div class="success-text">تم التحقق بنجاح!</div>
+    <div class="success-sub">جاري دخولك إلى الموقع...</div>
+  </div>
+</div>
 
-    <!-- ── Telegram widget script ── -->
-    <!--
-    ╔══════════════════════════════════════════════════════════╗
-    ║  SETUP INSTRUCTIONS                                     ║
-    ╠══════════════════════════════════════════════════════════╣
-    ║  1. Create a bot with @BotFather on Telegram            ║
-    ║  2. Use /setdomain to set your bot's domain             ║
-    ║     e.g. ichancy.com                                    ║
-    ║  3. Replace YOUR_BOT_USERNAME below with your bot's     ║
-    ║     username (without the @)                            ║
-    ║  4. Deploy this page on your verified domain (HTTPS)    ║
-    ║  5. For server-side auth verification, implement the    ║
-    ║     hash check using your bot token                     ║
-    ╚══════════════════════════════════════════════════════════╝
-    -->
-    <script async src="https://telegram.org/js/telegram-widget.js?22"></script>
+<!-- ===== MAIN SITE ===== -->
+<div class="scene" id="mainSite">
+  <canvas id="c"></canvas>
+  <div class="overlay"></div>
 
-    <script>
-        // ──────────── CONFIGURATION ────────────
-        // ★ Replace this with your actual bot username (without @)
-        const TELEGRAM_BOT_USERNAME = 'YOUR_BOT_USERNAME';
+  <div class="top-logo">
+    <div class="bolt">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 10 10-12h-9l1-10z" fill="#ffd000"/></svg>
+    </div>
+    <span>ichancy</span>
+  </div>
 
-        // ──────────── CANVAS BACKGROUND ────────────
-        const C = document.getElementById('c'),
-            X = C.getContext('2d');
-        let W, H;
+  <div class="dots-tr"><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div></div>
+  <div class="dots-bl"><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div></div>
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+  <div class="streak-y1"></div>
+  <div class="streak-y2"></div>
 
-        function resize() { W = C.width = window.innerWidth;
-            H = C.height = window.innerHeight;
-            draw(); }
+  <div class="bot-area">
+    <div class="ring-wrap">
+      <svg class="ring-svg" viewBox="0 0 280 280">
+        <circle cx="140" cy="140" r="128" fill="none" stroke="rgba(240,192,64,0.12)" stroke-width="1"/>
+      </svg>
+      <div id="rdots"></div>
+      <div class="head">
+        <div class="ear ear-l"></div>
+        <div class="ear ear-r"></div>
+        <div class="eye eye-l"></div>
+        <div class="eye eye-r"></div>
+        <div class="mouth"></div>
+      </div>
+    </div>
+    <div class="title-area">
+      <div class="t-main">ICHANCY</div>
+      <div class="t-sub"><span class="t-black">BLACK</span><span class="t-bot">BOT</span></div>
+    </div>
+  </div>
 
-        function draw() {
-            X.fillStyle = '#060e1f';
-            X.fillRect(0, 0, W, H);
-            const cx = W / 2,
-                cy = H / 2;
-            let g = X.createRadialGradient(cx, cy * 0.85, 0, cx, cy * 0.85, W * 0.55);
-            g.addColorStop(0, 'rgba(0,100,220,0.1)');
-            g.addColorStop(0.4, 'rgba(0,70,180,0.04)');
-            g.addColorStop(1, 'transparent');
-            X.fillStyle = g;
-            X.fillRect(0, 0, W, H);
+  <div class="footer">
+    <div class="globe"></div>
+    <div class="url">www.ichancy.com</div>
+  </div>
+</div>
 
-            g = X.createRadialGradient(cx, 0, 0, cx, 0, H * 0.5);
-            g.addColorStop(0, 'rgba(20,120,240,0.1)');
-            g.addColorStop(1, 'transparent');
-            X.fillStyle = g;
-            X.fillRect(0, 0, W, H);
+<script>
+// ============ CONFIGURATION ============
+// ضع هنا توكن بوت تلغرام الخاص بك
+const BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';
+// ضع هنا يوزرنيم البوت الخاص بك
+const BOT_USERNAME = 'YOUR_BOT_USERNAME';
 
-            X.save();
-            X.globalAlpha = 0.04;
-            X.fillStyle = '#0080e0';
-            X.fillRect(cx - 80, 0, 1.5, H * 0.45);
-            X.fillRect(cx + 80, 0, 1, H * 0.4);
-            X.fillRect(cx - 150, H * 0.15, 1, H * 0.55);
-            X.fillRect(cx + 150, H * 0.1, 1, H * 0.6);
-            X.globalAlpha = 1;
-            X.restore();
+// تحديث رابط البوت ديناميكياً
+document.getElementById('botLink').href = 'https://t.me/' + BOT_USERNAME;
+document.querySelectorAll('.lock-footer a').forEach(a => {
+  if(a.href) a.href = 'https://t.me/' + BOT_USERNAME;
+});
 
-            X.save();
-            X.beginPath();
-            X.moveTo(W * 0.02, 0);
-            X.lineTo(W * 0.32, H * 0.12);
-            X.lineTo(W * 0.28, H * 0.65);
-            X.lineTo(0, H * 0.48);
-            X.closePath();
-            let lg = X.createLinearGradient(W * 0.1, 0, W * 0.2, H * 0.4);
-            lg.addColorStop(0, 'rgba(0,110,230,0.07)');
-            lg.addColorStop(1, 'rgba(0,80,190,0.01)');
-            X.fillStyle = lg;
-            X.fill();
-            X.restore();
+// ============ GENERATED CODES (Server-side should handle this) ============
+// في التطبيق الحقيقي، يتم إنشاء الرموز عبر خادم البوت
+let generatedCodes = {};
+let currentUserId = null;
 
-            X.save();
-            X.beginPath();
-            X.moveTo(W * 0.98, 0);
-            X.lineTo(W * 0.68, H * 0.12);
-            X.lineTo(W * 0.72, H * 0.65);
-            X.lineTo(W, H * 0.48);
-            X.closePath();
-            lg = X.createLinearGradient(W * 0.9, 0, W * 0.8, H * 0.4);
-            lg.addColorStop(0, 'rgba(0,110,230,0.06)');
-            lg.addColorStop(1, 'rgba(0,80,190,0.01)');
-            X.fillStyle = lg;
-            X.fill();
-            X.restore();
+// ============ TELEGRAM BOT API ============
+async function sendToBot(method, params) {
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(params)
+    });
+    return await response.json();
+  } catch(e) {
+    console.error('Bot API error:', e);
+    return null;
+  }
+}
 
-            X.save();
-            X.beginPath();
-            X.moveTo(0, H);
-            X.lineTo(W * 0.12, H * 0.65);
-            X.lineTo(W * 0.18, H);
-            X.closePath();
-            X.fillStyle = 'rgba(0,80,180,0.04)';
-            X.fill();
-            X.restore();
-            X.save();
-            X.beginPath();
-            X.moveTo(W, H);
-            X.lineTo(W * 0.88, H * 0.65);
-            X.lineTo(W * 0.82, H);
-            X.closePath();
-            X.fillStyle = 'rgba(0,80,180,0.04)';
-            X.fill();
-            X.restore();
+// Generate random 6-digit code
+function generateCode() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
-            g = X.createRadialGradient(W * 0.92, H * 0.08, 0, W * 0.92, H * 0.08, W * 0.22);
-            g.addColorStop(0, 'rgba(255,200,0,0.05)');
-            g.addColorStop(1, 'transparent');
-            X.fillStyle = g;
-            X.fillRect(0, 0, W, H);
+// Check if code matches any generated code
+function isValidCode(code) {
+  const now = Date.now();
+  for (const userId in generatedCodes) {
+    const data = generatedCodes[userId];
+    if (data.code === code && (now - data.timestamp) < 300000) { // 5 min expiry
+      currentUserId = userId;
+      delete generatedCodes[userId];
+      return true;
+    }
+  }
+  return false;
+}
 
-            g = X.createRadialGradient(W * 0.08, H * 0.92, 0, W * 0.08, H * 0.92, W * 0.18);
-            g.addColorStop(0, 'rgba(255,200,0,0.04)');
-            g.addColorStop(1, 'transparent');
-            X.fillStyle = g;
-            X.fillRect(0, 0, W, H);
+// ============ UI LOGIC ============
+const lockScreen = document.getElementById('lockScreen');
+const step1 = document.getElementById('step1');
+const step2 = document.getElementById('step2');
+const successOverlay = document.getElementById('successOverlay');
+const codeInputs = document.querySelectorAll('.code-input');
+const verifyBtn = document.getElementById('verifyBtn');
+const errorMsg = document.getElementById('errorMsg');
+const successMsg = document.getElementById('successMsg');
 
-            g = X.createRadialGradient(cx, H, 0, cx, H, H * 0.35);
-            g.addColorStop(0, 'rgba(15,60,150,0.06)');
-            g.addColorStop(1, 'transparent');
-            X.fillStyle = g;
-            X.fillRect(0, 0, W, H);
+// Show verification step after delay (simulating user opened bot)
+// In production, the bot would call a webhook to show this step
+function showVerificationStep() {
+  step1.style.display = 'none';
+  step2.classList.add('active');
+  codeInputs[0].focus();
+}
+
+// Allow manual switch to verification (for demo)
+// User can press Ctrl+Shift+V to go to verification step
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === 'V') {
+    showVerificationStep();
+  }
+});
+
+// Also show a subtle "Proceed to verification" button after 3 seconds
+setTimeout(() => {
+  if (step1.style.display !== 'none') {
+    const proceedBtn = document.createElement('button');
+    proceedBtn.className = 'bot-link';
+    proceedBtn.style.cssText = 'background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);font-size:13px;padding:10px 20px;margin-top:8px;';
+    proceedBtn.innerHTML = '⌨️ أدخل رمز التحقق';
+    proceedBtn.onclick = showVerificationStep;
+    step1.appendChild(proceedBtn);
+  }
+}, 3000);
+
+// Code input auto-focus
+codeInputs.forEach((input, index) => {
+  input.addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+    if (this.value && index < 5) {
+      codeInputs[index + 1].focus();
+    }
+    if (index === 5 && this.value) {
+      // Auto verify when last digit entered
+      verifyCode();
+    }
+  });
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace' && !this.value && index > 0) {
+      codeInputs[index - 1].focus();
+      codeInputs[index - 1].value = '';
+    }
+    if (e.key === 'Enter') {
+      verifyCode();
+    }
+  });
+
+  input.addEventListener('paste', function(e) {
+    e.preventDefault();
+    const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+    if (paste.length >= 6) {
+      codeInputs.forEach((inp, i) => {
+        inp.value = paste[i] || '';
+      });
+      codeInputs[5].focus();
+      setTimeout(verifyCode, 100);
+    }
+  });
+});
+
+async function verifyCode() {
+  let code = '';
+  codeInputs.forEach(inp => code += inp.value);
+
+  if (code.length !== 6) {
+    codeInputs.forEach(inp => inp.classList.add('error'));
+    setTimeout(() => codeInputs.forEach(inp => inp.classList.remove('error')), 500);
+    errorMsg.textContent = 'أدخل الرمز كاملاً (6 أرقام)';
+    errorMsg.classList.add('show');
+    return;
+  }
+
+  errorMsg.classList.remove('show');
+  successMsg.classList.add('show');
+  successMsg.innerHTML = '<span class="spinner"></span> جاري التحقق...';
+  verifyBtn.disabled = true;
+
+  // Try to verify via Bot API first
+  const botResult = await verifyViaBotAPI(code);
+
+  if (botResult) {
+    unlockSite();
+    return;
+  }
+
+  // Fallback: check local codes (for demo)
+  // In production, only use Bot API verification
+  setTimeout(() => {
+    // Demo mode: accept any 6-digit code
+    // Remove this in production and only use Bot API
+    if (code.length === 6) {
+      unlockSite();
+    } else {
+      successMsg.classList.remove('show');
+      errorMsg.textContent = 'رمز التحقق غير صحيح، حاول مرة أخرى';
+      errorMsg.classList.add('show');
+      verifyBtn.disabled = false;
+      codeInputs.forEach(inp => {
+        inp.classList.add('error');
+        inp.value = '';
+      });
+      codeInputs[0].focus();
+      setTimeout(() => codeInputs.forEach(inp => inp.classList.remove('error')), 500);
+    }
+  }, 1500);
+}
+
+async function verifyViaBotAPI(code) {
+  if (BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE') return false;
+
+  try {
+    // Check updates for the code
+    const updates = await sendToBot('getUpdates', {
+      offset: 0,
+      limit: 100,
+      timeout: 1
+    });
+
+    if (!updates || !updates.ok) return false;
+
+    for (const update of updates.result) {
+      if (update.message && update.message.text) {
+        const msgText = update.message.text.trim();
+        if (msgText === code || msgText.includes(code)) {
+          // Delete the message for security
+          sendToBot('deleteMessage', {
+            chat_id: update.message.chat.id,
+            message_id: update.message.message_id
+          });
+          return true;
         }
-        window.addEventListener('resize', resize);
-        resize();
+      }
+    }
+  } catch(e) {}
+  return false;
+}
 
-        // ──────────── RING DOTS ────────────
-        const rd = document.getElementById('rdots');
-        const R = 128,
-            n = 16;
-        for (let i = 0; i < n; i++) {
-            const a = (i / n) * Math.PI * 2 - Math.PI / 2;
-            const d = document.createElement('div');
-            const big = i % 4 === 0;
-            d.className = 'ring-dot ' + (big ? 'rd-glow' : 'rd-sm');
-            d.style.transform = `translate(calc(-50% + ${Math.cos(a)*R}px), calc(-50% + ${Math.sin(a)*R}px))`;
-            if (big) { d.style.width = '14px';
-                d.style.height = '14px' }
-            rd.appendChild(d);
-        }
+function unlockSite() {
+  successMsg.innerHTML = '✅ تم التحقق بنجاح!';
+  successMsg.style.color = '#44ff88';
 
-        // ──────────── HEAD ANIMATION ────────────
-        const head = document.querySelector('.head');
-        let f = 0;
+  setTimeout(() => {
+    successOverlay.classList.add('show');
+  }, 300);
 
-        function anim() { f++;
-            head.style.transform = `translateY(${Math.sin(f*0.018)*3}px)`;
-            requestAnimationFrame(anim); }
-        anim();
+  setTimeout(() => {
+    lockScreen.classList.add('unlocked');
+    successOverlay.style.opacity = '0';
+    successOverlay.style.pointerEvents = 'none';
+  }, 1200);
 
-        // ──────────── TELEGRAM LOGIN WIDGET ────────────
-        const tgWidgetWrap = document.getElementById('tgWidgetWrap');
+  setTimeout(() => {
+    lockScreen.style.display = 'none';
+    successOverlay.style.display = 'none';
+  }, 2200);
+}
 
-        function renderTelegramWidget() {
-            // Clear previous content
-            tgWidgetWrap.innerHTML = '';
+// ============ BACKGROUND CANVAS ============
+const C = document.getElementById('c');
+const X = C.getContext('2d');
+let W, H;
 
-            if (TELEGRAM_BOT_USERNAME === 'YOUR_BOT_USERNAME') {
-                // Placeholder – show a styled demo button
-                const demoBtn = document.createElement('div');
-                demoBtn.style.cssText = `
-                    display:inline-flex;align-items:center;gap:10px;
-                    padding:12px 24px;border-radius:10px;
-                    background:#2AABEE;color:#fff;font-weight:600;
-                    font-size:15px;cursor:pointer;letter-spacing:0.5px;
-                    transition:all 0.25s ease;font-family:'Segoe UI',Arial,sans-serif;
-                    box-shadow:0 4px 16px rgba(42,171,238,0.35);
-                `;
-                demoBtn.innerHTML = '🔵 Login with Telegram';
-                demoBtn.title = 'Set your bot username in the code to enable the real widget';
-                demoBtn.addEventListener('mouseenter', () => {
-                    demoBtn.style.transform = 'scale(1.03)';
-                    demoBtn.style.boxShadow = '0 6px 22px rgba(42,171,238,0.5)';
-                });
-                demoBtn.addEventListener('mouseleave', () => {
-                    demoBtn.style.transform = 'scale(1)';
-                    demoBtn.style.boxShadow = '0 4px 16px rgba(42,171,238,0.35)';
-                });
-                demoBtn.addEventListener('click', () => {
-                    showToast('⚠️ Set your bot username in the code (TELEGRAM_BOT_USERNAME)');
-                });
-                tgWidgetWrap.appendChild(demoBtn);
-                return;
-            }
+function resize() {
+  W = C.width = window.innerWidth;
+  H = C.height = window.innerHeight;
+  draw();
+}
 
-            // Create the real Telegram widget element
-            const widgetEl = document.createElement('script');
-            widgetEl.async = true;
-            widgetEl.src = 'https://telegram.org/js/telegram-widget.js?22';
-            widgetEl.setAttribute('data-telegram-login', TELEGRAM_BOT_USERNAME);
-            widgetEl.setAttribute('data-size', 'large');
-            widgetEl.setAttribute('data-radius', '10');
-            widgetEl.setAttribute('data-request-access', 'write');
-            widgetEl.setAttribute('data-userpic', 'true');
-            widgetEl.setAttribute('data-onauth', 'onTelegramAuth(user)');
-            widgetEl.setAttribute('data-lang', 'en');
+function draw() {
+  X.fillStyle = '#060e1f';
+  X.fillRect(0, 0, W, H);
+  const cx = W / 2, cy = H / 2;
 
-            // The widget script self-executes when appended
-            tgWidgetWrap.appendChild(widgetEl);
+  let g = X.createRadialGradient(cx, cy * 0.85, 0, cx, cy * 0.85, W * 0.55);
+  g.addColorStop(0, 'rgba(0,100,220,0.1)');
+  g.addColorStop(0.4, 'rgba(0,70,180,0.04)');
+  g.addColorStop(1, 'transparent');
+  X.fillStyle = g;
+  X.fillRect(0, 0, W, H);
 
-            // Also add a fallback text in case the script fails
-            const fallback = document.createElement('span');
-            fallback.className = 'tg-fallback';
-            fallback.textContent = 'Widget loading…';
-            fallback.style.cssText = 'color:rgba(255,255,255,0.4);font-size:12px;letter-spacing:0.5px;';
-            tgWidgetWrap.appendChild(fallback);
+  g = X.createRadialGradient(cx, 0, 0, cx, 0, H * 0.5);
+  g.addColorStop(0, 'rgba(20,120,240,0.1)');
+  g.addColorStop(1, 'transparent');
+  X.fillStyle = g;
+  X.fillRect(0, 0, W, H);
 
-            // Remove fallback after a few seconds if widget rendered
-            setTimeout(() => {
-                if (tgWidgetWrap.querySelector('.tg-fallback') &&
-                    tgWidgetWrap.querySelector('iframe')) {
-                    const fb = tgWidgetWrap.querySelector('.tg-fallback');
-                    if (fb) fb.remove();
-                }
-            }, 4000);
-        }
+  X.save();
+  X.globalAlpha = 0.04;
+  X.fillStyle = '#0080e0';
+  X.fillRect(cx - 80, 0, 1.5, H * 0.45);
+  X.fillRect(cx + 80, 0, 1, H * 0.4);
+  X.fillRect(cx - 150, H * 0.15, 1, H * 0.55);
+  X.fillRect(cx + 150, H * 0.1, 1, H * 0.6);
+  X.globalAlpha = 1;
+  X.restore();
 
-        // Initial render
-        renderTelegramWidget();
+  X.save();
+  X.beginPath();
+  X.moveTo(W * 0.02, 0); X.lineTo(W * 0.32, H * 0.12);
+  X.lineTo(W * 0.28, H * 0.65); X.lineTo(0, H * 0.48); X.closePath();
+  let lg = X.createLinearGradient(W * 0.1, 0, W * 0.2, H * 0.4);
+  lg.addColorStop(0, 'rgba(0,110,230,0.07)');
+  lg.addColorStop(1, 'rgba(0,80,190,0.01)');
+  X.fillStyle = lg;
+  X.fill();
+  X.restore();
 
-        // ──────────── MODAL LOGIC ────────────
-        const modalOverlay = document.getElementById('modalOverlay');
-        const modalClose = document.getElementById('modalClose');
-        const loginTrigger = document.getElementById('loginTrigger');
+  X.save();
+  X.beginPath();
+  X.moveTo(W * 0.98, 0); X.lineTo(W * 0.68, H * 0.12);
+  X.lineTo(W * 0.72, H * 0.65); X.lineTo(W, H * 0.48); X.closePath();
+  lg = X.createLinearGradient(W * 0.9, 0, W * 0.8, H * 0.4);
+  lg.addColorStop(0, 'rgba(0,110,230,0.06)');
+  lg.addColorStop(1, 'rgba(0,80,190,0.01)');
+  X.fillStyle = lg;
+  X.fill();
+  X.restore();
 
-        function openModal() {
-            modalOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            // Re-render widget in case it needs a refresh
-            if (TELEGRAM_BOT_USERNAME !== 'YOUR_BOT_USERNAME' && !tgWidgetWrap.querySelector('iframe') && !tgWidgetWrap
-                .querySelector('script')) {
-                renderTelegramWidget();
-            }
-        }
+  X.save();
+  X.beginPath(); X.moveTo(0, H); X.lineTo(W * 0.12, H * 0.65); X.lineTo(W * 0.18, H); X.closePath();
+  X.fillStyle = 'rgba(0,80,180,0.04)'; X.fill(); X.restore();
+  X.save();
+  X.beginPath(); X.moveTo(W, H); X.lineTo(W * 0.88, H * 0.65); X.lineTo(W * 0.82, H); X.closePath();
+  X.fillStyle = 'rgba(0,80,180,0.04)'; X.fill(); X.restore();
 
-        function closeModal() {
-            modalOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
+  g = X.createRadialGradient(W * 0.92, H * 0.08, 0, W * 0.92, H * 0.08, W * 0.22);
+  g.addColorStop(0, 'rgba(255,200,0,0.05)');
+  g.addColorStop(1, 'transparent');
+  X.fillStyle = g;
+  X.fillRect(0, 0, W, H);
 
-        loginTrigger.addEventListener('click', openModal);
-        modalClose.addEventListener('click', closeModal);
-        modalOverlay.addEventListener('click', function(e) {
-            if (e.target === modalOverlay) closeModal();
-        });
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal();
-        });
+  g = X.createRadialGradient(W * 0.08, H * 0.92, 0, W * 0.08, H * 0.92, W * 0.18);
+  g.addColorStop(0, 'rgba(255,200,0,0.04)');
+  g.addColorStop(1, 'transparent');
+  X.fillStyle = g;
+  X.fillRect(0, 0, W, H);
 
-        // ──────────── AUTH CALLBACK ────────────
-        // This function is called by the Telegram widget after successful login
-        window.onTelegramAuth = function(user) {
-            console.log('Telegram auth successful:', user);
+  g = X.createRadialGradient(cx, H, 0, cx, H, H * 0.35);
+  g.addColorStop(0, 'rgba(15,60,150,0.06)');
+  g.addColorStop(1, 'transparent');
+  X.fillStyle = g;
+  X.fillRect(0, 0, W, H);
+}
 
-            // Store user data in localStorage
-            const userData = {
-                id: user.id,
-                first_name: user.first_name,
-                last_name: user.last_name || '',
-                username: user.username || '',
-                photo_url: user.photo_url || '',
-                auth_date: user.auth_date,
-                hash: user.hash
-            };
-            localStorage.setItem('ichancy_tg_user', JSON.stringify(userData));
+window.addEventListener('resize', resize);
+resize();
 
-            // Close modal
-            closeModal();
+// Ring dots
+const rd = document.getElementById('rdots');
+const R = 128, n = 16;
+for (let i = 0; i < n; i++) {
+  const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+  const d = document.createElement('div');
+  const big = i % 4 === 0;
+  d.className = 'ring-dot ' + (big ? 'rd-glow' : 'rd-sm');
+  d.style.transform = `translate(calc(-50% + ${Math.cos(a) * R}px), calc(-50% + ${Math.sin(a) * R}px))`;
+  if (big) { d.style.width = '14px'; d.style.height = '14px'; }
+  rd.appendChild(d);
+}
 
-            // Update UI
-            updateUIForLoggedInUser(userData);
-
-            // Show welcome toast
-            showToast('✅ Welcome, ' + userData.first_name + '!');
-
-            // ★ IMPORTANT: For production, send the user data to your server
-            // and verify the hash using your bot token before trusting the login.
-            // See: https://core.telegram.org/widgets/login#checking-authorization
-            verifyOnServer(userData);
-        };
-
-        // Placeholder for server-side verification
-        function verifyOnServer(userData) {
-            // In production, POST userData to your backend endpoint
-            // Your backend should verify the hash using your bot token
-            // Example: fetch('/api/telegram-auth', {method:'POST', body:JSON.stringify(userData)})
-            console.log('🔐 Server-side verification should be implemented. Data:', userData);
-        }
-
-        // ──────────── UI STATE MANAGEMENT ────────────
-        const userBadge = document.getElementById('userBadge');
-        const ubAvatar = document.getElementById('ubAvatar');
-        const ubAvatarPH = document.getElementById('ubAvatarPH');
-        const ubName = document.getElementById('ubName');
-        const userDropdown = document.getElementById('userDropdown');
-        const dotsTr = document.getElementById('dotsTr');
-
-        function updateUIForLoggedInUser(userData) {
-            loginTrigger.style.display = 'none';
-            userBadge.style.display = 'flex';
-            ubName.textContent = userData.first_name || 'User';
-
-            if (userData.photo_url) {
-                ubAvatar.src = userData.photo_url;
-                ubAvatar.style.display = 'block';
-                ubAvatarPH.style.display = 'none';
-            } else {
-                ubAvatar.style.display = 'none';
-                ubAvatarPH.style.display = 'flex';
-                ubAvatarPH.textContent = (userData.first_name || 'U').charAt(0).toUpperCase();
-            }
-
-            // Adjust dots position since user badge takes space
-            dotsTr.style.right = '140px';
-        }
-
-        function updateUIForLoggedOut() {
-            loginTrigger.style.display = 'flex';
-            userBadge.style.display = 'none';
-            userDropdown.classList.remove('show');
-            dotsTr.style.right = '32px';
-            ubAvatar.src = '';
-            ubAvatar.style.display = 'none';
-            ubAvatarPH.style.display = 'flex';
-            ubAvatarPH.textContent = '?';
-            ubName.textContent = 'User';
-        }
-
-        // Check for existing session on load
-        function checkExistingSession() {
-            const stored = localStorage.getItem('ichancy_tg_user');
-            if (stored) {
-                try {
-                    const userData = JSON.parse(stored);
-                    // Basic validation
-                    if (userData.id && userData.first_name) {
-                        updateUIForLoggedInUser(userData);
-                        return true;
-                    }
-                } catch (e) {
-                    localStorage.removeItem('ichancy_tg_user');
-                }
-            }
-            return false;
-        }
-
-        checkExistingSession();
-
-        // ──────────── USER BADGE & DROPDOWN ────────────
-        userBadge.addEventListener('click', function(e) {
-            e.stopPropagation();
-            userDropdown.classList.toggle('show');
-        });
-
-        document.addEventListener('click', function(e) {
-            if (!userBadge.contains(e.target) && !userDropdown.contains(e.target)) {
-                userDropdown.classList.remove('show');
-            }
-        });
-
-        // Profile click
-        document.getElementById('udProfile').addEventListener('click', function() {
-            userDropdown.classList.remove('show');
-            const stored = localStorage.getItem('ichancy_tg_user');
-            if (stored) {
-                try {
-                    const u = JSON.parse(stored);
-                    const info = [
-                        '👤 Name: ' + u.first_name + (u.last_name ? ' ' + u.last_name : ''),
-                        '📛 Username: ' + (u.username ? '@' + u.username : 'N/A'),
-                        '🆔 ID: ' + u.id,
-                        '📅 Auth: ' + new Date(u.auth_date * 1000).toLocaleDateString()
-                    ].join('\n');
-                    alert('🔐 Logged in via Telegram\n\n' + info);
-                } catch (e) {
-                    showToast('⚠️ Session data corrupted');
-                }
-            }
-        });
-
-        // Logout click
-        document.getElementById('udLogout').addEventListener('click', function() {
-            userDropdown.classList.remove('show');
-            localStorage.removeItem('ichancy_tg_user');
-            updateUIForLoggedOut();
-            showToast('👋 Logged out successfully');
-        });
-
-        // ──────────── TOAST ────────────
-        const toast = document.getElementById('toast');
-        let toastTimer;
-
-        function showToast(msg) {
-            clearTimeout(toastTimer);
-            toast.textContent = msg;
-            toast.classList.add('show');
-            toastTimer = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2800);
-        }
-
-        // ──────────── INIT ────────────
-        console.log('%c🤖 ICHANCY BLACK BOT %cReady',
-            'color:#ffd000;font-size:18px;font-weight:bold;',
-            'color:#fff;');
-        console.log('%c🔑 Telegram Login %c' + (TELEGRAM_BOT_USERNAME === 'YOUR_BOT_USERNAME' ?
-                '⚠️ Bot username not set – using demo mode' : '✅ Configured for @' + TELEGRAM_BOT_USERNAME),
-            'color:#2AABEE;', 'color:#aaa;');
-        if (TELEGRAM_BOT_USERNAME === 'YOUR_BOT_USERNAME') {
-            console.log('%c📋 Setup: %c1. Create bot with @BotFather %c| %c2. Set domain with /setdomain %c| %c3. Update TELEGRAM_BOT_USERNAME in code',
-                'color:#ffd000;', 'color:#fff;', 'color:#ffd000;', 'color:#fff;', 'color:#ffd000;', 'color:#fff;');
-        }
-    </script>
+// Head animation
+const head = document.querySelector('.head');
+let frame = 0;
+function anim() {
+  frame++;
+  head.style.transform = `translateY(${Math.sin(frame * 0.018) * 3}px)`;
+  requestAnimationFrame(anim);
+}
+anim();
+</script>
 </body>
 </html>
+
