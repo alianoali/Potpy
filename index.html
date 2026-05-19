@@ -196,7 +196,7 @@
 <div class="outside-warning" id="outsideWarning">
   <div class="icon">🔒</div>
   <h2>افتح من بوت تلغرام</h2>
-  <p>هذا التطبيق يعمل حصرياً من خلال بوت تلغرام. يرجى فتح الرابط من داخل محادثة البوت.</p>
+  <p>هذا التطبيق يعمل حصرياً من خلال زر "تطبيق الويب" في بوت تلغرام. تأكد من أن الرابط HTTPS وأنك تستخدم الزر المخصص داخل المحادثة.</p>
 </div>
 
 <!-- ملف المستخدم (يظهر بعد الدخول التلقائي) -->
@@ -273,7 +273,7 @@ let f=0;
 function anim(){f++;head.style.transform=`translateY(${Math.sin(f*0.018)*3}px)`;requestAnimationFrame(anim)}
 anim();
 
-// ========== 4. نظام التوثيق التلقائي عبر Telegram Web App ==========
+// ========== 4. نظام التوثيق التلقائي عبر Telegram Web App (محسّن) ==========
 const STORAGE_KEY = 'ichancy_tg_user';
 const scene = document.getElementById('mainScene');
 const profile = document.getElementById('userProfile');
@@ -281,17 +281,11 @@ const outsideWarning = document.getElementById('outsideWarning');
 
 // دالة لعرض واجهة المستخدم بعد التأكد من البيانات
 function showUserUI(user) {
-  // إزالة الضبابية
   scene.classList.add('unlocked');
-  // إظهار الشارة
   profile.style.display = 'flex';
-  
-  // تحديث الشارة
   document.getElementById('badgeName').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
   document.getElementById('badgeId').textContent = '@' + (user.username || 'no_username');
   document.getElementById('badgeImg').src = user.photo_url || '';
-  
-  // تحديث المودال
   document.getElementById('modalName').textContent = (user.first_name || '') + ' ' + (user.last_name || '');
   document.getElementById('modalUsername').textContent = '@' + (user.username || 'no_username');
   document.getElementById('modalId').textContent = user.id;
@@ -306,51 +300,47 @@ function handleUser(userData) {
   showUserUI(userData);
 }
 
-// دالة الخروج (مسح البيانات وإعادة التحميل)
+// دالة الخروج
 function logout() {
   localStorage.removeItem(STORAGE_KEY);
-  // إعادة التحميل؛ إذا كان لا يزال في تلغرام سيتم اكتشافه تلقائياً
   location.reload();
 }
 
-// التحقق من بيئة Telegram Web App
-function initTelegramAuth() {
-  // التأكد من أن الكود يعمل داخل WebView الخاص بتلغرام
-  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
+// محاولة الكشف عن بيئة تلغرام مع إعادة محاولة
+function initTelegramAuth(attempt = 0) {
+  // التحقق من وجود كائن Telegram (يُحقن فقط داخل WebView في تلغرام)
+  if (window.Telegram && window.Telegram.WebApp) {
     const tg = window.Telegram.WebApp;
-    
-    // إبلاغ تلغرام بأن التطبيق جاهز
-    tg.ready();
-    
-    // جلب بيانات المستخدم مباشرة (موثوقة فقط لو تم التحقق من hash على الخادم؛ لكن للعرض نحن نثق)
-    const user = tg.initDataUnsafe.user;
-    
-    if (user && user.id) {
-      // إخفاء شاشة "خارج تلغرام"
+    try {
+      tg.ready(); // إعلام تلغرام أن التطبيق جاهز
+    } catch(e) {}
+
+    // الوصول إلى بيانات المستخدم
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
       outsideWarning.classList.add('hidden');
-      handleUser(user);
-    } else {
-      // لا توجد بيانات مستخدم (نادر)
-      console.warn('No user data in Telegram WebApp');
-      outsideWarning.classList.remove('hidden');
+      handleUser(tg.initDataUnsafe.user);
+      return;
     }
+  }
+  
+  // إن لم تنجح المحاولة، ربما لم يُحقن الكائن بعد
+  if (attempt < 3) {
+    // إعادة المحاولة بعد 300 مللي ثانية
+    setTimeout(() => initTelegramAuth(attempt + 1), 300);
   } else {
-    // لم يتم فتح التطبيق من داخل تلغرام
-    outsideWarning.classList.remove('hidden');
-    
-    // من الممكن أن نحاول استخدام بيانات سابقة إذا كان قد سجل دخول مسبقاً في نفس الجلسة؟
-    // لكن حسب المتطلبات، الدخول يكون تلقائي وفقط من تلغرام، لذا نعرض التحذير.
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      // إذا كان قد دخل سابقاً وقمنا بتخزينه؛ يمكن أن نسمح له مؤقتاً لكن هذا غير آمن.
-      // الأفضل عدم السماح خارج تلغرام.
-      // سنبقي التحذير ظاهراً ولن نظهر واجهة التطبيق.
+    // بعد 3 محاولات: إظهار التحذير
+    if (!window.Telegram && location.protocol !== 'https:') {
+      // رسالة خاصة لـ HTTP
+      outsideWarning.querySelector('p').textContent = 'يجب أن يكون الموقع HTTPS ليعمل تطبيق الويب من تلغرام. يرجى رفعه على استضافة آمنة.';
+    } else {
+      outsideWarning.querySelector('p').textContent = 'افتح التطبيق من زر "تطبيق الويب" داخل بوت تلغرام، وتأكد أنك تستخدم HTTPS.';
     }
+    outsideWarning.classList.remove('hidden');
   }
 }
 
 // عند تحميل الصفحة
-window.addEventListener('DOMContentLoaded', initTelegramAuth);
+window.addEventListener('DOMContentLoaded', () => initTelegramAuth(0));
 
 // دوال المودال
 function openModal() {
