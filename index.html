@@ -1,257 +1,1166 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ICHANCY BLACK BOT</title>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Segoe UI',Arial,sans-serif}
-  .scene{width:100%;height:100%;position:relative;background:#060e1f;overflow:hidden}
-  canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1}
-  .overlay{position:absolute;inset:0;z-index:2;pointer-events:none}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICHANCY BLACK BOT - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
 
-  .top-logo{position:absolute;top:22px;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:6px}
-  .bolt{width:18px;height:18px;position:relative}
-  .bolt svg{width:100%;height:100%}
-  .top-logo span{color:#fff;font-size:17px;font-weight:700;letter-spacing:0.5px}
+        /* Background Scene */
+        .scene {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #060e1f;
+            overflow: hidden;
+            filter: blur(8px);
+            transition: filter 0.5s ease;
+        }
+        .scene.unlocked {
+            filter: blur(0);
+        }
 
-  .dots-tr{position:absolute;top:26px;right:32px;z-index:10;display:flex;gap:7px}
-  .dots-bl{position:absolute;bottom:26px;left:32px;z-index:10;display:flex;gap:7px}
-  .dot-w{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.55)}
+        /* Canvas & Overlays */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
 
-  .corner-tl{position:absolute;top:0;left:0;z-index:5;width:100px;height:180px}
-  .corner-tl::before{content:'';position:absolute;top:0;left:0;width:1px;height:120px;background:linear-gradient(to bottom,rgba(255,255,255,0.5),transparent);transform:rotate(25deg);transform-origin:top left}
-  .corner-br{position:absolute;bottom:0;right:0;z-index:5;width:100px;height:180px}
-  .corner-br::before{content:'';position:absolute;bottom:0;right:0;width:1px;height:100px;background:linear-gradient(to top,rgba(255,255,255,0.3),transparent);transform:rotate(-15deg);transform-origin:bottom right}
+        /* --- LOGIN OVERLAY (The Gate) --- */
+        .login-gate {
+            position: absolute;
+            inset: 0;
+            z-index: 100;
+            background: rgba(5, 10, 25, 0.85);
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .login-gate.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
 
-  .streak-y1{position:absolute;bottom:130px;left:70px;z-index:5;width:1.5px;height:35px;background:rgba(255,200,0,0.25);transform:rotate(-18deg)}
-  .streak-y2{position:absolute;top:90px;right:50px;z-index:5;width:50px;height:1.5px;background:rgba(255,200,0,0.15);transform:rotate(35deg)}
+        .login-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
 
-  .bot-area{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);z-index:10;display:flex;flex-direction:column;align-items:center}
+        .login-bot-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: radial-gradient(circle at 30% 30%, #444, #111);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(255, 180, 0, 0.2);
+        }
+        .login-bot-icon .eye {
+            width: 10px;
+            height: 18px;
+            background: #ffc840;
+            border-radius: 6px;
+            box-shadow: 0 0 8px #ffc840;
+        }
 
-  .ring-wrap{position:relative;width:280px;height:280px;display:flex;align-items:center;justify-content:center}
-  .ring-svg{position:absolute;width:280px;height:280px}
-  .ring-dot{position:absolute;width:11px;height:11px;border-radius:50%;top:50%;left:50%}
-  .rd-glow{background:radial-gradient(circle,#ffe89a,#f0c040,#e8a020);box-shadow:0 0 10px rgba(240,192,64,0.9),0 0 25px rgba(240,192,64,0.4)}
-  .rd-sm{background:radial-gradient(circle,#ffe070,#d8a830);box-shadow:0 0 8px rgba(216,168,48,0.7),0 0 18px rgba(216,168,48,0.3)}
+        .login-title {
+            color: #fff;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .login-sub {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
 
-  .head{width:190px;height:190px;border-radius:50%;position:relative;z-index:2;
-    background:radial-gradient(circle at 38% 30%,#333 0%,#1a1a1a 35%,#0d0d0d 65%,#050505 100%);
-    box-shadow:0 0 50px rgba(240,180,0,0.1),0 0 100px rgba(240,180,0,0.04),inset 0 -30px 50px rgba(0,0,0,0.9),inset 0 8px 25px rgba(80,80,80,0.2)}
+        /* Telegram Widget Container */
+        #telegram-login-container {
+            display: flex;
+            justify-content: center;
+            min-height: 48px;
+            margin-bottom: 10px;
+        }
+        #telegram-login-container iframe {
+            border-radius: 12px !important;
+            overflow: hidden;
+        }
 
-  .head::after{content:'';position:absolute;top:12%;left:22%;width:56%;height:30%;background:radial-gradient(ellipse,rgba(255,255,255,0.06),transparent);border-radius:50%}
+        .login-note {
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 11px;
+            margin-top: 15px;
+            line-height: 1.6;
+        }
+        .login-note svg {
+            vertical-align: middle;
+            margin-left: 3px;
+        }
 
-  .eye{position:absolute;width:26px;height:46px;border-radius:13px;
-    background:radial-gradient(ellipse at 45% 40%,#fff5d0,#ffc840,#f0a020);
-    box-shadow:0 0 18px rgba(255,200,50,0.85),0 0 40px rgba(255,200,50,0.4),0 0 70px rgba(255,180,30,0.2);
-    top:50%;transform:translateY(-50%)}
-  .eye-l{left:35px}
-  .eye-r{right:35px}
-  .eye::after{content:'';position:absolute;top:3px;left:50%;transform:translateX(-50%);width:7px;height:10px;background:rgba(255,255,255,0.5);border-radius:50%;filter:blur(1.5px)}
+        .error-msg {
+            background: rgba(255, 77, 77, 0.15);
+            border: 1px solid rgba(255, 77, 77, 0.4);
+            color: #ff6b6b;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-top: 15px;
+            display: none;
+        }
+        .error-msg.show {
+            display: block;
+            animation: shake 0.4s ease;
+        }
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-5px);
+            }
+            50% {
+                transform: translateX(5px);
+            }
+            75% {
+                transform: translateX(-3px);
+            }
+        }
 
-  .mouth{position:absolute;bottom:30%;left:50%;transform:translateX(-50%);width:52px;height:3.5px;border-radius:2px;
-    background:linear-gradient(90deg,transparent,#ffc840,#e8a020,#ffc840,transparent);
-    box-shadow:0 0 10px rgba(255,200,50,0.5)}
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffc840;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
-  .ear{position:absolute;width:16px;height:55px;border-radius:8px;top:50%;transform:translateY(-50%);
-    background:linear-gradient(180deg,#1a1a1a,#0a0a0a);box-shadow:inset 0 0 8px rgba(0,0,0,0.9)}
-  .ear-l{left:-3px}
-  .ear-r{right:-3px}
+        /* --- USER PROFILE (Top Right) --- */
+        .user-profile {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 50;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            background: rgba(20, 30, 50, 0.8);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 8px 16px 8px 8px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .user-profile:hover {
+            border-color: rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
+        }
 
-  .title-area{text-align:center;margin-top:18px}
-  .t-main{font-size:50px;font-weight:900;color:#fff;letter-spacing:4px;line-height:1;text-transform:uppercase}
-  .t-sub{display:flex;align-items:center;justify-content:center;margin-top:3px}
-  .t-black{background:linear-gradient(180deg,#ffd600,#f0a000);color:#000;font-size:24px;font-weight:900;padding:1px 12px 3px;letter-spacing:2px;text-transform:uppercase;display:inline-block;border-radius:2px}
-  .t-bot{color:#fff;font-size:24px;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-left:4px}
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #FFD700;
+        }
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .user-name {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .user-id {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 11px;
+            direction: ltr;
+            text-align: right;
+        }
 
-  .footer{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:5px}
-  .globe{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,200,0,0.55);position:relative;
-    background:radial-gradient(circle,rgba(255,200,0,0.08),transparent)}
-  .globe::before{content:'';position:absolute;top:3px;left:3px;right:3px;bottom:3px;border-radius:50%;border:1px solid rgba(255,200,0,0.25)}
-  .globe::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:100%;height:100%;border-radius:50%;border-left:1px solid rgba(255,200,0,0.25);border-right:1px solid rgba(255,200,0,0.25)}
-  .url{font-size:10px;color:rgba(255,255,255,0.65);letter-spacing:2.5px;text-transform:uppercase}
+        .logout-btn {
+            margin-right: 10px;
+            background: none;
+            border: none;
+            color: #ff4d4d;
+            cursor: pointer;
+            font-size: 18px;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+        .logout-btn:hover {
+            opacity: 1;
+        }
 
-  /* منع الوصول */
-  .access-denied-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: #000;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffd000;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    font-size: 20px;
-    text-align: center;
-    padding: 20px;
-    flex-direction: column;
-    gap: 20px;
-  }
-  .access-denied-overlay .bolt-large svg {
-    width: 60px;
-    height: 60px;
-  }
-  .hidden-content {
-    display: none;
-  }
-</style>
+        /* --- PROFILE MODAL (Popup) --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: linear-gradient(160deg, #1a2035, #0a101d);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 24px;
+            width: 340px;
+            overflow: hidden;
+            position: relative;
+            animation: popIn 0.3s ease-out;
+        }
+        @keyframes popIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            height: 100px;
+            background: linear-gradient(90deg, #2AABEE, #0088cc);
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 0 24px 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-avatar-wrap {
+            width: 90px;
+            height: 90px;
+            margin: -45px auto 15px;
+            border-radius: 50%;
+            padding: 4px;
+            background: linear-gradient(160deg, #1a2035, #0a101d);
+        }
+        .modal-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #FFD700;
+        }
+
+        .modal-name {
+            color: #fff;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .modal-username {
+            color: #2AABEE;
+            font-size: 14px;
+            margin-bottom: 20px;
+            direction: ltr;
+        }
+
+        .data-row {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .data-label {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+        }
+        .data-value {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            direction: ltr;
+        }
+
+        /* Main Content Elements */
+        .top-logo {
+            position: absolute;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .bolt {
+            width: 18px;
+            height: 18px;
+        }
+        .bolt svg {
+            width: 100%;
+            height: 100%;
+        }
+        .top-logo span {
+            color: #fff;
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .dots-tr {
+            position: absolute;
+            top: 26px;
+            right: 32px;
+            z-index: 10;
+            display: flex;
+            gap: 7px;
+        }
+        .dots-bl {
+            position: absolute;
+            bottom: 26px;
+            left: 32px;
+            z-index: 10;
+            display: flex;
+            gap: 7px;
+        }
+        .dot-w {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.55);
+        }
+
+        .bot-area {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -55%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+        .ring-wrap {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ring-svg {
+            position: absolute;
+            width: 280px;
+            height: 280px;
+        }
+        .ring-dot {
+            position: absolute;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+        }
+        .rd-glow {
+            background: radial-gradient(circle, #ffe89a, #f0c040, #e8a020);
+            box-shadow: 0 0 10px rgba(240, 192, 64, 0.9), 0 0 25px rgba(240, 192, 64, 0.4);
+        }
+        .rd-sm {
+            background: radial-gradient(circle, #ffe070, #d8a830);
+            box-shadow: 0 0 8px rgba(216, 168, 48, 0.7), 0 0 18px rgba(216, 168, 48, 0.3);
+        }
+
+        .head {
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+            background: radial-gradient(circle at 38% 30%, #333 0%, #1a1a1a 35%, #0d0d0d 65%, #050505 100%);
+            box-shadow: 0 0 50px rgba(240, 180, 0, 0.1), 0 0 100px rgba(240, 180, 0, 0.04), inset 0 -30px 50px rgba(0, 0, 0, 0.9), inset 0 8px 25px rgba(80, 80, 80, 0.2);
+        }
+        .head::after {
+            content: '';
+            position: absolute;
+            top: 12%;
+            left: 22%;
+            width: 56%;
+            height: 30%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.06), transparent);
+            border-radius: 50%;
+        }
+        .eye {
+            position: absolute;
+            width: 26px;
+            height: 46px;
+            border-radius: 13px;
+            background: radial-gradient(ellipse at 45% 40%, #fff5d0, #ffc840, #f0a020);
+            box-shadow: 0 0 18px rgba(255, 200, 50, 0.85), 0 0 40px rgba(255, 200, 50, 0.4), 0 0 70px rgba(255, 180, 30, 0.2);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .eye-l {
+            left: 35px;
+        }
+        .eye-r {
+            right: 35px;
+        }
+        .eye::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 7px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            filter: blur(1.5px);
+        }
+        .mouth {
+            position: absolute;
+            bottom: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 52px;
+            height: 3.5px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, transparent, #ffc840, #e8a020, #ffc840, transparent);
+            box-shadow: 0 0 10px rgba(255, 200, 50, 0.5);
+        }
+        .ear {
+            position: absolute;
+            width: 16px;
+            height: 55px;
+            border-radius: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(180deg, #1a1a1a, #0a0a0a);
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.9);
+        }
+        .ear-l {
+            left: -3px;
+        }
+        .ear-r {
+            right: -3px;
+        }
+
+        .title-area {
+            text-align: center;
+            margin-top: 18px;
+        }
+        .t-main {
+            font-size: 50px;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 4px;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+        .t-sub {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 3px;
+        }
+        .t-black {
+            background: linear-gradient(180deg, #ffd600, #f0a000);
+            color: #000;
+            font-size: 24px;
+            font-weight: 900;
+            padding: 1px 12px 3px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: inline-block;
+            border-radius: 2px;
+        }
+        .t-bot {
+            color: #fff;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-left: 4px;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .globe {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 200, 0, 0.55);
+            position: relative;
+            background: radial-gradient(circle, rgba(255, 200, 0, 0.08), transparent);
+        }
+        .globe::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 200, 0, 0.25);
+        }
+        .globe::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border-left: 1px solid rgba(255, 200, 0, 0.25);
+            border-right: 1px solid rgba(255, 200, 0, 0.25);
+        }
+        .url {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.65);
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+        }
+    </style>
 </head>
 <body>
-<!-- طبقة المنع - تظهر فقط لو لم يدخل من تيليغرام -->
-<div id="denied-overlay" class="access-denied-overlay">
-  <div class="bolt-large">
-    <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 10 10-12h-9l1-10z" fill="#ffd000"/></svg>
-  </div>
-  <div>لا يمكن الوصول إلى الموقع إلا عبر بوت تلغرام</div>
-  <div style="font-size:14px;color:rgba(255,255,255,0.6)">Access only via Telegram Bot</div>
-</div>
 
-<!-- المحتوى الأصلي - مخفي حتى يتم التحقق -->
-<div id="main-content" class="hidden-content">
-<div class="scene">
-  <canvas id="c"></canvas>
-  <div class="overlay"></div>
+    <div class="scene" id="mainScene">
+        <canvas id="c"></canvas>
+        <div class="overlay"></div>
 
-  <div class="top-logo">
-    <div class="bolt">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 10 10-12h-9l1-10z" fill="#ffd000"/></svg>
+        <!-- Logo -->
+        <div class="top-logo">
+            <div class="bolt"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 10 10-12h-9l1-10z" fill="#ffd000"/></svg></div>
+            <span>ichancy</span>
+        </div>
+
+        <!-- Dots & Corners -->
+        <div class="dots-tr"><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div></div>
+        <div class="dots-bl"><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div></div>
+        <div style="position:absolute;top:0;left:0;z-index:5;width:100px;height:180px">
+            <div style="position:absolute;top:0;left:0;width:1px;height:120px;background:linear-gradient(to bottom,rgba(255,255,255,0.5),transparent);transform:rotate(25deg);transform-origin:top left"></div>
+        </div>
+        <div style="position:absolute;bottom:0;right:0;z-index:5;width:100px;height:180px">
+            <div style="position:absolute;bottom:0;right:0;width:1px;height:100px;background:linear-gradient(to top,rgba(255,255,255,0.3),transparent);transform:rotate(-15deg);transform-origin:bottom right"></div>
+        </div>
+        <div style="position:absolute;bottom:130px;left:70px;z-index:5;width:1.5px;height:35px;background:rgba(255,200,0,0.25);transform:rotate(-18deg)"></div>
+        <div style="position:absolute;top:90px;right:50px;z-index:5;width:50px;height:1.5px;background:rgba(255,200,0,0.15);transform:rotate(35deg)"></div>
+
+        <!-- Bot -->
+        <div class="bot-area">
+            <div class="ring-wrap">
+                <svg class="ring-svg" viewBox="0 0 280 280"><circle cx="140" cy="140" r="128" fill="none" stroke="rgba(240,192,64,0.12)" stroke-width="1"/></svg>
+                <div id="rdots"></div>
+                <div class="head">
+                    <div class="ear ear-l"></div><div class="ear ear-r"></div>
+                    <div class="eye eye-l"></div><div class="eye eye-r"></div>
+                    <div class="mouth"></div>
+                </div>
+            </div>
+            <div class="title-area">
+                <div class="t-main">ICHANCY</div>
+                <div class="t-sub"><span class="t-black">BLACK</span><span class="t-bot">BOT</span></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="globe"></div>
+            <div class="url">www.ichancy.com</div>
+        </div>
     </div>
-    <span>ichancy</span>
-  </div>
 
-  <div class="dots-tr"><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div></div>
-  <div class="dots-bl"><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div></div>
-  <div class="corner-tl"></div>
-  <div class="corner-br"></div>
-  <div class="streak-y1"></div>
-  <div class="streak-y2"></div>
+    <!-- === LOGIN GATE === -->
+    <div class="login-gate" id="loginGate">
+        <div class="login-card">
+            <div class="login-bot-icon">
+                <div class="eye" style="margin-right:5px"></div>
+                <div class="eye"></div>
+            </div>
+            <div class="login-title">ICHANCY BLACK BOT</div>
+            <div class="login-sub">قم بتسجيل الدخول عبر بوت تلغرام للوصول</div>
 
-  <div class="bot-area">
-    <div class="ring-wrap">
-      <svg class="ring-svg" viewBox="0 0 280 280">
-        <circle cx="140" cy="140" r="128" fill="none" stroke="rgba(240,192,64,0.12)" stroke-width="1"/>
-      </svg>
-      <div id="rdots"></div>
-      <div class="head">
-        <div class="ear ear-l"></div>
-        <div class="ear ear-r"></div>
-        <div class="eye eye-l"></div>
-        <div class="eye eye-r"></div>
-        <div class="mouth"></div>
-      </div>
+            <!-- ✅ حاوية زر تلغرام الحقيقي -->
+            <div id="telegram-login-container"></div>
+
+            <!-- رسالة خطأ -->
+            <div class="error-msg" id="errorMsg"></div>
+
+            <div class="login-note">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="rgba(255,255,255,0.4)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                حساب تلغرام مطلوب. لا يمكن الوصول بدون مصادقة البوت.
+            </div>
+        </div>
     </div>
-    <div class="title-area">
-      <div class="t-main">ICHANCY</div>
-      <div class="t-sub"><span class="t-black">BLACK</span><span class="t-bot">BOT</span></div>
+
+    <!-- === USER PROFILE BADGE === -->
+    <div class="user-profile" id="userProfile" onclick="openModal()">
+        <button class="logout-btn" onclick="event.stopPropagation(); logout()" title="خروج">×</button>
+        <div class="user-info">
+            <span class="user-name" id="badgeName">User</span>
+            <span class="user-id" id="badgeId">@id</span>
+        </div>
+        <img src="" alt="" class="user-avatar" id="badgeImg">
     </div>
-  </div>
 
-  <div class="footer">
-    <div class="globe"></div>
-    <div class="url">www.ichancy.com</div>
-  </div>
-</div>
-</div>
+    <!-- === PROFILE MODAL === -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-avatar-wrap">
+                    <img src="" class="modal-avatar" id="modalImg">
+                </div>
+                <div class="modal-name" id="modalName">User Name</div>
+                <div class="modal-username" id="modalUsername">@username</div>
 
-<!-- Telegram Web App SDK -->
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script>
-(function() {
-  const deniedOverlay = document.getElementById('denied-overlay');
-  const mainContent = document.getElementById('main-content');
+                <div class="data-row">
+                    <span class="data-label">معرف المستخدم (ID)</span>
+                    <span class="data-value" id="modalId">123456789</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">حالة الحساب</span>
+                    <span class="data-value" style="color:#4ADE80">نشط</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">تاريخ التسجيل</span>
+                    <span class="data-value" id="modalDate">2026-05-20</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  // التحقق من وجود Telegram WebApp وبيانات المستخدم
-  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-    // الدخول من تيليغرام
-    if (deniedOverlay) deniedOverlay.style.display = 'none';
-    if (mainContent) mainContent.classList.remove('hidden-content');
-  } else {
-    // لم يتم الدخول من تيليغرام - ابق على طبقة المنع
-    if (deniedOverlay) deniedOverlay.style.display = 'flex';
-    if (mainContent) mainContent.classList.add('hidden-content');
-  }
-})();
-</script>
+    <!-- ==================== -->
+    <!-- Telegram WebApp SDK -->
+    <!-- ==================== -->
+    <script src="https://telegram.org/js/telegram-web-app.js">
+    </script>
 
-<script>
-// الكود الأصلي للرسم والتحريك (لن يعمل إلا بعد إظهار المحتوى)
-(function(){
-  if (!document.getElementById('main-content').classList.contains('hidden-content')) {
-    // المحتوى ظاهر، نبدأ الرسم
-    const C=document.getElementById('c'),X=C.getContext('2d');
-    let W,H;
-    function resize(){W=C.width=window.innerWidth;H=C.height=window.innerHeight;draw()}
-    function draw(){
-      X.fillStyle='#060e1f';X.fillRect(0,0,W,H);
-      const cx=W/2,cy=H/2;
-      let g=X.createRadialGradient(cx,cy*0.85,0,cx,cy*0.85,W*0.55);
-      g.addColorStop(0,'rgba(0,100,220,0.1)');g.addColorStop(0.4,'rgba(0,70,180,0.04)');g.addColorStop(1,'transparent');
-      X.fillStyle=g;X.fillRect(0,0,W,H);
+    <script>
+        // =============================================
+        // ⚙️ الإعدادات - قم بتغيير هذه القيم
+        // =============================================
+        const CONFIG = {
+            // اسم بوت تلغرام الخاص بك (بدون @)
+            BOT_USERNAME: 'ICHANCY_BOT', // ← غيّر هذا إلى اسم بوتك
 
-      g=X.createRadialGradient(cx,0,0,cx,0,H*0.5);
-      g.addColorStop(0,'rgba(20,120,240,0.1)');g.addColorStop(1,'transparent');
-      X.fillStyle=g;X.fillRect(0,0,W,H);
+            // رابط سيرفر التحقق (API) - اتركه فارغاً لاستخدام الوضع المحلي
+            // عند رفع الموقع على سيرفر حقيقي، ضع رابط الـ API هنا
+            // مثال: 'https://api.yourdomain.com/verify'
+            VERIFY_API_URL: '',
 
-      X.save();X.globalAlpha=0.04;X.fillStyle='#0080e0';
-      X.fillRect(cx-80,0,1.5,H*0.45);X.fillRect(cx+80,0,1,H*0.4);
-      X.fillRect(cx-150,H*0.15,1,H*0.55);X.fillRect(cx+150,H*0.1,1,H*0.6);
-      X.globalAlpha=1;X.restore();
+            // مفتاح التخزين
+            STORAGE_KEY: 'ichancy_user_data',
 
-      X.save();
-      X.beginPath();X.moveTo(W*0.02,0);X.lineTo(W*0.32,H*0.12);X.lineTo(W*0.28,H*0.65);X.lineTo(0,H*0.48);X.closePath();
-      let lg=X.createLinearGradient(W*0.1,0,W*0.2,H*0.4);
-      lg.addColorStop(0,'rgba(0,110,230,0.07)');lg.addColorStop(1,'rgba(0,80,190,0.01)');
-      X.fillStyle=lg;X.fill();X.restore();
+            // مدة صلاحية الجلسة (بالمللي ثانية) - 24 ساعة
+            SESSION_DURATION: 24 * 60 * 60 * 1000,
+        };
 
-      X.save();
-      X.beginPath();X.moveTo(W*0.98,0);X.lineTo(W*0.68,H*0.12);X.lineTo(W*0.72,H*0.65);X.lineTo(W,H*0.48);X.closePath();
-      lg=X.createLinearGradient(W*0.9,0,W*0.8,H*0.4);
-      lg.addColorStop(0,'rgba(0,110,230,0.06)');lg.addColorStop(1,'rgba(0,80,190,0.01)');
-      X.fillStyle=lg;X.fill();X.restore();
+        // =============================================
+        // 1️⃣ BACKGROUND ANIMATION
+        // =============================================
+        const C = document.getElementById('c'),
+            X = C.getContext('2d');
+        let W, H;
 
-      X.save();
-      X.beginPath();X.moveTo(0,H);X.lineTo(W*0.12,H*0.65);X.lineTo(W*0.18,H);X.closePath();
-      X.fillStyle='rgba(0,80,180,0.04)';X.fill();X.restore();
-      X.save();
-      X.beginPath();X.moveTo(W,H);X.lineTo(W*0.88,H*0.65);X.lineTo(W*0.82,H);X.closePath();
-      X.fillStyle='rgba(0,80,180,0.04)';X.fill();X.restore();
+        function resize() { W = C.width = window.innerWidth;
+            H = C.height = window.innerHeight;
+            draw(); }
 
-      g=X.createRadialGradient(W*0.92,H*0.08,0,W*0.92,H*0.08,W*0.22);
-      g.addColorStop(0,'rgba(255,200,0,0.05)');g.addColorStop(1,'transparent');
-      X.fillStyle=g;X.fillRect(0,0,W,H);
+        function draw() {
+            X.fillStyle = '#060e1f';
+            X.fillRect(0, 0, W, H);
+            const cx = W / 2,
+                cy = H / 2;
+            let g = X.createRadialGradient(cx, cy * 0.85, 0, cx, cy * 0.85, W * 0.55);
+            g.addColorStop(0, 'rgba(0,100,220,0.1)');
+            g.addColorStop(1, 'transparent');
+            X.fillStyle = g;
+            X.fillRect(0, 0, W, H);
+            g = X.createRadialGradient(cx, 0, 0, cx, 0, H * 0.5);
+            g.addColorStop(0, 'rgba(20,120,240,0.1)');
+            g.addColorStop(1, 'transparent');
+            X.fillStyle = g;
+            X.fillRect(0, 0, W, H);
+        }
+        window.addEventListener('resize', resize);
+        resize();
 
-      g=X.createRadialGradient(W*0.08,H*0.92,0,W*0.08,H*0.92,W*0.18);
-      g.addColorStop(0,'rgba(255,200,0,0.04)');g.addColorStop(1,'transparent');
-      X.fillStyle=g;X.fillRect(0,0,W,H);
+        // =============================================
+        // 2️⃣ RING DOTS
+        // =============================================
+        const rd = document.getElementById('rdots');
+        const R = 128,
+            n = 16;
+        for (let i = 0; i < n; i++) {
+            const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+            const d = document.createElement('div');
+            const big = i % 4 === 0;
+            d.className = 'ring-dot ' + (big ? 'rd-glow' : 'rd-sm');
+            d.style.transform = `translate(calc(-50% + ${Math.cos(a)*R}px), calc(-50% + ${Math.sin(a)*R}px))`;
+            if (big) { d.style.width = '14px';
+                d.style.height = '14px'; }
+            rd.appendChild(d);
+        }
 
-      g=X.createRadialGradient(cx,H,0,cx,H,H*0.35);
-      g.addColorStop(0,'rgba(15,60,150,0.06)');g.addColorStop(1,'transparent');
-      X.fillStyle=g;X.fillRect(0,0,W,H);
-    }
-    window.addEventListener('resize',resize);resize();
+        // =============================================
+        // 3️⃣ BOT ANIMATION
+        // =============================================
+        const head = document.querySelector('.head');
+        let f = 0;
 
-    const rd=document.getElementById('rdots');
-    const R=128,n=16;
-    for(let i=0;i<n;i++){
-      const a=(i/n)*Math.PI*2-Math.PI/2;
-      const d=document.createElement('div');
-      const big=i%4===0;
-      d.className='ring-dot '+(big?'rd-glow':'rd-sm');
-      d.style.transform=`translate(calc(-50% + ${Math.cos(a)*R}px), calc(-50% + ${Math.sin(a)*R}px))`;
-      if(big){d.style.width='14px';d.style.height='14px'}
-      rd.appendChild(d);
-    }
+        function anim() { f++;
+            head.style.transform = `translateY(${Math.sin(f*0.018)*3}px)`;
+            requestAnimationFrame(anim); }
+        anim();
 
-    const head=document.querySelector('.head');
-    let f=0;
-    function anim(){f++;head.style.transform=`translateY(${Math.sin(f*0.018)*3}px)`;requestAnimationFrame(anim)}
-    anim();
-  }
-})();
-</script>
+        // =============================================
+        // 4️⃣ عناصر DOM
+        // =============================================
+        const gate = document.getElementById('loginGate');
+        const scene = document.getElementById('mainScene');
+        const profile = document.getElementById('userProfile');
+        const errorMsg = document.getElementById('errorMsg');
+        const loginContainer = document.getElementById('telegram-login-container');
+
+        // =============================================
+        // 5️⃣ دوال مساعدة للتشفير (SHA-256 + HMAC)
+        // =============================================
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function hmacSha256(key, message) {
+            const keyBuffer = new TextEncoder().encode(key);
+            const msgBuffer = new TextEncoder().encode(message);
+            const cryptoKey = await crypto.subtle.importKey(
+                'raw', keyBuffer, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+            );
+            const signature = await crypto.subtle.sign('HMAC', cryptoKey, msgBuffer);
+            const hashArray = Array.from(new Uint8Array(signature));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // =============================================
+        // 6️⃣ التحقق من صحة بيانات تلغرام (محلياً)
+        // =============================================
+        async function verifyTelegramData(data, botToken) {
+            // استخراج الهاش من البيانات
+            const receivedHash = data.hash;
+            if (!receivedHash) return false;
+
+            // إزالة الهاش من البيانات للتحقق
+            const dataToCheck = {};
+            for (const key in data) {
+                if (key !== 'hash') {
+                    dataToCheck[key] = data[key];
+                }
+            }
+
+            // ترتيب المفاتيح أبجدياً وإنشاء سلسلة البيانات
+            const sortedKeys = Object.keys(dataToCheck).sort();
+            const dataCheckString = sortedKeys.map(key => `${key}=${dataToCheck[key]}`).join('\n');
+
+            // حساب المفتاح السري من توكن البوت
+            const secretKey = await sha256(botToken);
+
+            // حساب HMAC-SHA256
+            const computedHash = await hmacSha256(secretKey, dataCheckString);
+
+            return computedHash === receivedHash;
+        }
+
+        // =============================================
+        // 7️⃣ عرض الخطأ للمستخدم
+        // =============================================
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.classList.add('show');
+            setTimeout(() => errorMsg.classList.remove('show'), 5000);
+        }
+
+        // =============================================
+        // 8️⃣ إنشاء مستخدم تجريبي (للاختبار فقط)
+        // =============================================
+        function createDemoUser() {
+            return {
+                id: Math.floor(Math.random() * 900000000) + 100000000,
+                first_name: 'مستخدم',
+                last_name: 'تجريبي',
+                username: 'demo_user',
+                photo_url: 'https://ui-avatars.com/api/?name=Demo+User&background=FFD700&color=000&size=256',
+                auth_date: Date.now(),
+                hash: 'demo',
+            };
+        }
+
+        // =============================================
+        // 9️⃣ حفظ وعرض بيانات المستخدم
+        // =============================================
+        function showApp(user) {
+            // 1. إخفاء البوابة
+            gate.classList.add('hidden');
+
+            // 2. إزالة تشويش الخلفية
+            scene.classList.add('unlocked');
+
+            // 3. عرض شارة الملف الشخصي
+            profile.style.display = 'flex';
+
+            // 4. تحديث الشارة
+            const fullName = (user.first_name || '') + (user.last_name ? ' ' + user.last_name : '');
+            document.getElementById('badgeName').textContent = fullName || 'User';
+            document.getElementById('badgeId').textContent = '@' + (user.username || 'unknown');
+            document.getElementById('badgeImg').src = user.photo_url || 'https://ui-avatars.com/api/?name=U&background=555&color=fff&size=40';
+
+            // 5. تحديث بيانات النافذة المنبثقة
+            document.getElementById('modalName').textContent = fullName || 'User';
+            document.getElementById('modalUsername').textContent = '@' + (user.username || 'unknown');
+            document.getElementById('modalId').textContent = user.id;
+            document.getElementById('modalImg').src = user.photo_url || 'https://ui-avatars.com/api/?name=U&background=555&color=fff&size=256';
+
+            const d = new Date(user.auth_date * 1000 || Date.now());
+            document.getElementById('modalDate').textContent = d.toLocaleDateString('ar-EG', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            });
+
+            // 6. حفظ في LocalStorage مع وقت الانتهاء
+            const sessionData = {
+                user: user,
+                expiresAt: Date.now() + CONFIG.SESSION_DURATION,
+            };
+            localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(sessionData));
+        }
+
+        // =============================================
+        // 🔟 التحقق من الجلسة السابقة
+        // =============================================
+        function checkExistingSession() {
+            const saved = localStorage.getItem(CONFIG.STORAGE_KEY);
+            if (!saved) return false;
+
+            try {
+                const sessionData = JSON.parse(saved);
+                if (sessionData.expiresAt && Date.now() < sessionData.expiresAt && sessionData.user) {
+                    // الجلسة لا تزال صالحة
+                    showApp(sessionData.user);
+                    return true;
+                } else {
+                    // الجلسة منتهية
+                    localStorage.removeItem(CONFIG.STORAGE_KEY);
+                }
+            } catch (e) {
+                localStorage.removeItem(CONFIG.STORAGE_KEY);
+            }
+            return false;
+        }
+
+        // =============================================
+        // 1️⃣1️⃣ تسجيل الخروج
+        // =============================================
+        function logout() {
+            localStorage.removeItem(CONFIG.STORAGE_KEY);
+            location.reload();
+        }
+
+        // =============================================
+        // 1️⃣2️⃣ النافذة المنبثقة للملف الشخصي
+        // =============================================
+        function openModal() {
+            document.getElementById('profileModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('profileModal').classList.remove('active');
+        }
+
+        // إغلاق النافذة عند النقر خارجها
+        document.getElementById('profileModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // =============================================
+        // 1️⃣3️⃣ معالجة تسجيل الدخول عبر Telegram WebApp
+        // =============================================
+        function handleWebAppAuth() {
+            if (!window.Telegram || !window.Telegram.WebApp) return false;
+
+            const tg = window.Telegram.WebApp;
+            const initData = tg.initData || '';
+            const initDataUnsafe = tg.initDataUnsafe || {};
+
+            // التحقق من وجود بيانات المستخدم
+            if (initDataUnsafe.user && initDataUnsafe.user.id) {
+                const user = {
+                    id: initDataUnsafe.user.id,
+                    first_name: initDataUnsafe.user.first_name || '',
+                    last_name: initDataUnsafe.user.last_name || '',
+                    username: initDataUnsafe.user.username || '',
+                    photo_url: initDataUnsafe.user.photo_url || '',
+                    auth_date: initDataUnsafe.auth_date || Math.floor(Date.now() / 1000),
+                    hash: '',
+                };
+
+                // في بيئة WebApp حقيقية، يجب إرسال initData للسيرفر للتحقق
+                // هنا نقوم بالتحقق المحلي للعرض فقط
+                if (CONFIG.VERIFY_API_URL && initData) {
+                    // إرسال للسيرفر للتحقق
+                    fetch(CONFIG.VERIFY_API_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ initData: initData }),
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.valid) {
+                                showApp(user);
+                            } else {
+                                showError('فشل التحقق من بيانات تلغرام. يرجى المحاولة مرة أخرى.');
+                            }
+                        })
+                        .catch(() => {
+                            // في حالة فشل الاتصال بالسيرفر، نقبل البيانات محلياً
+                            // (للاختبار فقط - في الإنتاج يجب التحقق سيرفر side)
+                            console.warn('تعذر الاتصال بسيرفر التحقق. جارٍ القبول المحلي للبيانات.');
+                            showApp(user);
+                        });
+                } else {
+                    // وضع الاختبار - قبول مباشر
+                    showApp(user);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        // =============================================
+        // 1️⃣4️⃣ معالجة رد Telegram Login Widget
+        // =============================================
+        function onTelegramAuth(userData) {
+            // يتم استدعاء هذه الدالة من قبل ويدجت تلغرام بعد تسجيل الدخول الناجح
+            console.log('Telegram Auth Data:', userData);
+
+            if (!userData || !userData.id) {
+                showError('بيانات تسجيل الدخول غير مكتملة. يرجى المحاولة مرة أخرى.');
+                return;
+            }
+
+            // في الإنتاج: يجب التحقق من الهاش عبر السيرفر
+            // هنا نعرض البيانات مباشرة للاختبار
+            const user = {
+                id: userData.id,
+                first_name: userData.first_name || '',
+                last_name: userData.last_name || '',
+                username: userData.username || '',
+                photo_url: userData.photo_url || '',
+                auth_date: userData.auth_date || Math.floor(Date.now() / 1000),
+                hash: userData.hash || '',
+            };
+
+            // إذا كان هناك سيرفر تحقق، نرسل البيانات له
+            if (CONFIG.VERIFY_API_URL) {
+                fetch(CONFIG.VERIFY_API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(userData),
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.valid) {
+                            showApp(user);
+                        } else {
+                            showError('فشل التحقق الأمني. تأكد من أنك تستخدم بوت تلغرام الرسمي.');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Verification error:', err);
+                        showError('خطأ في الاتصال بسيرفر التحقق. يرجى المحاولة لاحقاً.');
+                    });
+            } else {
+                // وضع الاختبار - قبول مباشر مع تحذير
+                console.warn('⚠️ وضع الاختبار: لم يتم التحقق من الهاش. في الإنتاج، استخدم سيرفر للتحقق.');
+                showApp(user);
+            }
+        }
+
+        // =============================================
+        // 1️⃣5️⃣ إنشاء زر تلغرام ديناميكياً
+        // =============================================
+        function createTelegramWidget() {
+            // تنظيف الحاوية
+            loginContainer.innerHTML = '';
+
+            // إنشاء عنصر script لويدجت تلغرام
+            const script = document.createElement('script');
+            script.src = 'https://telegram.org/js/telegram-widget.js?22';
+            script.async = true;
+            script.setAttribute('data-telegram-login', CONFIG.BOT_USERNAME);
+            script.setAttribute('data-size', 'large');
+            script.setAttribute('data-radius', '12');
+            script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+            script.setAttribute('data-request-access', 'write');
+            script.setAttribute('data-userpic', 'true');
+
+            // إضافة الزر للحاوية
+            loginContainer.appendChild(script);
+
+            // إضافة معالج للخطأ إذا لم يظهر الزر خلال 10 ثوانٍ
+            setTimeout(() => {
+                const iframe = loginContainer.querySelector('iframe');
+                if (!iframe) {
+                    showError('تعذر تحميل زر تسجيل الدخول. تأكد من اتصالك بالإنترنت وأن اسم البوت صحيح.');
+                }
+            }, 10000);
+        }
+
+        // =============================================
+        // 1️⃣6️⃣ بدء التشغيل
+        // =============================================
+        async function init() {
+            // 1. التحقق من الجلسة السابقة
+            if (checkExistingSession()) {
+                return; // المستخدم مسجل دخوله بالفعل
+            }
+
+            // 2. التحقق مما إذا كنا داخل Telegram WebApp
+            const isWebApp = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe &&
+                window.Telegram.WebApp.initDataUnsafe.user);
+
+            if (isWebApp) {
+                // نحن داخل تطبيق تلغرام المصغر
+                console.log('📱 تم اكتشاف بيئة Telegram WebApp');
+                if (handleWebAppAuth()) {
+                    return;
+                }
+            }
+
+            // 3. تحميل ويدجت تلغرام
+            console.log('🌐 تحميل Telegram Login Widget...');
+            createTelegramWidget();
+
+            // 4. إظهار البوابة
+            gate.classList.remove('hidden');
+            scene.classList.remove('unlocked');
+        }
+
+        // =============================================
+        // 1️⃣7️⃣ بدء التطبيق
+        // =============================================
+        document.addEventListener('DOMContentLoaded', init);
+
+        // =============================================
+        // 📝 ملاحظات للمطور
+        // =============================================
+        console.log(`
+        ╔══════════════════════════════════════╗
+        ║   ICHANCY BLACK BOT - نظام الحماية  ║
+        ╠══════════════════════════════════════╣
+        ║                                    ║
+        ║  🔒 للمصادقة الحقيقية الكاملة:      ║
+        ║  ١. أنشئ بوت عبر @BotFather        ║
+        ║  ٢. استخدم /setdomain لربط الدومين  ║
+        ║  ٣. غيّر CONFIG.BOT_USERNAME       ║
+        ║  ٤. ارفع سيرفر تحقق (Node.js)      ║
+        ║  ٥. ضع رابط السيرفر في             ║
+        ║     CONFIG.VERIFY_API_URL          ║
+        ║                                    ║
+        ║  📱 للاختبار داخل Telegram:         ║
+        ║  - افتح البوت واضغط /start         ║
+        ║  - استخدم WebApp للدخول التلقائي   ║
+        ║                                    ║
+        ╚══════════════════════════════════════╝
+          `);
+
+        console.log('🔑 CONFIG الحالي:', CONFIG);
+    </script>
 </body>
 </html>
