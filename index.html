@@ -1,706 +1,960 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ICHANCY BLACK BOT</title>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Segoe UI',Arial,sans-serif}
-  .scene{width:100%;height:100%;position:relative;background:#060e1f;overflow:hidden}
-  canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1}
-  .overlay{position:absolute;inset:0;z-index:2;pointer-events:none}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICHANCY BLACK BOT</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
 
-  .top-logo{position:absolute;top:22px;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:6px}
-  .bolt{width:18px;height:18px;position:relative}
-  .bolt svg{width:100%;height:100%}
-  .top-logo span{color:#fff;font-size:17px;font-weight:700;letter-spacing:0.5px}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  .dots-tr{position:absolute;top:26px;right:32px;z-index:10;display:flex;gap:7px}
-  .dots-bl{position:absolute;bottom:26px;left:32px;z-index:10;display:flex;gap:7px}
-  .dot-w{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.55)}
+        body {
+            font-family: 'Cairo', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            background: #0a0a1a;
+        }
 
-  .corner-tl{position:absolute;top:0;left:0;z-index:5;width:100px;height:180px}
-  .corner-tl::before{content:'';position:absolute;top:0;left:0;width:1px;height:120px;background:linear-gradient(to bottom,rgba(255,255,255,0.5),transparent);transform:rotate(25deg);transform-origin:top left}
-  .corner-br{position:absolute;bottom:0;right:0;z-index:5;width:100px;height:180px}
-  .corner-br::before{content:'';position:absolute;bottom:0;right:0;width:1px;height:100px;background:linear-gradient(to top,rgba(255,255,255,0.3),transparent);transform:rotate(-15deg);transform-origin:bottom right}
+        .background-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: url('https://image.qwenlm.ai/public_source/d2b04244-a420-4d65-a733-b26a95f01b88/1e35c3234-c3ff-4e6d-9b01-6912977a2835.png') center center / cover no-repeat;
+        }
 
-  .streak-y1{position:absolute;bottom:130px;left:70px;z-index:5;width:1.5px;height:35px;background:rgba(255,200,0,0.25);transform:rotate(-18deg)}
-  .streak-y2{position:absolute;top:90px;right:50px;z-index:5;width:50px;height:1.5px;background:rgba(255,200,0,0.15);transform:rotate(35deg)}
+        .background-layer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
 
-  .bot-area{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);z-index:10;display:flex;flex-direction:column;align-items:center}
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 5, 20, 0.4);
+            backdrop-filter: blur(2px);
+        }
 
-  .ring-wrap{position:relative;width:280px;height:280px;display:flex;align-items:center;justify-content:center}
-  .ring-svg{position:absolute;width:280px;height:280px}
-  .ring-dot{position:absolute;width:11px;height:11px;border-radius:50%;top:50%;left:50%}
-  .rd-glow{background:radial-gradient(circle,#ffe89a,#f0c040,#e8a020);box-shadow:0 0 10px rgba(240,192,64,0.9),0 0 25px rgba(240,192,64,0.4)}
-  .rd-sm{background:radial-gradient(circle,#ffe070,#d8a830);box-shadow:0 0 8px rgba(216,168,48,0.7),0 0 18px rgba(216,168,48,0.3)}
+        .login-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            animation: fadeInUp 1.2s ease-out;
+        }
 
-  .head{width:190px;height:190px;border-radius:50%;position:relative;z-index:2;
-    background:radial-gradient(circle at 38% 30%,#333 0%,#1a1a1a 35%,#0d0d0d 65%,#050505 100%);
-    box-shadow:0 0 50px rgba(240,180,0,0.1),0 0 100px rgba(240,180,0,0.04),inset 0 -30px 50px rgba(0,0,0,0.9),inset 0 8px 25px rgba(80,80,80,0.2)}
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-  .head::after{content:'';position:absolute;top:12%;left:22%;width:56%;height:30%;background:radial-gradient(ellipse,rgba(255,255,255,0.06),transparent);border-radius:50%}
+        .logo-area {
+            margin-bottom: 30px;
+        }
 
-  .eye{position:absolute;width:26px;height:46px;border-radius:13px;
-    background:radial-gradient(ellipse at 45% 40%,#fff5d0,#ffc840,#f0a020);
-    box-shadow:0 0 18px rgba(255,200,50,0.85),0 0 40px rgba(255,200,50,0.4),0 0 70px rgba(255,180,30,0.2);
-    top:50%;transform:translateY(-50%)}
-  .eye-l{left:35px}
-  .eye-r{right:35px}
-  .eye::after{content:'';position:absolute;top:3px;left:50%;transform:translateX(-50%);width:7px;height:10px;background:rgba(255,255,255,0.5);border-radius:50%;filter:blur(1.5px)}
+        .logo-area h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 30px rgba(0, 150, 255, 0.5), 0 0 60px rgba(0, 100, 255, 0.3);
+            letter-spacing: 3px;
+            line-height: 1.2;
+        }
 
-  .mouth{position:absolute;bottom:30%;left:50%;transform:translateX(-50%);width:52px;height:3.5px;border-radius:2px;
-    background:linear-gradient(90deg,transparent,#ffc840,#e8a020,#ffc840,transparent);
-    box-shadow:0 0 10px rgba(255,200,50,0.5)}
+        .logo-area h1 .highlight {
+            color: #FFD700;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-  .ear{position:absolute;width:16px;height:55px;border-radius:8px;top:50%;transform:translateY(-50%);
-    background:linear-gradient(180deg,#1a1a1a,#0a0a0a);box-shadow:inset 0 0 8px rgba(0,0,0,0.9)}
-  .ear-l{left:-3px}
-  .ear-r{right:-3px}
+        .logo-area p {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 8px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
 
-  .title-area{text-align:center;margin-top:18px}
-  .t-main{font-size:50px;font-weight:900;color:#fff;letter-spacing:4px;line-height:1;text-transform:uppercase}
-  .t-sub{display:flex;align-items:center;justify-content:center;margin-top:3px}
-  .t-black{background:linear-gradient(180deg,#ffd600,#f0a000);color:#000;font-size:24px;font-weight:900;padding:1px 12px 3px;letter-spacing:2px;text-transform:uppercase;display:inline-block;border-radius:2px}
-  .t-bot{color:#fff;font-size:24px;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-left:4px}
+        .login-card {
+            background: rgba(10, 15, 40, 0.85);
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px 50px;
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 25px 60px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(0, 100, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            max-width: 420px;
+            width: 90vw;
+            position: relative;
+            overflow: hidden;
+        }
 
-  .footer{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:5px}
-  .globe{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,200,0,0.55);position:relative;
-    background:radial-gradient(circle,rgba(255,200,0,0.08),transparent)}
-  .globe::before{content:'';position:absolute;top:3px;left:3px;right:3px;bottom:3px;border-radius:50%;border:1px solid rgba(255,200,0,0.25)}
-  .globe::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:100%;height:100%;border-radius:50%;border-left:1px solid rgba(255,200,0,0.25);border-right:1px solid rgba(255,200,0,0.25)}
-  .url{font-size:10px;color:rgba(255,255,255,0.65);letter-spacing:2.5px;text-transform:uppercase}
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 200%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #0096FF, #FFD700, #0096FF, transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
 
-  /* ========== LOCK SCREEN ========== */
-  #lockScreen{
-    position:fixed;inset:0;z-index:1000;
-    display:flex;align-items:center;justify-content:center;
-    background:rgba(4,8,20,0.97);
-    backdrop-filter:blur(30px);
-    transition:opacity 0.8s ease, transform 0.8s ease;
-  }
-  #lockScreen.unlocked{
-    opacity:0;transform:scale(1.1);pointer-events:none;
-  }
-  .lock-container{
-    width:100%;max-width:420px;padding:40px 30px;
-    text-align:center;
-  }
-  .lock-icon{
-    width:80px;height:80px;margin:0 auto 24px;
-    background:linear-gradient(135deg,#2AABEE,#1E96D1);
-    border-radius:24px;
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 10px 40px rgba(42,171,238,0.3);
-    animation:lockPulse 2s ease-in-out infinite;
-  }
-  @keyframes lockPulse{
-    0%,100%{box-shadow:0 10px 40px rgba(42,171,238,0.3)}
-    50%{box-shadow:0 10px 60px rgba(42,171,238,0.5)}
-  }
-  .lock-icon svg{width:44px;height:44px}
-  .lock-title{
-    font-size:26px;font-weight:800;color:#fff;margin-bottom:8px;
-  }
-  .lock-subtitle{
-    font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:32px;line-height:1.6;
-  }
-  .bot-link{
-    display:inline-flex;align-items:center;gap:8px;
-    background:linear-gradient(135deg,#2AABEE,#1E96D1);
-    color:#fff;text-decoration:none;
-    padding:14px 28px;border-radius:14px;
-    font-weight:700;font-size:16px;
-    margin-bottom:28px;
-    transition:transform 0.2s, box-shadow 0.2s;
-    cursor:pointer;border:none;
-  }
-  .bot-link:hover{
-    transform:scale(1.03);
-    box-shadow:0 8px 30px rgba(42,171,238,0.4);
-  }
-  .bot-link svg{width:22px;height:22px}
-  .steps{
-    text-align:right;margin-bottom:28px;
-    padding:20px;
-    background:rgba(255,255,255,0.03);
-    border:1px solid rgba(255,255,255,0.06);
-    border-radius:16px;
-  }
-  .steps h3{
-    font-size:14px;color:rgba(255,255,255,0.7);margin-bottom:14px;font-weight:600;
-  }
-  .step{
-    display:flex;align-items:center;gap:10px;
-    margin-bottom:10px;
-    font-size:13px;color:rgba(255,255,255,0.5);
-  }
-  .step:last-child{margin-bottom:0}
-  .step-num{
-    width:24px;height:24px;border-radius:8px;
-    background:rgba(42,171,238,0.15);
-    color:#2AABEE;font-size:12px;font-weight:700;
-    display:flex;align-items:center;justify-content:center;
-    flex-shrink:0;
-  }
-  .code-section{
-    display:none;
-  }
-  .code-section.active{
-    display:block;
-  }
-  .code-input-wrap{
-    display:flex;gap:8px;justify-content:center;margin-bottom:16px;
-  }
-  .code-input{
-    width:48px;height:56px;
-    background:rgba(255,255,255,0.06);
-    border:2px solid rgba(255,255,255,0.1);
-    border-radius:14px;
-    color:#fff;font-size:22px;font-weight:700;
-    text-align:center;
-    outline:none;
-    transition:border-color 0.3s, box-shadow 0.3s;
-    font-family:'Segoe UI',Arial,sans-serif;
-  }
-  .code-input:focus{
-    border-color:#2AABEE;
-    box-shadow:0 0 20px rgba(42,171,238,0.2);
-  }
-  .code-input.error{
-    border-color:#ff4444;
-    animation:shake 0.4s ease;
-  }
-  @keyframes shake{
-    0%,100%{transform:translateX(0)}
-    25%{transform:translateX(-6px)}
-    75%{transform:translateX(6px)}
-  }
-  .verify-btn{
-    width:100%;padding:14px;
-    background:linear-gradient(135deg,#2AABEE,#1E96D1);
-    color:#fff;border:none;border-radius:14px;
-    font-size:16px;font-weight:700;cursor:pointer;
-    font-family:'Segoe UI',Arial,sans-serif;
-    transition:transform 0.2s, box-shadow 0.2s;
-  }
-  .verify-btn:hover{
-    transform:scale(1.02);
-    box-shadow:0 8px 30px rgba(42,171,238,0.3);
-  }
-  .verify-btn:disabled{
-    opacity:0.4;cursor:not-allowed;transform:none;
-  }
-  .error-msg{
-    color:#ff4444;font-size:13px;margin-top:10px;
-    display:none;
-  }
-  .error-msg.show{display:block}
-  .success-msg{
-    color:#44ff88;font-size:14px;margin-top:12px;
-    display:none;
-  }
-  .success-msg.show{display:block}
-  .lock-footer{
-    margin-top:24px;
-    font-size:11px;color:rgba(255,255,255,0.25);
-  }
-  .spinner{
-    display:inline-block;width:18px;height:18px;
-    border:2px solid rgba(255,255,255,0.3);
-    border-top-color:#fff;border-radius:50%;
-    animation:spin 0.8s linear infinite;
-    vertical-align:middle;margin-left:8px;
-  }
-  @keyframes spin{to{transform:rotate(360deg)}}
+        @keyframes shimmer {
+            0% { transform: translateX(-30%); }
+            100% { transform: translateX(30%); }
+        }
 
-  /* Success overlay */
-  #successOverlay{
-    position:fixed;inset:0;z-index:999;
-    display:flex;align-items:center;justify-content:center;
-    background:rgba(4,8,20,0.95);
-    opacity:0;pointer-events:none;
-    transition:opacity 0.5s ease;
-  }
-  #successOverlay.show{opacity:1;pointer-events:all}
-  .success-content{
-    text-align:center;
-    animation:successPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
-  }
-  @keyframes successPop{
-    from{transform:scale(0.5);opacity:0}
-    to{transform:scale(1);opacity:1}
-  }
-  .check-circle{
-    width:80px;height:80px;border-radius:50%;
-    background:linear-gradient(135deg,#44ff88,#22cc66);
-    display:flex;align-items:center;justify-content:center;
-    margin:0 auto 20px;
-    box-shadow:0 10px 40px rgba(68,255,136,0.3);
-  }
-  .check-circle svg{width:40px;height:40px}
-  .success-text{color:#fff;font-size:22px;font-weight:700}
-  .success-sub{color:rgba(255,255,255,0.5);font-size:14px;margin-top:8px}
-</style>
+        .login-card h2 {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .login-card .subtitle {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .telegram-icon-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            position: relative;
+        }
+
+        .telegram-icon-container svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 15px rgba(0, 150, 255, 0.4));
+        }
+
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 150, 255, 0.3);
+            animation: pulse 2s ease-out infinite;
+        }
+
+        .pulse-ring:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        .pulse-ring:nth-child(3) {
+            animation-delay: 1s;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.8);
+                opacity: 0;
+            }
+        }
+
+        .telegram-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px 30px;
+            background: linear-gradient(135deg, #0088cc, #0066aa);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+        }
+
+        .telegram-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .telegram-btn:hover::before {
+            left: 100%;
+        }
+
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 136, 204, 0.4);
+        }
+
+        .telegram-btn:active {
+            transform: translateY(0);
+        }
+
+        .telegram-btn svg {
+            width: 28px;
+            height: 28px;
+            fill: white;
+        }
+
+        .telegram-btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .telegram-btn .spinner {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .telegram-btn.loading .spinner {
+            display: block;
+        }
+
+        .telegram-btn.loading .btn-text,
+        .telegram-btn.loading svg {
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .security-badge svg {
+            width: 16px;
+            height: 16px;
+            fill: #4CAF50;
+        }
+
+        .security-badge span {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(0, 150, 255, 0.4);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            background: rgba(5, 5, 20, 0.92);
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+        }
+
+        .dashboard.active {
+            display: block;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .dash-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(0, 150, 255, 0.1);
+        }
+
+        .dash-header .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .dash-header .logo span {
+            color: #FFD700;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0096FF, #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .user-name {
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .user-id {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.75rem;
+        }
+
+        .logout-btn {
+            padding: 8px 20px;
+            background: rgba(255, 50, 50, 0.15);
+            border: 1px solid rgba(255, 50, 50, 0.3);
+            color: #ff6b6b;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 50, 50, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .dash-content {
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section h1 span {
+            background: linear-gradient(135deg, #0096FF, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-section p {
+            color: rgba(255,255,255,0.5);
+            font-size: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 150, 255, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 5px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 150, 255, 0.3);
+            background: rgba(0, 150, 255, 0.05);
+        }
+
+        .feature-card .f-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            color: #fff;
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+
+        .feature-card .tag {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 4px 12px;
+            background: rgba(0, 150, 255, 0.1);
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            border-radius: 20px;
+            color: #0096FF;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            z-index: 1000;
+            transition: transform 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            border: 1px solid rgba(76, 175, 80, 0.5);
+        }
+
+        .toast.error {
+            background: rgba(244, 67, 54, 0.9);
+            color: white;
+            border: 1px solid rgba(244, 67, 54, 0.5);
+        }
+
+        .toast.info {
+            background: rgba(0, 150, 255, 0.9);
+            color: white;
+            border: 1px solid rgba(0, 150, 255, 0.5);
+        }
+
+        .toast svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 600px) {
+            .logo-area h1 {
+                font-size: 2rem;
+            }
+            .login-card {
+                padding: 30px 25px;
+            }
+            .dash-header {
+                padding: 15px 20px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .dash-content {
+                padding: 20px;
+            }
+            .welcome-section h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        .corner-decoration {
+            position: fixed;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .corner-decoration.top-left {
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            border-top: 2px solid rgba(0, 150, 255, 0.3);
+            border-left: 2px solid rgba(0, 150, 255, 0.3);
+        }
+
+        .corner-decoration.top-right {
+            top: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            border-top: 2px solid rgba(0, 150, 255, 0.3);
+            border-right: 2px solid rgba(0, 150, 255, 0.3);
+        }
+
+        .corner-decoration.bottom-left {
+            bottom: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+            border-left: 2px solid rgba(0, 150, 255, 0.3);
+        }
+
+        .corner-decoration.bottom-right {
+            bottom: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+            border-right: 2px solid rgba(0, 150, 255, 0.3);
+        }
+
+        .glow-line {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #0096FF, #FFD700, #0096FF, transparent);
+            z-index: 5;
+            animation: glowMove 4s ease-in-out infinite;
+        }
+
+        @keyframes glowMove {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- ===== LOCK SCREEN ===== -->
-<div id="lockScreen">
-  <div class="lock-container">
-    <!-- Step 1: Bot link -->
-    <div id="step1">
-      <div class="lock-icon">
-        <svg viewBox="0 0 24 24" fill="#fff">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.03-1.99 1.27-5.62 3.72-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.88.03-.24.37-.49 1.02-.75 3.98-1.73 6.64-2.87 7.97-3.43 3.8-1.58 4.59-1.86 5.1-1.87.11 0 .37.03.54.17.14.12.18.28.2.45-.01.06.01.24 0 .38z"/>
-        </svg>
-      </div>
-      <div class="lock-title">🔒 الموقع محمي</div>
-      <div class="lock-subtitle">تحتاج إلى تسجيل الدخول عبر بوت تلغرام للوصول إلى الموقع</div>
+    <!-- Background -->
+    <div class="background-layer"></div>
 
-      <a id="botLink" class="bot-link" href="https://t.me/YOUR_BOT_USERNAME" target="_blank">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.03-1.99 1.27-5.62 3.72-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.88.03-.24.37-.49 1.02-.75 3.98-1.73 6.64-2.87 7.97-3.43 3.8-1.58 4.59-1.86 5.1-1.87.11 0 .37.03.54.17.14.12.18.28.2.45-.01.06.01.24 0 .38z"/>
-        </svg>
-        فتح بوت تلغرام
-      </a>
+    <!-- Corner Decorations -->
+    <div class="corner-decoration top-left"></div>
+    <div class="corner-decoration top-right"></div>
+    <div class="corner-decoration bottom-left"></div>
+    <div class="corner-decoration bottom-right"></div>
 
-      <div class="steps">
-        <h3>خطوات التسجيل:</h3>
-        <div class="step"><span class="step-num">1</span> اضغط على زر "فتح بوت تلغرام"</div>
-        <div class="step"><span class="step-num">2</span> أرسل الأمر <strong style="color:#2AABEE;margin:0 4px">/login</strong> للبوت</div>
-        <div class="step"><span class="step-num">3</span> انسخ رمز التحقق المرسل لك</div>
-        <div class="step"><span class="step-num">4</span> أدخل الرمز هنا للدخول</div>
-      </div>
+    <!-- Glow Line -->
+    <div class="glow-line"></div>
+
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Login Screen -->
+    <div class="overlay" id="loginScreen">
+        <div class="login-container">
+            <div class="logo-area">
+                <h1>ICHANCY <span class="highlight">BLACK</span> BOT</h1>
+                <p>منصة ذكية مدعومة بالذكاء الاصطناعي</p>
+            </div>
+
+            <div class="login-card">
+                <div class="telegram-icon-container">
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring"></div>
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.03-1.99 1.27-5.62 3.72-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.88.03-.24.37-.49 1.02-.75 3.99-1.74 6.65-2.89 7.99-3.44 3.81-1.58 4.6-1.86 5.12-1.87.11 0 .37.03.54.17.14.12.18.28.2.45-.01.06.01.24 0 .38z"/>
+                    </svg>
+                </div>
+
+                <h2>تسجيل الدخول</h2>
+                <p class="subtitle">قم بتسجيل الدخول عبر حسابك في تيليجرام للوصول إلى جميع الميزات</p>
+
+                <button class="telegram-btn" id="telegramBtn" onclick="initiateTelegramLogin()">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.03-1.99 1.27-5.62 3.72-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.88.03-.24.37-.49 1.02-.75 3.99-1.74 6.65-2.89 7.99-3.44 3.81-1.58 4.6-1.86 5.12-1.87.11 0 .37.03.54.17.14.12.18.28.2.45-.01.06.01.24 0 .38z"/>
+                    </svg>
+                    <span class="btn-text">تسجيل الدخول عبر تيليجرام</span>
+                    <div class="spinner"></div>
+                </button>
+
+                <div class="security-badge">
+                    <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                    <span>محمي ومشفّر بالكامل</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Step 2: Code verification -->
-    <div id="step2" class="code-section">
-      <div class="lock-icon">
-        <svg viewBox="0 0 24 24" fill="#fff" width="44" height="44">
-          <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
-        </svg>
-      </div>
-      <div class="lock-title">أدخل رمز التحقق</div>
-      <div class="lock-subtitle">أدخل الرمز المكون من 6 أرقام الذي أرسله لك البوت</div>
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="dash-header">
+            <div class="logo">ICHANCY <span>BLACK</span> BOT</div>
+            <div class="user-info">
+                <div>
+                    <div class="user-name" id="userName">المستخدم</div>
+                    <div class="user-id" id="userId">ID: ---</div>
+                </div>
+                <div class="user-avatar" id="userAvatar">U</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+        </div>
 
-      <div class="code-input-wrap">
-        <input type="text" class="code-input" maxlength="1" data-index="0" inputmode="numeric">
-        <input type="text" class="code-input" maxlength="1" data-index="1" inputmode="numeric">
-        <input type="text" class="code-input" maxlength="1" data-index="2" inputmode="numeric">
-        <input type="text" class="code-input" maxlength="1" data-index="3" inputmode="numeric">
-        <input type="text" class="code-input" maxlength="1" data-index="4" inputmode="numeric">
-        <input type="text" class="code-input" maxlength="1" data-index="5" inputmode="numeric">
-      </div>
+        <div class="dash-content">
+            <div class="welcome-section">
+                <h1>مرحباً بك في <span>ICHANCY BLACK BOT</span></h1>
+                <p>لوحة التحكم الرئيسية - جميع الأدوات متاحة الآن</p>
+            </div>
 
-      <button class="verify-btn" id="verifyBtn" onclick="verifyCode()">
-        تأكيد الدخول
-      </button>
-      <div class="error-msg" id="errorMsg">رمز التحقق غير صحيح، حاول مرة أخرى</div>
-      <div class="success-msg" id="successMsg">جاري التحقق...</div>
-      <div class="lock-footer">
-        لم تستلم الرمز؟ <a href="https://t.me/YOUR_BOT_USERNAME" target="_blank" style="color:#2AABEE;text-decoration:none">أعد إرسال /login</a>
-      </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">🤖</div>
+                    <div class="value" id="botStatus">نشط</div>
+                    <div class="label">حالة البوت</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">⚡</div>
+                    <div class="value" id="requestCount">0</div>
+                    <div class="label">الطلبات</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">️</div>
+                    <div class="value">مفعّل</div>
+                    <div class="label">الحماية</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📊</div>
+                    <div class="value" id="uptime">99.9%</div>
+                    <div class="label">وقت التشغيل</div>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="f-icon"></div>
+                    <h3>الذكاء الاصطناعي</h3>
+                    <p>تحليل متقدم باستخدام أحدث نماذج الذكاء الاصطناعي مع دعم اللغة العربية</p>
+                    <span class="tag">متاح</span>
+                </div>
+                <div class="feature-card">
+                    <div class="f-icon">🔐</div>
+                    <h3>الأمان المتقدم</h3>
+                    <p>تشفير كامل لجميع البيانات مع مصادقة ثنائية عبر تيليجرام</p>
+                    <span class="tag">مفعّل</span>
+                </div>
+                <div class="feature-card">
+                    <div class="f-icon">📡</div>
+                    <h3>الربط مع تيليجرام</h3>
+                    <p>إشعارات فورية وتحكم كامل عبر بوت تيليجرام المخصص</p>
+                    <span class="tag">متصل</span>
+                </div>
+                <div class="feature-card">
+                    <div class="f-icon">⚙️</div>
+                    <h3>لوحة التحكم</h3>
+                    <p>إدارة شاملة لجميع الإعدادات والميزات من مكان واحد</p>
+                    <span class="tag">متاح</span>
+                </div>
+                <div class="feature-card">
+                    <div class="f-icon"></div>
+                    <h3>دعم متعدد اللغات</h3>
+                    <p>واجهة متاحة بعدة لغات مع دعم كامل للعربية والإنجليزية</p>
+                    <span class="tag">متاح</span>
+                </div>
+                <div class="feature-card">
+                    <div class="f-icon">📈</div>
+                    <h3>التقارير والتحليلات</h3>
+                    <p>تقارير مفصلة وإحصائيات دقيقة لأداء النظام والعمليات</p>
+                    <span class="tag">متاح</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- Success Overlay -->
-<div id="successOverlay">
-  <div class="success-content">
-    <div class="check-circle">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"/>
-      </svg>
+    <!-- Toast Container -->
+    <div class="toast" id="toast">
+        <svg viewBox="0 0 24 24" id="toastIcon"></svg>
+        <span id="toastMessage"></span>
     </div>
-    <div class="success-text">تم التحقق بنجاح!</div>
-    <div class="success-sub">جاري دخولك إلى الموقع...</div>
-  </div>
-</div>
 
-<!-- ===== MAIN SITE ===== -->
-<div class="scene" id="mainSite">
-  <canvas id="c"></canvas>
-  <div class="overlay"></div>
+    <script>
+        // Telegram Bot Configuration
+        const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';
+        const BOT_USERNAME = 'YourBotUsername';
+        const REDIRECT_URL = window.location.origin + window.location.pathname;
 
-  <div class="top-logo">
-    <div class="bolt">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 10 10-12h-9l1-10z" fill="#ffd000"/></svg>
-    </div>
-    <span>ichancy</span>
-  </div>
-
-  <div class="dots-tr"><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div></div>
-  <div class="dots-bl"><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div></div>
-  <div class="corner-tl"></div>
-  <div class="corner-br"></div>
-  <div class="streak-y1"></div>
-  <div class="streak-y2"></div>
-
-  <div class="bot-area">
-    <div class="ring-wrap">
-      <svg class="ring-svg" viewBox="0 0 280 280">
-        <circle cx="140" cy="140" r="128" fill="none" stroke="rgba(240,192,64,0.12)" stroke-width="1"/>
-      </svg>
-      <div id="rdots"></div>
-      <div class="head">
-        <div class="ear ear-l"></div>
-        <div class="ear ear-r"></div>
-        <div class="eye eye-l"></div>
-        <div class="eye eye-r"></div>
-        <div class="mouth"></div>
-      </div>
-    </div>
-    <div class="title-area">
-      <div class="t-main">ICHANCY</div>
-      <div class="t-sub"><span class="t-black">BLACK</span><span class="t-bot">BOT</span></div>
-    </div>
-  </div>
-
-  <div class="footer">
-    <div class="globe"></div>
-    <div class="url">www.ichancy.com</div>
-  </div>
-</div>
-
-<script>
-// ============ CONFIGURATION ============
-// ضع هنا توكن بوت تلغرام الخاص بك
-const BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';
-// ضع هنا يوزرنيم البوت الخاص بك
-const BOT_USERNAME = 'YOUR_BOT_USERNAME';
-
-// تحديث رابط البوت ديناميكياً
-document.getElementById('botLink').href = 'https://t.me/' + BOT_USERNAME;
-document.querySelectorAll('.lock-footer a').forEach(a => {
-  if(a.href) a.href = 'https://t.me/' + BOT_USERNAME;
-});
-
-// ============ GENERATED CODES (Server-side should handle this) ============
-// في التطبيق الحقيقي، يتم إنشاء الرموز عبر خادم البوت
-let generatedCodes = {};
-let currentUserId = null;
-
-// ============ TELEGRAM BOT API ============
-async function sendToBot(method, params) {
-  const url = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(params)
-    });
-    return await response.json();
-  } catch(e) {
-    console.error('Bot API error:', e);
-    return null;
-  }
-}
-
-// Generate random 6-digit code
-function generateCode() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-// Check if code matches any generated code
-function isValidCode(code) {
-  const now = Date.now();
-  for (const userId in generatedCodes) {
-    const data = generatedCodes[userId];
-    if (data.code === code && (now - data.timestamp) < 300000) { // 5 min expiry
-      currentUserId = userId;
-      delete generatedCodes[userId];
-      return true;
-    }
-  }
-  return false;
-}
-
-// ============ UI LOGIC ============
-const lockScreen = document.getElementById('lockScreen');
-const step1 = document.getElementById('step1');
-const step2 = document.getElementById('step2');
-const successOverlay = document.getElementById('successOverlay');
-const codeInputs = document.querySelectorAll('.code-input');
-const verifyBtn = document.getElementById('verifyBtn');
-const errorMsg = document.getElementById('errorMsg');
-const successMsg = document.getElementById('successMsg');
-
-// Show verification step after delay (simulating user opened bot)
-// In production, the bot would call a webhook to show this step
-function showVerificationStep() {
-  step1.style.display = 'none';
-  step2.classList.add('active');
-  codeInputs[0].focus();
-}
-
-// Allow manual switch to verification (for demo)
-// User can press Ctrl+Shift+V to go to verification step
-document.addEventListener('keydown', function(e) {
-  if (e.ctrlKey && e.shiftKey && e.key === 'V') {
-    showVerificationStep();
-  }
-});
-
-// Also show a subtle "Proceed to verification" button after 3 seconds
-setTimeout(() => {
-  if (step1.style.display !== 'none') {
-    const proceedBtn = document.createElement('button');
-    proceedBtn.className = 'bot-link';
-    proceedBtn.style.cssText = 'background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);font-size:13px;padding:10px 20px;margin-top:8px;';
-    proceedBtn.innerHTML = '⌨️ أدخل رمز التحقق';
-    proceedBtn.onclick = showVerificationStep;
-    step1.appendChild(proceedBtn);
-  }
-}, 3000);
-
-// Code input auto-focus
-codeInputs.forEach((input, index) => {
-  input.addEventListener('input', function(e) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-    if (this.value && index < 5) {
-      codeInputs[index + 1].focus();
-    }
-    if (index === 5 && this.value) {
-      // Auto verify when last digit entered
-      verifyCode();
-    }
-  });
-
-  input.addEventListener('keydown', function(e) {
-    if (e.key === 'Backspace' && !this.value && index > 0) {
-      codeInputs[index - 1].focus();
-      codeInputs[index - 1].value = '';
-    }
-    if (e.key === 'Enter') {
-      verifyCode();
-    }
-  });
-
-  input.addEventListener('paste', function(e) {
-    e.preventDefault();
-    const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
-    if (paste.length >= 6) {
-      codeInputs.forEach((inp, i) => {
-        inp.value = paste[i] || '';
-      });
-      codeInputs[5].focus();
-      setTimeout(verifyCode, 100);
-    }
-  });
-});
-
-async function verifyCode() {
-  let code = '';
-  codeInputs.forEach(inp => code += inp.value);
-
-  if (code.length !== 6) {
-    codeInputs.forEach(inp => inp.classList.add('error'));
-    setTimeout(() => codeInputs.forEach(inp => inp.classList.remove('error')), 500);
-    errorMsg.textContent = 'أدخل الرمز كاملاً (6 أرقام)';
-    errorMsg.classList.add('show');
-    return;
-  }
-
-  errorMsg.classList.remove('show');
-  successMsg.classList.add('show');
-  successMsg.innerHTML = '<span class="spinner"></span> جاري التحقق...';
-  verifyBtn.disabled = true;
-
-  // Try to verify via Bot API first
-  const botResult = await verifyViaBotAPI(code);
-
-  if (botResult) {
-    unlockSite();
-    return;
-  }
-
-  // Fallback: check local codes (for demo)
-  // In production, only use Bot API verification
-  setTimeout(() => {
-    // Demo mode: accept any 6-digit code
-    // Remove this in production and only use Bot API
-    if (code.length === 6) {
-      unlockSite();
-    } else {
-      successMsg.classList.remove('show');
-      errorMsg.textContent = 'رمز التحقق غير صحيح، حاول مرة أخرى';
-      errorMsg.classList.add('show');
-      verifyBtn.disabled = false;
-      codeInputs.forEach(inp => {
-        inp.classList.add('error');
-        inp.value = '';
-      });
-      codeInputs[0].focus();
-      setTimeout(() => codeInputs.forEach(inp => inp.classList.remove('error')), 500);
-    }
-  }, 1500);
-}
-
-async function verifyViaBotAPI(code) {
-  if (BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE') return false;
-
-  try {
-    // Check updates for the code
-    const updates = await sendToBot('getUpdates', {
-      offset: 0,
-      limit: 100,
-      timeout: 1
-    });
-
-    if (!updates || !updates.ok) return false;
-
-    for (const update of updates.result) {
-      if (update.message && update.message.text) {
-        const msgText = update.message.text.trim();
-        if (msgText === code || msgText.includes(code)) {
-          // Delete the message for security
-          sendToBot('deleteMessage', {
-            chat_id: update.message.chat.id,
-            message_id: update.message.message_id
-          });
-          return true;
+        // Particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                particle.style.animationDelay = (Math.random() * 5) + 's';
+                particle.style.width = (Math.random() * 3 + 1) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = Math.random() > 0.5 
+                    ? 'rgba(0, 150, 255, 0.3)' 
+                    : 'rgba(255, 215, 0, 0.2)';
+                container.appendChild(particle);
+            }
         }
-      }
-    }
-  } catch(e) {}
-  return false;
-}
+        createParticles();
 
-function unlockSite() {
-  successMsg.innerHTML = '✅ تم التحقق بنجاح!';
-  successMsg.style.color = '#44ff88';
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('telegramUser');
+            if (savedUser) {
+                try {
+                    const user = JSON.parse(savedUser);
+                    showDashboard(user);
+                } catch(e) {
+                    localStorage.removeItem('telegramUser');
+                }
+            }
+        });
 
-  setTimeout(() => {
-    successOverlay.classList.add('show');
-  }, 300);
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
 
-  setTimeout(() => {
-    lockScreen.classList.add('unlocked');
-    successOverlay.style.opacity = '0';
-    successOverlay.style.pointerEvents = 'none';
-  }, 1200);
+            toast.className = 'toast ' + type;
+            toastMsg.textContent = message;
 
-  setTimeout(() => {
-    lockScreen.style.display = 'none';
-    successOverlay.style.display = 'none';
-  }, 2200);
-}
+            const icons = {
+                success: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>',
+                error: '<path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>',
+                info: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>'
+            };
+            toastIcon.innerHTML = icons[type] || icons.info;
 
-// ============ BACKGROUND CANVAS ============
-const C = document.getElementById('c');
-const X = C.getContext('2d');
-let W, H;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
 
-function resize() {
-  W = C.width = window.innerWidth;
-  H = C.height = window.innerHeight;
-  draw();
-}
+        // Initiate Telegram Login
+        function initiateTelegramLogin() {
+            const btn = document.getElementById('telegramBtn');
+            btn.classList.add('loading');
+            showToast('جاري الاتصال ببوت تيليجرام...', 'info');
 
-function draw() {
-  X.fillStyle = '#060e1f';
-  X.fillRect(0, 0, W, H);
-  const cx = W / 2, cy = H / 2;
+            // Simulate Telegram login process
+            // In production, this would redirect to Telegram OAuth
+            // https://oauth.telegram.org/auth?bot_id=YOUR_BOT_ID&origin=YOUR_ORIGIN&request_access=write&return_to=YOUR_REDIRECT
 
-  let g = X.createRadialGradient(cx, cy * 0.85, 0, cx, cy * 0.85, W * 0.55);
-  g.addColorStop(0, 'rgba(0,100,220,0.1)');
-  g.addColorStop(0.4, 'rgba(0,70,180,0.04)');
-  g.addColorStop(1, 'transparent');
-  X.fillStyle = g;
-  X.fillRect(0, 0, W, H);
+            setTimeout(() => {
+                // Simulated successful login
+                const mockUser = {
+                    id: Math.floor(Math.random() * 900000000) + 100000000,
+                    first_name: 'مستخدم',
+                    last_name: 'تيليجرام',
+                    username: 'telegram_user_' + Math.floor(Math.random() * 1000),
+                    photo_url: ''
+                };
 
-  g = X.createRadialGradient(cx, 0, 0, cx, 0, H * 0.5);
-  g.addColorStop(0, 'rgba(20,120,240,0.1)');
-  g.addColorStop(1, 'transparent');
-  X.fillStyle = g;
-  X.fillRect(0, 0, W, H);
+                localStorage.setItem('telegramUser', JSON.stringify(mockUser));
+                btn.classList.remove('loading');
+                showToast('تم تسجيل الدخول بنجاح! ✓', 'success');
 
-  X.save();
-  X.globalAlpha = 0.04;
-  X.fillStyle = '#0080e0';
-  X.fillRect(cx - 80, 0, 1.5, H * 0.45);
-  X.fillRect(cx + 80, 0, 1, H * 0.4);
-  X.fillRect(cx - 150, H * 0.15, 1, H * 0.55);
-  X.fillRect(cx + 150, H * 0.1, 1, H * 0.6);
-  X.globalAlpha = 1;
-  X.restore();
+                setTimeout(() => showDashboard(mockUser), 800);
+            }, 2000);
+        }
 
-  X.save();
-  X.beginPath();
-  X.moveTo(W * 0.02, 0); X.lineTo(W * 0.32, H * 0.12);
-  X.lineTo(W * 0.28, H * 0.65); X.lineTo(0, H * 0.48); X.closePath();
-  let lg = X.createLinearGradient(W * 0.1, 0, W * 0.2, H * 0.4);
-  lg.addColorStop(0, 'rgba(0,110,230,0.07)');
-  lg.addColorStop(1, 'rgba(0,80,190,0.01)');
-  X.fillStyle = lg;
-  X.fill();
-  X.restore();
+        // Show Dashboard
+        function showDashboard(user) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
 
-  X.save();
-  X.beginPath();
-  X.moveTo(W * 0.98, 0); X.lineTo(W * 0.68, H * 0.12);
-  X.lineTo(W * 0.72, H * 0.65); X.lineTo(W, H * 0.48); X.closePath();
-  lg = X.createLinearGradient(W * 0.9, 0, W * 0.8, H * 0.4);
-  lg.addColorStop(0, 'rgba(0,110,230,0.06)');
-  lg.addColorStop(1, 'rgba(0,80,190,0.01)');
-  X.fillStyle = lg;
-  X.fill();
-  X.restore();
+            const fullName = (user.first_name || '') + ' ' + (user.last_name || '');
+            document.getElementById('userName').textContent = fullName.trim() || user.username || 'مستخدم';
+            document.getElementById('userId').textContent = 'ID: ' + (user.id || '---');
+            document.getElementById('userAvatar').textContent = (user.first_name || 'U').charAt(0).toUpperCase();
 
-  X.save();
-  X.beginPath(); X.moveTo(0, H); X.lineTo(W * 0.12, H * 0.65); X.lineTo(W * 0.18, H); X.closePath();
-  X.fillStyle = 'rgba(0,80,180,0.04)'; X.fill(); X.restore();
-  X.save();
-  X.beginPath(); X.moveTo(W, H); X.lineTo(W * 0.88, H * 0.65); X.lineTo(W * 0.82, H); X.closePath();
-  X.fillStyle = 'rgba(0,80,180,0.04)'; X.fill(); X.restore();
+            // Animate stats
+            animateCounter('requestCount', 1247, 1500);
+        }
 
-  g = X.createRadialGradient(W * 0.92, H * 0.08, 0, W * 0.92, H * 0.08, W * 0.22);
-  g.addColorStop(0, 'rgba(255,200,0,0.05)');
-  g.addColorStop(1, 'transparent');
-  X.fillStyle = g;
-  X.fillRect(0, 0, W, H);
+        // Counter animation
+        function animateCounter(elementId, target, duration) {
+            const el = document.getElementById(elementId);
+            const start = 0;
+            const startTime = performance.now();
 
-  g = X.createRadialGradient(W * 0.08, H * 0.92, 0, W * 0.08, H * 0.92, W * 0.18);
-  g.addColorStop(0, 'rgba(255,200,0,0.04)');
-  g.addColorStop(1, 'transparent');
-  X.fillStyle = g;
-  X.fillRect(0, 0, W, H);
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(start + (target - start) * eased);
+                el.textContent = current.toLocaleString();
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
 
-  g = X.createRadialGradient(cx, H, 0, cx, H, H * 0.35);
-  g.addColorStop(0, 'rgba(15,60,150,0.06)');
-  g.addColorStop(1, 'transparent');
-  X.fillStyle = g;
-  X.fillRect(0, 0, W, H);
-}
+        // Logout
+        function logout() {
+            localStorage.removeItem('telegramUser');
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('loginScreen').style.display = 'flex';
+            showToast('تم تسجيل الخروج', 'info');
+        }
 
-window.addEventListener('resize', resize);
-resize();
-
-// Ring dots
-const rd = document.getElementById('rdots');
-const R = 128, n = 16;
-for (let i = 0; i < n; i++) {
-  const a = (i / n) * Math.PI * 2 - Math.PI / 2;
-  const d = document.createElement('div');
-  const big = i % 4 === 0;
-  d.className = 'ring-dot ' + (big ? 'rd-glow' : 'rd-sm');
-  d.style.transform = `translate(calc(-50% + ${Math.cos(a) * R}px), calc(-50% + ${Math.sin(a) * R}px))`;
-  if (big) { d.style.width = '14px'; d.style.height = '14px'; }
-  rd.appendChild(d);
-}
-
-// Head animation
-const head = document.querySelector('.head');
-let frame = 0;
-function anim() {
-  frame++;
-  head.style.transform = `translateY(${Math.sin(frame * 0.018) * 3}px)`;
-  requestAnimationFrame(anim);
-}
-anim();
-</script>
+        // Feature card click handler
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const tag = this.querySelector('.tag');
+                if (tag) {
+                    const original = tag.textContent;
+                    tag.textContent = '✓ نشط';
+                    tag.style.background = 'rgba(76, 175, 80, 0.15)';
+                    tag.style.borderColor = 'rgba(76, 175, 80, 0.3)';
+                    tag.style.color = '#4CAF50';
+                    showToast('تم تفعيل الميزة بنجاح', 'success');
+                    setTimeout(() => {
+                        tag.textContent = original;
+                        tag.style.background = '';
+                        tag.style.borderColor = '';
+                        tag.style.color = '';
+                    }, 2000);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
 
