@@ -3,53 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ICHANCY BLACK BOT - Login</title>
+<title>ICHANCY BLACK BOT - Web App</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Segoe UI',Arial,sans-serif}
-  
-  /* Background Scene */
+
   .scene{width:100%;height:100%;position:relative;background:#060e1f;overflow:hidden;filter:blur(8px);transition:filter 0.5s ease}
   .scene.unlocked{filter:blur(0)}
-  
-  /* Canvas & Overlays */
+
   canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1}
   .overlay{position:absolute;inset:0;z-index:2;pointer-events:none}
-  
-  /* --- LOGIN OVERLAY (The Gate) --- */
-  .login-gate{
-    position:absolute;inset:0;z-index:100;
-    background:rgba(5,10,25,0.85);
-    backdrop-filter:blur(15px);
+
+  /* رسالة خارج تلغرام */
+  .outside-warning{
+    position:absolute;inset:0;z-index:200;
+    background:rgba(5,10,25,0.95);
+    backdrop-filter:blur(20px);
     display:flex;flex-direction:column;align-items:center;justify-content:center;
-    transition:opacity 0.5s ease, visibility 0.5s ease;
+    color:#fff;text-align:center;padding:20px;
+    transition:opacity 0.5s,visibility 0.5s;
   }
-  .login-gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
-  
-  .login-card{
-    background:linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
-    border:1px solid rgba(255,255,255,0.1);
-    border-radius:24px;
-    padding:40px;
-    text-align:center;
-    max-width:380px;
-    width:90%;
-    box-shadow:0 20px 50px rgba(0,0,0,0.5);
-  }
-  
-  .login-bot-icon{
-    width:80px;height:80px;margin:0 auto 20px;
-    background:radial-gradient(circle at 30% 30%,#444,#111);
-    border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 0 20px rgba(255,180,0,0.2);
-  }
-  .login-bot-icon .eye{width:10px;height:18px;background:#ffc840;border-radius:6px;box-shadow:0 0 8px #ffc840}
-  
-  .login-title{color:#fff;font-size:22px;font-weight:700;margin-bottom:8px}
-  .login-sub{color:rgba(255,255,255,0.5);font-size:14px;margin-bottom:30px}
-  
-  /* --- USER PROFILE (Top Left) --- */
+  .outside-warning.hidden{opacity:0;visibility:hidden;pointer-events:none}
+  .outside-warning .icon{font-size:50px;margin-bottom:20px}
+  .outside-warning h2{font-size:22px;margin-bottom:10px}
+  .outside-warning p{color:rgba(255,255,255,0.6);max-width:300px}
+
+  /* ملف المستخدم (أعلى اليمين) */
   .user-profile{
     position:absolute;top:20px;right:20px;z-index:50;
     display:none;align-items:center;gap:12px;
@@ -62,7 +41,6 @@
     transition:all 0.3s ease;
   }
   .user-profile:hover{border-color:rgba(255,215,0,0.6);box-shadow:0 0 15px rgba(255,215,0,0.1)}
-  
   .user-avatar{
     width:40px;height:40px;border-radius:50%;object-fit:cover;
     border:2px solid #FFD700;
@@ -79,25 +57,20 @@
   }
   .logout-btn:hover{opacity:1}
 
-  /* --- PROFILE MODAL (Popup) --- */
+  /* المودال */
   .modal-overlay{
     position:fixed;inset:0;z-index:200;
     background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);
     display:none;align-items:center;justify-content:center;
   }
   .modal-overlay.active{display:flex}
-  
   .modal-card{
     background:linear-gradient(160deg, #1a2035, #0a101d);
     border:1px solid rgba(255,215,0,0.3);
-    border-radius:24px;
-    width:340px;
-    overflow:hidden;
-    position:relative;
-    animation:popIn 0.3s ease-out;
+    border-radius:24px;width:340px;overflow:hidden;
+    position:relative;animation:popIn 0.3s ease-out;
   }
   @keyframes popIn{from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1}}
-  
   .modal-header{
     height:100px;
     background:linear-gradient(90deg, #2AABEE, #0088cc);
@@ -110,9 +83,7 @@
     cursor:pointer;font-size:16px;
     display:flex;align-items:center;justify-content:center;
   }
-  
   .modal-body{padding:0 24px 24px;text-align:center;position:relative}
-  
   .modal-avatar-wrap{
     width:90px;height:90px;margin:-45px auto 15px;
     border-radius:50%;padding:4px;
@@ -122,38 +93,34 @@
     width:100%;height:100%;border-radius:50%;object-fit:cover;
     border:3px solid #FFD700;
   }
-  
   .modal-name{color:#fff;font-size:20px;font-weight:800;margin-bottom:4px}
   .modal-username{color:#2AABEE;font-size:14px;margin-bottom:20px;direction:ltr}
-  
   .data-row{
     background:rgba(255,255,255,0.03);
     border:1px solid rgba(255,255,255,0.05);
-    border-radius:12px;
-    padding:12px;
-    margin-bottom:10px;
+    border-radius:12px;padding:12px;margin-bottom:10px;
     display:flex;justify-content:space-between;align-items:center;
   }
   .data-label{color:rgba(255,255,255,0.4);font-size:12px}
   .data-value{color:#fff;font-size:14px;font-weight:600;direction:ltr}
 
-  /* Main Content Elements */
+  /* التصميم الأساسي للشعار والروبوت */
   .top-logo{position:absolute;top:22px;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:6px}
   .bolt{width:18px;height:18px}
   .bolt svg{width:100%;height:100%}
   .top-logo span{color:#fff;font-size:17px;font-weight:700;letter-spacing:0.5px}
-  
+
   .dots-tr{position:absolute;top:26px;right:32px;z-index:10;display:flex;gap:7px}
   .dots-bl{position:absolute;bottom:26px;left:32px;z-index:10;display:flex;gap:7px}
   .dot-w{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.55)}
-  
+
   .bot-area{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);z-index:10;display:flex;flex-direction:column;align-items:center;pointer-events:none}
   .ring-wrap{position:relative;width:280px;height:280px;display:flex;align-items:center;justify-content:center}
   .ring-svg{position:absolute;width:280px;height:280px}
   .ring-dot{position:absolute;width:11px;height:11px;border-radius:50%;top:50%;left:50%}
   .rd-glow{background:radial-gradient(circle,#ffe89a,#f0c040,#e8a020);box-shadow:0 0 10px rgba(240,192,64,0.9),0 0 25px rgba(240,192,64,0.4)}
   .rd-sm{background:radial-gradient(circle,#ffe070,#d8a830);box-shadow:0 0 8px rgba(216,168,48,0.7),0 0 18px rgba(216,168,48,0.3)}
-  
+
   .head{width:190px;height:190px;border-radius:50%;position:relative;z-index:2;
     background:radial-gradient(circle at 38% 30%,#333 0%,#1a1a1a 35%,#0d0d0d 65%,#050505 100%);
     box-shadow:0 0 50px rgba(240,180,0,0.1),0 0 100px rgba(240,180,0,0.04),inset 0 -30px 50px rgba(0,0,0,0.9),inset 0 8px 25px rgba(80,80,80,0.2)}
@@ -164,19 +131,18 @@
   .mouth{position:absolute;bottom:30%;left:50%;transform:translateX(-50%);width:52px;height:3.5px;border-radius:2px;background:linear-gradient(90deg,transparent,#ffc840,#e8a020,#ffc840,transparent);box-shadow:0 0 10px rgba(255,200,50,0.5)}
   .ear{position:absolute;width:16px;height:55px;border-radius:8px;top:50%;transform:translateY(-50%);background:linear-gradient(180deg,#1a1a1a,#0a0a0a);box-shadow:inset 0 0 8px rgba(0,0,0,0.9)}
   .ear-l{left:-3px}.ear-r{right:-3px}
-  
+
   .title-area{text-align:center;margin-top:18px}
   .t-main{font-size:50px;font-weight:900;color:#fff;letter-spacing:4px;line-height:1;text-transform:uppercase}
   .t-sub{display:flex;align-items:center;justify-content:center;margin-top:3px}
   .t-black{background:linear-gradient(180deg,#ffd600,#f0a000);color:#000;font-size:24px;font-weight:900;padding:1px 12px 3px;letter-spacing:2px;text-transform:uppercase;display:inline-block;border-radius:2px}
   .t-bot{color:#fff;font-size:24px;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-left:4px}
-  
+
   .footer{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:5px}
   .globe{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,200,0,0.55);position:relative;background:radial-gradient(circle,rgba(255,200,0,0.08),transparent)}
   .globe::before{content:'';position:absolute;top:3px;left:3px;right:3px;bottom:3px;border-radius:50%;border:1px solid rgba(255,200,0,0.25)}
   .globe::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:100%;height:100%;border-radius:50%;border-left:1px solid rgba(255,200,0,0.25);border-right:1px solid rgba(255,200,0,0.25)}
   .url{font-size:10px;color:rgba(255,255,255,0.65);letter-spacing:2.5px;text-transform:uppercase}
-
 </style>
 </head>
 <body>
@@ -185,13 +151,13 @@
   <canvas id="c"></canvas>
   <div class="overlay"></div>
 
-  <!-- Logo -->
+  <!-- شعار -->
   <div class="top-logo">
     <div class="bolt"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 10 10-12h-9l1-10z" fill="#ffd000"/></svg></div>
     <span>ichancy</span>
   </div>
 
-  <!-- Dots & Corners -->
+  <!-- الزخارف -->
   <div class="dots-tr"><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div></div>
   <div class="dots-bl"><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div><div class="dot-w"></div></div>
   <div style="position:absolute;top:0;left:0;z-index:5;width:100px;height:180px">
@@ -203,7 +169,7 @@
   <div style="position:absolute;bottom:130px;left:70px;z-index:5;width:1.5px;height:35px;background:rgba(255,200,0,0.25);transform:rotate(-18deg)"></div>
   <div style="position:absolute;top:90px;right:50px;z-index:5;width:50px;height:1.5px;background:rgba(255,200,0,0.15);transform:rotate(35deg)"></div>
 
-  <!-- Bot -->
+  <!-- الروبوت -->
   <div class="bot-area">
     <div class="ring-wrap">
       <svg class="ring-svg" viewBox="0 0 280 280"><circle cx="140" cy="140" r="128" fill="none" stroke="rgba(240,192,64,0.12)" stroke-width="1"/></svg>
@@ -226,31 +192,14 @@
   </div>
 </div>
 
-<!-- === LOGIN GATE === -->
-<div class="login-gate" id="loginGate">
-  <div class="login-card">
-    <div class="login-bot-icon">
-      <div class="eye" style="margin-right:5px"></div>
-      <div class="eye"></div>
-    </div>
-    <div class="login-title">ICHANCY BLACK BOT</div>
-    <div class="login-sub">قم بتسجيل الدخول عبر تلغرام للوصول</div>
-    
-    <!-- Telegram Login Widget (سيظهر مكان هذا العنصر) -->
-    <!-- استبدل YOUR_BOT_USERNAME باسم مستخدم البوت الفعلي -->
-    <script async 
-      src="https://telegram.org/js/telegram-widget.js?22" 
-      data-telegram-login="YOUR_BOT_USERNAME" 
-      data-size="large" 
-      data-radius="12" 
-      data-onauth="onTelegramAuth(user)" 
-      data-request-access="write"
-      data-lang="ar">
-    </script>
-  </div>
+<!-- شاشة خارج تلغرام -->
+<div class="outside-warning" id="outsideWarning">
+  <div class="icon">🔒</div>
+  <h2>افتح من بوت تلغرام</h2>
+  <p>هذا التطبيق يعمل حصرياً من خلال بوت تلغرام. يرجى فتح الرابط من داخل محادثة البوت.</p>
 </div>
 
-<!-- === USER PROFILE BADGE === -->
+<!-- ملف المستخدم (يظهر بعد الدخول التلقائي) -->
 <div class="user-profile" id="userProfile" onclick="openModal()">
   <button class="logout-btn" onclick="event.stopPropagation(); logout()" title="خروج">×</button>
   <div class="user-info">
@@ -260,7 +209,7 @@
   <img src="" alt="" class="user-avatar" id="badgeImg">
 </div>
 
-<!-- === PROFILE MODAL === -->
+<!-- مودال الملف الشخصي -->
 <div class="modal-overlay" id="profileModal">
   <div class="modal-card">
     <div class="modal-header">
@@ -272,7 +221,6 @@
       </div>
       <div class="modal-name" id="modalName">User Name</div>
       <div class="modal-username" id="modalUsername">@username</div>
-      
       <div class="data-row">
         <span class="data-label">معرف المستخدم (ID)</span>
         <span class="data-value" id="modalId">123456789</span>
@@ -282,15 +230,15 @@
         <span class="data-value" style="color:#4ADE80">نشط</span>
       </div>
       <div class="data-row">
-        <span class="data-label">تاريخ التسجيل</span>
-        <span class="data-value" id="modalDate">2026-05-20</span>
+        <span class="data-label">تاريخ الدخول</span>
+        <span class="data-value" id="modalDate">-</span>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// --- 1. BACKGROUND ANIMATION ---
+// ========== 1. الخلفية والرسوم ==========
 const C=document.getElementById('c'),X=C.getContext('2d');
 let W,H;
 function resize(){W=C.width=window.innerWidth;H=C.height=window.innerHeight;draw()}
@@ -306,7 +254,7 @@ function draw(){
 }
 window.addEventListener('resize',resize);resize();
 
-// --- 2. RING DOTS ---
+// ========== 2. الحلقات حول الروبوت ==========
 const rd=document.getElementById('rdots');
 const R=128,n=16;
 for(let i=0;i<n;i++){
@@ -319,68 +267,92 @@ for(let i=0;i<n;i++){
   rd.appendChild(d);
 }
 
-// --- 3. BOT ANIMATION ---
+// ========== 3. تحريك الروبوت ==========
 const head=document.querySelector('.head');
 let f=0;
 function anim(){f++;head.style.transform=`translateY(${Math.sin(f*0.018)*3}px)`;requestAnimationFrame(anim)}
 anim();
 
-// --- 4. TELEGRAM AUTH & STORAGE LOGIC ---
-
-const STORAGE_KEY = 'ichancy_user_data';
-const gate = document.getElementById('loginGate');
+// ========== 4. نظام التوثيق التلقائي عبر Telegram Web App ==========
+const STORAGE_KEY = 'ichancy_tg_user';
 const scene = document.getElementById('mainScene');
 const profile = document.getElementById('userProfile');
+const outsideWarning = document.getElementById('outsideWarning');
 
-// Check if user is already logged in
-window.addEventListener('DOMContentLoaded', () => {
-  const savedUser = localStorage.getItem(STORAGE_KEY);
-  if (savedUser) {
-    const user = JSON.parse(savedUser);
-    showApp(user);
-  }
-});
-
-// دالة تُستدعى بعد تسجيل الدخول عبر تلغرام (تلقائياً)
-function onTelegramAuth(user) {
-  // بيانات المستخدم من تلغرام: id, first_name, last_name, username, photo_url, auth_date, hash
-  // ملاحظة أمنية: يجب التحقق من hash على الخادم في التطبيقات الحقيقية
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-  showApp(user);
-}
-
-function showApp(user) {
-  // 1. إخفاء بوابة الدخول
-  gate.classList.add('hidden');
-  
-  // 2. فتح المشهد (إزالة الضبابية)
+// دالة لعرض واجهة المستخدم بعد التأكد من البيانات
+function showUserUI(user) {
+  // إزالة الضبابية
   scene.classList.add('unlocked');
-  
-  // 3. إظهار شارة الملف الشخصي
+  // إظهار الشارة
   profile.style.display = 'flex';
   
-  // 4. تحديث واجهة الشارة
+  // تحديث الشارة
   document.getElementById('badgeName').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
   document.getElementById('badgeId').textContent = '@' + (user.username || 'no_username');
   document.getElementById('badgeImg').src = user.photo_url || '';
   
-  // 5. تحديث بيانات النافذة المنبثقة
+  // تحديث المودال
   document.getElementById('modalName').textContent = (user.first_name || '') + ' ' + (user.last_name || '');
   document.getElementById('modalUsername').textContent = '@' + (user.username || 'no_username');
   document.getElementById('modalId').textContent = user.id;
   document.getElementById('modalImg').src = user.photo_url || '';
-  
-  // تاريخ التسجيل (auth_date يكون بالثواني منذ 1970)
-  const d = new Date(user.auth_date * 1000);
-  document.getElementById('modalDate').textContent = d.toLocaleDateString('ar-EG');
+  document.getElementById('modalDate').textContent = new Date().toLocaleDateString('ar-EG');
 }
 
+// دالة لتخزين وعرض المستخدم
+function handleUser(userData) {
+  if (!userData || !userData.id) return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+  showUserUI(userData);
+}
+
+// دالة الخروج (مسح البيانات وإعادة التحميل)
 function logout() {
   localStorage.removeItem(STORAGE_KEY);
+  // إعادة التحميل؛ إذا كان لا يزال في تلغرام سيتم اكتشافه تلقائياً
   location.reload();
 }
 
-// Modal Functions
+// التحقق من بيئة Telegram Web App
+function initTelegramAuth() {
+  // التأكد من أن الكود يعمل داخل WebView الخاص بتلغرام
+  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
+    const tg = window.Telegram.WebApp;
+    
+    // إبلاغ تلغرام بأن التطبيق جاهز
+    tg.ready();
+    
+    // جلب بيانات المستخدم مباشرة (موثوقة فقط لو تم التحقق من hash على الخادم؛ لكن للعرض نحن نثق)
+    const user = tg.initDataUnsafe.user;
+    
+    if (user && user.id) {
+      // إخفاء شاشة "خارج تلغرام"
+      outsideWarning.classList.add('hidden');
+      handleUser(user);
+    } else {
+      // لا توجد بيانات مستخدم (نادر)
+      console.warn('No user data in Telegram WebApp');
+      outsideWarning.classList.remove('hidden');
+    }
+  } else {
+    // لم يتم فتح التطبيق من داخل تلغرام
+    outsideWarning.classList.remove('hidden');
+    
+    // من الممكن أن نحاول استخدام بيانات سابقة إذا كان قد سجل دخول مسبقاً في نفس الجلسة؟
+    // لكن حسب المتطلبات، الدخول يكون تلقائي وفقط من تلغرام، لذا نعرض التحذير.
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      // إذا كان قد دخل سابقاً وقمنا بتخزينه؛ يمكن أن نسمح له مؤقتاً لكن هذا غير آمن.
+      // الأفضل عدم السماح خارج تلغرام.
+      // سنبقي التحذير ظاهراً ولن نظهر واجهة التطبيق.
+    }
+  }
+}
+
+// عند تحميل الصفحة
+window.addEventListener('DOMContentLoaded', initTelegramAuth);
+
+// دوال المودال
 function openModal() {
   document.getElementById('profileModal').classList.add('active');
 }
