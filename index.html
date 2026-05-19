@@ -49,18 +49,6 @@
   .login-title{color:#fff;font-size:22px;font-weight:700;margin-bottom:8px}
   .login-sub{color:rgba(255,255,255,0.5);font-size:14px;margin-bottom:30px}
   
-  .tg-btn{
-    background:#2AABEE;color:#fff;border:none;
-    padding:14px 28px;border-radius:12px;
-    font-size:16px;font-weight:600;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;gap:10px;
-    width:100%;transition:transform 0.2s, box-shadow 0.2s;
-    font-family:inherit;
-  }
-  .tg-btn:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(42,171,238,0.3)}
-  .tg-btn:active{transform:scale(0.98)}
-  .tg-btn svg{width:22px;height:22px;fill:#fff}
-  
   /* --- USER PROFILE (Top Left) --- */
   .user-profile{
     position:absolute;top:20px;right:20px;z-index:50;
@@ -246,12 +234,19 @@
       <div class="eye"></div>
     </div>
     <div class="login-title">ICHANCY BLACK BOT</div>
-    <div class="login-sub">قم بتسجيل الدخول للوصول إلى النظام</div>
+    <div class="login-sub">قم بتسجيل الدخول عبر تلغرام للوصول</div>
     
-    <button class="tg-btn" onclick="handleLogin()">
-      <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-      تسجيل الدخول عبر تلغرام
-    </button>
+    <!-- Telegram Login Widget (سيظهر مكان هذا العنصر) -->
+    <!-- استبدل YOUR_BOT_USERNAME باسم مستخدم البوت الفعلي -->
+    <script async 
+      src="https://telegram.org/js/telegram-widget.js?22" 
+      data-telegram-login="YOUR_BOT_USERNAME" 
+      data-size="large" 
+      data-radius="12" 
+      data-onauth="onTelegramAuth(user)" 
+      data-request-access="write"
+      data-lang="ar">
+    </script>
   </div>
 </div>
 
@@ -346,49 +341,37 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-function handleLogin() {
-  // ملاحظة: هذا محاكاة لتسجيل الدخول لأن الـ API الحقيقي يتطلب سيرفر
-  // في التطبيق الحقيقي هنا يتم استدعاء Telegram Login Widget
-  
-  // بيانات محاكاة لمستخدم (يتم استبدالها ببيانات حقيقية من تلغرام)
-  const mockUser = {
-    id: Math.floor(Math.random() * 900000000) + 100000000,
-    first_name: "Ahmed",
-    last_name: "Ali",
-    username: "ahmed_dev",
-    photo_url: "https://ui-avatars.com/api/?name=Ahmed+Ali&background=FFD700&color=000&size=256",
-    auth_date: Date.now()
-  };
-
-  // Save to LocalStorage
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(mockUser));
-  
-  // Show App
-  showApp(mockUser);
+// دالة تُستدعى بعد تسجيل الدخول عبر تلغرام (تلقائياً)
+function onTelegramAuth(user) {
+  // بيانات المستخدم من تلغرام: id, first_name, last_name, username, photo_url, auth_date, hash
+  // ملاحظة أمنية: يجب التحقق من hash على الخادم في التطبيقات الحقيقية
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+  showApp(user);
 }
 
 function showApp(user) {
-  // 1. Hide Gate
+  // 1. إخفاء بوابة الدخول
   gate.classList.add('hidden');
   
-  // 2. Unlock Scene (Remove Blur)
+  // 2. فتح المشهد (إزالة الضبابية)
   scene.classList.add('unlocked');
   
-  // 3. Show Profile Badge
+  // 3. إظهار شارة الملف الشخصي
   profile.style.display = 'flex';
   
-  // 4. Update Badge UI
+  // 4. تحديث واجهة الشارة
   document.getElementById('badgeName').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-  document.getElementById('badgeId').textContent = '@' + user.username;
-  document.getElementById('badgeImg').src = user.photo_url;
+  document.getElementById('badgeId').textContent = '@' + (user.username || 'no_username');
+  document.getElementById('badgeImg').src = user.photo_url || '';
   
-  // 5. Update Modal Data
-  document.getElementById('modalName').textContent = user.first_name + ' ' + (user.last_name || '');
-  document.getElementById('modalUsername').textContent = '@' + user.username;
+  // 5. تحديث بيانات النافذة المنبثقة
+  document.getElementById('modalName').textContent = (user.first_name || '') + ' ' + (user.last_name || '');
+  document.getElementById('modalUsername').textContent = '@' + (user.username || 'no_username');
   document.getElementById('modalId').textContent = user.id;
-  document.getElementById('modalImg').src = user.photo_url;
+  document.getElementById('modalImg').src = user.photo_url || '';
   
-  const d = new Date(user.auth_date);
+  // تاريخ التسجيل (auth_date يكون بالثواني منذ 1970)
+  const d = new Date(user.auth_date * 1000);
   document.getElementById('modalDate').textContent = d.toLocaleDateString('ar-EG');
 }
 
@@ -407,4 +390,3 @@ function closeModal() {
 </script>
 </body>
 </html>
-
