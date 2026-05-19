@@ -814,49 +814,12 @@
             font-size: var(--fs-xs);
             color: var(--text-secondary);
         }
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 5px 14px;
-            background: rgba(192, 57, 43, 0.12);
-            border: 1px solid rgba(192, 57, 43, 0.25);
-            border-radius: var(--radius-full);
-            font-size: var(--fs-xs);
-            color: var(--primary-light);
-            margin-bottom: 18px;
-            animation: fadeInUp 0.7s ease 0.15s both;
-        }
-        .badge-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--primary-light);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.4;
-                transform: scale(1.6);
-            }
-        }
         .hero-title {
             font-size: clamp(2rem, 5vw, 3.8rem);
             font-weight: 800;
             line-height: 1.12;
             margin-bottom: 16px;
             animation: fadeInUp 0.7s ease 0.35s both;
-        }
-        .hero-title .highlight {
-            background: linear-gradient(135deg, var(--primary-light), var(--secondary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
         .hero-desc {
             font-size: var(--fs-md);
@@ -902,29 +865,6 @@
         .btn-primary:active {
             transform: scale(0.95);
         }
-        .btn-secondary {
-            padding: 12px 26px;
-            background: transparent;
-            border: 1.5px solid var(--border-medium);
-            border-radius: var(--radius-sm);
-            color: var(--text-primary);
-            font-size: var(--fs-md);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-        .btn-secondary:hover {
-            border-color: var(--primary-light);
-            background: rgba(192, 57, 43, 0.08);
-        }
-        .btn-secondary:active {
-            transform: scale(0.95);
-        }
         .btn-generate {
             padding: 12px 26px;
             background: linear-gradient(135deg, #2ecc71, #27ae60);
@@ -965,29 +905,6 @@
         }
         .btn-generate:active {
             transform: scale(0.94);
-        }
-        .hero-stats {
-            display: flex;
-            gap: 28px;
-            margin-top: 36px;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.7s ease 0.8s both;
-        }
-        .stat-item {
-            text-align: center;
-        }
-        .stat-number {
-            font-size: var(--fs-2xl);
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-light), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .stat-label {
-            font-size: var(--fs-xs);
-            color: var(--text-muted);
-            margin-top: 2px;
         }
         .hero-visual {
             position: absolute;
@@ -1127,228 +1044,6 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        .abilities-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 18px;
-            max-width: 1150px;
-            margin: 0 auto;
-        }
-        .ability-card {
-            background: var(--bg-glass);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 22px;
-            transition: all 0.35s var(--ease-in-out);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-        .ability-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-light), var(--secondary));
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
-        }
-        .ability-card:hover::before {
-            transform: scaleX(1);
-        }
-        .ability-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(192, 57, 43, 0.25);
-            box-shadow: var(--shadow-md);
-        }
-        .ability-card:active {
-            transform: scale(0.96);
-        }
-        .ability-icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            margin-bottom: 14px;
-        }
-        .ability-icon.red {
-            background: linear-gradient(135deg, rgba(192, 57, 43, 0.2), rgba(192, 57, 43, 0.04));
-            border: 1px solid rgba(192, 57, 43, 0.25);
-        }
-        .ability-icon.gold {
-            background: linear-gradient(135deg, rgba(212, 160, 23, 0.2), rgba(212, 160, 23, 0.04));
-            border: 1px solid rgba(212, 160, 23, 0.25);
-        }
-        .ability-icon.blue {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.04));
-            border: 1px solid rgba(52, 152, 219, 0.25);
-        }
-        .ability-icon.purple {
-            background: linear-gradient(135deg, rgba(142, 68, 173, 0.2), rgba(142, 68, 173, 0.04));
-            border: 1px solid rgba(142, 68, 173, 0.25);
-        }
-        .ability-name {
-            font-size: var(--fs-lg);
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-        .ability-desc {
-            color: var(--text-secondary);
-            font-size: var(--fs-sm);
-            line-height: 1.7;
-            margin-bottom: 14px;
-        }
-        .ability-stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .ability-level {
-            display: flex;
-            gap: 3px;
-        }
-        .level-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
-        }
-        .level-dot.active {
-            background: var(--primary-light);
-            box-shadow: 0 0 7px rgba(192, 57, 43, 0.5);
-        }
-        .ability-power {
-            font-size: var(--fs-xs);
-            color: var(--primary-light);
-            font-weight: 600;
-        }
-
-        .weapons-section {
-            background: linear-gradient(180deg, transparent, rgba(10, 10, 15, 0.45), transparent);
-        }
-        .weapons-showcase {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-            gap: 22px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-        .weapon-card {
-            background: var(--bg-glass);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 28px;
-            text-align: center;
-            transition: all 0.35s var(--ease-in-out);
-        }
-        .weapon-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(192, 57, 43, 0.2);
-            box-shadow: var(--shadow-md);
-        }
-        .weapon-emoji {
-            font-size: 3.2rem;
-            margin-bottom: 14px;
-            display: block;
-            filter: drop-shadow(0 0 18px rgba(192, 57, 43, 0.3));
-        }
-        .weapon-name {
-            font-size: var(--fs-xl);
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        .weapon-type {
-            color: var(--primary-light);
-            font-size: var(--fs-xs);
-            margin-bottom: 10px;
-        }
-        .weapon-stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 14px;
-        }
-        .w-stat {
-            background: rgba(255, 255, 255, 0.025);
-            border-radius: var(--radius-sm);
-            padding: 9px;
-        }
-        .w-stat-label {
-            font-size: var(--fs-xs);
-            color: var(--text-muted);
-            margin-bottom: 3px;
-        }
-        .w-stat-value {
-            font-size: var(--fs-md);
-            font-weight: 700;
-        }
-
-        .progress-section {
-            max-width: 750px;
-            margin: 0 auto;
-        }
-        .progress-item {
-            margin-bottom: 22px;
-        }
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 7px;
-        }
-        .progress-label {
-            font-size: var(--fs-md);
-            font-weight: 600;
-        }
-        .progress-value {
-            font-size: var(--fs-sm);
-            color: var(--primary-light);
-            font-weight: 600;
-        }
-        .progress-bar {
-            height: 9px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            border-radius: var(--radius-full);
-            width: 0;
-            transition: width 1.8s var(--ease-out);
-            position: relative;
-        }
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
-            animation: shimmer 2s infinite;
-        }
-        @keyframes shimmer {
-            0% {
-                transform: translateX(-100%);
-            }
-            100% {
-                transform: translateX(100%);
-            }
-        }
-        .pf-purple {
-            background: linear-gradient(90deg, #8e44ad, #9b59b6);
-        }
-        .pf-green {
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
         }
 
         .timeline {
@@ -2686,13 +2381,6 @@
             .section {
                 padding: 45px 16px;
             }
-            .weapons-showcase {
-                grid-template-columns: 1fr;
-                max-width: 480px;
-            }
-            .abilities-grid {
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            }
             .form-row {
                 grid-template-columns: 1fr;
             }
@@ -2752,7 +2440,6 @@
                 gap: 8px;
             }
             .hero-actions .btn-primary,
-            .hero-actions .btn-secondary,
             .hero-actions .btn-generate {
                 width: 100%;
                 justify-content: center;
@@ -2770,10 +2457,6 @@
             .footer-grid {
                 grid-template-columns: 1fr;
                 gap: 18px;
-            }
-            .abilities-grid {
-                grid-template-columns: 1fr;
-                max-width: 420px;
             }
             .payment-methods-grid {
                 grid-template-columns: 1fr 1fr;
@@ -2843,27 +2526,11 @@
             .hero-desc {
                 font-size: 0.82rem;
             }
-            .hero-stats {
-                gap: 14px;
-                justify-content: center;
-            }
-            .stat-number {
-                font-size: 1.2rem;
-            }
             .section {
                 padding: 36px 10px;
             }
             .section-title {
                 font-size: 1.3rem;
-            }
-            .ability-card {
-                padding: 16px;
-            }
-            .weapon-card {
-                padding: 18px;
-            }
-            .weapon-emoji {
-                font-size: 2.5rem;
             }
             .contact-form {
                 padding: 18px 12px;
@@ -2904,7 +2571,6 @@
                 padding: 3px 6px;
             }
             .btn-primary,
-            .btn-secondary,
             .btn-generate {
                 font-size: 0.85rem;
                 padding: 10px 18px;
@@ -2941,14 +2607,6 @@
             }
         }
         @media (hover: none) and (pointer: coarse) {
-            .ability-card:hover,
-            .weapon-card:hover {
-                transform: none;
-            }
-            .ability-card:active {
-                transform: scale(0.96);
-                border-color: rgba(192, 57, 43, 0.25);
-            }
             .gallery-overlay {
                 transform: translateY(0);
                 background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
@@ -3003,8 +2661,6 @@
             </div>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#hero" class="active" onclick="scrollToSection('hero')">الرئيسية</a></li>
-                <li><a href="#abilities" onclick="scrollToSection('abilities')">القدرات</a></li>
-                <li><a href="#weapons" onclick="scrollToSection('weapons')">الأسلحة</a></li>
                 <li><a href="#timeline" onclick="scrollToSection('timeline')">القصة</a></li>
                 <li><a href="#gallery" onclick="scrollToSection('gallery')">المعرض</a></li>
                 <li><a href="#contact" onclick="scrollToSection('contact')">تواصل</a></li>
@@ -3022,55 +2678,17 @@
                     <div class="welcome-avatar" id="welcomeAvatar"></div>
                     <div class="welcome-text"><h4 id="welcomeText">مرحباً بك أيها المحارب!</h4><p>تم تسجيل دخولك بنجاح.</p></div>
                 </div>
-                <div class="hero-badge"><span class="badge-dot"></span>إله الحرب - الأسطورة الخالدة</div>
-                <h1 class="hero-title">كراتوس<br><span class="highlight">قاتل الآلهة</span></h1>
+                <h1 class="hero-title">كراتوس</h1>
                 <p class="hero-desc">من شبح إسبرطة إلى إله الحرب، رحلة كراتوس الأسطورية عبر عوالم الأساطير.</p>
                 <div class="hero-actions">
                     <button class="btn-primary" onclick="App.showToast('⚔️ انطلقت المغامرة!')">⚔️ ابدأ الرحلة</button>
-                    <button class="btn-secondary" onclick="scrollToSection('abilities')">📖 اكتشف القدرات</button>
                     <button class="btn-generate" onclick="showGenerateAccountModal()">🔑 إنشاء حساب جديد</button>
-                </div>
-                <div class="hero-stats">
-                    <div class="stat-item"><div class="stat-number"><span class="counter" data-target="9">0</span></div><div class="stat-label">آلهة مهزومة</div></div>
-                    <div class="stat-item"><div class="stat-number"><span class="counter" data-target="50">0</span>+</div><div class="stat-label">مهمة مكتملة</div></div>
-                    <div class="stat-item"><div class="stat-number"><span class="counter" data-target="100">0</span></div><div class="stat-label">مستوى القوة</div></div>
                 </div>
             </div>
             <div class="hero-visual">
                 <div class="float-card"><div class="float-card-header"><div class="fc-icon red">⚔️</div><span class="fc-title">قوة الهجوم</span></div><div class="fc-value" style="color:#e74c3c;">9,850</div><div class="fc-bar"><div class="fc-bar-fill pf-red" style="width:92%;"></div></div></div>
                 <div class="float-card"><div class="float-card-header"><div class="fc-icon gold">🛡️</div><span class="fc-title">الدفاع</span></div><div class="fc-value" style="color:#f39c12;">8,720</div><div class="fc-bar"><div class="fc-bar-fill pf-gold" style="width:85%;"></div></div></div>
                 <div class="float-card"><div class="float-card-header"><div class="fc-icon blue">✨</div><span class="fc-title">القوة السحرية</span></div><div class="fc-value" style="color:#3498db;">7,430</div><div class="fc-bar"><div class="fc-bar-fill pf-blue" style="width:78%;"></div></div></div>
-            </div>
-        </section>
-
-        <section class="section" id="abilities">
-            <div class="section-header fade-in"><span class="section-tag">القدرات القتالية</span><h2 class="section-title">قدرات كراتوس الأسطورية</h2></div>
-            <div class="abilities-grid">
-                <div class="ability-card fade-in" onclick="App.showToast('🔥 غضب كراتوس!')"><div class="ability-icon red">🔥</div><h3 class="ability-name">غضب كراتوس</h3><p class="ability-desc">قوة غضب لا تُقاوم تزيد من قوة الهجوم بنسبة 300%</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="ability-power">MAX</span></div></div>
-                <div class="ability-card fade-in" onclick="App.showToast('⚡ برق زيوس!')"><div class="ability-icon gold">⚡</div><h3 class="ability-name">برق زيوس</h3><p class="ability-desc">تحكم في قوة البرق والرعد لتوجيه صاعقات مدمرة</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot"></span></div><span class="ability-power">85%</span></div></div>
-                <div class="ability-card fade-in" onclick="App.showToast('❄️ جليد الشمال!')"><div class="ability-icon blue">❄️</div><h3 class="ability-name">جليد فايمب</h3><p class="ability-desc">قوة الجليد الشمالية التي تجمد الأعداء</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot"></span></div><span class="ability-power">80%</span></div></div>
-                <div class="ability-card fade-in" onclick="App.showToast('🌀 سلاسل الفوضى!')"><div class="ability-icon purple">🌀</div><h3 class="ability-name">سلاسل الفوضى</h3><p class="ability-desc">سلاسل ملتهبة مربوطة بالذراعين تضرب الأعداء عن بعد</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="ability-power">MAX</span></div></div>
-                <div class="ability-card fade-in" onclick="App.showToast('💀 لمسة الفناء!')"><div class="ability-icon red">💀</div><h3 class="ability-name">لمسة الفناء</h3><p class="ability-desc">هجوم قاتل مع تأثير تسمم يستنزف صحة العدو</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot"></span><span class="level-dot"></span></div><span class="ability-power">65%</span></div></div>
-                <div class="ability-card fade-in" onclick="App.showToast('🌟 قوة الإله!')"><div class="ability-icon gold">🌟</div><h3 class="ability-name">قوة الإله</h3><p class="ability-desc">القدرة الخالصة التي تمنح كراتوس خلوداً مؤقتاً</p><div class="ability-stats"><div class="ability-level"><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span><span class="level-dot active"></span></div><span class="ability-power">∞</span></div></div>
-            </div>
-        </section>
-
-        <section class="section weapons-section" id="weapons">
-            <div class="section-header fade-in"><span class="section-tag">ترسانة الأسلحة</span><h2 class="section-title">أسلحة كراتوس</h2></div>
-            <div class="weapons-showcase">
-                <div class="weapon-card fade-in"><span class="weapon-emoji">🪓</span><h3 class="weapon-name">فأس ليفياثان</h3><p class="weapon-type">سلاح إسكندنافي</p><p style="color:var(--text-secondary);font-size:0.85rem;">فأس جليدية سحرية يمكن إلقاؤها واستدعاؤها</p><div class="weapon-stats-grid"><div class="w-stat"><div class="w-stat-label">الضرر</div><div class="w-stat-value" style="color:#e74c3c;">920</div></div><div class="w-stat"><div class="w-stat-label">السرعة</div><div class="w-stat-value" style="color:#3498db;">85</div></div><div class="w-stat"><div class="w-stat-label">المدى</div><div class="w-stat-value" style="color:#f39c12;">78</div></div><div class="w-stat"><div class="w-stat-label">السحر</div><div class="w-stat-value" style="color:#9b59b6;">90</div></div></div></div>
-                <div class="weapon-card fade-in"><span class="weapon-emoji">🔥</span><h3 class="weapon-name">شفرة الفوضى</h3><p class="weapon-type">سلاح يوناني</p><p style="color:var(--text-secondary);font-size:0.85rem;">شفرتان ملتهبتان مربوطتان بسلاسل</p><div class="weapon-stats-grid"><div class="w-stat"><div class="w-stat-label">الضرر</div><div class="w-stat-value" style="color:#e74c3c;">980</div></div><div class="w-stat"><div class="w-stat-label">السرعة</div><div class="w-stat-value" style="color:#3498db;">95</div></div><div class="w-stat"><div class="w-stat-label">المدى</div><div class="w-stat-value" style="color:#f39c12;">92</div></div><div class="w-stat"><div class="w-stat-label">السحر</div><div class="w-stat-value" style="color:#9b59b6;">88</div></div></div></div>
-            </div>
-        </section>
-
-        <section class="section" id="stats">
-            <div class="section-header fade-in"><span class="section-tag">إحصائيات القوة</span><h2 class="section-title">مستويات كراتوس</h2></div>
-            <div class="progress-section fade-in">
-                <div class="progress-item"><div class="progress-header"><span class="progress-label">⚔️ القوة الجسدية</span><span class="progress-value">97%</span></div><div class="progress-bar"><div class="progress-fill pf-red" data-width="97"></div></div></div>
-                <div class="progress-item"><div class="progress-header"><span class="progress-label">🧠 الحكمة</span><span class="progress-value">82%</span></div><div class="progress-bar"><div class="progress-fill pf-gold" data-width="82"></div></div></div>
-                <div class="progress-item"><div class="progress-header"><span class="progress-label">✨ القوة السحرية</span><span class="progress-value">88%</span></div><div class="progress-bar"><div class="progress-fill pf-blue" data-width="88"></div></div></div>
-                <div class="progress-item"><div class="progress-header"><span class="progress-label">🛡️ التحمل</span><span class="progress-value">95%</span></div><div class="progress-bar"><div class="progress-fill pf-purple" data-width="95"></div></div></div>
-                <div class="progress-item"><div class="progress-header"><span class="progress-label">💨 السرعة</span><span class="progress-value">79%</span></div><div class="progress-bar"><div class="progress-fill pf-green" data-width="79"></div></div></div>
             </div>
         </section>
 
@@ -3110,7 +2728,7 @@
         <footer class="footer">
             <div class="footer-grid">
                 <div class="footer-brand"><div class="nav-logo"><div class="logo-icon">Ω</div><span class="logo-text">KRATOS</span></div><p>موقع تفاعلي مخصص لعالم God of War الأسطوري.</p></div>
-                <div><h4 class="footer-title">روابط</h4><ul class="footer-links"><li><a href="#hero" onclick="scrollToSection('hero')">الرئيسية</a></li><li><a href="#abilities" onclick="scrollToSection('abilities')">القدرات</a></li><li><a href="#weapons" onclick="scrollToSection('weapons')">الأسلحة</a></li></ul></div>
+                <div><h4 class="footer-title">روابط</h4><ul class="footer-links"><li><a href="#hero" onclick="scrollToSection('hero')">الرئيسية</a></li><li><a href="#timeline" onclick="scrollToSection('timeline')">القصة</a></li></ul></div>
                 <div><h4 class="footer-title">العوالم</h4><ul class="footer-links"><li><a href="#">ميدغارد</a></li><li><a href="#">ألفهايم</a></li><li><a href="#">أسكارد</a></li></ul></div>
                 <div><h4 class="footer-title">الدعم</h4><ul class="footer-links"><li><a href="#">الأسئلة الشائعة</a></li><li><a href="#">سياسة الخصوصية</a></li><li><a href="#">تواصل معنا</a></li></ul></div>
             </div>
@@ -3932,22 +3550,6 @@
                             observer.unobserve(e.target); } });
                 }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
                 document.querySelectorAll('.fade-in, .timeline-item').forEach(el => observer.observe(el));
-                setTimeout(() => {
-                    document.querySelectorAll('.progress-fill').forEach(bar => { const w = bar
-                            .getAttribute('data-width'); if (w) bar.style.width = w + '%'; });
-                }, 400);
-                setTimeout(() => {
-                    document.querySelectorAll('.counter').forEach(c => {
-                        const target = +c.getAttribute('data-target');
-                        let count = 0;
-                        const step = target / 90;
-                        const upd = () => { count += step; if (count < target) { c
-                                .textContent = Math.ceil(count);
-                                requestAnimationFrame(upd); } else c.textContent =
-                                target; };
-                        upd();
-                    });
-                }, 600);
             }
         };
 
