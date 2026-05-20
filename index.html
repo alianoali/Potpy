@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ICHANCY BLACK BOT | منصة احترافية</title>
-    <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.js">
-    </script>
+    <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.js"></script>
     <style>
         :root {
             --bg: #050a15;
@@ -20,7 +19,6 @@
             --text-dim: rgba(255, 255, 255, 0.5);
             --radius: 24px;
             --radius-sm: 14px;
-            --shadow: 0 25px 45px rgba(0, 0, 0, 0.5);
             --transition: 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
         }
 
@@ -37,9 +35,10 @@
             background: #000;
             font-family: 'Segoe UI', 'Tajawal', system-ui, sans-serif;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Background */
+        /* خلفية متحركة */
         .scene {
             position: relative;
             width: 100%;
@@ -57,7 +56,7 @@
             z-index: 1;
         }
 
-        /* Login Gate */
+        /* بوابة الدخول */
         .login-gate {
             position: absolute;
             inset: 0;
@@ -146,7 +145,7 @@
             }
         }
 
-        /* App Shell */
+        /* واجهة التطبيق */
         .app-shell {
             position: absolute;
             inset: 0;
@@ -193,6 +192,12 @@
             height: 36px;
             border-radius: 50%;
             border: 2px solid #FFD700;
+            object-fit: cover;
+        }
+        .user-pill .uname {
+            color: #fff;
+            font-weight: 600;
+            font-size: 13px;
         }
         .logout-icon {
             width: 28px;
@@ -202,6 +207,15 @@
             border-radius: 50%;
             color: var(--danger);
             cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+        }
+        .logout-icon:hover {
+            background: rgba(255, 77, 77, 0.4);
+            color: #fff;
         }
 
         .main-content {
@@ -211,7 +225,17 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            -webkit-overflow-scrolling: touch;
         }
+        .main-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        .main-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        /* ألسنة التنقل */
         .nav-tabs {
             display: flex;
             gap: 6px;
@@ -221,6 +245,7 @@
             padding: 5px;
             width: fit-content;
             margin: 0 auto;
+            flex-wrap: wrap;
         }
         .nav-tab {
             padding: 9px 20px;
@@ -239,7 +264,12 @@
             color: #fff;
             box-shadow: 0 4px 15px rgba(255, 200, 0, 0.2);
         }
+        .nav-tab:hover:not(.active) {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.06);
+        }
 
+        /* اللوحات */
         .panel {
             display: none;
             flex-direction: column;
@@ -249,6 +279,7 @@
             display: flex;
         }
 
+        /* بطاقات */
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -256,25 +287,24 @@
             padding: 22px 20px;
             backdrop-filter: blur(12px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeSlideIn 0.4s ease;
         }
-
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
         .welcome-hero {
             background: linear-gradient(135deg, rgba(255, 200, 0, 0.08), rgba(42, 171, 238, 0.05));
             border: 1px solid rgba(255, 200, 0, 0.15);
             padding: 28px 22px;
             text-align: center;
             border-radius: var(--radius);
-            animation: fadeSlideIn 0.6s ease;
-        }
-        @keyframes fadeSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         .welcome-hero h2 {
             color: #fff;
@@ -291,15 +321,60 @@
             font-size: 12px;
             transition: all var(--transition);
             font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
         .btn-primary {
             background: linear-gradient(135deg, #FFD700, #f0a000);
             color: #000;
+            box-shadow: 0 4px 15px rgba(240, 160, 0, 0.3);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
         }
         .btn-danger {
             background: rgba(255, 77, 77, 0.15);
             border: 1px solid var(--danger);
             color: var(--danger);
+        }
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
+
+        /* مؤشر التحميل */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 250;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .loading-overlay.active {
+            display: flex;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .toast {
@@ -330,6 +405,7 @@
             z-index: 8;
             pointer-events: none;
             transition: opacity 0.5s;
+            text-align: center;
         }
         .bot-area.dimmed {
             opacity: 0.15;
@@ -341,12 +417,12 @@
     <div class="scene blurred" id="mainScene">
         <canvas id="c"></canvas>
         <div class="bot-area" id="botArea">
-            <div style="width:140px;height:140px;border-radius:50%;background:radial-gradient(circle at 40% 30%, #2a2a2a, #111 65%, #050505);box-shadow:0 0 40px rgba(240,180,0,0.08);"></div>
+            <div style="width:140px;height:140px;border-radius:50%;background:radial-gradient(circle at 40% 30%, #2a2a2a, #111 65%, #050505);box-shadow:0 0 40px rgba(240,180,0,0.08);margin:0 auto;"></div>
             <div style="margin-top:12px;color:#fff;font-weight:900;font-size:32px;">ICHANCY</div>
         </div>
     </div>
 
-    <!-- Login Gate -->
+    <!-- بوابة الدخول -->
     <div class="login-gate" id="loginGate">
         <div class="login-card">
             <div class="login-bot-icon"><div class="eye"></div><div class="eye"></div></div>
@@ -358,17 +434,17 @@
         </div>
     </div>
 
-    <!-- App Shell -->
+    <!-- واجهة التطبيق -->
     <div class="app-shell" id="appShell">
         <div class="topbar">
             <div class="brand"><span>ICHANCY</span></div>
             <div class="user-pill" id="userPill">
-                <span id="pillName" style="color:#fff;font-weight:600;">مستخدم</span>
+                <span class="uname" id="pillName">مستخدم</span>
                 <img id="pillImg" src="" alt="">
                 <button class="logout-icon" onclick="event.stopPropagation(); performLogout()">⏻</button>
             </div>
         </div>
-        <div class="main-content">
+        <div class="main-content" id="mainContent">
             <div class="nav-tabs" id="navTabs"></div>
             <div class="panel active" id="panelDashboard"></div>
             <div class="panel" id="panelProfile"></div>
@@ -378,24 +454,26 @@
         </div>
     </div>
 
+    <!-- مؤشر التحميل -->
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+
     <div class="toast" id="toast"></div>
 
-    <script src="https://telegram.org/js/telegram-web-app.js">
-    </script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // ==================== تكوين ====================
+        // ==================== إعدادات ====================
         const CONFIG = {
             BOT_USERNAME: 'ICHANCY_BOT',
             VERIFY_API_URL: '',
             SESSION_KEY: 'ichancy_secure_session',
             SESSION_DURATION: 24 * 60 * 60 * 1000,
             ADMIN_TELEGRAM_ID: '7609492965',
-            APP_VERSION: '5.0.0',
+            APP_VERSION: '5.0.1',
         };
 
         // ==================== قاعدة بيانات Dexie ====================
         const db = new Dexie('IchancyDB');
-        db.version(3).stores({
+        db.version(4).stores({
             users: '++id, telegramId, username, firstName, createdAt, updatedAt',
             sessions: '++id, userId, loginTime',
             notes: '++id, userId, title, content, createdAt',
@@ -407,6 +485,7 @@
         const canvas = document.getElementById('c');
         const ctx = canvas.getContext('2d');
         let w, h;
+        let resizeTimeout;
 
         function resizeCanvas() {
             w = canvas.width = innerWidth;
@@ -423,13 +502,17 @@
             ctx.fillStyle = g;
             ctx.fillRect(0, 0, w, h);
         }
-        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(resizeCanvas, 100);
+        });
         resizeCanvas();
 
         // ==================== الحالة العامة ====================
         let currentUserId = null;
         let currentTelegramUser = null;
         let isAdmin = false;
+        let sessionCheckInterval = null;
 
         // ==================== عناصر DOM ====================
         const $ = (s) => document.querySelector(s);
@@ -440,6 +523,7 @@
         const errorMsg = $('#errorMsg');
         const loginContainer = $('#telegram-login-container');
         const toast = $('#toast');
+        const loadingOverlay = $('#loadingOverlay');
         const pillName = $('#pillName');
         const pillImg = $('#pillImg');
         const navTabsContainer = $('#navTabs');
@@ -467,69 +551,109 @@
             setTimeout(() => errorMsg.classList.remove('show'), 5000);
         }
 
+        function showLoading() {
+            loadingOverlay.classList.add('active');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+        }
+
         // ==================== عمليات قاعدة البيانات ====================
         async function findOrCreateUser(tgUser) {
-            const existing = await db.users.where('telegramId').equals(tgUser.id).first();
-            if (existing) {
-                await db.users.update(existing.id, {
-                    firstName: tgUser.first_name || existing.firstName,
-                    lastName: tgUser.last_name || existing.lastName,
-                    username: tgUser.username || existing.username,
-                    photoUrl: tgUser.photo_url || existing.photoUrl,
-                    updatedAt: Date.now(),
-                });
-                return existing.id;
-            } else {
-                const id = await db.users.add({
-                    telegramId: tgUser.id,
-                    firstName: tgUser.first_name || '',
-                    lastName: tgUser.last_name || '',
-                    username: tgUser.username || '',
-                    photoUrl: tgUser.photo_url || '',
-                    createdAt: Date.now(),
-                    updatedAt: Date.now(),
-                });
-                await db.settings.put({ userId: id, notifications: true, language: 'ar' });
-                return id;
+            try {
+                const existing = await db.users.where('telegramId').equals(tgUser.id).first();
+                if (existing) {
+                    await db.users.update(existing.id, {
+                        firstName: tgUser.first_name || existing.firstName,
+                        lastName: tgUser.last_name || existing.lastName,
+                        username: tgUser.username || existing.username,
+                        photoUrl: tgUser.photo_url || existing.photoUrl,
+                        updatedAt: Date.now(),
+                    });
+                    return existing.id;
+                } else {
+                    const id = await db.users.add({
+                        telegramId: tgUser.id,
+                        firstName: tgUser.first_name || '',
+                        lastName: tgUser.last_name || '',
+                        username: tgUser.username || '',
+                        photoUrl: tgUser.photo_url || '',
+                        createdAt: Date.now(),
+                        updatedAt: Date.now(),
+                    });
+                    await db.settings.put({ userId: id, notifications: true, language: 'ar' });
+                    return id;
+                }
+            } catch (error) {
+                console.error('فشل في إنشاء/تحديث المستخدم:', error);
+                showError('حدث خطأ في قاعدة البيانات. يرجى المحاولة مرة أخرى.');
+                return null;
             }
         }
 
         async function logActivity(userId, action, details = '') {
-            await db.activityLog.add({ userId, action, timestamp: Date.now(), details });
+            try {
+                await db.activityLog.add({ userId, action, timestamp: Date.now(), details });
+            } catch (error) {
+                console.error('فشل في تسجيل النشاط:', error);
+            }
         }
 
         async function getSettings(userId) {
-            const s = await db.settings.where('userId').equals(userId).first();
-            return s || { notifications: true, language: 'ar' };
+            try {
+                const s = await db.settings.where('userId').equals(userId).first();
+                return s || { notifications: true, language: 'ar' };
+            } catch (error) {
+                console.error('فشل في جلب الإعدادات:', error);
+                return { notifications: true, language: 'ar' };
+            }
         }
 
         async function updateSettings(userId, updates) {
-            const exist = await db.settings.where('userId').equals(userId).first();
-            if (exist) await db.settings.update(exist.id, updates);
-            else await db.settings.put({ userId, ...updates });
-            await logActivity(userId, 'settings_changed', JSON.stringify(updates));
+            try {
+                const exist = await db.settings.where('userId').equals(userId).first();
+                if (exist) await db.settings.update(exist.id, updates);
+                else await db.settings.put({ userId, ...updates });
+                await logActivity(userId, 'settings_changed', JSON.stringify(updates));
+            } catch (error) {
+                console.error('فشل في تحديث الإعدادات:', error);
+                showError('فشل في تحديث الإعدادات');
+            }
         }
 
         async function deleteUserAccount(userId) {
-            const user = await db.users.get(userId);
-            if (!user) return false;
-            if (user.telegramId.toString() === CONFIG.ADMIN_TELEGRAM_ID) {
-                showToast('لا يمكن حذف حساب المشرف');
+            try {
+                const user = await db.users.get(userId);
+                if (!user) return false;
+                if (user.telegramId.toString() === CONFIG.ADMIN_TELEGRAM_ID) {
+                    showToast('لا يمكن حذف حساب المشرف');
+                    return false;
+                }
+                await db.transaction('rw', db.users, db.sessions, db.notes, db.activityLog, db.settings, async () => {
+                    await db.users.delete(userId);
+                    await db.sessions.where('userId').equals(userId).delete();
+                    await db.notes.where('userId').equals(userId).delete();
+                    await db.activityLog.where('userId').equals(userId).delete();
+                    await db.settings.where('userId').equals(userId).delete();
+                });
+                if (currentUserId) await logActivity(currentUserId, 'admin_deleted_user',
+                `حذف المستخدم ${user.telegramId}`);
+                return true;
+            } catch (error) {
+                console.error('فشل في حذف المستخدم:', error);
+                showError('فشل في حذف المستخدم');
                 return false;
             }
-            await db.transaction('rw', db.users, db.sessions, db.notes, db.activityLog, db.settings, async () => {
-                await db.users.delete(userId);
-                await db.sessions.where('userId').equals(userId).delete();
-                await db.notes.where('userId').equals(userId).delete();
-                await db.activityLog.where('userId').equals(userId).delete();
-                await db.settings.where('userId').equals(userId).delete();
-            });
-            await logActivity(currentUserId, 'admin_deleted_user', `حذف المستخدم ${user.telegramId}`);
-            return true;
         }
 
         async function getAllUsers() {
-            return await db.users.orderBy('createdAt').reverse().toArray();
+            try {
+                return await db.users.orderBy('createdAt').reverse().toArray();
+            } catch (error) {
+                console.error('فشل في جلب المستخدمين:', error);
+                return [];
+            }
         }
 
         // ==================== إدارة الجلسة ====================
@@ -556,17 +680,34 @@
             localStorage.removeItem(CONFIG.SESSION_KEY);
         }
 
-        // ==================== إعادة تعيين الحالة ====================
-        function resetAppState() {
+        function startSessionCheck() {
+            stopSessionCheck();
+            sessionCheckInterval = setInterval(() => {
+                const session = getSession();
+                if (!session) {
+                    performLogout();
+                }
+            }, 30000); // فحص كل 30 ثانية
+        }
+
+        function stopSessionCheck() {
+            if (sessionCheckInterval) {
+                clearInterval(sessionCheckInterval);
+                sessionCheckInterval = null;
+            }
+        }
+
+        // ==================== إعادة تعيين كاملة للحالة ====================
+        function fullReset() {
             currentUserId = null;
             currentTelegramUser = null;
             isAdmin = false;
-            // إفراغ جميع اللوحات
             Object.values(panels).forEach(p => { if (p) p.innerHTML = ''; });
+            stopSessionCheck();
         }
 
-        // ==================== بناء الواجهة ====================
-        function buildNavigationTabs() {
+        // ==================== بناء ألسنة التنقل ====================
+        function buildNavTabs() {
             const tabs = [
                 { id: 'dashboard', icon: '📊', text: 'لوحة التحكم' },
                 { id: 'profile', icon: '👤', text: 'الملف الشخصي' },
@@ -587,11 +728,19 @@
             const panel = panels[panelName];
             if (panel) panel.classList.add('active');
 
-            if (panelName === 'dashboard') await renderDashboard();
-            if (panelName === 'profile') await renderProfile();
-            if (panelName === 'notes') await renderNotes();
-            if (panelName === 'settings') await renderSettings();
-            if (panelName === 'admin') await renderAdminPanel();
+            showLoading();
+            try {
+                if (panelName === 'dashboard') await renderDashboard();
+                if (panelName === 'profile') await renderProfile();
+                if (panelName === 'notes') await renderNotes();
+                if (panelName === 'settings') await renderSettings();
+                if (panelName === 'admin' && isAdmin) await renderAdminPanel();
+            } catch (error) {
+                console.error('فشل في عرض اللوحة:', error);
+                showError('حدث خطأ أثناء تحميل البيانات');
+            } finally {
+                hideLoading();
+            }
         }
 
         navTabsContainer.addEventListener('click', (e) => {
@@ -602,9 +751,9 @@
 
         // ==================== دوال العرض ====================
         async function renderDashboard() {
-            if (!currentUserId) return;
+            if (!currentUserId) return performLogout();
             const user = await db.users.get(currentUserId);
-            if (!user) return logout();
+            if (!user) return performLogout();
             const activity = await db.activityLog.where('userId').equals(currentUserId).reverse().limit(5).toArray();
             const notesCount = await db.notes.where('userId').equals(currentUserId).count();
             const totalActions = await db.activityLog.where('userId').equals(currentUserId).count();
@@ -633,16 +782,16 @@
                     ${activity.length === 0 ? '<div style="color:var(--text-dim);text-align:center;">لا توجد نشاطات</div>' :
                     activity.map(a => `
                         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:12px;color:#ddd;">
-                            <span>${a.action}</span>
+                            <span>${escapeHTML(a.action)}</span>
                             <span style="color:var(--text-dim);">${new Date(a.timestamp).toLocaleString('ar-EG',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'numeric'})}</span>
                         </div>`).join('')}
                 </div>`;
         }
 
         async function renderProfile() {
-            if (!currentUserId) return;
+            if (!currentUserId) return performLogout();
             const user = await db.users.get(currentUserId);
-            if (!user) return logout();
+            if (!user) return performLogout();
             const settings = await getSettings(currentUserId);
             const sessionsCount = await db.sessions.where('userId').equals(currentUserId).count();
             const notesCount = await db.notes.where('userId').equals(currentUserId).count();
@@ -650,7 +799,7 @@
             panels.profile.innerHTML = `
                 <div class="card">
                     <div style="display:flex;align-items:center;gap:18px;">
-                        <img src="${user.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName||'U')}&background=FFD700&color=000&size=256`}" style="width:80px;height:80px;border-radius:50%;border:3px solid #FFD700;object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=U&background=555&color=fff&size=256'">
+                        <img src="${escapeHTML(user.photoUrl) || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName||'U')}&background=FFD700&color=000&size=256`}" style="width:80px;height:80px;border-radius:50%;border:3px solid #FFD700;object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=U&background=555&color=fff&size=256'">
                         <div>
                             <div style="color:#fff;font-size:22px;font-weight:800;">${escapeHTML(user.firstName||'')} ${escapeHTML(user.lastName||'')}</div>
                             <div style="color:var(--accent);">@${escapeHTML(user.username||'unknown')}</div>
@@ -670,7 +819,7 @@
         }
 
         async function renderNotes() {
-            if (!currentUserId) return;
+            if (!currentUserId) return performLogout();
             const notes = await db.notes.where('userId').equals(currentUserId).reverse().sortBy('createdAt');
             panels.notes.innerHTML = `
                 <div class="card">
@@ -692,7 +841,7 @@
         }
 
         async function renderSettings() {
-            if (!currentUserId) return;
+            if (!currentUserId) return performLogout();
             const settings = await getSettings(currentUserId);
             panels.settings.innerHTML = `
                 <div class="card">
@@ -726,6 +875,7 @@
 
         // ==================== إجراءات المستخدم ====================
         function editProfile() {
+            if (!currentUserId) return;
             db.users.get(currentUserId).then(user => {
                 if (!user) return;
                 const firstName = prompt('الاسم الأول:', user.firstName);
@@ -736,67 +886,108 @@
                 if (username === null) return;
                 const photoUrl = prompt('رابط الصورة:', user.photoUrl);
                 if (photoUrl === null) return;
+                showLoading();
                 db.users.update(currentUserId, { firstName, lastName, username, photoUrl, updatedAt: Date.now() })
                     .then(async () => {
                         await logActivity(currentUserId, 'profile_updated');
                         updateUserPill();
-                        switchPanel('profile');
+                        await switchPanel('profile');
                         showToast('✅ تم التحديث');
-                    });
+                    })
+                    .catch(() => showError('فشل في تحديث الملف'))
+                    .finally(() => hideLoading());
             });
         }
 
         function addNote() {
+            if (!currentUserId) return;
             const title = prompt('عنوان الملاحظة:');
             if (!title) return;
             const content = prompt('المحتوى:');
             if (content === null) return;
+            showLoading();
             db.notes.add({ userId: currentUserId, title, content: content || '', createdAt: Date.now() })
                 .then(async () => {
                     await logActivity(currentUserId, 'note_added', title);
-                    switchPanel('notes');
+                    await switchPanel('notes');
                     showToast('📝 تمت الإضافة');
-                });
+                })
+                .catch(() => showError('فشل في إضافة الملاحظة'))
+                .finally(() => hideLoading());
         }
 
         function deleteNoteById(id) {
             if (confirm('حذف الملاحظة؟')) {
+                showLoading();
                 db.notes.delete(id).then(async () => {
                     await logActivity(currentUserId, 'note_deleted');
-                    switchPanel('notes');
+                    await switchPanel('notes');
                     showToast('🗑 تم الحذف');
-                });
+                })
+                .catch(() => showError('فشل في حذف الملاحظة'))
+                .finally(() => hideLoading());
             }
         }
 
         async function toggleNotifications() {
-            const s = await getSettings(currentUserId);
-            await updateSettings(currentUserId, { notifications: !s.notifications });
-            switchPanel('settings');
-            showToast(s.notifications ? '🔕 تم الإيقاف' : '🔔 تم التشغيل');
+            if (!currentUserId) return;
+            showLoading();
+            try {
+                const s = await getSettings(currentUserId);
+                await updateSettings(currentUserId, { notifications: !s.notifications });
+                await switchPanel('settings');
+                showToast(s.notifications ? '🔕 تم الإيقاف' : '🔔 تم التشغيل');
+            } catch (error) {
+                showError('فشل في تحديث الإعدادات');
+            } finally {
+                hideLoading();
+            }
         }
 
         async function switchLanguage() {
-            const s = await getSettings(currentUserId);
-            const newLang = s.language === 'ar' ? 'en' : 'ar';
-            await updateSettings(currentUserId, { language: newLang });
-            switchPanel('settings');
-            showToast(newLang === 'ar' ? 'العربية' : 'English');
+            if (!currentUserId) return;
+            showLoading();
+            try {
+                const s = await getSettings(currentUserId);
+                const newLang = s.language === 'ar' ? 'en' : 'ar';
+                await updateSettings(currentUserId, { language: newLang });
+                await switchPanel('settings');
+                showToast(newLang === 'ar' ? 'العربية' : 'English');
+            } catch (error) {
+                showError('فشل في تغيير اللغة');
+            } finally {
+                hideLoading();
+            }
         }
 
         async function deleteMyAccount() {
+            if (!currentUserId) return;
             if (confirm('⚠️ حذف نهائي للحساب وجميع البيانات؟')) {
-                await deleteUserAccount(currentUserId);
-                performLogout();
+                showLoading();
+                try {
+                    await deleteUserAccount(currentUserId);
+                    performLogout();
+                } catch (error) {
+                    showError('فشل في حذف الحساب');
+                } finally {
+                    hideLoading();
+                }
             }
         }
 
         async function adminDeleteUser(userId) {
             if (confirm('حذف هذا المستخدم نهائياً؟')) {
-                const success = await deleteUserAccount(userId);
-                if (success) {
-                    switchPanel('admin');
-                    showToast('🗑 تم الحذف');
+                showLoading();
+                try {
+                    const success = await deleteUserAccount(userId);
+                    if (success) {
+                        await switchPanel('admin');
+                        showToast('🗑 تم الحذف');
+                    }
+                } catch (error) {
+                    showError('فشل في حذف المستخدم');
+                } finally {
+                    hideLoading();
                 }
             }
         }
@@ -804,15 +995,22 @@
         // ==================== تحديث شريط المستخدم ====================
         async function updateUserPill() {
             if (!currentUserId) return;
-            const user = await db.users.get(currentUserId);
-            if (!user) return;
-            const name = [user.firstName, user.lastName].filter(Boolean).join(' ') || 'مستخدم';
-            pillName.textContent = name;
-            pillImg.src = user.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FFD700&color=000&size=40`;
-            pillImg.onerror = () => { pillImg.src = 'https://ui-avatars.com/api/?name=U&background=555&color=fff&size=40'; };
+            try {
+                const user = await db.users.get(currentUserId);
+                if (!user) return;
+                const name = [user.firstName, user.lastName].filter(Boolean).join(' ') || 'مستخدم';
+                pillName.textContent = name;
+                pillImg.src = user.photoUrl ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FFD700&color=000&size=40`;
+                pillImg.onerror = () => { pillImg.src =
+                        'https://ui-avatars.com/api/?name=U&background=555&color=fff&size=40'; };
+            } catch (error) {
+                console.error('فشل في تحديث شريط المستخدم:', error);
+            }
         }
 
         function escapeHTML(str) {
+            if (!str) return '';
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
@@ -820,35 +1018,42 @@
 
         // ==================== دورة الحياة ====================
         async function showApp(tgUser) {
-            // إعادة تعيين كاملة لأي حالة سابقة
-            resetAppState();
+            fullReset();
             clearSession();
-
-            const userId = await findOrCreateUser(tgUser);
-            currentUserId = userId;
-            currentTelegramUser = tgUser;
-            isAdmin = (tgUser.id.toString() === CONFIG.ADMIN_TELEGRAM_ID);
-
-            setSession(userId, tgUser);
-            await db.sessions.add({ userId, loginTime: Date.now() });
-            await logActivity(userId, 'login', 'تسجيل دخول');
-
-            gate.classList.add('hidden');
-            scene.classList.remove('blurred');
-            appShell.classList.add('active');
-            botArea.classList.add('dimmed');
-
-            buildNavigationTabs();
-            updateUserPill();
-            switchPanel('dashboard');
-
-            const name = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') || 'مستخدم';
-            showToast(`👋 أهلاً ${name}!`);
+            showLoading();
+            try {
+                const userId = await findOrCreateUser(tgUser);
+                if (!userId) {
+                    hideLoading();
+                    return;
+                }
+                currentUserId = userId;
+                currentTelegramUser = tgUser;
+                isAdmin = (tgUser.id.toString() === CONFIG.ADMIN_TELEGRAM_ID);
+                setSession(userId, tgUser);
+                await db.sessions.add({ userId, loginTime: Date.now() });
+                await logActivity(userId, 'login', 'تسجيل دخول');
+                gate.classList.add('hidden');
+                scene.classList.remove('blurred');
+                appShell.classList.add('active');
+                botArea.classList.add('dimmed');
+                buildNavTabs();
+                await updateUserPill();
+                await switchPanel('dashboard');
+                startSessionCheck();
+                const name = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') || 'مستخدم';
+                showToast(`👋 أهلاً ${name}!`);
+            } catch (error) {
+                console.error('فشل في بدء التطبيق:', error);
+                showError('حدث خطأ أثناء تحميل التطبيق');
+            } finally {
+                hideLoading();
+            }
         }
 
         async function performLogout() {
             if (currentUserId) await logActivity(currentUserId, 'logout');
-            resetAppState();
+            fullReset();
             clearSession();
             appShell.classList.remove('active');
             gate.classList.remove('hidden');
@@ -862,24 +1067,30 @@
         async function checkExistingSession() {
             const session = getSession();
             if (!session || !session.userId) return false;
-            const user = await db.users.get(session.userId);
-            if (!user) { clearSession(); return false; }
-
-            // استعادة الحالة
-            currentUserId = user.id;
-            currentTelegramUser = session.telegramUser;
-            isAdmin = (user.telegramId.toString() === CONFIG.ADMIN_TELEGRAM_ID);
-
-            gate.classList.add('hidden');
-            scene.classList.remove('blurred');
-            appShell.classList.add('active');
-            botArea.classList.add('dimmed');
-
-            buildNavigationTabs();
-            updateUserPill();
-            switchPanel('dashboard');
-            showToast('👋 مرحباً بعودتك');
-            return true;
+            showLoading();
+            try {
+                const user = await db.users.get(session.userId);
+                if (!user) { clearSession();
+                    hideLoading(); return false; }
+                currentUserId = user.id;
+                currentTelegramUser = session.telegramUser;
+                isAdmin = (user.telegramId.toString() === CONFIG.ADMIN_TELEGRAM_ID);
+                gate.classList.add('hidden');
+                scene.classList.remove('blurred');
+                appShell.classList.add('active');
+                botArea.classList.add('dimmed');
+                buildNavTabs();
+                await updateUserPill();
+                await switchPanel('dashboard');
+                startSessionCheck();
+                showToast('👋 مرحباً بعودتك');
+                return true;
+            } catch (error) {
+                console.error('فشل في استعادة الجلسة:', error);
+                return false;
+            } finally {
+                hideLoading();
+            }
         }
 
         // ==================== مصادقة تلغرام ====================
@@ -897,7 +1108,8 @@
             if (CONFIG.VERIFY_API_URL) {
                 fetch(CONFIG.VERIFY_API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(userData) })
-                    .then(r => r.json()).then(d => { if (d.valid) showApp(tgUser);
+                    .then(r => r.json())
+                    .then(d => { if (d.valid) showApp(tgUser);
                         else showError('فشل التحقق'); })
                     .catch(() => showError('خطأ في السيرفر'));
             } else {
@@ -940,6 +1152,12 @@
             createTelegramWidget();
             gate.classList.remove('hidden');
         }
+
+        // تنظيف عند مغادرة الصفحة
+        window.addEventListener('beforeunload', () => {
+            stopSessionCheck();
+            clearTimeout(toastTimer);
+        });
 
         document.addEventListener('DOMContentLoaded', init);
     </script>
