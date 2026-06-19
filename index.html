@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <meta name="description" content="Kratos Bot Web App - Multi-User Telegram Mini App">
+    <meta name="description" content="Kratos Bot Web App - Multi-User Telegram Mini App with Admin Panel">
     <meta name="theme-color" content="#0a1628">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Kratos Bot - Chancy | Multi-User Mini App</title>
-    
-    <!-- Telegram Web App SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
+    <title>Kratos Bot - Chancy | Multi-User + Admin Panel</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js">
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://image.qwenlm.ai">
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Cairo:wght@400;600;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --color-primary: #0a1628;
@@ -39,42 +39,49 @@
             --color-error: #ef4444;
             --color-warning: #f59e0b;
             --color-info: #3b82f6;
-            
+            --color-admin-gold: #f0c040;
+            --color-admin-gold-dark: #c89820;
+            --color-admin-purple: #8b5cf6;
+            --color-admin-purple-dark: #6d28d9;
+            --color-admin-bg: #0d1b33;
+            --color-admin-card: #132744;
+            --color-admin-border: rgba(240, 192, 64, 0.25);
+
             --font-arabic: 'Cairo', sans-serif;
             --font-display: 'Anton', sans-serif;
             --font-tech: 'Orbitron', sans-serif;
-            
+
             --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.8rem);
             --text-sm: clamp(0.8rem, 0.75rem + 0.3vw, 0.9rem);
             --text-base: clamp(0.9rem, 0.85rem + 0.4vw, 1rem);
             --text-lg: clamp(1rem, 0.95rem + 0.5vw, 1.15rem);
             --text-xl: clamp(1.2rem, 1.1rem + 0.6vw, 1.4rem);
             --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
-            
+
             --space-xs: 0.25rem;
             --space-sm: 0.5rem;
             --space-md: 1rem;
             --space-lg: 1.5rem;
             --space-xl: 2rem;
             --space-2xl: 3rem;
-            
+
             --container-max: 1400px;
             --container-padding: clamp(1rem, 3vw, 2rem);
             --header-height: 70px;
-            
+
             --radius-sm: 6px;
             --radius-md: 12px;
             --radius-lg: 20px;
             --radius-xl: 28px;
             --radius-full: 9999px;
-            
+
             --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
             --shadow-md: 0 5px 20px rgba(0, 0, 0, 0.5);
             --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.6);
-            
+
             --transition-fast: 0.15s ease;
             --transition-base: 0.3s ease;
-            
+
             --z-base: 1;
             --z-header: 100;
             --z-modal: 1000;
@@ -82,8 +89,18 @@
             --z-loader: 9999;
         }
 
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
         body {
             font-family: var(--font-arabic);
             font-size: var(--text-base);
@@ -94,26 +111,61 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
-        img { max-width: 100%; height: auto; display: block; }
-        a { color: inherit; text-decoration: none; }
-        button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
-        ul { list-style: none; }
-        input, textarea, select { font-family: inherit; }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: inherit;
+        }
+        ul {
+            list-style: none;
+        }
+        input,
+        textarea,
+        select {
+            font-family: inherit;
+        }
 
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: var(--color-dark); }
-        ::-webkit-scrollbar-thumb { background: var(--color-accent-green); border-radius: 4px; }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--color-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-accent-green);
+            border-radius: 4px;
+        }
 
-        /* Loader */
         .app-loader {
-            position: fixed; inset: 0;
+            position: fixed;
+            inset: 0;
             background: var(--color-primary);
-            display: flex; justify-content: center; align-items: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             z-index: var(--z-loader);
             transition: opacity 0.6s ease, visibility 0.6s ease;
         }
-        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .loader__content { text-align: center; }
+        .app-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loader__content {
+            text-align: center;
+        }
         .loader__logo {
             width: clamp(70px, 15vw, 110px);
             animation: loaderPulse 2s ease-in-out infinite;
@@ -121,8 +173,15 @@
             filter: drop-shadow(0 0 20px rgba(127, 255, 0, 0.6));
         }
         @keyframes loaderPulse {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.1); opacity: 1; }
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
         }
         .loader__text {
             font-family: var(--font-tech);
@@ -133,40 +192,52 @@
             color: var(--color-accent-green);
         }
         .loader__bar {
-            width: 200px; height: 3px;
+            width: 200px;
+            height: 3px;
             background: rgba(127, 255, 0, 0.2);
             border-radius: 3px;
             margin: var(--space-md) auto 0;
             overflow: hidden;
         }
         .loader__bar-fill {
-            height: 100%; background: var(--color-accent-green);
+            height: 100%;
+            background: var(--color-accent-green);
             border-radius: 3px;
             animation: loadBar 1.5s ease-in-out infinite;
         }
         @keyframes loadBar {
-            0% { width: 0; }
-            50% { width: 70%; }
-            100% { width: 100%; }
+            0% {
+                width: 0;
+            }
+            50% {
+                width: 70%;
+            }
+            100% {
+                width: 100%;
+            }
         }
 
-        /* Auth Gate */
         .auth-gate {
-            position: fixed; inset: 0;
+            position: fixed;
+            inset: 0;
             z-index: calc(var(--z-loader) - 1);
-            background: 
-                linear-gradient(135deg, rgba(10, 22, 40, 0.97) 0%, rgba(5, 13, 26, 0.99) 100%),
+            background: linear-gradient(135deg, rgba(10, 22, 40, 0.97) 0%, rgba(5, 13, 26, 0.99) 100%),
                 url('https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1ee2a5e6d-65d1-4459-9aaa-a98ae6fd75ae.png');
             background-size: cover;
             background-position: center;
-            display: flex; justify-content: center; align-items: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: var(--container-padding);
             overflow-y: auto;
         }
-        .auth-gate.hidden { display: none; }
+        .auth-gate.hidden {
+            display: none;
+        }
 
         .auth-container {
-            width: 100%; max-width: 460px;
+            width: 100%;
+            max-width: 460px;
             background: rgba(17, 34, 64, 0.85);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
@@ -179,19 +250,32 @@
         }
         .auth-container::before {
             content: '';
-            position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
             background: linear-gradient(90deg, var(--color-accent-red), var(--color-accent-green), var(--color-telegram));
         }
-        .auth-header { text-align: center; margin-bottom: var(--space-lg); }
+        .auth-header {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
         .auth-logo {
-            width: 75px; height: 75px;
+            width: 75px;
+            height: 75px;
             margin: 0 auto var(--space-md);
             filter: drop-shadow(0 0 15px rgba(127, 255, 0, 0.5));
             animation: logoGlow 3s ease-in-out infinite;
         }
         @keyframes logoGlow {
-            0%, 100% { filter: drop-shadow(0 0 15px rgba(127, 255, 0, 0.5)); }
-            50% { filter: drop-shadow(0 0 25px rgba(127, 255, 0, 0.8)); }
+            0%,
+            100% {
+                filter: drop-shadow(0 0 15px rgba(127, 255, 0, 0.5));
+            }
+            50% {
+                filter: drop-shadow(0 0 25px rgba(127, 255, 0, 0.8));
+            }
         }
         .auth-title {
             font-family: var(--font-tech);
@@ -200,24 +284,75 @@
             margin-bottom: var(--space-xs);
             letter-spacing: 2px;
         }
-        .auth-title span { color: var(--color-accent-green); }
-        .auth-subtitle { color: var(--color-text-muted); font-size: var(--text-sm); }
+        .auth-title span {
+            color: var(--color-accent-green);
+        }
+        .auth-subtitle {
+            color: var(--color-text-muted);
+            font-size: var(--text-sm);
+        }
 
         .telegram-btn {
-            width: 100%; padding: var(--space-md);
+            width: 100%;
+            padding: var(--space-md);
             background: linear-gradient(135deg, var(--color-telegram), var(--color-telegram-dark));
-            color: white; border-radius: var(--radius-md);
-            font-size: var(--text-base); font-weight: 700;
-            display: flex; align-items: center; justify-content: center;
+            color: white;
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: var(--space-sm);
             transition: all var(--transition-base);
             margin-bottom: var(--space-md);
             box-shadow: 0 5px 20px rgba(42, 171, 238, 0.3);
         }
-        .telegram-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(42, 171, 238, 0.5); }
-        .telegram-btn:active { transform: translateY(0); }
-        .telegram-btn svg { width: 24px; height: 24px; }
-        .telegram-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(42, 171, 238, 0.5);
+        }
+        .telegram-btn:active {
+            transform: translateY(0);
+        }
+        .telegram-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+        .telegram-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .admin-login-btn {
+            width: 100%;
+            padding: var(--space-md);
+            background: linear-gradient(135deg, var(--color-admin-gold), var(--color-admin-gold-dark));
+            color: #1a1a1a;
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            transition: all var(--transition-base);
+            margin-bottom: var(--space-md);
+            box-shadow: 0 5px 20px rgba(240, 192, 64, 0.3);
+        }
+        .admin-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(240, 192, 64, 0.5);
+        }
+        .admin-login-btn:active {
+            transform: translateY(0);
+        }
+        .admin-login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
 
         .info-box {
             background: rgba(10, 22, 40, 0.6);
@@ -227,26 +362,69 @@
             margin-bottom: var(--space-md);
         }
         .info-box__title {
-            font-weight: 700; margin-bottom: var(--space-xs);
-            color: var(--color-accent-green); font-size: var(--text-sm);
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+            color: var(--color-accent-green);
+            font-size: var(--text-sm);
         }
-        .info-box__text { color: var(--color-text-muted); font-size: var(--text-xs); line-height: 1.8; }
+        .info-box__text {
+            color: var(--color-text-muted);
+            font-size: var(--text-xs);
+            line-height: 1.8;
+        }
 
         .spinner {
-            width: 20px; height: 20px;
+            width: 20px;
+            height: 20px;
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-top-color: white;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-        /* Auto-login banner */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes pulseGlow {
+            0%,
+            100% {
+                box-shadow: 0 0 15px rgba(240, 192, 64, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(240, 192, 64, 0.8);
+            }
+        }
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
         .auto-login-banner {
             background: linear-gradient(135deg, rgba(42, 171, 238, 0.2), rgba(127, 255, 0, 0.1));
             border: 1px solid var(--color-telegram);
@@ -258,15 +436,23 @@
             gap: var(--space-md);
             animation: fadeInUp 0.5s ease;
         }
-        .auto-login-banner__icon { font-size: 2rem; }
-        .auto-login-banner__content { flex: 1; }
-        .auto-login-banner__title {
-            font-weight: 700; color: var(--color-telegram);
-            margin-bottom: 4px; font-size: var(--text-sm);
+        .auto-login-banner__icon {
+            font-size: 2rem;
         }
-        .auto-login-banner__text { font-size: var(--text-xs); color: var(--color-text-muted); }
+        .auto-login-banner__content {
+            flex: 1;
+        }
+        .auto-login-banner__title {
+            font-weight: 700;
+            color: var(--color-telegram);
+            margin-bottom: 4px;
+            font-size: var(--text-sm);
+        }
+        .auto-login-banner__text {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+        }
 
-        /* Account Switcher */
         .account-switcher {
             background: rgba(10, 22, 40, 0.6);
             border: 1px solid rgba(127, 255, 0, 0.2);
@@ -305,16 +491,27 @@
             border-color: var(--color-accent-green);
         }
         .account-item__avatar {
-            width: 36px; height: 36px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 900; color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: var(--color-primary);
             flex-shrink: 0;
             overflow: hidden;
         }
-        .account-item__avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .account-item__info { flex: 1; min-width: 0; }
+        .account-item__avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .account-item__info {
+            flex: 1;
+            min-width: 0;
+        }
         .account-item__name {
             font-weight: 600;
             font-size: var(--text-sm);
@@ -335,13 +532,26 @@
             color: var(--color-primary);
             font-weight: 700;
         }
+        .account-item__badge--admin {
+            background: linear-gradient(135deg, var(--color-admin-gold), var(--color-admin-gold-dark));
+            color: #1a1a1a;
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
 
-        /* Web App */
-        .webapp { display: none; min-height: 100vh; padding-top: var(--header-height); }
-        .webapp.active { display: block; }
+        .webapp {
+            display: none;
+            min-height: 100vh;
+            padding-top: var(--header-height);
+        }
+        .webapp.active {
+            display: block;
+        }
 
         .app-header {
-            position: fixed; top: 0; left: 0; right: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             height: var(--header-height);
             background: rgba(10, 22, 40, 0.95);
             backdrop-filter: blur(20px);
@@ -350,72 +560,148 @@
             z-index: var(--z-header);
             padding: 0 var(--container-padding);
         }
+        .app-header.admin-active {
+            border-bottom: 1px solid var(--color-admin-border);
+            background: rgba(13, 27, 51, 0.97);
+        }
         .header-inner {
             max-width: var(--container-max);
-            height: 100%; margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: center;
+            height: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             gap: var(--space-md);
         }
         .brand-logo {
-            display: flex; align-items: center; gap: var(--space-sm);
-            cursor: pointer; transition: transform var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            cursor: pointer;
+            transition: transform var(--transition-base);
         }
-        .brand-logo:hover { transform: scale(1.05); }
+        .brand-logo:hover {
+            transform: scale(1.05);
+        }
         .brand-logo__img {
             width: clamp(35px, 4.5vw, 45px);
             height: clamp(35px, 4.5vw, 45px);
             filter: drop-shadow(0 0 8px rgba(127, 255, 0, 0.5));
         }
-        .brand-logo__text { display: flex; flex-direction: column; line-height: 1; }
+        .brand-logo__text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
         .brand-logo__title {
             font-family: var(--font-tech);
             font-size: clamp(14px, 1.5vw, 18px);
-            font-weight: 900; letter-spacing: 1.5px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
         }
-        .brand-logo__title span { color: var(--color-accent-green); }
+        .brand-logo__title span {
+            color: var(--color-accent-green);
+        }
 
-        .header-actions { display: flex; align-items: center; gap: var(--space-sm); }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
         .icon-btn {
-            width: 40px; height: 40px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.05);
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all var(--transition-base);
             position: relative;
             font-size: 18px;
         }
-        .icon-btn:hover { background: rgba(127, 255, 0, 0.15); transform: translateY(-2px); }
+        .icon-btn:hover {
+            background: rgba(127, 255, 0, 0.15);
+            transform: translateY(-2px);
+        }
         .icon-btn .badge {
-            position: absolute; top: -2px; right: -2px;
+            position: absolute;
+            top: -2px;
+            right: -2px;
             background: var(--color-error);
-            color: white; font-size: 10px; font-weight: 700;
-            min-width: 18px; height: 18px;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            min-width: 18px;
+            height: 18px;
             border-radius: 9px;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 0 4px;
         }
+        .icon-btn--admin {
+            background: rgba(240, 192, 64, 0.15);
+            border: 2px solid rgba(240, 192, 64, 0.4);
+            animation: pulseGlow 3s ease-in-out infinite;
+            position: relative;
+        }
+        .icon-btn--admin::after {
+            content: '👑';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 12px;
+            animation: fadeInDown 0.5s ease;
+        }
+        .icon-btn--admin:hover {
+            background: rgba(240, 192, 64, 0.25);
+            border-color: var(--color-admin-gold);
+            box-shadow: 0 0 25px rgba(240, 192, 64, 0.6);
+        }
         .user-chip {
-            display: flex; align-items: center; gap: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
             padding: 4px 12px 4px 4px;
             background: rgba(127, 255, 0, 0.1);
             border: 1px solid rgba(127, 255, 0, 0.3);
             border-radius: var(--radius-full);
-            cursor: pointer; transition: all var(--transition-base);
+            cursor: pointer;
+            transition: all var(--transition-base);
         }
-        .user-chip:hover { background: rgba(127, 255, 0, 0.2); }
+        .user-chip:hover {
+            background: rgba(127, 255, 0, 0.2);
+        }
+        .user-chip.admin-chip {
+            background: rgba(240, 192, 64, 0.1);
+            border: 1px solid rgba(240, 192, 64, 0.4);
+        }
         .user-avatar {
-            width: 32px; height: 32px; border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: var(--text-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: var(--text-sm);
             color: var(--color-primary);
             overflow: hidden;
         }
-        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
         .user-chip__name {
-            font-size: var(--text-sm); font-weight: 600;
-            max-width: 100px; overflow: hidden;
-            text-overflow: ellipsis; white-space: nowrap;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .app-main {
@@ -425,18 +711,33 @@
             padding-bottom: 100px;
         }
 
-        .page-view { display: none; animation: fadeInUp 0.4s ease; }
-        .page-view.active { display: block; }
+        .page-view {
+            display: none;
+            animation: fadeInUp 0.4s ease;
+        }
+        .page-view.active {
+            display: block;
+        }
 
-        .page-header { margin-bottom: var(--space-xl); }
+        .page-header {
+            margin-bottom: var(--space-xl);
+        }
         .page-title {
             font-family: var(--font-tech);
             font-size: var(--text-2xl);
             font-weight: 900;
             margin-bottom: var(--space-xs);
         }
-        .page-title span { color: var(--color-accent-green); }
-        .page-subtitle { color: var(--color-text-muted); font-size: var(--text-sm); }
+        .page-title span {
+            color: var(--color-accent-green);
+        }
+        .page-title.admin-title span {
+            color: var(--color-admin-gold);
+        }
+        .page-subtitle {
+            color: var(--color-text-muted);
+            font-size: var(--text-sm);
+        }
 
         .stats-grid {
             display: grid;
@@ -455,7 +756,11 @@
         }
         .stat-card::before {
             content: '';
-            position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
             background: linear-gradient(90deg, var(--color-accent-green), var(--color-accent-blue));
         }
         .stat-card:hover {
@@ -463,7 +768,21 @@
             border-color: rgba(127, 255, 0, 0.4);
             box-shadow: var(--shadow-md);
         }
-        .stat-card__icon { font-size: 2rem; margin-bottom: var(--space-sm); }
+        .stat-card.admin-stat::before {
+            background: linear-gradient(90deg, var(--color-admin-gold), var(--color-admin-purple));
+        }
+        .stat-card.admin-stat {
+            border-color: var(--color-admin-border);
+            background: linear-gradient(135deg, rgba(19, 39, 68, 0.9), rgba(13, 27, 51, 0.95));
+        }
+        .stat-card.admin-stat:hover {
+            border-color: rgba(240, 192, 64, 0.6);
+            box-shadow: 0 8px 30px rgba(240, 192, 64, 0.2);
+        }
+        .stat-card__icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-sm);
+        }
         .stat-card__value {
             font-family: var(--font-tech);
             font-size: var(--text-2xl);
@@ -471,7 +790,13 @@
             color: var(--color-accent-green);
             margin-bottom: var(--space-xs);
         }
-        .stat-card__label { color: var(--color-text-muted); font-size: var(--text-sm); }
+        .stat-card.admin-stat .stat-card__value {
+            color: var(--color-admin-gold);
+        }
+        .stat-card__label {
+            color: var(--color-text-muted);
+            font-size: var(--text-sm);
+        }
 
         .profile-card {
             background: linear-gradient(135deg, rgba(17, 34, 64, 0.8), rgba(10, 22, 40, 0.9));
@@ -484,28 +809,47 @@
         }
         .profile-card::before {
             content: '';
-            position: absolute; top: 0; left: 0; right: 0; height: 100px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
             background: linear-gradient(135deg, var(--color-accent-red), var(--color-accent-green));
             opacity: 0.3;
         }
         .profile-header {
-            position: relative; z-index: 1;
-            display: flex; align-items: center; gap: var(--space-lg);
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
             margin-bottom: var(--space-lg);
             flex-wrap: wrap;
         }
         .profile-avatar {
-            width: 100px; height: 100px; border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
             background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.5rem; font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 900;
             color: var(--color-primary);
             border: 4px solid var(--color-primary);
             overflow: hidden;
             flex-shrink: 0;
         }
-        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .profile-info { flex: 1; min-width: 200px; }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-info {
+            flex: 1;
+            min-width: 200px;
+        }
         .profile-name {
             font-family: var(--font-tech);
             font-size: var(--text-xl);
@@ -519,12 +863,22 @@
             font-family: var(--font-tech);
         }
         .profile-meta {
-            display: flex; gap: var(--space-md); flex-wrap: wrap;
+            display: flex;
+            gap: var(--space-md);
+            flex-wrap: wrap;
             font-size: var(--text-xs);
             color: var(--color-text-muted);
         }
-        .profile-meta-item { display: flex; align-items: center; gap: var(--space-xs); }
-        .profile-actions { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+        .profile-meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        .profile-actions {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+        }
 
         .profile-details {
             display: grid;
@@ -547,7 +901,11 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        .detail-value { font-size: var(--text-base); font-weight: 600; word-break: break-word; }
+        .detail-value {
+            font-size: var(--text-base);
+            font-weight: 600;
+            word-break: break-word;
+        }
 
         .activity-list {
             background: rgba(17, 34, 64, 0.6);
@@ -558,53 +916,98 @@
         .activity-item {
             padding: var(--space-md);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex; align-items: center; gap: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
             transition: background var(--transition-base);
         }
-        .activity-item:last-child { border-bottom: none; }
-        .activity-item:hover { background: rgba(127, 255, 0, 0.05); }
-        .activity-icon {
-            width: 40px; height: 40px; border-radius: 50%;
-            background: rgba(127, 255, 0, 0.15);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; flex-shrink: 0;
+        .activity-item:last-child {
+            border-bottom: none;
         }
-        .activity-content { flex: 1; min-width: 0; }
-        .activity-title { font-weight: 600; font-size: var(--text-sm); margin-bottom: 2px; }
-        .activity-time { font-size: var(--text-xs); color: var(--color-text-muted); }
+        .activity-item:hover {
+            background: rgba(127, 255, 0, 0.05);
+        }
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(127, 255, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .activity-title {
+            font-weight: 600;
+            font-size: var(--text-sm);
+            margin-bottom: 2px;
+        }
+        .activity-time {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+        }
 
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
             background: rgba(10, 22, 40, 0.98);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-top: 1px solid rgba(127, 255, 0, 0.15);
-            display: flex; justify-content: space-around;
+            display: flex;
+            justify-content: space-around;
             padding: var(--space-sm) 0;
             z-index: var(--z-header);
         }
         .bottom-nav__item {
             flex: 1;
-            display: flex; flex-direction: column;
-            align-items: center; gap: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
             padding: var(--space-xs);
             color: var(--color-text-muted);
             font-size: var(--text-xs);
             transition: all var(--transition-base);
             cursor: pointer;
-            border: none; background: none;
+            border: none;
+            background: none;
         }
-        .bottom-nav__item.active { color: var(--color-accent-green); }
-        .bottom-nav__item:hover { color: var(--color-accent-green); }
-        .bottom-nav__icon { font-size: 1.4rem; }
+        .bottom-nav__item.active {
+            color: var(--color-accent-green);
+        }
+        .bottom-nav__item:hover {
+            color: var(--color-accent-green);
+        }
+        .bottom-nav__icon {
+            font-size: 1.4rem;
+        }
+        .bottom-nav__item.admin-nav-item.active {
+            color: var(--color-admin-gold);
+        }
+        .bottom-nav__item.admin-nav-item:hover {
+            color: var(--color-admin-gold);
+        }
 
         .toast-container {
-            position: fixed; top: calc(var(--header-height) + 10px);
-            left: 50%; transform: translateX(-50%);
+            position: fixed;
+            top: calc(var(--header-height) + 10px);
+            left: 50%;
+            transform: translateX(-50%);
             z-index: var(--z-toast);
-            display: flex; flex-direction: column; gap: var(--space-sm);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
             pointer-events: none;
-            width: 90%; max-width: 400px;
+            width: 90%;
+            max-width: 400px;
         }
         .toast {
             background: rgba(17, 34, 64, 0.98);
@@ -612,69 +1015,123 @@
             border: 1px solid rgba(127, 255, 0, 0.3);
             border-radius: var(--radius-md);
             padding: var(--space-md);
-            display: flex; align-items: center; gap: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
             box-shadow: var(--shadow-lg);
             animation: slideIn 0.3s ease;
             pointer-events: auto;
         }
-        .toast.success { border-color: var(--color-success); }
-        .toast.error { border-color: var(--color-error); }
-        .toast.info { border-color: var(--color-info); }
-        .toast.warning { border-color: var(--color-warning); }
-        .toast-icon { font-size: 1.3rem; }
-        .toast-message { flex: 1; font-size: var(--text-sm); }
+        .toast.success {
+            border-color: var(--color-success);
+        }
+        .toast.error {
+            border-color: var(--color-error);
+        }
+        .toast.info {
+            border-color: var(--color-info);
+        }
+        .toast.warning {
+            border-color: var(--color-warning);
+        }
+        .toast-icon {
+            font-size: 1.3rem;
+        }
+        .toast-message {
+            flex: 1;
+            font-size: var(--text-sm);
+        }
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-overlay {
-            position: fixed; inset: 0;
+            position: fixed;
+            inset: 0;
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(5px);
             z-index: var(--z-modal);
-            display: flex; justify-content: center; align-items: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: var(--container-padding);
-            opacity: 0; visibility: hidden;
+            opacity: 0;
+            visibility: hidden;
             transition: all var(--transition-base);
         }
-        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
         .modal {
             background: var(--color-secondary);
             border: 1px solid rgba(127, 255, 0, 0.2);
             border-radius: var(--radius-lg);
             padding: var(--space-xl);
-            max-width: 500px; width: 100%;
-            max-height: 90vh; overflow-y: auto;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
             transform: scale(0.9);
             transition: transform var(--transition-base);
         }
-        .modal-overlay.active .modal { transform: scale(1); }
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+        .modal.admin-modal {
+            border-color: var(--color-admin-border);
+            background: var(--color-admin-bg);
+            max-width: 650px;
+        }
         .modal-header {
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: var(--space-lg);
             padding-bottom: var(--space-md);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .modal-title { font-family: var(--font-tech); font-size: var(--text-xl); font-weight: 700; }
+        .modal-title {
+            font-family: var(--font-tech);
+            font-size: var(--text-xl);
+            font-weight: 700;
+        }
         .modal-close {
-            width: 32px; height: 32px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.05);
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.2rem;
             transition: all var(--transition-base);
         }
-        .modal-close:hover { background: rgba(239, 68, 68, 0.2); color: var(--color-error); }
+        .modal-close:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--color-error);
+        }
 
-        .form-group { margin-bottom: var(--space-md); }
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
         .form-label {
-            display: block; margin-bottom: var(--space-xs);
-            font-size: var(--text-sm); color: var(--color-text-muted);
+            display: block;
+            margin-bottom: var(--space-xs);
+            font-size: var(--text-sm);
+            color: var(--color-text-muted);
             font-weight: 600;
         }
         .form-input {
-            width: 100%; padding: var(--space-sm) var(--space-md);
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
             background: rgba(10, 22, 40, 0.8);
             border: 2px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--radius-md);
@@ -683,37 +1140,87 @@
             transition: all var(--transition-base);
         }
         .form-input:focus {
-            outline: none; border-color: var(--color-accent-green);
+            outline: none;
+            border-color: var(--color-accent-green);
             box-shadow: 0 0 15px rgba(127, 255, 0, 0.2);
         }
 
         .btn {
             padding: var(--space-sm) var(--space-lg);
             border-radius: var(--radius-md);
-            font-weight: 700; font-size: var(--text-sm);
+            font-weight: 700;
+            font-size: var(--text-sm);
             transition: all var(--transition-base);
-            display: inline-flex; align-items: center; justify-content: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             gap: var(--space-xs);
         }
         .btn-primary {
             background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-green-dark));
             color: var(--color-primary);
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(127, 255, 0, 0.4); }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(127, 255, 0, 0.4);
+        }
         .btn-secondary {
             background: rgba(255, 255, 255, 0.05);
             color: var(--color-text-light);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--color-accent-green); }
-        .btn-full { width: 100%; padding: var(--space-md); }
-        .btn-danger { background: var(--color-error); color: white; }
-        .btn-danger:hover { background: #dc2626; }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--color-accent-green);
+        }
+        .btn-full {
+            width: 100%;
+            padding: var(--space-md);
+        }
+        .btn-danger {
+            background: var(--color-error);
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .btn-admin {
+            background: linear-gradient(135deg, var(--color-admin-gold), var(--color-admin-gold-dark));
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(240, 192, 64, 0.5);
+        }
+        .btn-admin-outline {
+            background: transparent;
+            border: 2px solid var(--color-admin-gold);
+            color: var(--color-admin-gold);
+        }
+        .btn-admin-outline:hover {
+            background: rgba(240, 192, 64, 0.1);
+            box-shadow: 0 0 20px rgba(240, 192, 64, 0.3);
+        }
 
-        .empty-state { text-align: center; padding: var(--space-2xl) var(--space-md); color: var(--color-text-muted); }
-        .empty-state__icon { font-size: 4rem; margin-bottom: var(--space-md); opacity: 0.5; }
-        .empty-state__title { font-size: var(--text-lg); margin-bottom: var(--space-sm); color: var(--color-text-light); }
-        .empty-state__text { font-size: var(--text-sm); }
+        .empty-state {
+            text-align: center;
+            padding: var(--space-2xl) var(--space-md);
+            color: var(--color-text-muted);
+        }
+        .empty-state__icon {
+            font-size: 4rem;
+            margin-bottom: var(--space-md);
+            opacity: 0.5;
+        }
+        .empty-state__title {
+            font-size: var(--text-lg);
+            margin-bottom: var(--space-sm);
+            color: var(--color-text-light);
+        }
+        .empty-state__text {
+            font-size: var(--text-sm);
+        }
 
         .bot-badge {
             display: inline-flex;
@@ -726,8 +1233,19 @@
             font-size: var(--text-xs);
             font-weight: 700;
         }
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, var(--color-admin-gold), var(--color-admin-gold-dark));
+            color: #1a1a1a;
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: 700;
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
 
-        /* Account Actions (بديل للإعدادات) */
         .account-actions {
             background: rgba(17, 34, 64, 0.6);
             border: 1px solid rgba(127, 255, 0, 0.15);
@@ -759,7 +1277,9 @@
             transition: all var(--transition-base);
             text-align: right;
         }
-        .account-action-btn:hover { transform: translateX(-5px); }
+        .account-action-btn:hover {
+            transform: translateX(-5px);
+        }
         .account-action-btn--primary {
             background: rgba(127, 255, 0, 0.1);
             border: 1px solid rgba(127, 255, 0, 0.3);
@@ -776,33 +1296,343 @@
         .account-action-btn--danger:hover {
             background: rgba(239, 68, 68, 0.2);
         }
-        .account-action-btn__content { flex: 1; }
-        .account-action-btn__label { font-weight: 700; font-size: var(--text-sm); }
-        .account-action-btn__desc { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: 2px; }
-        .account-action-btn__icon { font-size: 1.5rem; }
+        .account-action-btn__content {
+            flex: 1;
+        }
+        .account-action-btn__label {
+            font-weight: 700;
+            font-size: var(--text-sm);
+        }
+        .account-action-btn__desc {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            margin-top: 2px;
+        }
+        .account-action-btn__icon {
+            font-size: 1.5rem;
+        }
+
+        /* Admin Panel Styles */
+        .admin-panel-header {
+            background: linear-gradient(135deg, rgba(19, 39, 68, 0.95), rgba(13, 27, 51, 0.98));
+            border: 1px solid var(--color-admin-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        .admin-panel-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(240, 192, 64, 0.05) 0%, transparent 70%);
+            animation: shimmer 8s linear infinite;
+        }
+        .admin-panel-header__content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            flex-wrap: wrap;
+        }
+        .admin-panel-header__icon {
+            font-size: 3rem;
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+        .admin-panel-header__info h2 {
+            font-family: var(--font-tech);
+            font-size: var(--text-2xl);
+            font-weight: 900;
+            color: var(--color-admin-gold);
+            margin-bottom: var(--space-xs);
+        }
+        .admin-panel-header__info p {
+            color: var(--color-text-muted);
+            font-size: var(--text-sm);
+        }
+
+        .admin-table-container {
+            background: var(--color-admin-card);
+            border: 1px solid var(--color-admin-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: var(--space-xl);
+        }
+        .admin-table-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid rgba(240, 192, 64, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+        }
+        .admin-table-header__title {
+            font-family: var(--font-tech);
+            font-size: var(--text-lg);
+            font-weight: 700;
+            color: var(--color-admin-gold);
+        }
+        .admin-search {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            background: rgba(10, 22, 40, 0.6);
+            border: 1px solid rgba(240, 192, 64, 0.3);
+            border-radius: var(--radius-full);
+            padding: var(--space-xs) var(--space-md);
+        }
+        .admin-search input {
+            background: none;
+            border: none;
+            color: var(--color-text-light);
+            padding: var(--space-xs);
+            outline: none;
+            font-size: var(--text-sm);
+            width: 180px;
+        }
+        .admin-search input::placeholder {
+            color: var(--color-text-muted);
+        }
+        .admin-table-wrapper {
+            overflow-x: auto;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--text-sm);
+        }
+        .admin-table th {
+            background: rgba(240, 192, 64, 0.08);
+            color: var(--color-admin-gold);
+            font-weight: 700;
+            padding: var(--space-md);
+            text-align: right;
+            white-space: nowrap;
+            border-bottom: 2px solid rgba(240, 192, 64, 0.2);
+            font-family: var(--font-tech);
+            font-size: var(--text-xs);
+            letter-spacing: 1px;
+        }
+        .admin-table td {
+            padding: var(--space-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            white-space: nowrap;
+        }
+        .admin-table tbody tr {
+            transition: all var(--transition-base);
+        }
+        .admin-table tbody tr:hover {
+            background: rgba(240, 192, 64, 0.05);
+        }
+        .admin-table .user-cell {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        .admin-table .mini-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 12px;
+            color: var(--color-primary);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .admin-table .mini-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 6px;
+        }
+        .status-dot.active {
+            background: var(--color-success);
+            box-shadow: 0 0 8px var(--color-success);
+        }
+        .status-dot.inactive {
+            background: var(--color-text-dim);
+        }
+        .admin-actions-cell {
+            display: flex;
+            gap: var(--space-xs);
+        }
+        .admin-action-btn {
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+        .admin-action-btn--view {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--color-info);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        .admin-action-btn--view:hover {
+            background: rgba(59, 130, 246, 0.35);
+        }
+        .admin-action-btn--delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--color-error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .admin-action-btn--delete:hover {
+            background: rgba(239, 68, 68, 0.35);
+        }
+        .admin-action-btn--notify {
+            background: rgba(240, 192, 64, 0.2);
+            color: var(--color-admin-gold);
+            border: 1px solid rgba(240, 192, 64, 0.3);
+        }
+        .admin-action-btn--notify:hover {
+            background: rgba(240, 192, 64, 0.35);
+        }
+
+        .admin-global-activity {
+            background: var(--color-admin-card);
+            border: 1px solid var(--color-admin-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: var(--space-xl);
+        }
+        .admin-global-activity__header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid rgba(240, 192, 64, 0.2);
+            font-family: var(--font-tech);
+            font-size: var(--text-lg);
+            font-weight: 700;
+            color: var(--color-admin-gold);
+        }
+        .admin-global-activity__list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .admin-quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+        .admin-quick-action-card {
+            background: var(--color-admin-card);
+            border: 1px solid var(--color-admin-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        .admin-quick-action-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-admin-gold);
+            box-shadow: 0 10px 30px rgba(240, 192, 64, 0.2);
+        }
+        .admin-quick-action-card__icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-sm);
+        }
+        .admin-quick-action-card__title {
+            font-weight: 700;
+            font-size: var(--text-sm);
+            color: var(--color-text-light);
+            margin-bottom: 4px;
+        }
+        .admin-quick-action-card__desc {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+        }
 
         @media (max-width: 768px) {
-            .user-chip__name { display: none; }
-            .profile-header { flex-direction: column; text-align: center; }
-            .profile-actions { justify-content: center; }
-            .bottom-nav { display: flex; }
-            .app-main { padding-bottom: 120px; }
+            .user-chip__name {
+                display: none;
+            }
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .profile-actions {
+                justify-content: center;
+            }
+            .bottom-nav {
+                display: flex;
+            }
+            .app-main {
+                padding-bottom: 120px;
+            }
+            .admin-table th,
+            .admin-table td {
+                padding: var(--space-sm);
+                font-size: var(--text-xs);
+            }
+            .admin-search input {
+                width: 120px;
+            }
+            .admin-panel-header__content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .admin-quick-actions {
+                grid-template-columns: 1fr 1fr;
+            }
         }
-        @media (min-width: 769px) { .bottom-nav { display: none; } }
+        @media (min-width: 769px) {
+            .bottom-nav {
+                display: none;
+            }
+        }
         @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .stat-card { padding: var(--space-md); }
-            .stat-card__value { font-size: var(--text-xl); }
-            .profile-avatar { width: 80px; height: 80px; font-size: 2rem; }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .stat-card {
+                padding: var(--space-md);
+            }
+            .stat-card__value {
+                font-size: var(--text-xl);
+            }
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+            .admin-quick-actions {
+                grid-template-columns: 1fr;
+            }
         }
-        @media (max-width: 360px) { .stats-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 360px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- App Loader -->
     <div class="app-loader" id="appLoader">
         <div class="loader__content">
             <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Logo" class="loader__logo">
@@ -811,16 +1641,14 @@
         </div>
     </div>
 
-    <!-- Auth Gate -->
     <div class="auth-gate" id="authGate">
         <div class="auth-container">
             <div class="auth-header">
                 <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Logo" class="auth-logo">
                 <h1 class="auth-title">KRATOS<span>BOT</span></h1>
-                <p class="auth-subtitle">Multi-User Telegram Mini App</p>
+                <p class="auth-subtitle">Multi-User Telegram Mini App + Admin Panel</p>
             </div>
 
-            <!-- Auto-login banner -->
             <div id="autoLoginBanner" style="display: none;">
                 <div class="auto-login-banner">
                     <div class="auto-login-banner__icon">🤖</div>
@@ -831,11 +1659,10 @@
                 </div>
             </div>
 
-            <!-- Account Switcher -->
             <div id="accountSwitcher" style="display: none;">
                 <div class="account-switcher">
                     <div class="account-switcher__title">
-                        <span> الحسابات المسجلة على هذا الجهاز</span>
+                        <span>👥 الحسابات المسجلة على هذا الجهاز</span>
                         <span id="accountsCount">0</span>
                     </div>
                     <div id="accountsList"></div>
@@ -843,7 +1670,7 @@
             </div>
 
             <div class="info-box">
-                <div class="info-box__title"> تسجيل دخول آمن عبر تلغرام</div>
+                <div class="info-box__title">🔐 تسجيل دخول آمن عبر تلغرام</div>
                 <div class="info-box__text">
                     هذا التطبيق يدعم حسابات متعددة. في كل مرة تفتح فيها التطبيق، سيتم التعرف على حساب تلغرام الحالي تلقائياً.
                     <br><br>
@@ -858,6 +1685,10 @@
                 <span>تسجيل الدخول عبر تلغرام</span>
             </button>
 
+            <button class="admin-login-btn" id="adminLoginBtn">
+                👑 <span>تسجيل دخول المشرف</span>
+            </button>
+
             <div class="info-box">
                 <div class="info-box__title">📋 كيف يعمل تبديل الحسابات؟</div>
                 <div class="info-box__text">
@@ -870,13 +1701,10 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Web App (After Login) -->
     <div class="webapp" id="webapp">
-        <!-- Header -->
-        <header class="app-header">
+        <header class="app-header" id="appHeader">
             <div class="header-inner">
                 <div class="brand-logo" onclick="App.navigate('home')">
                     <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Logo" class="brand-logo__img">
@@ -886,8 +1714,11 @@
                 </div>
 
                 <div class="header-actions">
+                    <button class="icon-btn icon-btn--admin" id="adminPanelBtn" aria-label="لوحة التحكم" title="🔑 لوحة تحكم المشرف" style="display:none;" onclick="App.navigate('admin')">
+                        🛡️
+                    </button>
                     <button class="icon-btn" id="switchAccountBtn" aria-label="تبديل الحساب" title="تبديل الحساب">
-                        
+                        👥
                     </button>
                     <button class="icon-btn" id="notifBtn" aria-label="الإشعارات">
                         🔔
@@ -904,7 +1735,6 @@
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="app-main">
             <!-- HOME PAGE -->
             <div class="page-view active" id="page-home">
@@ -944,18 +1774,18 @@
                             <div class="profile-username" id="homeUsername">@user</div>
                             <div class="profile-meta">
                                 <div class="profile-meta-item">📅 <span id="homeJoinDate">-</span></div>
-                                <div class="profile-meta-item"> <span id="homeStatus">نشط</span></div>
+                                <div class="profile-meta-item">🟢 <span id="homeStatus">نشط</span></div>
                             </div>
                         </div>
                         <div class="profile-actions">
                             <button class="btn btn-primary" onclick="App.navigate('profile')">
-                                عرض الملف الشخصي
+                                👤 عرض الملف الشخصي
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <h3 style="font-family: var(--font-tech); margin-bottom: var(--space-md);">آخر النشاطات</h3>
+                <h3 style="font-family: var(--font-tech); margin-bottom: var(--space-md);">📋 آخر النشاطات</h3>
                 <div class="activity-list" id="recentActivity">
                     <div class="empty-state">
                         <div class="empty-state__icon">📭</div>
@@ -979,8 +1809,8 @@
                             <div class="profile-name" id="profileName">مستخدم</div>
                             <div class="profile-username" id="profileUsername">@user</div>
                             <div class="profile-meta">
-                                <div class="profile-meta-item"> <span id="profileId">-</span></div>
-                                <div class="profile-meta-item"> انضم في <span id="profileJoinDate">-</span></div>
+                                <div class="profile-meta-item">🆔 <span id="profileId">-</span></div>
+                                <div class="profile-meta-item">📅 انضم في <span id="profileJoinDate">-</span></div>
                             </div>
                         </div>
                         <div class="profile-actions">
@@ -988,7 +1818,7 @@
                                 ✏️ تعديل
                             </button>
                             <button class="btn btn-secondary" onclick="App.exportData()">
-                                 تصدير
+                                📥 تصدير
                             </button>
                         </div>
                     </div>
@@ -1044,9 +1874,8 @@
                         </div>
                     </div>
 
-                    <!-- Account Actions (بديل للإعدادات) -->
                     <div class="account-actions">
-                        <div class="account-actions__title"> إجراءات الحساب</div>
+                        <div class="account-actions__title">⚙️ إجراءات الحساب</div>
                         <div class="account-actions__list">
                             <button class="account-action-btn account-action-btn--primary" onclick="App.showAccountSwitcher()">
                                 <div class="account-action-btn__content">
@@ -1055,7 +1884,7 @@
                                 </div>
                                 <div class="account-action-btn__icon">→</div>
                             </button>
-                            
+
                             <button class="account-action-btn account-action-btn--primary" onclick="App.logout()">
                                 <div class="account-action-btn__content">
                                     <div class="account-action-btn__label">🚪 تسجيل الخروج</div>
@@ -1063,15 +1892,15 @@
                                 </div>
                                 <div class="account-action-btn__icon">→</div>
                             </button>
-                            
+
                             <button class="account-action-btn account-action-btn--danger" onclick="App.deleteCurrentAccount()">
                                 <div class="account-action-btn__content">
-                                    <div class="account-action-btn__label">️ حذف الحساب الحالي</div>
+                                    <div class="account-action-btn__label">🗑️ حذف الحساب الحالي</div>
                                     <div class="account-action-btn__desc">إزالة بيانات هذا الحساب فقط من الجهاز</div>
                                 </div>
                                 <div class="account-action-btn__icon">→</div>
                             </button>
-                            
+
                             <button class="account-action-btn account-action-btn--danger" onclick="App.clearAllData()">
                                 <div class="account-action-btn__content">
                                     <div class="account-action-btn__label">⚠️ مسح جميع البيانات</div>
@@ -1083,7 +1912,7 @@
                     </div>
                 </div>
 
-                <h3 style="font-family: var(--font-tech); margin-bottom: var(--space-md);">سجل النشاطات الكامل</h3>
+                <h3 style="font-family: var(--font-tech); margin-bottom: var(--space-md);">📜 سجل النشاطات الكامل</h3>
                 <div class="activity-list" id="fullActivity">
                     <div class="empty-state">
                         <div class="empty-state__icon">📭</div>
@@ -1091,17 +1920,124 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ADMIN PANEL PAGE -->
+            <div class="page-view" id="page-admin">
+                <div class="admin-panel-header">
+                    <div class="admin-panel-header__content">
+                        <div class="admin-panel-header__icon">👑</div>
+                        <div class="admin-panel-header__info">
+                            <h2>لوحة تحكم المشرف</h2>
+                            <p>إدارة كاملة للموقع والمستخدمين | Admin ID: 8614039081</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-grid" id="adminStatsGrid">
+                    <div class="stat-card admin-stat">
+                        <div class="stat-card__icon">👥</div>
+                        <div class="stat-card__value" id="adminStatTotalUsers">0</div>
+                        <div class="stat-card__label">إجمالي المستخدمين</div>
+                    </div>
+                    <div class="stat-card admin-stat">
+                        <div class="stat-card__icon">🤖</div>
+                        <div class="stat-card__value" id="adminStatBots">0</div>
+                        <div class="stat-card__label">بوتات مسجلة</div>
+                    </div>
+                    <div class="stat-card admin-stat">
+                        <div class="stat-card__icon">🟢</div>
+                        <div class="stat-card__value" id="adminStatActive">0</div>
+                        <div class="stat-card__label">مستخدمين نشطين</div>
+                    </div>
+                    <div class="stat-card admin-stat">
+                        <div class="stat-card__icon">📝</div>
+                        <div class="stat-card__value" id="adminStatTotalActivities">0</div>
+                        <div class="stat-card__label">إجمالي النشاطات</div>
+                    </div>
+                </div>
+
+                <div class="admin-quick-actions">
+                    <div class="admin-quick-action-card" onclick="AdminPanel.refreshAll()">
+                        <div class="admin-quick-action-card__icon">🔄</div>
+                        <div class="admin-quick-action-card__title">تحديث البيانات</div>
+                        <div class="admin-quick-action-card__desc">تحديث جميع الإحصائيات والبيانات</div>
+                    </div>
+                    <div class="admin-quick-action-card" onclick="AdminPanel.broadcastNotification()">
+                        <div class="admin-quick-action-card__icon">📢</div>
+                        <div class="admin-quick-action-card__title">إرسال إشعار عام</div>
+                        <div class="admin-quick-action-card__desc">إرسال إشعار لجميع المستخدمين</div>
+                    </div>
+                    <div class="admin-quick-action-card" onclick="AdminPanel.exportAllData()">
+                        <div class="admin-quick-action-card__icon">📥</div>
+                        <div class="admin-quick-action-card__title">تصدير كل البيانات</div>
+                        <div class="admin-quick-action-card__desc">تنزيل نسخة احتياطية كاملة</div>
+                    </div>
+                    <div class="admin-quick-action-card" onclick="AdminPanel.clearInactiveUsers()">
+                        <div class="admin-quick-action-card__icon">🧹</div>
+                        <div class="admin-quick-action-card__title">تنظيف المستخدمين</div>
+                        <div class="admin-quick-action-card__desc">حذف الحسابات غير النشطة</div>
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <div class="admin-table-header">
+                        <div class="admin-table-header__title">📋 قائمة المستخدمين</div>
+                        <div class="admin-search">
+                            <span>🔍</span>
+                            <input type="text" id="adminSearchInput" placeholder="بحث عن مستخدم..." oninput="AdminPanel.filterUsers()">
+                        </div>
+                    </div>
+                    <div class="admin-table-wrapper">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>المستخدم</th>
+                                    <th>المعرف</th>
+                                    <th>النوع</th>
+                                    <th>الحالة</th>
+                                    <th>آخر دخول</th>
+                                    <th>عدد الدخول</th>
+                                    <th>إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminUsersTableBody">
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="empty-state">
+                                            <div class="empty-state__icon">👥</div>
+                                            <div class="empty-state__title">لا يوجد مستخدمون</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="admin-global-activity">
+                    <div class="admin-global-activity__header">📜 سجل النشاطات العام (آخر 50 نشاط)</div>
+                    <div class="admin-global-activity__list" id="adminGlobalActivity">
+                        <div class="empty-state">
+                            <div class="empty-state__icon">📭</div>
+                            <div class="empty-state__title">لا توجد نشاطات عامة</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
 
-        <!-- Bottom Navigation (بدون إعدادات) -->
-        <nav class="bottom-nav">
+        <nav class="bottom-nav" id="bottomNav">
             <button class="bottom-nav__item active" data-page="home" onclick="App.navigate('home')">
                 <span class="bottom-nav__icon">🏠</span>
                 <span>الرئيسية</span>
             </button>
             <button class="bottom-nav__item" data-page="profile" onclick="App.navigate('profile')">
-                <span class="bottom-nav__icon"></span>
+                <span class="bottom-nav__icon">👤</span>
                 <span>الملف</span>
+            </button>
+            <button class="bottom-nav__item admin-nav-item" data-page="admin" id="bottomAdminNav" style="display:none;" onclick="App.navigate('admin')">
+                <span class="bottom-nav__icon">🛡️</span>
+                <span>التحكم</span>
             </button>
         </nav>
     </div>
@@ -1154,33 +2090,85 @@
         </div>
     </div>
 
+    <!-- User Detail Modal (Admin) -->
+    <div class="modal-overlay" id="adminUserDetailModal">
+        <div class="modal admin-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">👤 تفاصيل المستخدم</h3>
+                <button class="modal-close" onclick="App.closeModal('adminUserDetailModal')">✕</button>
+            </div>
+            <div id="adminUserDetailContent"></div>
+        </div>
+    </div>
+
+    <!-- Broadcast Notification Modal (Admin) -->
+    <div class="modal-overlay" id="adminBroadcastModal">
+        <div class="modal admin-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">📢 إرسال إشعار عام</h3>
+                <button class="modal-close" onclick="App.closeModal('adminBroadcastModal')">✕</button>
+            </div>
+            <form id="adminBroadcastForm">
+                <div class="form-group">
+                    <label class="form-label">عنوان الإشعار</label>
+                    <input type="text" class="form-input" id="broadcastTitle" placeholder="عنوان الإشعار..." required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">نص الإشعار</label>
+                    <textarea class="form-input" id="broadcastMessage" rows="4" placeholder="نص الإشعار الذي سيظهر لجميع المستخدمين..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">نوع الإشعار</label>
+                    <select class="form-input" id="broadcastType">
+                        <option value="info">ℹ️ معلومات</option>
+                        <option value="warning">⚠️ تحذير</option>
+                        <option value="success">✅ نجاح</option>
+                        <option value="error">❌ خطأ</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-lg);">
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="App.closeModal('adminBroadcastModal')">إلغاء</button>
+                    <button type="submit" class="btn btn-admin" style="flex: 1;">📢 إرسال للجميع</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         'use strict';
+
+        /* ============================================
+           CONSTANTS
+           ============================================ */
+        const ADMIN_TELEGRAM_ID = 'tg_8614039081';
+        const ADMIN_TELEGRAM_USER_ID = 8614039081;
 
         /* ============================================
            DATABASE MODULE - Multi-User System
            ============================================ */
         const DB = {
             KEYS: {
-                USERS: 'kratos_users_v4',
-                CURRENT_USER_ID: 'kratos_current_user_id_v4',
-                SETTINGS: 'kratos_settings_v4'
+                USERS: 'kratos_users_v5',
+                CURRENT_USER_ID: 'kratos_current_user_id_v5',
+                SETTINGS: 'kratos_settings_v5',
+                ADMIN_LOGS: 'kratos_admin_logs_v5'
             },
 
             init() {
                 if (!localStorage.getItem(this.KEYS.USERS)) localStorage.setItem(this.KEYS.USERS, '{}');
+                if (!localStorage.getItem(this.KEYS.ADMIN_LOGS)) localStorage.setItem(this.KEYS.ADMIN_LOGS, '[]');
                 if (!localStorage.getItem(this.KEYS.SETTINGS)) {
                     localStorage.setItem(this.KEYS.SETTINGS, JSON.stringify({
                         botUsername: 'KratosChancyBot',
-                        sessionDuration: 24 * 60 * 60 * 1000
+                        sessionDuration: 24 * 60 * 60 * 1000,
+                        adminTelegramId: ADMIN_TELEGRAM_ID,
+                        adminUserId: ADMIN_TELEGRAM_USER_ID
                     }));
                 }
             },
 
             getUsers() {
-                try {
-                    return JSON.parse(localStorage.getItem(this.KEYS.USERS)) || {};
-                } catch (e) { return {}; }
+                try { return JSON.parse(localStorage.getItem(this.KEYS.USERS)) || {}; } catch (e) { return {}; }
             },
 
             saveUsers(users) {
@@ -1202,10 +2190,25 @@
                 }
             },
 
+            getAdminLogs() {
+                try { return JSON.parse(localStorage.getItem(this.KEYS.ADMIN_LOGS)) || []; } catch (e) { return []; }
+            },
+
+            addAdminLog(log) {
+                const logs = this.getAdminLogs();
+                logs.unshift({
+                    id: this.uid(),
+                    ...log,
+                    timestamp: Date.now()
+                });
+                if (logs.length > 200) logs.length = 200;
+                localStorage.setItem(this.KEYS.ADMIN_LOGS, JSON.stringify(logs));
+            },
+
             upsertUser(userData) {
                 const users = this.getUsers();
                 const tgId = userData.telegramId;
-                
+
                 if (users[tgId]) {
                     users[tgId] = {
                         ...users[tgId],
@@ -1233,6 +2236,7 @@
                             botId: tgId,
                             isBot: true
                         } : null,
+                        isAdmin: tgId === ADMIN_TELEGRAM_ID,
                         createdAt: Date.now(),
                         lastLogin: Date.now(),
                         loginCount: 1,
@@ -1277,7 +2281,7 @@
             addActivity(tgId, activity) {
                 const users = this.getUsers();
                 if (!users[tgId]) return;
-                
+
                 if (!users[tgId].activity) users[tgId].activity = [];
                 users[tgId].activity.unshift({
                     id: this.uid(),
@@ -1286,12 +2290,19 @@
                     description: activity.description || '',
                     timestamp: Date.now()
                 });
-                
+
                 if (users[tgId].activity.length > 50) {
                     users[tgId].activity = users[tgId].activity.slice(0, 50);
                 }
-                
+
                 this.saveUsers(users);
+            },
+
+            addGlobalActivity(activity) {
+                const allUsers = this.getUsers();
+                Object.keys(allUsers).forEach(tgId => {
+                    this.addActivity(tgId, activity);
+                });
             },
 
             deleteUser(tgId) {
@@ -1299,7 +2310,7 @@
                 if (users[tgId]) {
                     delete users[tgId];
                     this.saveUsers(users);
-                    
+
                     if (this.getCurrentUserId() === tgId) {
                         this.setCurrentUserId(null);
                     }
@@ -1313,10 +2324,16 @@
                 return Object.values(users).sort((a, b) => b.lastLogin - a.lastLogin);
             },
 
+            getTotalActivities() {
+                const users = this.getUsers();
+                return Object.values(users).reduce((sum, u) => sum + (u.activity ? u.activity.length : 0), 0);
+            },
+
             clearAll() {
                 localStorage.removeItem(this.KEYS.USERS);
                 localStorage.removeItem(this.KEYS.CURRENT_USER_ID);
                 localStorage.removeItem(this.KEYS.SETTINGS);
+                localStorage.removeItem(this.KEYS.ADMIN_LOGS);
             },
 
             uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 9); }
@@ -1337,25 +2354,23 @@
                     this.webApp.ready();
                     this.webApp.expand();
                     this.initData = this.webApp.initData;
-                    
-                    console.log('🔍 initData:', this.initData ? 'متوفر' : 'غير متوفر');
-                    
+
                     try {
                         if (this.initData) {
                             const params = new URLSearchParams(this.initData);
                             const userStr = params.get('user');
-                            
+
                             if (userStr) {
                                 this.user = JSON.parse(decodeURIComponent(userStr));
                                 this.isBot = this.user.is_bot || false;
-                                
+
                                 console.log('✅ Telegram User Detected:', {
                                     id: this.user.id,
                                     username: this.user.username,
                                     first_name: this.user.first_name,
                                     is_bot: this.isBot
                                 });
-                                
+
                                 return true;
                             }
                         }
@@ -1363,14 +2378,14 @@
                         console.error('❌ Error parsing Telegram initData:', e);
                     }
                 }
-                
+
                 console.log('⚠️ Telegram WebApp SDK غير متوفر أو initData غير موجود');
                 return false;
             },
 
             getUserData() {
                 if (!this.user) return null;
-                
+
                 return {
                     telegramId: 'tg_' + this.user.id,
                     telegramUserId: this.user.id,
@@ -1387,48 +2402,60 @@
             },
 
             getSimulatedData(accountNumber = 1) {
-                const accounts = [
-                    {
-                        telegramId: 'tg_123456789',
-                        telegramUserId: 123456789,
-                        username: 'AhmadUser',
-                        firstName: 'أحمد',
-                        lastName: 'محمد',
-                        fullName: 'أحمد محمد',
-                        photoUrl: null,
-                        languageCode: 'ar',
-                        isBot: false,
-                        botName: null,
-                        loginSource: 'telegram_webapp_simulated'
-                    },
-                    {
-                        telegramId: 'tg_987654321',
-                        telegramUserId: 987654321,
-                        username: 'SaraUser',
-                        firstName: 'سارة',
-                        lastName: 'علي',
-                        fullName: 'سارة علي',
-                        photoUrl: null,
-                        languageCode: 'ar',
-                        isBot: false,
-                        botName: null,
-                        loginSource: 'telegram_webapp_simulated'
-                    },
-                    {
-                        telegramId: 'tg_bot_111222333',
-                        telegramUserId: 111222333,
-                        username: 'KratosChancyBot',
-                        firstName: 'Kratos Chancy Bot',
-                        lastName: '',
-                        fullName: 'Kratos Chancy Bot',
-                        photoUrl: 'https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png',
-                        languageCode: 'ar',
-                        isBot: true,
-                        botName: 'Kratos Chancy Bot',
-                        loginSource: 'telegram_webapp_simulated'
-                    }
-                ];
+                const accounts = [{
+                    telegramId: 'tg_123456789',
+                    telegramUserId: 123456789,
+                    username: 'AhmadUser',
+                    firstName: 'أحمد',
+                    lastName: 'محمد',
+                    fullName: 'أحمد محمد',
+                    photoUrl: null,
+                    languageCode: 'ar',
+                    isBot: false,
+                    botName: null,
+                    loginSource: 'telegram_webapp_simulated'
+                }, {
+                    telegramId: 'tg_987654321',
+                    telegramUserId: 987654321,
+                    username: 'SaraUser',
+                    firstName: 'سارة',
+                    lastName: 'علي',
+                    fullName: 'سارة علي',
+                    photoUrl: null,
+                    languageCode: 'ar',
+                    isBot: false,
+                    botName: null,
+                    loginSource: 'telegram_webapp_simulated'
+                }, {
+                    telegramId: 'tg_bot_111222333',
+                    telegramUserId: 111222333,
+                    username: 'KratosChancyBot',
+                    firstName: 'Kratos Chancy Bot',
+                    lastName: '',
+                    fullName: 'Kratos Chancy Bot',
+                    photoUrl: 'https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png',
+                    languageCode: 'ar',
+                    isBot: true,
+                    botName: 'Kratos Chancy Bot',
+                    loginSource: 'telegram_webapp_simulated'
+                }];
                 return accounts[(accountNumber - 1) % accounts.length];
+            },
+
+            getAdminSimulatedData() {
+                return {
+                    telegramId: ADMIN_TELEGRAM_ID,
+                    telegramUserId: ADMIN_TELEGRAM_USER_ID,
+                    username: 'KratosAdmin',
+                    firstName: 'مدير',
+                    lastName: 'النظام',
+                    fullName: 'مدير النظام',
+                    photoUrl: 'https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png',
+                    languageCode: 'ar',
+                    isBot: false,
+                    botName: null,
+                    loginSource: 'admin_panel_login'
+                };
             },
 
             sendData(data) {
@@ -1450,19 +2477,341 @@
                 const container = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
-                
+
                 const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
                 toast.innerHTML = `
                     <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
                     <span class="toast-message">${message}</span>
                 `;
-                
+
                 container.appendChild(toast);
                 setTimeout(() => {
                     toast.style.opacity = '0';
                     toast.style.transform = 'translateY(-20px)';
                     setTimeout(() => toast.remove(), 300);
                 }, duration);
+            }
+        };
+
+        /* ============================================
+           ADMIN PANEL MODULE
+           ============================================ */
+        const AdminPanel = {
+            init() {
+                this.bindAdminEvents();
+            },
+
+            bindAdminEvents() {
+                document.getElementById('adminBroadcastForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.sendBroadcast();
+                });
+            },
+
+            isCurrentUserAdmin() {
+                const user = App.currentUser;
+                return user && (user.telegramId === ADMIN_TELEGRAM_ID || user.isAdmin === true);
+            },
+
+            refreshAll() {
+                App.renderAll();
+                this.renderAdminPanel();
+                Toast.show('🔄 تم تحديث جميع البيانات', 'success');
+                DB.addAdminLog({ action: 'refresh_all', description: 'تحديث كامل للوحة التحكم' });
+            },
+
+            renderAdminPanel() {
+                if (!this.isCurrentUserAdmin()) return;
+
+                const allUsers = DB.getAllUsers();
+                const totalUsers = allUsers.length;
+                const bots = allUsers.filter(u => u.accountType === 'bot').length;
+                const active = allUsers.filter(u => u.status === 'active').length;
+                const totalActivities = DB.getTotalActivities();
+
+                document.getElementById('adminStatTotalUsers').textContent = totalUsers;
+                document.getElementById('adminStatBots').textContent = bots;
+                document.getElementById('adminStatActive').textContent = active;
+                document.getElementById('adminStatTotalActivities').textContent = totalActivities;
+
+                this.renderUsersTable(allUsers);
+                this.renderGlobalActivity(allUsers);
+            },
+
+            renderUsersTable(users, filter = '') {
+                const tbody = document.getElementById('adminUsersTableBody');
+                const filteredUsers = filter ?
+                    users.filter(u =>
+                        u.username.toLowerCase().includes(filter.toLowerCase()) ||
+                        (u.fullName && u.fullName.toLowerCase().includes(filter.toLowerCase())) ||
+                        u.telegramId.toLowerCase().includes(filter.toLowerCase())
+                    ) :
+                    users;
+
+                if (filteredUsers.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <div class="empty-state__icon">🔍</div>
+                                    <div class="empty-state__title">لا توجد نتائج</div>
+                                    <div class="empty-state__text">لا يوجد مستخدمون مطابقون للبحث</div>
+                                </div>
+                            </td>
+                        </tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = filteredUsers.map(user => {
+                    const isAdmin = user.telegramId === ADMIN_TELEGRAM_ID || user.isAdmin;
+                    const avatarContent = user.avatar ?
+                        `<img src="${user.avatar}" alt="avatar">` :
+                        (user.username || 'U').charAt(0).toUpperCase();
+                    const typeLabel = user.accountType === 'bot' ?
+                        '<span class="bot-badge">🤖 بوت</span>' :
+                        (isAdmin ? '<span class="admin-badge">👑 مشرف</span>' :
+                            '<span>👤 مستخدم</span>');
+                    const statusClass = user.status === 'active' ? 'active' : 'inactive';
+                    const statusLabel = user.status === 'active' ? 'نشط' : 'غير نشط';
+
+                    return `
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="mini-avatar">${avatarContent}</div>
+                                    <div>
+                                        <strong>${user.fullName || user.username}</strong>
+                                        <br><small style="color:var(--color-text-muted)">@${user.username}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="font-family:var(--font-tech);font-size:var(--text-xs);">${user.telegramId.replace('tg_','')}</td>
+                            <td>${typeLabel}</td>
+                            <td><span class="status-dot ${statusClass}"></span>${statusLabel}</td>
+                            <td>${App.timeAgo(user.lastLogin)}</td>
+                            <td>${user.loginCount}</td>
+                            <td>
+                                <div class="admin-actions-cell">
+                                    <button class="admin-action-btn admin-action-btn--view" onclick="AdminPanel.viewUserDetail('${user.telegramId}')" title="عرض التفاصيل">
+                                        👁️
+                                    </button>
+                                    <button class="admin-action-btn admin-action-btn--notify" onclick="AdminPanel.notifyUser('${user.telegramId}')" title="إرسال إشعار">
+                                        🔔
+                                    </button>
+                                    ${!isAdmin ? `
+                                    <button class="admin-action-btn admin-action-btn--delete" onclick="AdminPanel.deleteUserAdmin('${user.telegramId}')" title="حذف المستخدم">
+                                        🗑️
+                                    </button>` : ''}
+                                </div>
+                            </td>
+                        </tr>`;
+                }).join('');
+            },
+
+            renderGlobalActivity(allUsers) {
+                const container = document.getElementById('adminGlobalActivity');
+                const allActivities = [];
+
+                allUsers.forEach(user => {
+                    if (user.activity) {
+                        user.activity.forEach(act => {
+                            allActivities.push({
+                                ...act,
+                                userName: user.fullName || user.username,
+                                userTgId: user.telegramId,
+                                userAvatar: user.avatar
+                            });
+                        });
+                    }
+                });
+
+                allActivities.sort((a, b) => b.timestamp - a.timestamp);
+                const recentActivities = allActivities.slice(0, 50);
+
+                if (recentActivities.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state__icon">📭</div>
+                            <div class="empty-state__title">لا توجد نشاطات عامة</div>
+                        </div>`;
+                    return;
+                }
+
+                const icons = { success: '✅', info: 'ℹ️', warning: '⚠️', error: '❌' };
+                container.innerHTML = recentActivities.map(a => `
+                    <div class="activity-item">
+                        <div class="activity-icon">${icons[a.type] || '📌'}</div>
+                        <div class="activity-content">
+                            <div class="activity-title">
+                                <strong>${a.userName}</strong> • ${a.title}
+                            </div>
+                            <div class="activity-time">${a.description} • ${App.timeAgo(a.timestamp)}</div>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            filterUsers() {
+                const query = document.getElementById('adminSearchInput').value;
+                const allUsers = DB.getAllUsers();
+                this.renderUsersTable(allUsers, query);
+            },
+
+            viewUserDetail(tgId) {
+                const user = DB.getUserByTgId(tgId);
+                if (!user) {
+                    Toast.show('المستخدم غير موجود', 'error');
+                    return;
+                }
+
+                const isAdmin = user.telegramId === ADMIN_TELEGRAM_ID || user.isAdmin;
+                const content = document.getElementById('adminUserDetailContent');
+                content.innerHTML = `
+                    <div style="text-align:center;margin-bottom:var(--space-lg);">
+                        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent-green),var(--color-accent-blue));display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:var(--color-primary);margin:0 auto;overflow:hidden;">
+                            ${user.avatar ? `<img src="${user.avatar}" alt="avatar" style="width:100%;height:100%;object-fit:cover;">` : (user.username||'U').charAt(0).toUpperCase()}
+                        </div>
+                        <h3 style="margin-top:var(--space-md);font-family:var(--font-tech);">${user.fullName || user.username}</h3>
+                        <p style="color:var(--color-accent-green);">@${user.username}</p>
+                        ${isAdmin ? '<span class="admin-badge">👑 المشرف العام</span>' : ''}
+                        ${user.accountType === 'bot' ? '<span class="bot-badge">🤖 بوت</span>' : ''}
+                    </div>
+                    <div class="profile-details">
+                        <div class="detail-item"><div class="detail-label">المعرف الكامل</div><div class="detail-value" style="font-family:var(--font-tech);font-size:var(--text-xs);">${user.telegramId}</div></div>
+                        <div class="detail-item"><div class="detail-label">نوع الحساب</div><div class="detail-value">${user.accountType === 'bot' ? 'بوت' : 'مستخدم'}</div></div>
+                        <div class="detail-item"><div class="detail-label">تاريخ الإنشاء</div><div class="detail-value">${new Date(user.createdAt).toLocaleString('ar')}</div></div>
+                        <div class="detail-item"><div class="detail-label">آخر دخول</div><div class="detail-value">${new Date(user.lastLogin).toLocaleString('ar')}</div></div>
+                        <div class="detail-item"><div class="detail-label">عدد مرات الدخول</div><div class="detail-value">${user.loginCount}</div></div>
+                        <div class="detail-item"><div class="detail-label">مصدر الدخول</div><div class="detail-value">${user.loginSource}</div></div>
+                        <div class="detail-item"><div class="detail-label">الحالة</div><div class="detail-value">${user.status === 'active' ? '🟢 نشط' : '🔴 غير نشط'}</div></div>
+                        <div class="detail-item"><div class="detail-label">الإحصائيات</div><div class="detail-value">🎮 ${user.stats.sessions} جلسة | ⭐ مستوى ${user.stats.level} | 🏆 ${user.stats.achievements} إنجاز</div></div>
+                        <div class="detail-item"><div class="detail-label">عدد النشاطات</div><div class="detail-value">${user.activity ? user.activity.length : 0}</div></div>
+                    </div>
+                    <div style="display:flex;gap:var(--space-sm);margin-top:var(--space-lg);">
+                        ${!isAdmin ? `<button class="btn btn-danger btn-full" onclick="AdminPanel.deleteUserAdmin('${user.telegramId}');App.closeModal('adminUserDetailModal');">🗑️ حذف المستخدم</button>` : ''}
+                        <button class="btn btn-secondary btn-full" onclick="App.closeModal('adminUserDetailModal')">إغلاق</button>
+                    </div>
+                `;
+
+                document.getElementById('adminUserDetailModal').classList.add('active');
+                DB.addAdminLog({ action: 'view_user', description: `عرض تفاصيل المستخدم: ${user.username}`, targetUser: user.telegramId });
+            },
+
+            deleteUserAdmin(tgId) {
+                if (tgId === ADMIN_TELEGRAM_ID) {
+                    Toast.show('⚠️ لا يمكن حذف حساب المشرف العام!', 'error');
+                    return;
+                }
+
+                const user = DB.getUserByTgId(tgId);
+                if (!user) return;
+
+                if (!confirm(`⚠️ هل أنت متأكد من حذف المستخدم "${user.username}"؟\n\nسيتم حذف جميع بياناته نهائياً.`)) return;
+                if (!confirm('تأكيد أخير: هذا الإجراء لا يمكن التراجع عنه!')) return;
+
+                DB.deleteUser(tgId);
+                DB.addAdminLog({ action: 'delete_user', description: `حذف المستخدم: ${user.username}`, targetUser: tgId });
+                Toast.show(`🗑️ تم حذف المستخدم ${user.username}`, 'warning');
+                this.renderAdminPanel();
+            },
+
+            notifyUser(tgId) {
+                const user = DB.getUserByTgId(tgId);
+                if (!user) {
+                    Toast.show('المستخدم غير موجود', 'error');
+                    return;
+                }
+
+                const title = prompt('عنوان الإشعار:', 'إشعار من المشرف');
+                if (!title) return;
+
+                const message = prompt('نص الإشعار:', '');
+                if (!message) return;
+
+                DB.addActivity(tgId, {
+                    type: 'warning',
+                    title: `📢 ${title}`,
+                    description: message
+                });
+
+                DB.addAdminLog({ action: 'notify_user', description: `إشعار للمستخدم ${user.username}: ${title}`, targetUser: tgId });
+                Toast.show(`🔔 تم إرسال الإشعار إلى ${user.username}`, 'success');
+                this.renderAdminPanel();
+            },
+
+            broadcastNotification() {
+                document.getElementById('adminBroadcastModal').classList.add('active');
+            },
+
+            sendBroadcast() {
+                const title = document.getElementById('broadcastTitle').value.trim();
+                const message = document.getElementById('broadcastMessage').value.trim();
+                const type = document.getElementById('broadcastType').value;
+
+                if (!title || !message) {
+                    Toast.show('يرجى ملء جميع الحقول', 'error');
+                    return;
+                }
+
+                DB.addGlobalActivity({
+                    type: type,
+                    title: `📢 ${title}`,
+                    description: message
+                });
+
+                DB.addAdminLog({ action: 'broadcast', description: `إشعار عام: ${title}` });
+                App.closeModal('adminBroadcastModal');
+                Toast.show('📢 تم إرسال الإشعار لجميع المستخدمين', 'success');
+                this.renderAdminPanel();
+                App.renderActivity();
+
+                document.getElementById('broadcastTitle').value = '';
+                document.getElementById('broadcastMessage').value = '';
+            },
+
+            exportAllData() {
+                const allData = {
+                    exportedAt: new Date().toISOString(),
+                    exportedBy: 'Admin Panel',
+                    adminId: ADMIN_TELEGRAM_ID,
+                    users: DB.getUsers(),
+                    adminLogs: DB.getAdminLogs(),
+                    settings: JSON.parse(localStorage.getItem(DB.KEYS.SETTINGS) || '{}')
+                };
+
+                const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `kratos_full_backup_${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                DB.addAdminLog({ action: 'export_all', description: 'تصدير كامل للبيانات' });
+                Toast.show('📥 تم تصدير جميع البيانات بنجاح', 'success');
+            },
+
+            clearInactiveUsers() {
+                const allUsers = DB.getAllUsers();
+                const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+                const inactiveUsers = allUsers.filter(u =>
+                    u.telegramId !== ADMIN_TELEGRAM_ID &&
+                    u.lastLogin < thirtyDaysAgo &&
+                    u.accountType !== 'bot'
+                );
+
+                if (inactiveUsers.length === 0) {
+                    Toast.show('✅ لا يوجد مستخدمون غير نشطين (أكثر من 30 يوم)', 'info');
+                    return;
+                }
+
+                if (!confirm(`⚠️ تم العثور على ${inactiveUsers.length} مستخدم غير نشط.\n\nهل تريد حذفهم جميعاً؟`)) return;
+                if (!confirm('تأكيد أخير: سيتم حذف جميع الحسابات غير النشطة!')) return;
+
+                inactiveUsers.forEach(u => DB.deleteUser(u.telegramId));
+                DB.addAdminLog({ action: 'clear_inactive', description: `حذف ${inactiveUsers.length} مستخدم غير نشط` });
+                Toast.show(`🧹 تم حذف ${inactiveUsers.length} مستخدم غير نشط`, 'warning');
+                this.renderAdminPanel();
             }
         };
 
@@ -1475,7 +2824,7 @@
                 const tgUserData = isTelegram ? TelegramWebApp.getUserData() : null;
                 const currentUserId = DB.getCurrentUserId();
                 const currentUser = currentUserId ? DB.getUserByTgId(currentUserId) : null;
-                
+
                 console.log('🔐 Auth Check:', {
                     isTelegram,
                     tgUserData: tgUserData ? tgUserData.telegramId : null,
@@ -1485,7 +2834,7 @@
 
                 if (tgUserData) {
                     const newTgId = tgUserData.telegramId;
-                    
+
                     if (currentUser && currentUser.telegramId === newTgId) {
                         console.log('✅ نفس المستخدم - تحديث الجلسة');
                         DB.updateUser(newTgId, { lastLogin: Date.now() });
@@ -1494,26 +2843,26 @@
                         console.log('🔄 مستخدم مختلف! تبديل الحساب');
                         const newUser = DB.upsertUser(tgUserData);
                         DB.setCurrentUserId(newUser.telegramId);
-                        
+
                         DB.addActivity(newUser.telegramId, {
                             type: 'success',
                             title: 'تبديل حساب تلقائي',
                             description: `تم التبديل من حساب ${currentUser.username}`
                         });
-                        
+
                         this.showAccountSwitchInfo(currentUser, newUser);
                         setTimeout(() => this.enterApp(newUser), 1500);
                     } else {
                         console.log('🆕 مستخدم جديد - إنشاء حساب');
                         const newUser = DB.upsertUser(tgUserData);
                         DB.setCurrentUserId(newUser.telegramId);
-                        
+
                         DB.addActivity(newUser.telegramId, {
                             type: 'success',
                             title: 'تسجيل دخول أول',
                             description: 'تم إنشاء الحساب بنجاح'
                         });
-                        
+
                         this.showAutoLoginBanner(tgUserData);
                         setTimeout(() => this.enterApp(newUser), 1500);
                     }
@@ -1543,7 +2892,7 @@
                 const banner = document.getElementById('autoLoginBanner');
                 const title = document.getElementById('autoLoginTitle');
                 const text = document.getElementById('autoLoginText');
-                
+
                 banner.style.display = 'block';
                 title.textContent = userData.isBot ? '🤖 تم الكشف عن بوت تلغرام' : '👤 تم الكشف عن حساب تلغرام';
                 text.textContent = `مرحباً ${userData.fullName || userData.username}! جاري تحميل بياناتك...`;
@@ -1553,7 +2902,7 @@
                 const banner = document.getElementById('autoLoginBanner');
                 const title = document.getElementById('autoLoginTitle');
                 const text = document.getElementById('autoLoginText');
-                
+
                 banner.style.display = 'block';
                 title.textContent = '🔄 تم تبديل الحساب تلقائياً';
                 text.textContent = `من: ${oldUser.username} → إلى: ${newUser.username}`;
@@ -1563,24 +2912,27 @@
                 const switcher = document.getElementById('accountSwitcher');
                 const list = document.getElementById('accountsList');
                 const count = document.getElementById('accountsCount');
-                
+
                 const allUsers = DB.getAllUsers();
-                
+
                 if (allUsers.length > 0) {
                     count.textContent = allUsers.length;
-                    list.innerHTML = allUsers.map(user => `
+                    list.innerHTML = allUsers.map(user => {
+                        const isAdmin = user.telegramId === ADMIN_TELEGRAM_ID || user.isAdmin;
+                        return `
                         <div class="account-item" onclick="Auth.switchToAccount('${user.telegramId}')">
                             <div class="account-item__avatar">
                                 ${user.avatar ? `<img src="${user.avatar}" alt="avatar">` : user.username.charAt(0).toUpperCase()}
                             </div>
                             <div class="account-item__info">
-                                <div class="account-item__name">${user.fullName || user.username}</div>
+                                <div class="account-item__name">${user.fullName || user.username} ${isAdmin ? '👑' : ''}</div>
                                 <div class="account-item__id">@${user.username} • ${user.telegramId}</div>
                             </div>
+                            ${isAdmin ? '<span class="account-item__badge account-item__badge--admin">مشرف</span>' : ''}
                             ${user.accountType === 'bot' ? '<span class="account-item__badge">BOT</span>' : ''}
-                        </div>
-                    `).join('');
-                    
+                        </div>`;
+                    }).join('');
+
                     switcher.style.display = 'block';
                 }
             },
@@ -1608,7 +2960,7 @@
                 const simulatedData = TelegramWebApp.getSimulatedData(accountNumber);
                 const user = DB.upsertUser(simulatedData);
                 DB.setCurrentUserId(user.telegramId);
-                
+
                 DB.addActivity(user.telegramId, {
                     type: 'success',
                     title: 'تسجيل دخول (محاكاة)',
@@ -1616,9 +2968,35 @@
                 });
 
                 btn.disabled = false;
-                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>تسجيل الدخول عبر تلغرام</span>';
-                
+                btn.innerHTML =
+                    '<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>تسجيل الدخول عبر تلغرام</span>';
+
                 this.enterApp(user);
+            },
+
+            async simulateAdminLogin() {
+                const btn = document.getElementById('adminLoginBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<div class="spinner"></div><span>جاري تسجيل دخول المشرف...</span>';
+
+                await new Promise(r => setTimeout(r, 1200));
+
+                const adminData = TelegramWebApp.getAdminSimulatedData();
+                const adminUser = DB.upsertUser(adminData);
+                DB.setCurrentUserId(adminUser.telegramId);
+
+                DB.addActivity(adminUser.telegramId, {
+                    type: 'success',
+                    title: '👑 تسجيل دخول المشرف',
+                    description: 'تم الدخول إلى لوحة التحكم'
+                });
+
+                DB.addAdminLog({ action: 'admin_login', description: 'تسجيل دخول المشرف إلى لوحة التحكم' });
+
+                btn.disabled = false;
+                btn.innerHTML = '👑 <span>تسجيل دخول المشرف</span>';
+
+                this.enterApp(adminUser);
             },
 
             enterApp(user) {
@@ -1627,22 +3005,44 @@
                     return;
                 }
 
+                const isAdmin = user.telegramId === ADMIN_TELEGRAM_ID || user.isAdmin === true;
+                if (isAdmin && !user.isAdmin) {
+                    DB.updateUser(user.telegramId, { isAdmin: true });
+                    user.isAdmin = true;
+                }
+
                 this.hideAuthGate();
                 document.getElementById('webapp').classList.add('active');
                 document.body.style.overflow = '';
 
                 App.currentUser = user;
                 App.renderAll();
-                
-                const greeting = user.accountType === 'bot' 
-                    ? `مرحباً بالبوت ${user.fullName}!` 
-                    : `مرحباً بعودتك، ${user.username}!`;
-                Toast.show(greeting, 'success');
+
+                if (isAdmin) {
+                    AdminPanel.renderAdminPanel();
+                    document.getElementById('adminPanelBtn').style.display = 'flex';
+                    document.getElementById('bottomAdminNav').style.display = 'flex';
+                    document.getElementById('appHeader').classList.add('admin-active');
+                    document.getElementById('userChip').classList.add('admin-chip');
+
+                    const greeting = '👑 مرحباً بك في لوحة تحكم المشرف، ' + (user.fullName || user.username) + '!';
+                    Toast.show(greeting, 'success', 5000);
+                } else {
+                    document.getElementById('adminPanelBtn').style.display = 'none';
+                    document.getElementById('bottomAdminNav').style.display = 'none';
+                    document.getElementById('appHeader').classList.remove('admin-active');
+                    document.getElementById('userChip').classList.remove('admin-chip');
+
+                    const greeting = user.accountType === 'bot' ?
+                        `مرحباً بالبوت ${user.fullName}!` :
+                        `مرحباً بعودتك، ${user.username}!`;
+                    Toast.show(greeting, 'success');
+                }
             },
 
             logout() {
                 if (!confirm('هل أنت متأكد من تسجيل الخروج من الحساب الحالي؟')) return;
-                
+
                 const currentId = DB.getCurrentUserId();
                 if (currentId) {
                     DB.addActivity(currentId, {
@@ -1650,8 +3050,11 @@
                         title: 'تسجيل خروج',
                         description: 'تم تسجيل الخروج من الحساب'
                     });
+                    if (currentId === ADMIN_TELEGRAM_ID) {
+                        DB.addAdminLog({ action: 'admin_logout', description: 'تسجيل خروج المشرف' });
+                    }
                 }
-                
+
                 DB.setCurrentUserId(null);
                 location.reload();
             },
@@ -1671,6 +3074,7 @@
 
             init() {
                 DB.init();
+                AdminPanel.init();
                 this.bindEvents();
             },
 
@@ -1678,6 +3082,10 @@
                 document.getElementById('telegramLoginBtn').addEventListener('click', () => {
                     Auth.simulateLogin(this.simulatedAccountNumber);
                     this.simulatedAccountNumber = (this.simulatedAccountNumber % 3) + 1;
+                });
+
+                document.getElementById('adminLoginBtn').addEventListener('click', () => {
+                    Auth.simulateAdminLogin();
                 });
 
                 document.getElementById('switchAccountBtn').addEventListener('click', () => {
@@ -1699,12 +3107,25 @@
             },
 
             navigate(page) {
+                const isAdmin = this.currentUser &&
+                    (this.currentUser.telegramId === ADMIN_TELEGRAM_ID || this.currentUser.isAdmin);
+
+                if (page === 'admin' && !isAdmin) {
+                    Toast.show('⛔ هذه الصفحة مخصصة للمشرف فقط!', 'error');
+                    return;
+                }
+
                 document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
-                document.getElementById(`page-${page}`).classList.add('active');
-                
+                const targetPage = document.getElementById(`page-${page}`);
+                if (targetPage) targetPage.classList.add('active');
+
                 document.querySelectorAll('.bottom-nav__item').forEach(item => {
                     item.classList.toggle('active', item.dataset.page === page);
                 });
+
+                if (page === 'admin' && isAdmin) {
+                    AdminPanel.renderAdminPanel();
+                }
 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
@@ -1712,6 +3133,8 @@
             renderAll() {
                 const user = this.currentUser;
                 if (!user) return;
+
+                const isAdmin = user.telegramId === ADMIN_TELEGRAM_ID || user.isAdmin === true;
 
                 document.getElementById('headerUserName').textContent = user.username;
                 const headerAvatar = document.getElementById('headerAvatar');
@@ -1722,10 +3145,10 @@
                 }
 
                 document.getElementById('welcomeName').textContent = user.fullName || user.username;
-                document.getElementById('welcomeSubtitle').textContent = user.accountType === 'bot' 
-                    ? '🤖 حساب بوت تلغرام' 
-                    : 'إليك نظرة عامة على حسابك';
-                
+                document.getElementById('welcomeSubtitle').textContent = user.accountType === 'bot' ?
+                    '🤖 حساب بوت تلغرام' :
+                    (isAdmin ? '👑 حساب المشرف العام - لديك صلاحيات كاملة' : 'إليك نظرة عامة على حسابك');
+
                 document.getElementById('homeName').textContent = user.fullName || user.username;
                 document.getElementById('homeUsername').textContent = '@' + user.username;
                 const homeAvatar = document.getElementById('homeAvatar');
@@ -1734,7 +3157,8 @@
                 } else {
                     homeAvatar.textContent = user.username.charAt(0).toUpperCase();
                 }
-                document.getElementById('homeJoinDate').textContent = new Date(user.createdAt).toLocaleDateString('ar');
+                document.getElementById('homeJoinDate').textContent = new Date(user.createdAt).toLocaleDateString(
+                'ar');
                 document.getElementById('homeStatus').textContent = user.status === 'active' ? 'نشط' : 'معلق';
 
                 document.getElementById('statSessions').textContent = user.stats.sessions;
@@ -1751,30 +3175,38 @@
                     profileAvatar.textContent = user.username.charAt(0).toUpperCase();
                 }
                 document.getElementById('profileId').textContent = user.id.substr(0, 12) + '...';
-                document.getElementById('profileJoinDate').textContent = new Date(user.createdAt).toLocaleDateString('ar');
+                document.getElementById('profileJoinDate').textContent = new Date(user.createdAt).toLocaleDateString(
+                'ar');
 
-                document.getElementById('detailAccountType').innerHTML = user.accountType === 'bot' 
-                    ? '<span class="bot-badge">🤖 بوت تلغرام</span>' 
-                    : '👤 مستخدم عادي';
+                document.getElementById('detailAccountType').innerHTML = user.accountType === 'bot' ?
+                    '<span class="bot-badge">🤖 بوت تلغرام</span>' :
+                    (isAdmin ? '<span class="admin-badge">👑 مشرف النظام</span>' : '👤 مستخدم عادي');
                 document.getElementById('detailFullName').textContent = user.fullName || '-';
                 document.getElementById('detailUsername').textContent = '@' + user.username;
                 document.getElementById('detailEmail').textContent = user.email || '-';
                 document.getElementById('detailPhone').textContent = user.phone || '-';
                 document.getElementById('detailLang').textContent = user.language === 'ar' ? 'العربية' : 'English';
                 document.getElementById('detailTimezone').textContent = user.timezone;
-                document.getElementById('detailLastLogin').textContent = new Date(user.lastLogin).toLocaleString('ar');
+                document.getElementById('detailLastLogin').textContent = new Date(user.lastLogin).toLocaleString(
+                'ar');
                 document.getElementById('detailTgId').textContent = user.telegramId;
                 document.getElementById('detailLoginCount').textContent = user.loginCount;
-                
+
                 const sourceLabels = {
                     'telegram_webapp': '📱 Telegram WebApp',
-                    'telegram_webapp_simulated': ' محاكاة',
+                    'telegram_webapp_simulated': '💻 محاكاة',
+                    'admin_panel_login': '👑 لوحة تحكم المشرف',
                     'manual_code': '🔑 كود تفعيل'
                 };
-                document.getElementById('detailSource').textContent = sourceLabels[user.loginSource] || user.loginSource;
-                
+                document.getElementById('detailSource').textContent = sourceLabels[user.loginSource] || user
+                    .loginSource;
+
                 if (user.accountType === 'bot' && user.botInfo) {
-                    document.getElementById('detailBotName').innerHTML = `<span class="bot-badge">🤖 ${user.botInfo.botName}</span>`;
+                    document.getElementById('detailBotName').innerHTML =
+                        `<span class="bot-badge">🤖 ${user.botInfo.botName}</span>`;
+                } else if (isAdmin) {
+                    document.getElementById('detailBotName').innerHTML =
+                        '<span class="admin-badge">👑 الحساب الرئيسي للمشرف</span>';
                 } else {
                     document.getElementById('detailBotName').textContent = '-';
                 }
@@ -1785,7 +3217,7 @@
             renderActivity() {
                 const user = this.currentUser;
                 const activities = user.activity || [];
-                
+
                 const renderList = (containerId, limit) => {
                     const container = document.getElementById(containerId);
                     if (activities.length === 0) {
@@ -1799,8 +3231,8 @@
                     }
 
                     const items = limit ? activities.slice(0, limit) : activities;
-                    const icons = { success: '✅', info: '️', warning: '⚠️', error: '❌' };
-                    
+                    const icons = { success: '✅', info: 'ℹ️', warning: '⚠️', error: '❌' };
+
                     container.innerHTML = items.map(a => `
                         <div class="activity-item">
                             <div class="activity-icon">${icons[a.type] || '📌'}</div>
@@ -1841,7 +3273,7 @@
                 this.currentUser = DB.getUserByTgId(this.currentUser.telegramId);
                 this.renderAll();
                 this.closeModal('editProfileModal');
-                Toast.show('تم حفظ التغييرات بنجاح', 'success');
+                Toast.show('✅ تم حفظ التغييرات بنجاح', 'success');
 
                 DB.addActivity(this.currentUser.telegramId, {
                     type: 'info',
@@ -1861,25 +3293,29 @@
                 a.download = `kratos_${user.username}_${Date.now()}.json`;
                 a.click();
                 URL.revokeObjectURL(url);
-                Toast.show('تم تصدير البيانات', 'success');
+                Toast.show('📥 تم تصدير البيانات', 'success');
             },
 
             deleteCurrentAccount() {
                 if (!confirm('⚠️ هل أنت متأكد من حذف هذا الحساب؟')) return;
                 if (!confirm('تأكيد: سيتم حذف جميع بيانات هذا الحساب!')) return;
-                
+
                 const tgId = this.currentUser.telegramId;
+                if (tgId === ADMIN_TELEGRAM_ID) {
+                    Toast.show('⛔ لا يمكن حذف حساب المشرف العام!', 'error');
+                    return;
+                }
                 DB.deleteUser(tgId);
-                Toast.show('تم حذف الحساب', 'warning');
+                Toast.show('🗑️ تم حذف الحساب', 'warning');
                 setTimeout(() => location.reload(), 1500);
             },
 
             clearAllData() {
-                if (!confirm('️ هل أنت متأكد؟ سيتم حذف جميع الحسابات!')) return;
+                if (!confirm('⚠️ هل أنت متأكد؟ سيتم حذف جميع الحسابات!')) return;
                 if (!confirm('تأكيد أخير: هذا لا يمكن التراجع عنه!')) return;
-                
+
                 DB.clearAll();
-                Toast.show('تم مسح جميع البيانات', 'warning');
+                Toast.show('⚠️ تم مسح جميع البيانات', 'warning');
                 setTimeout(() => location.reload(), 1500);
             },
 
@@ -1887,25 +3323,29 @@
                 const allUsers = DB.getAllUsers();
                 const list = document.getElementById('modalAccountsList');
                 const currentId = this.currentUser.telegramId;
-                
+
                 if (allUsers.length === 0) {
-                    list.innerHTML = '<div class="empty-state"><div class="empty-state__icon">👥</div><div class="empty-state__title">لا توجد حسابات أخرى</div></div>';
+                    list.innerHTML =
+                        '<div class="empty-state"><div class="empty-state__icon">👥</div><div class="empty-state__title">لا توجد حسابات أخرى</div></div>';
                 } else {
-                    list.innerHTML = allUsers.map(user => `
+                    list.innerHTML = allUsers.map(user => {
+                        const isAdmin = user.telegramId === ADMIN_TELEGRAM_ID || user.isAdmin;
+                        return `
                         <div class="account-item ${user.telegramId === currentId ? 'active' : ''}" 
                              onclick="App.switchAccount('${user.telegramId}')">
                             <div class="account-item__avatar">
                                 ${user.avatar ? `<img src="${user.avatar}" alt="avatar">` : user.username.charAt(0).toUpperCase()}
                             </div>
                             <div class="account-item__info">
-                                <div class="account-item__name">${user.fullName || user.username} ${user.telegramId === currentId ? '(الحالي)' : ''}</div>
+                                <div class="account-item__name">${user.fullName || user.username} ${user.telegramId === currentId ? '(الحالي)' : ''} ${isAdmin ? '👑' : ''}</div>
                                 <div class="account-item__id">@${user.username} • ${user.telegramId}</div>
                             </div>
+                            ${isAdmin ? '<span class="account-item__badge account-item__badge--admin">مشرف</span>' : ''}
                             ${user.accountType === 'bot' ? '<span class="account-item__badge">BOT</span>' : ''}
-                        </div>
-                    `).join('');
+                        </div>`;
+                    }).join('');
                 }
-                
+
                 document.getElementById('accountSwitcherModal').classList.add('active');
             },
 
@@ -1922,7 +3362,23 @@
                     this.closeModal('accountSwitcherModal');
                     this.currentUser = user;
                     this.renderAll();
-                    Toast.show(`تم التبديل إلى ${user.username}`, 'success');
+
+                    const isAdmin = user.telegramId === ADMIN_TELEGRAM_ID || user.isAdmin;
+                    if (isAdmin) {
+                        AdminPanel.renderAdminPanel();
+                        document.getElementById('adminPanelBtn').style.display = 'flex';
+                        document.getElementById('bottomAdminNav').style.display = 'flex';
+                        document.getElementById('appHeader').classList.add('admin-active');
+                        document.getElementById('userChip').classList.add('admin-chip');
+                    } else {
+                        document.getElementById('adminPanelBtn').style.display = 'none';
+                        document.getElementById('bottomAdminNav').style.display = 'none';
+                        document.getElementById('appHeader').classList.remove('admin-active');
+                        document.getElementById('userChip').classList.remove('admin-chip');
+                        this.navigate('home');
+                    }
+
+                    Toast.show(`🔄 تم التبديل إلى ${user.username}`, 'success');
                 } else {
                     this.closeModal('accountSwitcherModal');
                 }
@@ -1944,7 +3400,9 @@
                 const hours = Math.floor(minutes / 60);
                 if (hours < 24) return `منذ ${hours} ساعة`;
                 const days = Math.floor(hours / 24);
-                return `منذ ${days} يوم`;
+                if (days < 30) return `منذ ${days} يوم`;
+                const months = Math.floor(days / 30);
+                return `منذ ${months} شهر`;
             }
         };
 
@@ -1956,4 +3414,3 @@
     </script>
 </body>
 </html>
-
