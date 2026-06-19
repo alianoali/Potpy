@@ -1002,7 +1002,7 @@
         }
 
         /* ============================================================
-           SECTION 7: Stats Grid
+           SECTION 7: Stats Grid (Removed - kept for admin panel)
            ============================================================ */
         .stats-grid {
             display: grid;
@@ -1208,59 +1208,8 @@
         }
 
         /* ============================================================
-           SECTION 9: Activity Lists
+           SECTION 9: Activity Lists - REMOVED
            ============================================================ */
-        .activity-list {
-            background: rgba(17, 34, 64, 0.6);
-            border: var(--border-green);
-            border-radius: var(--radius-md);
-            overflow: hidden;
-        }
-
-        .activity-item {
-            padding: var(--space-md);
-            border-bottom: var(--border-subtle);
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            transition: background var(--transition-base);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-item:hover {
-            background: rgba(127, 255, 0, 0.05);
-        }
-
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(127, 255, 0, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-
-        .activity-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .activity-title {
-            font-weight: 600;
-            font-size: var(--text-sm);
-            margin-bottom: 2px;
-        }
-
-        .activity-time {
-            font-size: var(--text-xs);
-            color: var(--color-text-secondary);
-        }
 
         /* ============================================================
            SECTION 10: Bottom Navigation
@@ -2359,7 +2308,7 @@
     <div class="page-view is-active" id="page-home" aria-label="الصفحة الرئيسية">
         <div class="page-header">
             <h1 class="page-title">مرحباً، <span id="welcomeName">مستخدم</span> 👋</h1>
-            <p class="page-subtitle" id="welcomeSubtitle">الملف الشخصي الكامل وإحصائيات النشاط</p>
+            <p class="page-subtitle" id="welcomeSubtitle">الملف الشخصي الكامل</p>
         </div>
 
         <!-- Profile Card -->
@@ -2374,229 +2323,174 @@
                         <div class="profile-meta-item">🟢 <span id="homeStatus">نشط</span></div>
                     </div>
                 </div>
-                <div class="profile-actions">
-                    <button class="btn btn-primary" onclick="App.openEditProfile()" aria-label="تعديل الملف الشخصي">
-                        ✏️ تعديل الملف
-                    </button>
-                    <button class="btn btn-secondary" onclick="App.exportData()" aria-label="تصدير البيانات">
-                        📥 تصدير
-                    </button>
-                    <button class="reset-stats-btn" onclick="App.resetStats()"
-                    aria-label="تصفير الإحصائيات" title="تصفير جلسات اللعب، الساعات، المستوى والإنجازات">
-                    🔄 تصفير الإحصائيات
-                </button>
+                <!-- Removed action buttons: Edit, Export, Reset Stats -->
+            </div>
+
+            <!-- Profile Details -->
+            <div class="profile-details" id="homeProfileDetails">
+                <div class="detail-item">
+                    <div class="detail-label">نوع الحساب</div>
+                    <div class="detail-value" id="detailAccountType">-</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">الاسم الكامل</div>
+                    <div class="detail-value" id="detailFullName">-</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">اسم المستخدم</div>
+                    <div class="detail-value" id="detailUsername">-</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">البريد الإلكتروني</div>
+                    <div class="detail-value" id="detailEmail">-</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">رقم الهاتف</div>
+                    <div class="detail-value" id="detailPhone">-</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">اللغة المفضلة</div>
+                    <div class="detail-value" id="detailLang">العربية</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">المنطقة الزمنية</div>
+                    <div class="detail-value" id="detailTimezone">-</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">آخر تسجيل دخول</div>
+                    <div class="detail-value" id="detailLastLogin">-</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">معرف تلغرام (User ID)</div>
+                    <div class="detail-value" id="detailTgId" style="font-family: var(--font-family-mono); font-size: var(--text-xs);">-</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">عدد مرات الدخول</div>
+                    <div class="detail-value" id="detailLoginCount">0</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">مصدر الدخول</div>
+                    <div class="detail-value" id="detailSource">-</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">اسم البوت</div>
+                    <div class="detail-value" id="detailBotName">-</div>
+                </div>
             </div>
         </div>
-
-        <!-- Profile Details -->
-        <div class="profile-details" id="homeProfileDetails">
-            <div class="detail-item">
-                <div class="detail-label">نوع الحساب</div>
-                <div class="detail-value" id="detailAccountType">-</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">الاسم الكامل</div>
-                <div class="detail-value" id="detailFullName">-</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">اسم المستخدم</div>
-                <div class="detail-value" id="detailUsername">-</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">البريد الإلكتروني</div>
-                <div class="detail-value" id="detailEmail">-</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">رقم الهاتف</div>
-                <div class="detail-value" id="detailPhone">-</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">اللغة المفضلة</div>
-                <div class="detail-value" id="detailLang">العربية</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">المنطقة الزمنية</div>
-                <div class="detail-value" id="detailTimezone">-</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">آخر تسجيل دخول</div>
-                <div class="detail-value" id="detailLastLogin">-</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">معرف تلغرام (User ID)</div>
-                <div class="detail-value" id="detailTgId" style="font-family: var(--font-family-mono); font-size: var(--text-xs);">-</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">عدد مرات الدخول</div>
-                <div class="detail-value" id="detailLoginCount">0</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">مصدر الدخول</div>
-                <div class="detail-value" id="detailSource">-</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">اسم البوت</div>
-                <div class="detail-value" id="detailBotName">-</div>
-            </div>
-        </div>
-
-        <!-- Account Actions - Removed all account action buttons -->
+        <!-- Removed Stats Grid, Recent Activity, Full Activity -->
     </div>
 
-    <!-- Stats Grid -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-card__icon" aria-hidden="true">🎮</div>
-            <div class="stat-card__value" id="statSessions">0</div>
-            <div class="stat-card__label">جلسات اللعب</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-card__icon" aria-hidden="true">⏱️</div>
-            <div class="stat-card__value" id="statHours">0</div>
-            <div class="stat-card__label">ساعات نشطة</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-card__icon" aria-hidden="true">🏆</div>
-            <div class="stat-card__value" id="statAchievements">0</div>
-            <div class="stat-card__label">إنجازات</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-card__icon" aria-hidden="true">⭐</div>
-            <div class="stat-card__value" id="statLevel">1</div>
-            <div class="stat-card__label">المستوى</div>
-        </div>
-    </div>
-
-    <!-- Recent Activity -->
-    <h3 style="font-family: var(--font-family-mono); margin-bottom: var(--space-md);">📋 آخر النشاطات</h3>
-    <div class="activity-list" id="recentActivity">
-        <div class="empty-state">
-            <div class="empty-state__icon" aria-hidden="true">📭</div>
-            <div class="empty-state__title">لا توجد نشاطات بعد</div>
-            <div class="empty-state__text">ابدأ اللعب لتظهر نشاطاتك هنا</div>
-        </div>
-    </div>
-
-    <!-- Full Activity Log -->
-    <h3 style="font-family: var(--font-family-mono); margin: var(--space-xl) 0 var(--space-md);">📜 سجل النشاطات الكامل</h3>
-    <div class="activity-list" id="fullActivity">
-        <div class="empty-state">
-            <div class="empty-state__icon" aria-hidden="true">📭</div>
-            <div class="empty-state__title">لا توجد نشاطات</div>
-        </div>
-    </div>
-</div>
-
-<!-- ADMIN PANEL PAGE -->
-<div class="page-view" id="page-admin" aria-label="لوحة تحكم المشرف">
-    <div class="admin-panel-header">
-        <div class="admin-panel-header__content">
-            <div class="admin-panel-header__icon" aria-hidden="true">👑</div>
-            <div class="admin-panel-header__info">
-                <h2>لوحة تحكم المشرف</h2>
-                <p>إدارة كاملة للموقع والمستخدمين | Admin ID: 8614039081</p>
+    <!-- ADMIN PANEL PAGE -->
+    <div class="page-view" id="page-admin" aria-label="لوحة تحكم المشرف">
+        <div class="admin-panel-header">
+            <div class="admin-panel-header__content">
+                <div class="admin-panel-header__icon" aria-hidden="true">👑</div>
+                <div class="admin-panel-header__info">
+                    <h2>لوحة تحكم المشرف</h2>
+                    <p>إدارة كاملة للموقع والمستخدمين | Admin ID: 8614039081</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Admin Stats -->
-    <div class="stats-grid" id="adminStatsGrid">
-        <div class="stat-card is-admin">
-            <div class="stat-card__icon" aria-hidden="true">👥</div>
-            <div class="stat-card__value" id="adminStatTotalUsers">0</div>
-            <div class="stat-card__label">إجمالي المستخدمين</div>
-        </div>
-        <div class="stat-card is-admin">
-            <div class="stat-card__icon" aria-hidden="true">🤖</div>
-            <div class="stat-card__value" id="adminStatBots">0</div>
-            <div class="stat-card__label">بوتات مسجلة</div>
-        </div>
-        <div class="stat-card is-admin">
-            <div class="stat-card__icon" aria-hidden="true">🟢</div>
-            <div class="stat-card__value" id="adminStatActive">0</div>
-            <div class="stat-card__label">مستخدمين نشطين</div>
-        </div>
-        <div class="stat-card is-admin">
-            <div class="stat-card__icon" aria-hidden="true">📝</div>
-            <div class="stat-card__value" id="adminStatTotalActivities">0</div>
-            <div class="stat-card__label">إجمالي النشاطات</div>
-        </div>
-    </div>
-
-    <!-- Admin Quick Actions -->
-    <div class="admin-quick-actions">
-        <div class="admin-quick-action-card" onclick="AdminPanel.refreshAll()" role="button" tabindex="0">
-            <div class="admin-quick-action-card__icon" aria-hidden="true">🔄</div>
-            <div class="admin-quick-action-card__title">تحديث البيانات</div>
-            <div class="admin-quick-action-card__desc">تحديث جميع الإحصائيات والبيانات</div>
-        </div>
-        <div class="admin-quick-action-card" onclick="AdminPanel.broadcastNotification()" role="button" tabindex="0">
-            <div class="admin-quick-action-card__icon" aria-hidden="true">📢</div>
-            <div class="admin-quick-action-card__title">إرسال إشعار عام</div>
-            <div class="admin-quick-action-card__desc">إرسال إشعار لجميع المستخدمين</div>
-        </div>
-        <div class="admin-quick-action-card" onclick="AdminPanel.exportAllData()" role="button" tabindex="0">
-            <div class="admin-quick-action-card__icon" aria-hidden="true">📥</div>
-            <div class="admin-quick-action-card__title">تصدير كل البيانات</div>
-            <div class="admin-quick-action-card__desc">تنزيل نسخة احتياطية كاملة</div>
-        </div>
-        <div class="admin-quick-action-card" onclick="AdminPanel.clearInactiveUsers()" role="button" tabindex="0">
-            <div class="admin-quick-action-card__icon" aria-hidden="true">🧹</div>
-            <div class="admin-quick-action-card__title">تنظيف المستخدمين</div>
-            <div class="admin-quick-action-card__desc">حذف الحسابات غير النشطة</div>
-        </div>
-    </div>
-
-    <!-- Admin Users Table -->
-    <div class="admin-table-container">
-        <div class="admin-table-header">
-            <div class="admin-table-header__title">📋 قائمة المستخدمين</div>
-            <div class="admin-search">
-                <span aria-hidden="true">🔍</span>
-                <input type="text" id="adminSearchInput"
-                placeholder="بحث عن مستخدم..."
-                aria-label="بحث عن مستخدم"
-                oninput="AdminPanel.filterUsers()">
+        <!-- Admin Stats -->
+        <div class="stats-grid" id="adminStatsGrid">
+            <div class="stat-card is-admin">
+                <div class="stat-card__icon" aria-hidden="true">👥</div>
+                <div class="stat-card__value" id="adminStatTotalUsers">0</div>
+                <div class="stat-card__label">إجمالي المستخدمين</div>
+            </div>
+            <div class="stat-card is-admin">
+                <div class="stat-card__icon" aria-hidden="true">🤖</div>
+                <div class="stat-card__value" id="adminStatBots">0</div>
+                <div class="stat-card__label">بوتات مسجلة</div>
+            </div>
+            <div class="stat-card is-admin">
+                <div class="stat-card__icon" aria-hidden="true">🟢</div>
+                <div class="stat-card__value" id="adminStatActive">0</div>
+                <div class="stat-card__label">مستخدمين نشطين</div>
+            </div>
+            <div class="stat-card is-admin">
+                <div class="stat-card__icon" aria-hidden="true">📝</div>
+                <div class="stat-card__value" id="adminStatTotalActivities">0</div>
+                <div class="stat-card__label">إجمالي النشاطات</div>
             </div>
         </div>
-        <div class="admin-table-wrapper" role="region" aria-label="جدول المستخدمين" tabindex="0">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th scope="col">المستخدم</th>
-                        <th scope="col">المعرف</th>
-                        <th scope="col">النوع</th>
-                        <th scope="col">الحالة</th>
-                        <th scope="col">آخر دخول</th>
-                        <th scope="col">عدد الدخول</th>
-                        <th scope="col">إجراءات</th>
-                    </tr>
-                </thead>
-                <tbody id="adminUsersTableBody">
-                    <tr>
-                        <td colspan="7">
-                            <div class="empty-state">
-                                <div class="empty-state__icon" aria-hidden="true">👥</div>
-                                <div class="empty-state__title">لا يوجد مستخدمون</div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
 
-    <!-- Admin Global Activity -->
-    <div class="admin-global-activity">
-        <div class="admin-global-activity__header">📜 سجل النشاطات العام (آخر 50 نشاط)</div>
-        <div class="admin-global-activity__list" id="adminGlobalActivity">
-            <div class="empty-state">
-                <div class="empty-state__icon" aria-hidden="true">📭</div>
-                <div class="empty-state__title">لا توجد نشاطات عامة</div>
+        <!-- Admin Quick Actions -->
+        <div class="admin-quick-actions">
+            <div class="admin-quick-action-card" onclick="AdminPanel.refreshAll()" role="button" tabindex="0">
+                <div class="admin-quick-action-card__icon" aria-hidden="true">🔄</div>
+                <div class="admin-quick-action-card__title">تحديث البيانات</div>
+                <div class="admin-quick-action-card__desc">تحديث جميع الإحصائيات والبيانات</div>
+            </div>
+            <div class="admin-quick-action-card" onclick="AdminPanel.broadcastNotification()" role="button" tabindex="0">
+                <div class="admin-quick-action-card__icon" aria-hidden="true">📢</div>
+                <div class="admin-quick-action-card__title">إرسال إشعار عام</div>
+                <div class="admin-quick-action-card__desc">إرسال إشعار لجميع المستخدمين</div>
+            </div>
+            <div class="admin-quick-action-card" onclick="AdminPanel.exportAllData()" role="button" tabindex="0">
+                <div class="admin-quick-action-card__icon" aria-hidden="true">📥</div>
+                <div class="admin-quick-action-card__title">تصدير كل البيانات</div>
+                <div class="admin-quick-action-card__desc">تنزيل نسخة احتياطية كاملة</div>
+            </div>
+            <div class="admin-quick-action-card" onclick="AdminPanel.clearInactiveUsers()" role="button" tabindex="0">
+                <div class="admin-quick-action-card__icon" aria-hidden="true">🧹</div>
+                <div class="admin-quick-action-card__title">تنظيف المستخدمين</div>
+                <div class="admin-quick-action-card__desc">حذف الحسابات غير النشطة</div>
+            </div>
+        </div>
+
+        <!-- Admin Users Table -->
+        <div class="admin-table-container">
+            <div class="admin-table-header">
+                <div class="admin-table-header__title">📋 قائمة المستخدمين</div>
+                <div class="admin-search">
+                    <span aria-hidden="true">🔍</span>
+                    <input type="text" id="adminSearchInput"
+                    placeholder="بحث عن مستخدم..."
+                    aria-label="بحث عن مستخدم"
+                    oninput="AdminPanel.filterUsers()">
+                </div>
+            </div>
+            <div class="admin-table-wrapper" role="region" aria-label="جدول المستخدمين" tabindex="0">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">المستخدم</th>
+                            <th scope="col">المعرف</th>
+                            <th scope="col">النوع</th>
+                            <th scope="col">الحالة</th>
+                            <th scope="col">آخر دخول</th>
+                            <th scope="col">عدد الدخول</th>
+                            <th scope="col">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminUsersTableBody">
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <div class="empty-state__icon" aria-hidden="true">👥</div>
+                                    <div class="empty-state__title">لا يوجد مستخدمون</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Admin Global Activity -->
+        <div class="admin-global-activity">
+            <div class="admin-global-activity__header">📜 سجل النشاطات العام (آخر 50 نشاط)</div>
+            <div class="admin-global-activity__list" id="adminGlobalActivity">
+                <div class="empty-state">
+                    <div class="empty-state__icon" aria-hidden="true">📭</div>
+                    <div class="empty-state__title">لا توجد نشاطات عامة</div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </main>
 
 <!-- Bottom Navigation -->
@@ -2616,38 +2510,6 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
 </div>
 
 <!-- ==================== Modals ==================== -->
-
-<!-- Edit Profile Modal -->
-<div class="modal-overlay" id="editProfileModal" role="dialog" aria-labelledby="editProfileTitle" aria-modal="true">
-    <div class="modal">
-        <div class="modal-header">
-            <h3 class="modal-title" id="editProfileTitle">تعديل الملف الشخصي</h3>
-            <button class="modal-close" onclick="App.closeModal('editProfileModal')" aria-label="إغلاق">✕</button>
-        </div>
-        <form id="editProfileForm" novalidate>
-            <div class="form-group">
-                <label class="form-label" for="editFullName">الاسم الكامل</label>
-                <input type="text" class="form-input" id="editFullName" placeholder="أدخل اسمك الكامل" autocomplete="name">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="editEmail">البريد الإلكتروني</label>
-                <input type="email" class="form-input" id="editEmail" placeholder="example@email.com" autocomplete="email">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="editPhone">رقم الهاتف</label>
-                <input type="tel" class="form-input" id="editPhone" placeholder="+966..." autocomplete="tel">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="editBio">نبذة عنك</label>
-                <textarea class="form-input" id="editBio" rows="3" placeholder="اكتب شيئًا عنك..."></textarea>
-            </div>
-            <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-lg);">
-                <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="App.closeModal('editProfileModal')">إلغاء</button>
-                <button type="submit" class="btn btn-primary" style="flex: 1;">حفظ التغييرات</button>
-            </div>
-        </form>
-    </div>
-</div>
 
 <!-- Account Switcher Modal -->
 <div class="modal-overlay" id="accountSwitcherModal" role="dialog" aria-labelledby="switcherTitle" aria-modal="true">
@@ -3440,7 +3302,6 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                     <div class="detail-item"><div class="detail-label">عدد مرات الدخول</div><div class="detail-value">${user.loginCount}</div></div>
                     <div class="detail-item"><div class="detail-label">مصدر الدخول</div><div class="detail-value">${Util.escapeHTML(user.loginSource)}</div></div>
                     <div class="detail-item"><div class="detail-label">الحالة</div><div class="detail-value">${user.status === 'active' ? '🟢 نشط' : '🔴 غير نشط'}</div></div>
-                    <div class="detail-item"><div class="detail-label">الإحصائيات</div><div class="detail-value">🎮 ${user.stats.sessions} جلسة | ⭐ مستوى ${user.stats.level} | 🏆 ${user.stats.achievements} إنجاز</div></div>
                     <div class="detail-item"><div class="detail-label">عدد النشاطات</div><div class="detail-value">${user.activity ? user.activity.length : 0}</div></div>
                 </div>
                 <div style="display:flex;gap:var(--space-sm);margin-top:var(--space-lg);">
@@ -3979,15 +3840,6 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                 logoutBtn.addEventListener('click', () => Auth.logout());
             }
 
-            // Edit profile form
-            const editForm = document.getElementById('editProfileForm');
-            if (editForm) {
-                editForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    saveProfile();
-                });
-            }
-
             // Hide loader after page load
             window.addEventListener('load', () => {
                 const loader = document.getElementById('appLoader');
@@ -4082,7 +3934,7 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             if (welcomeSubtitle) {
                 welcomeSubtitle.textContent = user.accountType === 'bot' ?
                     '🤖 حساب بوت تلغرام' :
-                    (isAdmin ? '👑 حساب المشرف العام - لديك صلاحيات كاملة' : 'الملف الشخصي الكامل وإحصائيات النشاط');
+                    (isAdmin ? '👑 حساب المشرف العام - لديك صلاحيات كاملة' : 'الملف الشخصي الكامل');
             }
 
             // Home profile
@@ -4102,16 +3954,6 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             }
             if (homeJoinDate) homeJoinDate.textContent = new Date(user.createdAt).toLocaleDateString('ar');
             if (homeStatus) homeStatus.textContent = user.status === 'active' ? 'نشط' : 'معلق';
-
-            // Stats
-            const setStat = (id, val) => {
-                const el = document.getElementById(id);
-                if (el) el.textContent = val;
-            };
-            setStat('statSessions', user.stats.sessions);
-            setStat('statHours', user.stats.hours);
-            setStat('statAchievements', user.stats.achievements);
-            setStat('statLevel', user.stats.level);
 
             // Profile details
             const setDetail = (id, val) => {
@@ -4147,161 +3989,13 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                 setDetail('detailBotName', '-');
             }
 
-            renderActivity();
-        }
-
-        /** Render activity lists */
-        function renderActivity() {
-            const user = currentUser;
-            const activities = user ? (user.activity || []) : [];
-
-            const renderList = (containerId, limit) => {
-                const container = document.getElementById(containerId);
-                if (!container) return;
-
-                if (activities.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-state__icon" aria-hidden="true">📭</div>
-                            <div class="empty-state__title">لا توجد نشاطات</div>
-                            <div class="empty-state__text">ابدأ الاستخدام لتظهر نشاطاتك هنا</div>
-                        </div>`;
-                    return;
-                }
-
-                const items = limit ? activities.slice(0, limit) : activities;
-                const icons = { success: '✅', info: 'ℹ️', warning: '⚠️', error: '❌' };
-
-                container.innerHTML = items.map(a => `
-                    <div class="activity-item">
-                        <div class="activity-icon" aria-hidden="true">${icons[a.type] || '📌'}</div>
-                        <div class="activity-content">
-                            <div class="activity-title">${Util.escapeHTML(a.title)}</div>
-                            <div class="activity-time">${Util.escapeHTML(a.description)} • ${Util.timeAgo(a.timestamp)}</div>
-                        </div>
-                    </div>
-                `).join('');
-            };
-
-            renderList('recentActivity', 5);
-            renderList('fullActivity', null);
-        }
-
-        /** Open edit profile modal */
-        function openEditProfile() {
-            const user = currentUser;
-            if (!user) return;
-
-            const fullNameInput = document.getElementById('editFullName');
-            const emailInput = document.getElementById('editEmail');
-            const phoneInput = document.getElementById('editPhone');
-            const bioInput = document.getElementById('editBio');
-
-            if (fullNameInput) fullNameInput.value = user.fullName || '';
-            if (emailInput) emailInput.value = user.email || '';
-            if (phoneInput) phoneInput.value = user.phone || '';
-            if (bioInput) bioInput.value = user.bio || '';
-
-            const modal = document.getElementById('editProfileModal');
-            if (modal) modal.classList.add('is-active');
+            // Removed stats and activity rendering
         }
 
         /** @param {string} modalId */
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.classList.remove('is-active');
-        }
-
-        /** Save profile changes */
-        function saveProfile() {
-            if (!currentUser) return;
-
-            const fullNameInput = document.getElementById('editFullName');
-            const emailInput = document.getElementById('editEmail');
-            const phoneInput = document.getElementById('editPhone');
-            const bioInput = document.getElementById('editBio');
-
-            const updates = {
-                fullName: fullNameInput ? fullNameInput.value.trim() : '',
-                email: emailInput ? emailInput.value.trim() : '',
-                phone: phoneInput ? phoneInput.value.trim() : '',
-                bio: bioInput ? bioInput.value.trim() : ''
-            };
-
-            DB.updateUser(currentUser.telegramId, updates);
-            currentUser = DB.getUserByTgId(currentUser.telegramId);
-            renderAll();
-            closeModal('editProfileModal');
-            Toast.show('✅ تم حفظ التغييرات بنجاح', 'success');
-
-            DB.addActivity(currentUser.telegramId, {
-                type: 'info',
-                title: 'تحديث الملف الشخصي',
-                description: 'تم تحديث معلومات الحساب'
-            });
-            renderActivity();
-        }
-
-        /** Reset user statistics */
-        function resetStats() {
-            if (!currentUser) return;
-            if (!confirm('⚠️ هل أنت متأكد من تصفير جميع الإحصائيات؟\n(جلسات اللعب، الساعات، المستوى، الإنجازات)')) return;
-
-            const defaultStats = {
-                sessions: 0,
-                hours: 0,
-                achievements: 0,
-                level: 1,
-                xp: 0
-            };
-            DB.updateUser(currentUser.telegramId, { stats: defaultStats });
-            currentUser = DB.getUserByTgId(currentUser.telegramId);
-            renderAll();
-            DB.addActivity(currentUser.telegramId, {
-                type: 'warning',
-                title: 'تصفير الإحصائيات',
-                description: 'تم إعادة تعيين جلسات اللعب، الساعات، المستوى والإنجازات'
-            });
-            renderActivity();
-            Toast.show('🔄 تم تصفير الإحصائيات بنجاح', 'warning');
-        }
-
-        /** Export current user data */
-        function exportData() {
-            if (!currentUser) return;
-            const data = { exportedAt: new Date().toISOString(), user: currentUser };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `kratos_${currentUser.username}_${Date.now()}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            Toast.show('📥 تم تصدير البيانات', 'success');
-        }
-
-        /** Delete current account - removed from UI but kept for internal use */
-        function deleteCurrentAccount() {
-            if (!currentUser) return;
-            const tgId = currentUser.telegramId;
-            if (tgId === CONFIG.ADMIN_TELEGRAM_ID) {
-                Toast.show('⛔ لا يمكن حذف حساب المشرف العام!', 'error');
-                return;
-            }
-            DB.deleteUser(tgId);
-            Toast.show('🗑️ تم حذف الحساب', 'warning');
-            setTimeout(() => location.reload(), 1500);
-        }
-
-        /** Clear all data - kept for internal use */
-        function clearAllData() {
-            if (!confirm('⚠️ هل أنت متأكد؟ سيتم حذف جميع الحسابات!')) return;
-            if (!confirm('تأكيد أخير: هذا لا يمكن التراجع عنه!')) return;
-            DB.clearAll();
-            Toast.show('⚠️ تم مسح جميع البيانات', 'warning');
-            setTimeout(() => location.reload(), 1500);
         }
 
         /** Show account switcher modal */
@@ -4417,17 +4111,11 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             getCurrentUser,
             setCurrentUser,
             navigate,
-            renderAll,
-            openEditProfile,
             closeModal,
-            saveProfile,
-            resetStats,
-            exportData,
-            deleteCurrentAccount,
-            clearAllData,
             showAccountSwitcher,
             deleteAccountFromSwitcher,
             switchAccount,
+            renderAll,
             logout,
             logoutAndSwitch
         };
