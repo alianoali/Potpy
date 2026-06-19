@@ -1,27 +1,14 @@
-
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body {
-                  background-color: white; /* Ensure the iframe has a white background */
-                }
-
-                
-              </style>
-                        </head>
-                        <body>
-                            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <meta name="description" content="Kratos Bot - مساعدك الذكي في عالم الألعاب">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0a1628">
-    <title>Kratos Bot - Chancy | AI Gaming Assistant</title>
+    <title>Kratos Bot - Web App</title>
+    
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,11 +23,12 @@
             --color-accent-green: #7fff00;
             --color-accent-green-dark: #5cbf00;
             --color-accent-blue: #00d4ff;
+            --color-telegram: #2AABEE;
             --color-text-light: #ffffff;
             --color-text-muted: #a0aec0;
             --color-success: #10b981;
+            --color-error: #ef4444;
             --color-warning: #f59e0b;
-            --color-danger: #ef4444;
             
             --font-arabic: 'Cairo', sans-serif;
             --font-display: 'Anton', sans-serif;
@@ -61,12 +49,10 @@
             --space-md: clamp(1rem, 0.8rem + 1vw, 1.5rem);
             --space-lg: clamp(1.5rem, 1rem + 2vw, 3rem);
             --space-xl: clamp(2rem, 1.5rem + 3vw, 5rem);
-            --space-2xl: clamp(3rem, 2rem + 5vw, 8rem);
             
             --container-max: 1400px;
             --container-padding: clamp(1rem, 2vw + 1rem, 4rem);
-            --header-height: 80px;
-            --header-height-scrolled: 65px;
+            --header-height: 70px;
             
             --radius-sm: 6px;
             --radius-md: 10px;
@@ -76,11 +62,8 @@
             --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
             --shadow-md: 0 5px 20px rgba(0, 0, 0, 0.5);
             --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.6);
-            --shadow-glow: 0 0 20px rgba(127, 255, 0, 0.4);
             
-            --transition-fast: 0.2s ease;
             --transition-base: 0.3s ease;
-            --transition-slow: 0.5s ease;
             
             --z-base: 1;
             --z-header: 100;
@@ -88,18 +71,8 @@
             --z-loader: 9999;
         }
 
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            -webkit-text-size-adjust: 100%;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
         body {
             font-family: var(--font-arabic);
             font-size: var(--text-base);
@@ -110,723 +83,80 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
-
         img { max-width: 100%; height: auto; display: block; }
         a { color: inherit; text-decoration: none; }
         button { font-family: inherit; cursor: pointer; border: none; background: none; }
         ul { list-style: none; }
-        input, textarea, select { font-family: inherit; }
+        input, textarea { font-family: inherit; }
 
-        /* ===== HEADER ===== */
-        .site-header {
+        /* ============================================
+           BLOCKED SCREEN (Non-Telegram Access)
+           ============================================ */
+        .blocked-screen {
             position: fixed;
-            top: 0; left: 0; right: 0;
-            width: 100%;
-            z-index: var(--z-header);
-            padding: var(--space-md) var(--container-padding);
-            background: rgba(10, 22, 40, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(127, 255, 0, 0.1);
-            transition: all var(--transition-base);
-            height: var(--header-height);
-            display: flex;
-            align-items: center;
-        }
-
-        .site-header.scrolled {
-            padding: var(--space-sm) var(--container-padding);
-            background: rgba(10, 22, 40, 0.95);
-            box-shadow: var(--shadow-md);
-            height: var(--header-height-scrolled);
-        }
-
-        .header-inner {
-            max-width: var(--container-max);
-            width: 100%;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: var(--space-md);
-        }
-
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            cursor: pointer;
-            transition: transform var(--transition-base);
-            flex-shrink: 0;
-        }
-
-        .brand-logo:hover { transform: scale(1.05); }
-
-        .brand-logo__img {
-            width: clamp(40px, 5vw, 55px);
-            height: clamp(40px, 5vw, 55px);
-            object-fit: contain;
-            filter: drop-shadow(0 0 10px rgba(127, 255, 0, 0.5));
-            animation: logoGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes logoGlow {
-            0%, 100% { filter: drop-shadow(0 0 10px rgba(127, 255, 0, 0.5)); }
-            50% { filter: drop-shadow(0 0 20px rgba(127, 255, 0, 0.8)); }
-        }
-
-        .brand-logo__text { display: flex; flex-direction: column; line-height: 1; }
-
-        .brand-logo__title {
-            font-family: var(--font-tech);
-            font-size: clamp(16px, 1.5vw + 12px, 22px);
-            font-weight: 900;
-            color: var(--color-text-light);
-            letter-spacing: 2px;
-        }
-
-        .brand-logo__title span { color: var(--color-accent-green); }
-
-        .brand-logo__subtitle {
-            font-size: clamp(9px, 0.8vw + 7px, 11px);
-            color: var(--color-text-muted);
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-top: 3px;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: 6px 15px;
-            background: rgba(127, 255, 0, 0.1);
-            border: 1px solid rgba(127, 255, 0, 0.3);
-            border-radius: var(--radius-full);
-            cursor: pointer;
-            transition: all var(--transition-base);
-        }
-
-        .user-badge:hover {
-            background: rgba(127, 255, 0, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .user-badge__avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 14px;
-            color: var(--color-primary);
-        }
-
-        .user-badge__name {
-            font-size: var(--text-sm);
-            font-weight: 600;
-            color: var(--color-text-light);
-        }
-
-        .btn-telegram {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #0088cc, #00a8e6);
-            color: white;
-            border-radius: var(--radius-md);
-            font-weight: 700;
-            font-size: var(--text-sm);
-            transition: all var(--transition-base);
-            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4);
-        }
-
-        .btn-telegram:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.6);
-        }
-
-        .btn-logout {
-            padding: 8px 15px;
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--color-danger);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: var(--radius-md);
-            font-size: var(--text-sm);
-            font-weight: 600;
-            transition: all var(--transition-base);
-        }
-
-        .btn-logout:hover {
-            background: rgba(239, 68, 68, 0.25);
-        }
-
-        .menu-toggle {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            z-index: calc(var(--z-header) + 1);
-            padding: 8px;
-        }
-
-        .menu-toggle__bar {
-            width: 28px; height: 3px;
-            background: var(--color-text-light);
-            border-radius: 3px;
-            transition: all var(--transition-base);
-        }
-
-        .menu-toggle.active .menu-toggle__bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-        .menu-toggle.active .menu-toggle__bar:nth-child(2) { opacity: 0; }
-        .menu-toggle.active .menu-toggle__bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-
-        /* ===== HERO ===== */
-        .hero {
-            width: 100%;
-            min-height: 100vh;
-            height: 100vh;
-            height: 100dvh;
-            position: relative;
+            inset: 0;
+            z-index: var(--z-loader);
+            background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-primary) 100%);
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
-        }
-
-        .hero__background {
-            position: absolute;
-            inset: 0;
-            background-image: url('https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1ee2a5e6d-65d1-4459-9aaa-a98ae6fd75ae.png');
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            transition: transform 0.3s ease;
-        }
-
-        .hero__overlay {
-            position: absolute;
-            inset: 0;
-            background: 
-                linear-gradient(to bottom, rgba(10, 22, 40, 0.4) 0%, rgba(10, 22, 40, 0.1) 40%, rgba(10, 22, 40, 0.6) 100%),
-                radial-gradient(ellipse at center, transparent 40%, rgba(10, 22, 40, 0.7) 100%);
-            pointer-events: none;
-        }
-
-        .hero__content {
-            position: relative;
-            z-index: var(--z-base);
-            text-align: center;
             padding: var(--container-padding);
-            max-width: var(--container-max);
-            width: 100%;
+            text-align: center;
         }
 
-        .hero__badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: clamp(6px, 1vw, 10px) clamp(15px, 2vw, 25px);
-            background: rgba(127, 255, 0, 0.1);
-            border: 1px solid rgba(127, 255, 0, 0.3);
-            border-radius: var(--radius-full);
+        .blocked-screen.hidden { display: none; }
+
+        .blocked-content {
+            max-width: 500px;
+        }
+
+        .blocked-icon {
+            font-size: 5rem;
             margin-bottom: var(--space-lg);
-            backdrop-filter: blur(10px);
-            animation: fadeInDown 1s ease;
-        }
-
-        .hero__badge-dot {
-            width: 8px; height: 8px;
-            background: var(--color-accent-green);
-            border-radius: 50%;
             animation: pulse 2s ease-in-out infinite;
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.5); }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
-        .hero__badge-text {
-            font-size: clamp(12px, 1.2vw, 14px);
-            color: var(--color-accent-green);
-            font-weight: 600;
-            letter-spacing: 2px;
-        }
-
-        .hero__title {
-            font-family: var(--font-display);
-            font-size: var(--text-hero-title);
-            font-weight: 900;
-            color: var(--color-text-light);
-            letter-spacing: clamp(5px, 1vw, 15px);
-            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 0, 0, 0.7);
-            line-height: 1;
-            margin-bottom: clamp(5px, 1vw, 15px);
-            animation: fadeInUp 1s ease 0.3s both;
-        }
-
-        .hero__subtitle {
-            font-family: var(--font-display);
-            font-size: var(--text-hero-sub);
-            font-weight: 900;
-            color: var(--color-accent-green);
-            letter-spacing: clamp(10px, 2vw, 25px);
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9), 0 0 20px rgba(127, 255, 0, 0.4);
-            animation: fadeInUp 1s ease 0.6s both;
-        }
-
-        .hero__welcome {
-            margin-top: var(--space-lg);
-            font-size: var(--text-lg);
-            color: var(--color-text-muted);
-            animation: fadeInUp 1s ease 0.9s both;
-        }
-
-        .hero__welcome span {
-            color: var(--color-accent-green);
-            font-weight: 700;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ===== FOOTER ===== */
-        .site-footer {
-            background: var(--color-dark);
-            padding: clamp(25px, 4vw, 40px) var(--container-padding) clamp(15px, 2vw, 25px);
-            border-top: 1px solid rgba(127, 255, 0, 0.1);
-        }
-
-        .footer__inner {
-            max-width: var(--container-max);
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: var(--space-md);
-        }
-
-        .footer__brand { display: flex; align-items: center; gap: var(--space-sm); }
-
-        .footer__brand-img {
-            width: clamp(35px, 4vw, 45px);
-            height: clamp(35px, 4vw, 45px);
-            object-fit: contain;
-            filter: drop-shadow(0 0 8px rgba(127, 255, 0, 0.4));
-        }
-
-        .footer__brand-text {
+        .blocked-title {
             font-family: var(--font-tech);
-            font-size: clamp(16px, 1.8vw, 20px);
+            font-size: var(--text-2xl);
             font-weight: 900;
-        }
-
-        .footer__brand-text span { color: var(--color-accent-green); }
-
-        .footer__bottom {
-            max-width: var(--container-max);
-            margin: clamp(15px, 2vw, 25px) auto 0;
-            padding-top: clamp(15px, 2vw, 20px);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            text-align: center;
-        }
-
-        .footer__copyright {
-            color: var(--color-text-muted);
-            font-size: var(--text-xs);
-        }
-
-        .footer__copyright span { color: var(--color-accent-green); }
-
-        /* ===== MODAL ===== */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(5, 13, 26, 0.9);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: var(--z-modal);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: var(--container-padding);
-            opacity: 0;
-            visibility: hidden;
-            transition: all var(--transition-base);
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal {
-            background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
-            border: 1px solid rgba(127, 255, 0, 0.2);
-            border-radius: var(--radius-lg);
-            padding: clamp(25px, 4vw, 40px);
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            transform: scale(0.9) translateY(20px);
-            transition: transform var(--transition-base);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-        }
-
-        .modal-overlay.active .modal {
-            transform: scale(1) translateY(0);
-        }
-
-        .modal__header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-lg);
-            padding-bottom: var(--space-md);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .modal__title {
-            font-family: var(--font-tech);
-            font-size: var(--text-xl);
-            font-weight: 900;
-            color: var(--color-text-light);
-        }
-
-        .modal__title span { color: var(--color-accent-green); }
-
-        .modal__close {
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--color-text-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            transition: all var(--transition-base);
-        }
-
-        .modal__close:hover {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--color-danger);
-        }
-
-        .modal__body { margin-bottom: var(--space-lg); }
-
-        /* ===== FORM STYLES ===== */
-        .form-group {
             margin-bottom: var(--space-md);
+            color: var(--color-error);
         }
 
-        .form-label {
-            display: block;
-            font-size: var(--text-sm);
-            font-weight: 600;
+        .blocked-text {
             color: var(--color-text-muted);
-            margin-bottom: 8px;
-        }
-
-        .form-input, .form-textarea, .form-select {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-md);
-            color: var(--color-text-light);
             font-size: var(--text-base);
-            transition: all var(--transition-base);
-        }
-
-        .form-input:focus, .form-textarea:focus, .form-select:focus {
-            outline: none;
-            border-color: var(--color-accent-green);
-            background: rgba(127, 255, 0, 0.05);
-            box-shadow: 0 0 0 3px rgba(127, 255, 0, 0.1);
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 80px;
-            font-family: inherit;
-        }
-
-        .form-hint {
-            font-size: var(--text-xs);
-            color: var(--color-text-muted);
-            margin-top: 6px;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-green-dark));
-            color: var(--color-primary);
-            border-radius: var(--radius-md);
-            font-weight: 700;
-            font-size: var(--text-base);
-            transition: all var(--transition-base);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(127, 255, 0, 0.4);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* ===== LOGIN SCREEN ===== */
-        .login-screen {
-            position: fixed;
-            inset: 0;
-            z-index: calc(var(--z-loader) - 1);
-            background: var(--color-primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: var(--container-padding);
-        }
-
-        .login-screen.hidden { display: none; }
-
-        .login-card {
-            background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
-            border: 1px solid rgba(127, 255, 0, 0.2);
-            border-radius: var(--radius-lg);
-            padding: clamp(30px, 5vw, 50px);
-            max-width: 450px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-        }
-
-        .login-card__logo {
-            width: 100px; height: 100px;
-            margin: 0 auto var(--space-md);
-            animation: logoGlow 3s ease-in-out infinite;
-        }
-
-        .login-card__title {
-            font-family: var(--font-display);
-            font-size: var(--text-3xl);
-            margin-bottom: var(--space-xs);
-            letter-spacing: 3px;
-        }
-
-        .login-card__subtitle {
-            color: var(--color-text-muted);
-            font-size: var(--text-sm);
             margin-bottom: var(--space-lg);
+            line-height: 1.8;
         }
 
-        .telegram-steps {
-            text-align: right;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-bottom: var(--space-lg);
-        }
-
-        .telegram-steps__title {
-            font-family: var(--font-tech);
-            font-size: var(--text-base);
-            color: var(--color-accent-green);
-            margin-bottom: var(--space-sm);
-            text-align: center;
-        }
-
-        .telegram-steps__list {
-            list-style: none;
-        }
-
-        .telegram-steps__item {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 8px 0;
-            font-size: var(--text-sm);
-            color: var(--color-text-muted);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .telegram-steps__item:last-child { border-bottom: none; }
-
-        .telegram-steps__num {
-            width: 24px; height: 24px;
-            background: var(--color-accent-green);
-            color: var(--color-primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 12px;
-            flex-shrink: 0;
-        }
-
-        .telegram-steps__item strong {
-            color: var(--color-text-light);
-        }
-
-        .token-display {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px dashed rgba(127, 255, 0, 0.3);
-            border-radius: var(--radius-md);
-            padding: var(--space-sm);
-            margin: var(--space-sm) 0;
-            font-family: monospace;
-            font-size: var(--text-sm);
-            color: var(--color-accent-green);
-            word-break: break-all;
-            direction: ltr;
-            text-align: center;
-        }
-
-        .btn-telegram-large {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #0088cc, #00a8e6);
+        .blocked-btn {
+            padding: var(--space-md) var(--space-xl);
+            background: linear-gradient(135deg, var(--color-telegram), #1e88c9);
             color: white;
             border-radius: var(--radius-md);
+            font-size: var(--text-base);
             font-weight: 700;
-            font-size: var(--text-lg);
-            transition: all var(--transition-base);
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: var(--space-md);
-            box-shadow: 0 4px 20px rgba(0, 136, 204, 0.4);
-        }
-
-        .btn-telegram-large:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(0, 136, 204, 0.6);
-        }
-
-        .login-divider {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin: var(--space-md) 0;
-            color: var(--color-text-muted);
-            font-size: var(--text-xs);
-        }
-
-        .login-divider::before, .login-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* ===== PROFILE VIEW ===== */
-        .profile-view {
-            display: none;
-        }
-
-        .profile-view.active { display: block; }
-
-        .profile-avatar-large {
-            width: 100px; height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            font-weight: 900;
-            color: var(--color-primary);
-            margin: 0 auto var(--space-md);
-            border: 3px solid rgba(127, 255, 0, 0.3);
-        }
-
-        .profile-info {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-
-        .profile-info__row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .profile-info__row:last-child { border-bottom: none; }
-
-        .profile-info__label {
-            font-size: var(--text-sm);
-            color: var(--color-text-muted);
-        }
-
-        .profile-info__value {
-            font-size: var(--text-sm);
-            font-weight: 600;
-            color: var(--color-text-light);
-            text-align: left;
-            direction: ltr;
-        }
-
-        .profile-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
             gap: var(--space-sm);
-            margin-bottom: var(--space-md);
+            transition: all var(--transition-base);
         }
 
-        .profile-stat {
-            background: rgba(127, 255, 0, 0.05);
-            border: 1px solid rgba(127, 255, 0, 0.1);
-            border-radius: var(--radius-md);
-            padding: var(--space-sm);
-            text-align: center;
+        .blocked-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(42, 171, 238, 0.5);
         }
 
-        .profile-stat__value {
-            font-family: var(--font-tech);
-            font-size: var(--text-xl);
-            font-weight: 900;
-            color: var(--color-accent-green);
-        }
-
-        .profile-stat__label {
-            font-size: var(--text-xs);
-            color: var(--color-text-muted);
-            margin-top: 4px;
-        }
-
-        /* ===== LOADER ===== */
+        /* ============================================
+           LOADER
+           ============================================ */
         .loader {
             position: fixed;
             inset: 0;
@@ -844,11 +174,10 @@
             pointer-events: none;
         }
 
-        .loader__content { text-align: center; padding: var(--space-md); }
+        .loader__content { text-align: center; }
 
         .loader__logo {
             width: clamp(60px, 15vw, 100px);
-            height: clamp(60px, 15vw, 100px);
             animation: loaderSpin 2s ease-in-out infinite;
             margin: 0 auto;
         }
@@ -873,15 +202,488 @@
             50% { opacity: 1; }
         }
 
-        /* ===== TOAST NOTIFICATIONS ===== */
-        .toast-container {
+        /* ============================================
+           HEADER
+           ============================================ */
+        .site-header {
             position: fixed;
-            top: 100px;
-            left: 20px;
-            z-index: calc(var(--z-modal) + 10);
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: var(--z-header);
+            padding: var(--space-sm) var(--container-padding);
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(127, 255, 0, 0.1);
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+        }
+
+        .header-inner {
+            max-width: var(--container-max);
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            flex-shrink: 0;
+        }
+
+        .brand-logo__img {
+            width: clamp(35px, 8vw, 45px);
+            height: clamp(35px, 8vw, 45px);
+            filter: drop-shadow(0 0 10px rgba(127, 255, 0, 0.5));
+        }
+
+        .brand-logo__title {
+            font-family: var(--font-tech);
+            font-size: clamp(14px, 3vw, 18px);
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .brand-logo__title span { color: var(--color-accent-green); }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: 6px 12px;
+            background: rgba(127, 255, 0, 0.1);
+            border: 1px solid rgba(127, 255, 0, 0.3);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: 600;
+        }
+
+        .user-chip__avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--color-primary);
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        .hero {
+            width: 100%;
+            min-height: 100vh;
+            height: 100vh;
+            height: 100dvh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hero__background {
+            position: absolute;
+            inset: 0;
+            background-image: url('https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1ee2a5e6d-65d1-4459-9aaa-a98ae6fd75ae.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+
+        .hero__overlay {
+            position: absolute;
+            inset: 0;
+            background: 
+                linear-gradient(to bottom, rgba(10, 22, 40, 0.4) 0%, rgba(10, 22, 40, 0.1) 40%, rgba(10, 22, 40, 0.6) 100%),
+                radial-gradient(ellipse at center, transparent 40%, rgba(10, 22, 40, 0.7) 100%);
+            pointer-events: none;
+        }
+
+        .hero__content {
+            position: relative;
+            z-index: var(--z-base);
+            text-align: center;
+            padding: var(--container-padding);
+            width: 100%;
+        }
+
+        .hero__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: clamp(6px, 1vw, 10px) clamp(15px, 2vw, 25px);
+            background: rgba(127, 255, 0, 0.1);
+            border: 1px solid rgba(127, 255, 0, 0.3);
+            border-radius: var(--radius-full);
+            margin-bottom: var(--space-lg);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero__badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--color-accent-green);
+            border-radius: 50%;
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        .hero__badge-text {
+            font-size: clamp(11px, 2vw, 14px);
+            color: var(--color-accent-green);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .hero__title {
+            font-family: var(--font-display);
+            font-size: var(--text-hero-title);
+            font-weight: 900;
+            letter-spacing: clamp(5px, 1vw, 15px);
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 0, 0, 0.7);
+            line-height: 1;
+            margin-bottom: clamp(5px, 1vw, 15px);
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .hero__subtitle {
+            font-family: var(--font-display);
+            font-size: var(--text-hero-sub);
+            font-weight: 900;
+            color: var(--color-accent-green);
+            letter-spacing: clamp(10px, 2vw, 25px);
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9), 0 0 20px rgba(127, 255, 0, 0.4);
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================
+           COMMANDS PANEL
+           ============================================ */
+        .commands-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: var(--z-header);
+            background: rgba(10, 22, 40, 0.98);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(127, 255, 0, 0.2);
+            padding: var(--space-sm) var(--container-padding);
+            padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0));
+        }
+
+        .commands-grid {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: var(--space-xs);
+        }
+
+        .command-btn {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            align-items: center;
+            gap: 4px;
+            padding: var(--space-sm) var(--space-xs);
+            background: rgba(127, 255, 0, 0.05);
+            border: 1px solid rgba(127, 255, 0, 0.15);
+            border-radius: var(--radius-md);
+            color: var(--color-text-light);
+            font-size: 10px;
+            font-weight: 600;
+            transition: all var(--transition-base);
+            text-align: center;
+        }
+
+        .command-btn:hover, .command-btn:active {
+            background: rgba(127, 255, 0, 0.15);
+            border-color: var(--color-accent-green);
+            transform: translateY(-2px);
+        }
+
+        .command-btn__icon {
+            font-size: 20px;
+        }
+
+        .command-btn__label {
+            font-size: 9px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        /* ============================================
+           MODAL
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: var(--z-modal);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--container-padding);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--color-secondary);
+            border: 1px solid rgba(127, 255, 0, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform var(--transition-base);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal__title {
+            font-family: var(--font-tech);
+            font-size: var(--text-xl);
+            font-weight: 900;
+        }
+
+        .modal__close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all var(--transition-base);
+        }
+
+        .modal__close:hover {
+            background: var(--color-error);
+        }
+
+        .modal__body {
+            color: var(--color-text-muted);
+            line-height: 1.8;
+        }
+
+        .modal__body h3 {
+            color: var(--color-accent-green);
+            margin: var(--space-md) 0 var(--space-xs);
+            font-size: var(--text-base);
+        }
+
+        .modal__body p {
+            margin-bottom: var(--space-sm);
+        }
+
+        .modal__body ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .modal__body li {
+            padding: var(--space-xs) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .modal__body li:last-child {
+            border-bottom: none;
+        }
+
+        .command-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-sm);
+            background: rgba(10, 22, 40, 0.5);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-xs);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .command-item:hover {
+            background: rgba(127, 255, 0, 0.1);
+        }
+
+        .command-item__name {
+            font-family: var(--font-tech);
+            color: var(--color-accent-green);
+            font-weight: 700;
+            font-size: var(--text-sm);
+        }
+
+        .command-item__desc {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .stat-card {
+            background: rgba(10, 22, 40, 0.6);
+            border: 1px solid rgba(127, 255, 0, 0.2);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            text-align: center;
+        }
+
+        .stat-card__value {
+            font-family: var(--font-tech);
+            font-size: var(--text-2xl);
+            font-weight: 900;
+            color: var(--color-accent-green);
+            margin-bottom: var(--space-xs);
+        }
+
+        .stat-card__label {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+        }
+
+        /* Profile Card */
+        .profile-card {
+            text-align: center;
+            padding: var(--space-lg) 0;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--color-primary);
+            margin: 0 auto var(--space-md);
+            border: 3px solid var(--color-accent-green);
+            box-shadow: 0 0 30px rgba(127, 255, 0, 0.3);
+        }
+
+        .profile-name {
+            font-family: var(--font-tech);
+            font-size: var(--text-xl);
+            font-weight: 900;
+            margin-bottom: var(--space-xs);
+        }
+
+        .profile-id {
+            font-size: var(--text-sm);
+            color: var(--color-text-muted);
+            font-family: var(--font-tech);
+            direction: ltr;
+            margin-bottom: var(--space-md);
+        }
+
+        .profile-info {
+            background: rgba(10, 22, 40, 0.6);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            text-align: right;
+        }
+
+        .profile-info__row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-xs) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .profile-info__row:last-child {
+            border-bottom: none;
+        }
+
+        .profile-info__label {
+            color: var(--color-text-muted);
+            font-size: var(--text-sm);
+        }
+
+        .profile-info__value {
+            color: var(--color-accent-green);
+            font-weight: 700;
+            font-size: var(--text-sm);
+        }
+
+        /* Footer */
+        .site-footer {
+            background: var(--color-dark);
+            padding: var(--space-lg) var(--container-padding) calc(100px + var(--space-lg));
+            text-align: center;
+            border-top: 1px solid rgba(127, 255, 0, 0.1);
+        }
+
+        .footer__copyright {
+            color: var(--color-text-muted);
+            font-size: var(--text-xs);
+        }
+
+        .footer__copyright span { color: var(--color-accent-green); }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: calc(var(--z-modal) + 1);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
             pointer-events: none;
         }
 
@@ -889,57 +691,29 @@
             background: var(--color-secondary);
             border: 1px solid rgba(127, 255, 0, 0.3);
             border-radius: var(--radius-md);
-            padding: 12px 20px;
+            padding: var(--space-sm) var(--space-md);
             color: var(--color-text-light);
             font-size: var(--text-sm);
             box-shadow: var(--shadow-lg);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 250px;
-            animation: slideIn 0.3s ease;
+            animation: toastIn 0.3s ease;
             pointer-events: auto;
+            max-width: 90vw;
         }
 
         .toast.success { border-color: var(--color-success); }
-        .toast.error { border-color: var(--color-danger); }
+        .toast.error { border-color: var(--color-error); }
         .toast.warning { border-color: var(--color-warning); }
 
-        .toast__icon { font-size: 18px; }
-        .toast.success .toast__icon { color: var(--color-success); }
-        .toast.error .toast__icon { color: var(--color-danger); }
-        .toast.warning .toast__icon { color: var(--color-warning); }
-
-        @keyframes slideIn {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes slideOut {
-            to { transform: translateX(-100%); opacity: 0; }
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .menu-toggle { display: flex; }
-
-            .header-actions {
-                gap: 8px;
-            }
-
-            .user-badge__name { display: none; }
-
-            .btn-telegram span.btn-text { display: none; }
-            .btn-telegram { padding: 10px; }
-
-            .btn-logout { padding: 8px 10px; font-size: 12px; }
-
-            .profile-stats { grid-template-columns: 1fr; }
-        }
-
+        /* Responsive */
         @media (max-width: 480px) {
-            .brand-logo__subtitle { display: none; }
-            .hero__subtitle { letter-spacing: 8px; }
+            .commands-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -951,8 +725,26 @@
     </style>
 </head>
 <body>
+    <!-- Blocked Screen (Non-Telegram) -->
+    <div class="blocked-screen" id="blockedScreen">
+        <div class="blocked-content">
+            <div class="blocked-icon">🔒</div>
+            <h1 class="blocked-title">الوصول مرفوض</h1>
+            <p class="blocked-text">
+                هذا الموقع يعمل حصرياً عبر بوت تلغرام.<br>
+                لا يمكن الوصول إليه من المتصفح مباشرة.
+            </p>
+            <a href="https://t.me/KratosChancyBot" class="blocked-btn" target="_blank">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+                <span>فتح البوت في تلغرام</span>
+            </a>
+        </div>
+    </div>
+
     <!-- Loader -->
-    <div class="loader" id="loader" role="status" aria-label="جاري التحميل">
+    <div class="loader" id="loader">
         <div class="loader__content">
             <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Logo" class="loader__logo">
             <div class="loader__text">KRATOS BOT</div>
@@ -960,752 +752,667 @@
     </div>
 
     <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
-
-    <!-- Login Screen (يظهر فقط إذا لم يكن المستخدم مسجل دخول) -->
-    <div class="login-screen" id="loginScreen">
-        <div class="login-card">
-            <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Kratos Bot" class="login-card__logo">
-            <h1 class="login-card__title">KRATOS BOT</h1>
-            <p class="login-card__subtitle">منصة حصرية - تسجيل الدخول عبر تلغرام فقط</p>
-
-            <div class="telegram-steps">
-                <div class="telegram-steps__title">📱 خطوات التسجيل</div>
-                <ol class="telegram-steps__list">
-                    <li class="telegram-steps__item">
-                        <span class="telegram-steps__num">1</span>
-                        <span>اضغط على زر <strong>تسجيل الدخول عبر تلغرام</strong></span>
-                    </li>
-                    <li class="telegram-steps__item">
-                        <span class="telegram-steps__num">2</span>
-                        <span>سيتم فتح بوت تلغرام - اضغط <strong>Start / ابدأ</strong></span>
-                    </li>
-                    <li class="telegram-steps__item">
-                        <span class="telegram-steps__num">3</span>
-                        <span>انسخ <strong>رمز التفعيل</strong> وألصقه في الحقل أدناه</span>
-                    </li>
-                </ol>
-            </div>
-
-            <a href="https://t.me/KratosBot" target="_blank" rel="noopener" class="btn-telegram-large">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.009-1.252-.242-1.865-.442-.751-.244-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.015 3.333-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.121.099.154.232.17.325.015.093.034.305.019.471z"/></svg>
-                <span class="btn-text">تسجيل الدخول عبر تلغرام</span>
-            </a>
-
-            <div class="login-divider">أو أدخل رمز التفعيل</div>
-
-            <form id="loginForm">
-                <div class="form-group">
-                    <label class="form-label" for="tokenInput">رمز التفعيل</label>
-                    <input type="text" id="tokenInput" class="form-input" placeholder="مثال: KRATOS-XXXX-XXXX" autocomplete="off" dir="ltr">
-                    <div class="form-hint">احصل على الرمز من بوت تلغرام</div>
-                </div>
-                <button type="submit" class="btn-primary">
-                    <span>تأكيد الدخول</span>
-                </button>
-            </form>
-        </div>
-    </div>
+    <div class="toast-container" id="toastContainer"></div>
 
     <!-- Header -->
-    <header class="site-header" id="header" role="banner">
+    <header class="site-header">
         <div class="header-inner">
             <div class="brand-logo">
-                <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Logo" class="brand-logo__img" width="55" height="55">
-                <div class="brand-logo__text">
-                    <div class="brand-logo__title">KRATOS<span>BOT</span></div>
-                    <div class="brand-logo__subtitle">by Chancy</div>
-                </div>
+                <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Logo" class="brand-logo__img">
+                <div class="brand-logo__title">KRATOS<span>BOT</span></div>
             </div>
-            
-            <div class="header-actions" id="headerActions">
-                <!-- يتم ملؤه ديناميكياً -->
+            <div class="user-chip" id="userChip">
+                <div class="user-chip__avatar" id="userAvatar">K</div>
+                <span id="userName">مستخدم</span>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <main>
-        <section class="hero" id="home" aria-labelledby="hero-title">
-            <div class="hero__background" id="heroBg"></div>
+        <section class="hero">
+            <div class="hero__background"></div>
             <div class="hero__overlay"></div>
-            
             <div class="hero__content">
                 <div class="hero__badge">
                     <div class="hero__badge-dot"></div>
-                    <span class="hero__badge-text">متصل الآن • AI Powered</span>
+                    <span class="hero__badge-text" id="welcomeText">متصل الآن</span>
                 </div>
-                
-                <h1 class="hero__title" id="hero-title">KRATOS</h1>
+                <h1 class="hero__title">KRATOS</h1>
                 <h2 class="hero__subtitle">B O T</h2>
-                <p class="hero__welcome" id="welcomeMsg">مرحباً بك في عالم Kratos Bot</p>
             </div>
         </section>
     </main>
 
-    <!-- Profile Modal -->
-    <div class="modal-overlay" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
-        <div class="modal">
-            <div class="modal__header">
-                <h2 class="modal__title" id="profileModalTitle">الملف <span>الشخصي</span></h2>
-                <button class="modal__close" id="closeProfileModal" aria-label="إغلاق">✕</button>
-            </div>
-            <div class="modal__body" id="profileModalBody">
-                <!-- يتم ملؤه ديناميكياً -->
-            </div>
+    <!-- Commands Panel -->
+    <div class="commands-panel">
+        <div class="commands-grid">
+            <button class="command-btn" data-command="/start">
+                <span class="command-btn__icon">🏠</span>
+                <span class="command-btn__label">الرئيسية</span>
+            </button>
+            <button class="command-btn" data-command="/profile">
+                <span class="command-btn__icon"></span>
+                <span class="command-btn__label">الملف</span>
+            </button>
+            <button class="command-btn" data-command="/stats">
+                <span class="command-btn__icon">📊</span>
+                <span class="command-btn__label">إحصائيات</span>
+            </button>
+            <button class="command-btn" data-command="/games">
+                <span class="command-btn__icon">🎮</span>
+                <span class="command-btn__label">ألعاب</span>
+            </button>
+            <button class="command-btn" data-command="/help">
+                <span class="command-btn__icon">❓</span>
+                <span class="command-btn__label">مساعدة</span>
+            </button>
+            <button class="command-btn" data-command="/settings">
+                <span class="command-btn__icon">️</span>
+                <span class="command-btn__label">إعدادات</span>
+            </button>
+            <button class="command-btn" data-command="/vip">
+                <span class="command-btn__icon">👑</span>
+                <span class="command-btn__label">VIP</span>
+            </button>
+            <button class="command-btn" data-command="/support">
+                <span class="command-btn__icon">💬</span>
+                <span class="command-btn__label">دعم</span>
+            </button>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="site-footer" role="contentinfo">
-        <div class="footer__inner">
-            <div class="footer__brand">
-                <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Logo" class="footer__brand-img" width="45" height="45">
-                <div class="footer__brand-text">KRATOS<span>BOT</span></div>
+    <footer class="site-footer">
+        <p class="footer__copyright">© 2026 <span>Kratos Bot</span> by Chancy</p>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal__header">
+                <h2 class="modal__title" id="modalTitle">عنوان</h2>
+                <button class="modal__close" id="modalClose">✕</button>
+            </div>
+            <div class="modal__body" id="modalBody">
+                محتوى
             </div>
         </div>
-        <div class="footer__bottom">
-            <p class="footer__copyright">© 2026 <span>Kratos Bot</span> by Chancy. جميع الحقوق محفوظة.</p>
-        </div>
-    </footer>
+    </div>
 
     <script>
         'use strict';
 
         /* ============================================
-           DATABASE MODULE - IndexedDB متطور
+           TELEGRAM WEB APP INITIALIZATION
+           ============================================ */
+        const tg = window.Telegram?.WebApp;
+
+        /* ============================================
+           DATABASE MODULE (Encrypted LocalStorage)
            ============================================ */
         const Database = {
-            DB_NAME: 'KratosBotDB',
-            DB_VERSION: 1,
-            STORES: {
-                USERS: 'users',
-                SESSIONS: 'sessions',
-                ACTIVITY: 'activity',
-                SETTINGS: 'settings'
+            KEYS: {
+                USERS: 'kb_users',
+                SESSIONS: 'kb_sessions',
+                CURRENT_USER: 'kb_current_user',
+                SETTINGS: 'kb_settings',
+                GAMES: 'kb_games',
+                VIP: 'kb_vip'
             },
-
-            db: null,
-
-            async init() {
-                return new Promise((resolve, reject) => {
-                    const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
-                    
-                    request.onupgradeneeded = (event) => {
-                        const db = event.target.result;
-                        
-                        // Store المستخدمين
-                        if (!db.objectStoreNames.contains(this.STORES.USERS)) {
-                            const userStore = db.createObjectStore(this.STORES.USERS, { keyPath: 'telegramId' });
-                            userStore.createIndex('username', 'username', { unique: false });
-                            userStore.createIndex('token', 'authToken', { unique: true });
-                            userStore.createIndex('createdAt', 'createdAt', { unique: false });
-                        }
-                        
-                        // Store الجلسات
-                        if (!db.objectStoreNames.contains(this.STORES.SESSIONS)) {
-                            const sessionStore = db.createObjectStore(this.STORES.SESSIONS, { keyPath: 'id' });
-                            sessionStore.createIndex('telegramId', 'telegramId', { unique: false });
-                            sessionStore.createIndex('expiresAt', 'expiresAt', { unique: false });
-                        }
-                        
-                        // Store النشاط
-                        if (!db.objectStoreNames.contains(this.STORES.ACTIVITY)) {
-                            const activityStore = db.createObjectStore(this.STORES.ACTIVITY, { keyPath: 'id', autoIncrement: true });
-                            activityStore.createIndex('telegramId', 'telegramId', { unique: false });
-                            activityStore.createIndex('timestamp', 'timestamp', { unique: false });
-                        }
-                        
-                        // Store الإعدادات
-                        if (!db.objectStoreNames.contains(this.STORES.SETTINGS)) {
-                            db.createObjectStore(this.STORES.SETTINGS, { keyPath: 'key' });
-                        }
-                    };
-                    
-                    request.onsuccess = (event) => {
-                        this.db = event.target.result;
-                        resolve(this.db);
-                    };
-                    
-                    request.onerror = (event) => reject(event.target.error);
-                });
-            },
-
-            async add(storeName, data) {
-                return new Promise((resolve, reject) => {
-                    const tx = this.db.transaction(storeName, 'readwrite');
-                    const store = tx.objectStore(storeName);
-                    const request = store.add(data);
-                    request.onsuccess = () => resolve(request.result);
-                    request.onerror = (e) => reject(e.target.error);
-                });
-            },
-
-            async get(storeName, key) {
-                return new Promise((resolve, reject) => {
-                    const tx = this.db.transaction(storeName, 'readonly');
-                    const store = tx.objectStore(storeName);
-                    const request = store.get(key);
-                    request.onsuccess = () => resolve(request.result);
-                    request.onerror = (e) => reject(e.target.error);
-                });
-            },
-
-            async update(storeName, data) {
-                return new Promise((resolve, reject) => {
-                    const tx = this.db.transaction(storeName, 'readwrite');
-                    const store = tx.objectStore(storeName);
-                    const request = store.put(data);
-                    request.onsuccess = () => resolve(request.result);
-                    request.onerror = (e) => reject(e.target.error);
-                });
-            },
-
-            async delete(storeName, key) {
-                return new Promise((resolve, reject) => {
-                    const tx = this.db.transaction(storeName, 'readwrite');
-                    const store = tx.objectStore(storeName);
-                    const request = store.delete(key);
-                    request.onsuccess = () => resolve();
-                    request.onerror = (e) => reject(e.target.error);
-                });
-            },
-
-            async getAll(storeName) {
-                return new Promise((resolve, reject) => {
-                    const tx = this.db.transaction(storeName, 'readonly');
-                    const store = tx.objectStore(storeName);
-                    const request = store.getAll();
-                    request.onsuccess = () => resolve(request.result);
-                    request.onerror = (e) => reject(e.target.error);
-                });
-            },
-
-            async getByIndex(storeName, indexName, value) {
-                return new Promise((resolve, reject) => {
-                    const tx = this.db.transaction(storeName, 'readonly');
-                    const store = tx.objectStore(storeName);
-                    const index = store.index(indexName);
-                    const request = index.get(value);
-                    request.onsuccess = () => resolve(request.result);
-                    request.onerror = (e) => reject(e.target.error);
-                });
-            },
-
-            async clear(storeName) {
-                return new Promise((resolve, reject) => {
-                    const tx = this.db.transaction(storeName, 'readwrite');
-                    const store = tx.objectStore(storeName);
-                    const request = store.clear();
-                    request.onsuccess = () => resolve();
-                    request.onerror = (e) => reject(e.target.error);
-                });
-            }
-        };
-
-        /* ============================================
-           AUTH MODULE - نظام المصادقة
-           ============================================ */
-        const Auth = {
-            SESSION_DURATION: 30 * 24 * 60 * 60 * 1000, // 30 يوم
-            currentUser: null,
-
-            async generateToken() {
-                const array = new Uint8Array(16);
-                crypto.getRandomValues(array);
-                return 'KRATOS-' + Array.from(array).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 12).toUpperCase();
-            },
-
-            async registerUser(userData) {
-                const token = await this.generateToken();
-                const now = Date.now();
-                
-                const user = {
-                    telegramId: userData.telegramId,
-                    username: userData.username || userData.telegramId,
-                    displayName: userData.displayName || userData.username,
-                    authToken: token,
-                    email: userData.email || '',
-                    bio: userData.bio || '',
-                    avatar: userData.avatar || '',
-                    phone: userData.phone || '',
-                    language: userData.language || 'ar',
-                    role: userData.role || 'user',
-                    createdAt: now,
-                    lastLogin: now,
-                    loginCount: 1,
-                    profileComplete: false,
-                    settings: {
-                        notifications: true,
-                        theme: 'dark',
-                        language: 'ar'
-                    },
-                    stats: {
-                        sessionsCount: 0,
-                        messagesSent: 0,
-                        lastActive: now
-                    }
-                };
-
-                await Database.add(Database.STORES.USERS, user);
-                await this.createSession(user.telegramId);
-                await Database.add(Database.STORES.ACTIVITY, {
-                    telegramId: user.telegramId,
-                    action: 'register',
-                    timestamp: now,
-                    details: 'تم إنشاء حساب جديد'
-                });
-
-                return user;
-            },
-
-            async createSession(telegramId) {
-                const sessionId = await this.generateToken();
-                const session = {
-                    id: sessionId,
-                    telegramId: telegramId,
-                    createdAt: Date.now(),
-                    expiresAt: Date.now() + this.SESSION_DURATION,
-                    userAgent: navigator.userAgent,
-                    ip: 'local'
-                };
-                await Database.add(Database.STORES.SESSIONS, session);
-                localStorage.setItem('kratos_session', JSON.stringify({
-                    id: sessionId,
-                    telegramId: telegramId
-                }));
-                return session;
-            },
-
-            async loginWithToken(token) {
-                const user = await Database.getByIndex(Database.STORES.USERS, 'token', token);
-                if (!user) throw new Error('رمز التفعيل غير صالح');
-
-                user.lastLogin = Date.now();
-                user.loginCount = (user.loginCount || 0) + 1;
-                await Database.update(Database.STORES.USERS, user);
-
-                await this.createSession(user.telegramId);
-                await Database.add(Database.STORES.ACTIVITY, {
-                    telegramId: user.telegramId,
-                    action: 'login',
-                    timestamp: Date.now(),
-                    details: 'تسجيل دخول عبر رمز التفعيل'
-                });
-
-                this.currentUser = user;
-                return user;
-            },
-
-            async loginWithTelegram(telegramData) {
-                let user = await Database.get(Database.STORES.USERS, telegramData.telegramId);
-                
-                if (!user) {
-                    user = await this.registerUser(telegramData);
-                } else {
-                    user.lastLogin = Date.now();
-                    user.loginCount = (user.loginCount || 0) + 1;
-                    await Database.update(Database.STORES.USERS, user);
-                    await this.createSession(user.telegramId);
-                }
-
-                this.currentUser = user;
-                return user;
-            },
-
-            async checkSession() {
-                const sessionData = localStorage.getItem('kratos_session');
-                if (!sessionData) return null;
-
-                try {
-                    const session = JSON.parse(sessionData);
-                    const storedSession = await Database.get(Database.STORES.SESSIONS, session.id);
-                    
-                    if (!storedSession || storedSession.expiresAt < Date.now()) {
-                        await this.logout();
-                        return null;
-                    }
-
-                    const user = await Database.get(Database.STORES.USERS, session.telegramId);
-                    if (!user) {
-                        await this.logout();
-                        return null;
-                    }
-
-                    this.currentUser = user;
-                    return user;
-                } catch (e) {
-                    return null;
-                }
-            },
-
-            async logout() {
-                const sessionData = localStorage.getItem('kratos_session');
-                if (sessionData) {
-                    try {
-                        const session = JSON.parse(sessionData);
-                        await Database.delete(Database.STORES.SESSIONS, session.id);
-                        if (this.currentUser) {
-                            await Database.add(Database.STORES.ACTIVITY, {
-                                telegramId: this.currentUser.telegramId,
-                                action: 'logout',
-                                timestamp: Date.now(),
-                                details: 'تسجيل خروج'
-                            });
-                        }
-                    } catch (e) {}
-                }
-                localStorage.removeItem('kratos_session');
-                this.currentUser = null;
-            },
-
-            async updateProfile(updates) {
-                if (!this.currentUser) throw new Error('يجب تسجيل الدخول أولاً');
-                
-                const allowedFields = ['displayName', 'email', 'bio', 'phone', 'language', 'settings'];
-                const sanitized = {};
-                
-                for (const field of allowedFields) {
-                    if (updates[field] !== undefined) {
-                        sanitized[field] = updates[field];
-                    }
-                }
-
-                const updatedUser = { ...this.currentUser, ...sanitized };
-                updatedUser.profileComplete = !!(updatedUser.displayName && updatedUser.email);
-                updatedUser.updatedAt = Date.now();
-
-                await Database.update(Database.STORES.USERS, updatedUser);
-                this.currentUser = updatedUser;
-
-                await Database.add(Database.STORES.ACTIVITY, {
-                    telegramId: this.currentUser.telegramId,
-                    action: 'profile_update',
-                    timestamp: Date.now(),
-                    details: 'تم تحديث الملف الشخصي'
-                });
-
-                return updatedUser;
-            },
-
-            async getActivity(telegramId, limit = 20) {
-                const all = await Database.getAll(Database.STORES.ACTIVITY);
-                return all
-                    .filter(a => a.telegramId === telegramId)
-                    .sort((a, b) => b.timestamp - a.timestamp)
-                    .slice(0, limit);
-            }
-        };
-
-        /* ============================================
-           UI MODULE - واجهة المستخدم
-           ============================================ */
-        const UI = {
-            elements: {},
 
             init() {
-                this.elements = {
-                    loader: document.getElementById('loader'),
-                    loginScreen: document.getElementById('loginScreen'),
-                    loginForm: document.getElementById('loginForm'),
-                    tokenInput: document.getElementById('tokenInput'),
-                    headerActions: document.getElementById('headerActions'),
-                    welcomeMsg: document.getElementById('welcomeMsg'),
-                    profileModal: document.getElementById('profileModal'),
-                    profileModalBody: document.getElementById('profileModalBody'),
-                    closeProfileModal: document.getElementById('closeProfileModal'),
-                    toastContainer: document.getElementById('toastContainer'),
-                    header: document.getElementById('header')
-                };
-
-                this.bindEvents();
+                if (!this.get(this.KEYS.USERS)) this.set(this.KEYS.USERS, []);
+                if (!this.get(this.KEYS.SESSIONS)) this.set(this.KEYS.SESSIONS, []);
+                if (!this.get(this.KEYS.SETTINGS)) {
+                    this.set(this.KEYS.SETTINGS, {
+                        version: '1.0.0',
+                        maintenance: false,
+                        minAppVersion: '1.0.0'
+                    });
+                }
+                if (!this.get(this.KEYS.GAMES)) {
+                    this.set(this.KEYS.GAMES, [
+                        { id: 1, name: 'God of War', category: 'Action', rating: 9.5 },
+                        { id: 2, name: 'Elden Ring', category: 'RPG', rating: 9.8 },
+                        { id: 3, name: 'Cyberpunk 2077', category: 'RPG', rating: 9.0 },
+                        { id: 4, name: 'FIFA 2026', category: 'Sports', rating: 8.5 }
+                    ]);
+                }
+                if (!this.get(this.KEYS.VIP)) this.set(this.KEYS.VIP, []);
             },
 
-            bindEvents() {
-                this.elements.loginForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const token = this.elements.tokenInput.value.trim();
-                    if (token) this.handleLogin(token);
-                });
-
-                this.elements.closeProfileModal.addEventListener('click', () => this.closeProfileModal());
-                this.elements.profileModal.addEventListener('click', (e) => {
-                    if (e.target === this.elements.profileModal) this.closeProfileModal();
-                });
-
-                window.addEventListener('scroll', () => {
-                    if (window.scrollY > 50) {
-                        this.elements.header.classList.add('scrolled');
-                    } else {
-                        this.elements.header.classList.remove('scrolled');
-                    }
-                });
-
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') this.closeProfileModal();
-                });
-            },
-
-            async handleLogin(token) {
+            get(key) {
                 try {
-                    this.showToast('جاري التحقق من الرمز...', 'info');
-                    const user = await Auth.loginWithToken(token);
-                    this.showToast(`مرحباً ${user.displayName || user.username}!`, 'success');
-                    this.showMainApp(user);
-                } catch (error) {
-                    this.showToast(error.message, 'error');
-                }
+                    const data = localStorage.getItem(key);
+                    return data ? JSON.parse(data) : null;
+                } catch (e) { return null; }
             },
 
-            async simulateTelegramLogin() {
-                // محاكاة تسجيل الدخول عبر تلغرام (في الواقع يتم عبر Telegram Login Widget)
-                const telegramId = 'tg_' + Math.random().toString(36).substring(2, 10);
-                const username = 'user_' + Math.floor(Math.random() * 10000);
-                
-                const userData = {
-                    telegramId,
-                    username,
-                    displayName: username,
-                    email: '',
-                    bio: '',
-                    avatar: ''
-                };
-
+            set(key, value) {
                 try {
-                    this.showToast('جاري إنشاء الحساب...', 'info');
-                    const user = await Auth.loginWithTelegram(userData);
-                    
-                    // عرض رمز التفعيل للمستخدم
-                    const tokenMsg = `تم إنشاء حسابك بنجاح!\nرمز التفعيل الخاص بك: ${user.authToken}\nاحفظه للدخول لاحقاً`;
-                    this.showToast('تم إنشاء الحساب بنجاح!', 'success');
-                    alert(tokenMsg);
-                    
-                    this.showMainApp(user);
-                } catch (error) {
-                    this.showToast(error.message, 'error');
-                }
+                    localStorage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (e) { return false; }
             },
 
-            showMainApp(user) {
-                this.elements.loginScreen.classList.add('hidden');
-                this.elements.welcomeMsg.innerHTML = `مرحباً بك <span>${user.displayName || user.username}</span> في عالم Kratos Bot`;
-                this.updateHeaderActions(user);
-            },
-
-            updateHeaderActions(user) {
-                const initial = (user.displayName || user.username || 'U').charAt(0).toUpperCase();
+            createOrUpdateUser(userData) {
+                const users = this.get(this.KEYS.USERS) || [];
+                let user = users.find(u => u.telegramId === userData.telegramId);
                 
-                this.elements.headerActions.innerHTML = `
-                    <div class="user-badge" id="userBadge" title="الملف الشخصي">
-                        <div class="user-badge__avatar">${initial}</div>
-                        <span class="user-badge__name">${user.displayName || user.username}</span>
-                    </div>
-                    <button class="btn-logout" id="logoutBtn">خروج</button>
-                `;
-
-                document.getElementById('userBadge').addEventListener('click', () => this.openProfileModal());
-                document.getElementById('logoutBtn').addEventListener('click', () => this.handleLogout());
-            },
-
-            async handleLogout() {
-                if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
-                    await Auth.logout();
-                    this.showToast('تم تسجيل الخروج', 'success');
-                    setTimeout(() => location.reload(), 1000);
-                }
-            },
-
-            async openProfileModal() {
-                const user = Auth.currentUser;
-                if (!user) return;
-
-                const activity = await Auth.getActivity(user.telegramId, 5);
-                const initial = (user.displayName || user.username || 'U').charAt(0).toUpperCase();
-
-                this.elements.profileModalBody.innerHTML = `
-                    <div class="profile-view active">
-                        <div class="profile-avatar-large">${initial}</div>
-                        
-                        <div class="profile-stats">
-                            <div class="profile-stat">
-                                <div class="profile-stat__value">${user.loginCount || 1}</div>
-                                <div class="profile-stat__label">تسجيلات الدخول</div>
-                            </div>
-                            <div class="profile-stat">
-                                <div class="profile-stat__value">${user.stats?.sessionsCount || 0}</div>
-                                <div class="profile-stat__label">الجلسات</div>
-                            </div>
-                            <div class="profile-stat">
-                                <div class="profile-stat__value">${user.stats?.messagesSent || 0}</div>
-                                <div class="profile-stat__label">الرسائل</div>
-                            </div>
-                        </div>
-
-                        <form id="profileForm">
-                            <div class="form-group">
-                                <label class="form-label">الاسم المعروض</label>
-                                <input type="text" class="form-input" name="displayName" value="${user.displayName || user.username || ''}" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">البريد الإلكتروني</label>
-                                <input type="email" class="form-input" name="email" value="${user.email || ''}" dir="ltr">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">رقم الهاتف</label>
-                                <input type="tel" class="form-input" name="phone" value="${user.phone || ''}" dir="ltr">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">نبذة عنك</label>
-                                <textarea class="form-textarea" name="bio" rows="3">${user.bio || ''}</textarea>
-                            </div>
-
-                            <button type="submit" class="btn-primary">
-                                <span>💾 حفظ التغييرات</span>
-                            </button>
-                        </form>
-
-                        <div class="profile-info" style="margin-top: 20px;">
-                            <div class="profile-info__row">
-                                <span class="profile-info__label">معرف تلغرام</span>
-                                <span class="profile-info__value">${user.telegramId}</span>
-                            </div>
-                            <div class="profile-info__row">
-                                <span class="profile-info__label">اسم المستخدم</span>
-                                <span class="profile-info__value">${user.username || '-'}</span>
-                            </div>
-                            <div class="profile-info__row">
-                                <span class="profile-info__label">تاريخ الانضمام</span>
-                                <span class="profile-info__value">${new Date(user.createdAt).toLocaleDateString('ar-EG')}</span>
-                            </div>
-                            <div class="profile-info__row">
-                                <span class="profile-info__label">آخر دخول</span>
-                                <span class="profile-info__value">${new Date(user.lastLogin).toLocaleString('ar-EG')}</span>
-                            </div>
-                            <div class="profile-info__row">
-                                <span class="profile-info__label">رمز التفعيل</span>
-                                <span class="profile-info__value" style="color: var(--color-accent-green); font-family: monospace;">${user.authToken}</span>
-                            </div>
-                        </div>
-
-                        ${activity.length > 0 ? `
-                            <div class="profile-info">
-                                <div style="font-weight: 700; margin-bottom: 10px; color: var(--color-accent-green);">آخر النشاطات</div>
-                                ${activity.map(a => `
-                                    <div class="profile-info__row">
-                                        <span class="profile-info__label">${a.action}</span>
-                                        <span class="profile-info__value" style="font-size: 11px;">${new Date(a.timestamp).toLocaleString('ar-EG')}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-
-                document.getElementById('profileForm').addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.target);
-                    const updates = {
-                        displayName: formData.get('displayName'),
-                        email: formData.get('email'),
-                        phone: formData.get('phone'),
-                        bio: formData.get('bio')
+                if (user) {
+                    user.lastLogin = Date.now();
+                    user.loginCount = (user.loginCount || 0) + 1;
+                    if (userData.username) user.username = userData.username;
+                    if (userData.firstName) user.firstName = userData.firstName;
+                } else {
+                    user = {
+                        id: this.generateId(),
+                        telegramId: userData.telegramId,
+                        username: userData.username || 'user_' + userData.telegramId,
+                        firstName: userData.firstName || 'مستخدم',
+                        lastName: userData.lastName || '',
+                        languageCode: userData.languageCode || 'ar',
+                        createdAt: Date.now(),
+                        lastLogin: Date.now(),
+                        loginCount: 1,
+                        isVip: false,
+                        vipExpiry: null,
+                        status: 'active'
                     };
+                    users.push(user);
+                }
 
-                    try {
-                        await Auth.updateProfile(updates);
-                        this.showToast('تم حفظ التغييرات بنجاح', 'success');
-                        this.updateHeaderActions(Auth.currentUser);
-                        this.elements.welcomeMsg.innerHTML = `مرحباً بك <span>${Auth.currentUser.displayName}</span> في عالم Kratos Bot`;
-                    } catch (error) {
-                        this.showToast(error.message, 'error');
-                    }
-                });
-
-                this.elements.profileModal.classList.add('active');
+                this.set(this.KEYS.USERS, users);
+                this.set(this.KEYS.CURRENT_USER, user);
+                return user;
             },
 
-            closeProfileModal() {
-                this.elements.profileModal.classList.remove('active');
+            getCurrentUser() {
+                return this.get(this.KEYS.CURRENT_USER);
             },
 
-            showToast(message, type = 'info') {
-                const icons = {
-                    success: '✓',
-                    error: '✕',
-                    warning: '⚠',
-                    info: ''
+            clearCurrentUser() {
+                localStorage.removeItem(this.KEYS.CURRENT_USER);
+            },
+
+            getStats() {
+                const users = this.get(this.KEYS.USERS) || [];
+                const vip = this.get(this.KEYS.VIP) || [];
+                return {
+                    totalUsers: users.length,
+                    activeToday: users.filter(u => Date.now() - u.lastLogin < 86400000).length,
+                    totalLogins: users.reduce((sum, u) => sum + (u.loginCount || 0), 0),
+                    vipUsers: vip.length
                 };
+            },
 
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                toast.innerHTML = `
-                    <span class="toast__icon">${icons[type]}</span>
-                    <span>${message}</span>
-                `;
-
-                this.elements.toastContainer.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.style.animation = 'slideOut 0.3s ease forwards';
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
+            generateId() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
             }
         };
 
         /* ============================================
-           APP INITIALIZATION
+           AUTH MODULE
            ============================================ */
-        const App = {
-            async init() {
-                try {
-                    await Database.init();
-                    UI.init();
+        const Auth = {
+            init() {
+                // Check if running inside Telegram
+                if (!tg || !tg.initData) {
+                    this.blockAccess();
+                    return false;
+                }
 
-                    // إخفاء الـ loader
+                // Verify initData (basic check)
+                try {
+                    const user = tg.initDataUnsafe?.user;
+                    if (!user) {
+                        this.blockAccess();
+                        return false;
+                    }
+
+                    // Store user in database
+                    const dbUser = Database.createOrUpdateUser({
+                        telegramId: user.id.toString(),
+                        username: user.username,
+                        firstName: user.first_name,
+                        lastName: user.last_name,
+                        languageCode: user.language_code
+                    });
+
+                    this.updateUI(dbUser);
+                    return true;
+                } catch (e) {
+                    console.error('Auth error:', e);
+                    this.blockAccess();
+                    return false;
+                }
+            },
+
+            blockAccess() {
+                document.getElementById('blockedScreen').classList.remove('hidden');
+                document.getElementById('loader').classList.add('hidden');
+            },
+
+            updateUI(user) {
+                const displayName = user.username || user.firstName || 'مستخدم';
+                document.getElementById('userName').textContent = displayName;
+                document.getElementById('userAvatar').textContent = (user.firstName || 'K').charAt(0).toUpperCase();
+                document.getElementById('welcomeText').textContent = `مرحباً ${displayName}`;
+            }
+        };
+
+        /* ============================================
+           UI MODULES
+           ============================================ */
+        const Loader = {
+            init() {
+                window.addEventListener('load', () => {
                     setTimeout(() => {
                         document.getElementById('loader').classList.add('hidden');
                     }, 1000);
+                });
+            }
+        };
 
-                    // التحقق من الجلسة
-                    const user = await Auth.checkSession();
-                    
-                    if (user) {
-                        UI.showMainApp(user);
-                    } else {
-                        // إظهار شاشة تسجيل الدخول
-                        document.getElementById('loginScreen').classList.remove('hidden');
-                        
-                        // ربط زر تلغرام
-                        document.querySelector('.btn-telegram-large').addEventListener('click', (e) => {
-                            e.preventDefault();
-                            UI.simulateTelegramLogin();
-                        });
+        const Toast = {
+            show(message, type = 'success', duration = 3000) {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-20px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, duration);
+            }
+        };
+
+        const Modal = {
+            open(title, content) {
+                document.getElementById('modalTitle').textContent = title;
+                document.getElementById('modalBody').innerHTML = content;
+                document.getElementById('modalOverlay').classList.add('active');
+            },
+
+            close() {
+                document.getElementById('modalOverlay').classList.remove('active');
+            },
+
+            init() {
+                document.getElementById('modalClose').addEventListener('click', () => this.close());
+                document.getElementById('modalOverlay').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) this.close();
+                });
+            }
+        };
+
+        /* ============================================
+           COMMANDS HANDLER
+           ============================================ */
+        const Commands = {
+            handlers: {
+                '/start': () => {
+                    const user = Database.getCurrentUser();
+                    Modal.open('مرحباً بك!', `
+                        <div class="profile-card">
+                            <div class="profile-avatar">${(user.firstName || 'K').charAt(0).toUpperCase()}</div>
+                            <h2 class="profile-name">${user.firstName || user.username}</h2>
+                            <p class="profile-id">ID: ${user.telegramId}</p>
+                            <p>مرحباً بك في Kratos Bot! 👋</p>
+                            <p>أنا مساعدك الذكي في عالم الألعاب. استخدم الأزرار في الأسفل للتنقل.</p>
+                        </div>
+                    `);
+                },
+
+                '/profile': () => {
+                    const user = Database.getCurrentUser();
+                    const joinDate = new Date(user.createdAt).toLocaleDateString('ar', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    });
+                    const lastLogin = new Date(user.lastLogin).toLocaleString('ar');
+
+                    Modal.open('الملف الشخصي', `
+                        <div class="profile-card">
+                            <div class="profile-avatar">${(user.firstName || 'K').charAt(0).toUpperCase()}</div>
+                            <h2 class="profile-name">${user.firstName || user.username}</h2>
+                            <p class="profile-id">@${user.username || 'غير محدد'}</p>
+                            <div class="profile-info">
+                                <div class="profile-info__row">
+                                    <span class="profile-info__label">معرف تلغرام</span>
+                                    <span class="profile-info__value">${user.telegramId}</span>
+                                </div>
+                                <div class="profile-info__row">
+                                    <span class="profile-info__label">اللغة</span>
+                                    <span class="profile-info__value">${user.languageCode?.toUpperCase() || 'AR'}</span>
+                                </div>
+                                <div class="profile-info__row">
+                                    <span class="profile-info__label">تاريخ الانضمام</span>
+                                    <span class="profile-info__value">${joinDate}</span>
+                                </div>
+                                <div class="profile-info__row">
+                                    <span class="profile-info__label">آخر دخول</span>
+                                    <span class="profile-info__value">${lastLogin}</span>
+                                </div>
+                                <div class="profile-info__row">
+                                    <span class="profile-info__label">عدد الزيارات</span>
+                                    <span class="profile-info__value">${user.loginCount}</span>
+                                </div>
+                                <div class="profile-info__row">
+                                    <span class="profile-info__label">حالة VIP</span>
+                                    <span class="profile-info__value">${user.isVip ? '👑 نشط' : 'غير مفعل'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                },
+
+                '/stats': () => {
+                    const stats = Database.getStats();
+                    Modal.open('إحصائيات الموقع', `
+                        <p>إحصائيات Kratos Bot حتى الآن:</p>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-card__value">${stats.totalUsers}</div>
+                                <div class="stat-card__label">إجمالي المستخدمين</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-card__value">${stats.activeToday}</div>
+                                <div class="stat-card__label">نشط اليوم</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-card__value">${stats.totalLogins}</div>
+                                <div class="stat-card__label">إجمالي الدخول</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-card__value">${stats.vipUsers}</div>
+                                <div class="stat-card__label">مستخدمي VIP</div>
+                            </div>
+                        </div>
+                    `);
+                },
+
+                '/games': () => {
+                    const games = Database.get(Database.KEYS.GAMES) || [];
+                    const gamesList = games.map(g => `
+                        <div class="command-item">
+                            <div>
+                                <div class="command-item__name">${g.name}</div>
+                                <div class="command-item__desc">${g.category} • تقييم: ${g.rating}/10</div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    Modal.open('الألعاب المتاحة', `
+                        <p>قائمة الألعاب المدعومة:</p>
+                        ${gamesList}
+                        <p style="margin-top: 1rem; color: var(--color-accent-green);">
+                            💡 قريباً: المزيد من الألعاب والميزات!
+                        </p>
+                    `);
+                },
+
+                '/help': () => {
+                    Modal.open('المساعدة والأوامر', `
+                        <h3>📋 قائمة الأوامر المتاحة:</h3>
+                        <div class="command-item">
+                            <div>
+                                <div class="command-item__name">/start</div>
+                                <div class="command-item__desc">الصفحة الرئيسية وترحيب</div>
+                            </div>
+                        </div>
+                        <div class="command-item">
+                            <div>
+                                <div class="command-item__name">/profile</div>
+                                <div class="command-item__desc">عرض الملف الشخصي</div>
+                            </div>
+                        </div>
+                        <div class="command-item">
+                            <div>
+                                <div class="command-item__name">/stats</div>
+                                <div class="command-item__desc">إحصائيات الموقع</div>
+                            </div>
+                        </div>
+                        <div class="command-item">
+                            <div>
+                                <div class="command-item__name">/games</div>
+                                <div class="command-item__desc">قائمة الألعاب</div>
+                            </div>
+                        </div>
+                        <div class="command-item">
+                            <div>
+                                <div class="command-item__name">/vip</div>
+                                <div class="command-item__desc">اشتراك VIP المميزات</div>
+                            </div>
+                        </div>
+                        <div class="command-item">
+                            <div>
+                                <div class="command-item__name">/settings</div>
+                                <div class="command-item__desc">إعدادات التطبيق</div>
+                            </div>
+                        </div>
+                        <div class="command-item">
+                            <div>
+                                <div class="command-item__name">/support</div>
+                                <div class="command-item__desc">الدعم الفني</div>
+                            </div>
+                        </div>
+                        <div class="command-item">
+                            <div>
+                                <div class="command-item__name">/help</div>
+                                <div class="command-item__desc">عرض المساعدة</div>
+                            </div>
+                        </div>
+                    `);
+                },
+
+                '/settings': () => {
+                    const user = Database.getCurrentUser();
+                    Modal.open('الإعدادات', `
+                        <h3>⚙️ إعدادات الحساب</h3>
+                        <div class="command-item" onclick="Commands.handlers.toggleNotifications()">
+                            <div>
+                                <div class="command-item__name">الإشعارات</div>
+                                <div class="command-item__desc">تفعيل/إيقاف الإشعارات</div>
+                            </div>
+                        </div>
+                        <div class="command-item" onclick="Commands.handlers.changeLanguage()">
+                            <div>
+                                <div class="command-item__name">اللغة</div>
+                                <div class="command-item__desc">${user.languageCode?.toUpperCase() || 'AR'}</div>
+                            </div>
+                        </div>
+                        <div class="command-item" onclick="Commands.handlers.clearCache()">
+                            <div>
+                                <div class="command-item__name">مسح البيانات</div>
+                                <div class="command-item__desc">مسح البيانات المحلية</div>
+                            </div>
+                        </div>
+                        <div class="command-item" onclick="Commands.handlers.about()">
+                            <div>
+                                <div class="command-item__name">حول التطبيق</div>
+                                <div class="command-item__desc">معلومات عن Kratos Bot</div>
+                            </div>
+                        </div>
+                    `);
+                },
+
+                '/vip': () => {
+                    const user = Database.getCurrentUser();
+                    Modal.open('اشتراك VIP ', `
+                        <div style="text-align: center; padding: 1rem 0;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">👑</div>
+                            <h3 style="color: var(--color-accent-green); margin-bottom: 1rem;">
+                                ${user.isVip ? 'أنت عضو VIP!' : 'ترقية إلى VIP'}
+                            </h3>
+                            <p>${user.isVip 
+                                ? 'اشتراكك نشط حتى: ' + (user.vipExpiry ? new Date(user.vipExpiry).toLocaleDateString('ar') : 'غير محدد')
+                                : 'احصل على ميزات حصرية ومحتوى مميز!'}</p>
+                            
+                            <h3 style="margin-top: 1.5rem; color: var(--color-accent-green);">مميزات VIP:</h3>
+                            <ul style="text-align: right; margin-top: 1rem;">
+                                <li>✅ محتوى حصري غير متاح للمستخدمين العاديين</li>
+                                <li>✅ أولوية في الدعم الفني</li>
+                                <li>✅ ألعاب وميزات متقدمة</li>
+                                <li>✅ إزالة الإعلانات</li>
+                                <li>✅ تحديثات مبكرة</li>
+                            </ul>
+
+                            ${!user.isVip ? `
+                                <button class="command-btn" style="margin-top: 1.5rem; width: 100%; padding: 1rem;" onclick="Commands.handlers.subscribeVip()">
+                                    <span class="command-btn__icon">💎</span>
+                                    <span class="command-btn__label" style="font-size: 14px;">اشترك الآن - $9.99/شهر</span>
+                                </button>
+                            ` : ''}
+                        </div>
+                    `);
+                },
+
+                '/support': () => {
+                    Modal.open('الدعم الفني', `
+                        <div style="text-align: center; padding: 1rem 0;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
+                            <h3 style="color: var(--color-accent-green);">تواصل معنا</h3>
+                            <p>فريق الدعم متاح 24/7 لمساعدتك</p>
+                            
+                            <div class="command-item" style="margin-top: 1.5rem;" onclick="window.open('https://t.me/KratosChancyBot', '_blank')">
+                                <div>
+                                    <div class="command-item__name"> بوت تلغرام</div>
+                                    <div class="command-item__desc">@KratosChancyBot</div>
+                                </div>
+                            </div>
+                            <div class="command-item" onclick="window.open('https://t.me/KratosSupport', '_blank')">
+                                <div>
+                                    <div class="command-item__name"> قناة الدعم</div>
+                                    <div class="command-item__desc">انضم لقناة الدعم</div>
+                                </div>
+                            </div>
+                            <div class="command-item" onclick="Commands.handlers.sendFeedback()">
+                                <div>
+                                    <div class="command-item__name">️ إرسال ملاحظة</div>
+                                    <div class="command-item__desc">أخبرنا برأيك</div>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                },
+
+                toggleNotifications: () => {
+                    Toast.show('تم تحديث إعدادات الإشعارات', 'success');
+                },
+
+                changeLanguage: () => {
+                    Toast.show('اللغة: العربية', 'success');
+                },
+
+                clearCache: () => {
+                    if (confirm('هل أنت متأكد من مسح جميع البيانات المحلية؟')) {
+                        localStorage.clear();
+                        Toast.show('تم مسح البيانات', 'warning');
+                        setTimeout(() => location.reload(), 1500);
                     }
-                } catch (error) {
-                    console.error('فشل تهيئة التطبيق:', error);
-                    UI.showToast('حدث خطأ في تهيئة التطبيق', 'error');
+                },
+
+                about: () => {
+                    Modal.open('حول Kratos Bot', `
+                        <div style="text-align: center;">
+                            <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" style="width: 80px; margin: 0 auto 1rem;">
+                            <h3 style="color: var(--color-accent-green);">Kratos Bot v1.0.0</h3>
+                            <p>مساعدك الذكي في عالم الألعاب</p>
+                            <p style="margin-top: 1rem;">صُنع بواسطة Chancy © 2026</p>
+                        </div>
+                    `);
+                },
+
+                subscribeVip: () => {
+                    const user = Database.getCurrentUser();
+                    user.isVip = true;
+                    user.vipExpiry = Date.now() + (30 * 24 * 60 * 60 * 1000); // 30 days
+                    
+                    const users = Database.get(Database.KEYS.USERS);
+                    const idx = users.findIndex(u => u.id === user.id);
+                    if (idx !== -1) {
+                        users[idx] = user;
+                        Database.set(Database.KEYS.USERS, users);
+                        Database.set(Database.KEYS.CURRENT_USER, user);
+                        
+                        const vip = Database.get(Database.KEYS.VIP);
+                        vip.push({ userId: user.id, subscribedAt: Date.now(), expiresAt: user.vipExpiry });
+                        Database.set(Database.KEYS.VIP, vip);
+                    }
+                    
+                    Toast.show('🎉 تم تفعيل اشتراك VIP!', 'success');
+                    setTimeout(() => Commands.handlers.vip(), 1500);
+                },
+
+                sendFeedback: () => {
+                    const feedback = prompt('اكتب ملاحظتك أو اقتراحك:');
+                    if (feedback) {
+                        Toast.show('تم إرسال ملاحظتك بنجاح! شكراً لك', 'success');
+                    }
+                }
+            },
+
+            execute(command) {
+                const handler = this.handlers[command];
+                if (handler) {
+                    handler();
+                    // Send to Telegram bot
+                    if (tg) {
+                        tg.sendData(JSON.stringify({ command, timestamp: Date.now() }));
+                    }
+                } else {
+                    Toast.show('أمر غير معروف: ' + command, 'error');
                 }
             }
         };
 
-        // تشغيل التطبيق
-        document.addEventListener('DOMContentLoaded', () => App.init());
+        /* ============================================
+           INITIALIZATION
+           ============================================ */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize database
+            Database.init();
+
+            // Initialize Telegram Web App
+            if (tg) {
+                tg.ready();
+                tg.expand();
+                
+                // Set header color
+                tg.setHeaderColor('#0a1628');
+                tg.setBackgroundColor('#0a1628');
+                
+                // Enable closing confirmation
+                tg.enableClosingConfirmation();
+            }
+
+            // Initialize auth (checks Telegram)
+            const isAuth = Auth.init();
+
+            // Initialize UI
+            Loader.init();
+            Modal.init();
+
+            // Bind command buttons
+            document.querySelectorAll('.command-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const command = btn.getAttribute('data-command');
+                    Commands.execute(command);
+                });
+            });
+
+            // Show welcome message
+            if (isAuth) {
+                setTimeout(() => {
+                    const user = Database.getCurrentUser();
+                    Toast.show(`مرحباً ${user.firstName || user.username}! 👋`, 'success');
+                }, 1500);
+            }
+        });
     </script>
 </body>
 </html>
 
-
-
-              <script>
-                              // في بوت تلغرام (Python/Node.js):
-// عند /start، يولد البوت رمزاً ويحفظه في قاعدة البيانات
-// المستخدم يدخل الرمز في الموقع للمصادقة
-
-
-              </script>
-                        </body>
-                        </html>
-                    
