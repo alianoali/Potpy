@@ -481,6 +481,7 @@
             transition: all var(--transition-base);
             margin-bottom: 4px;
             border: 1px solid transparent;
+            position: relative;
         }
         .account-item:hover {
             background: rgba(127, 255, 0, 0.1);
@@ -536,6 +537,23 @@
             background: linear-gradient(135deg, var(--color-admin-gold), var(--color-admin-gold-dark));
             color: #1a1a1a;
             animation: pulseGlow 2s ease-in-out infinite;
+        }
+        .account-item__delete {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #ffaaaa;
+            border-radius: var(--radius-sm);
+            padding: 4px 10px;
+            font-size: var(--text-xs);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            margin-right: auto;
+            white-space: nowrap;
+        }
+        .account-item__delete:hover {
+            background: rgba(239, 68, 68, 0.4);
+            color: white;
         }
 
         .webapp {
@@ -1560,6 +1578,22 @@
             color: var(--color-text-muted);
         }
 
+        .reset-stats-btn {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.5);
+            color: var(--color-warning);
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            padding: var(--space-sm) var(--space-lg);
+            font-size: var(--text-sm);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        .reset-stats-btn:hover {
+            background: rgba(245, 158, 11, 0.35);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+        }
+
         @media (max-width: 768px) {
             .user-chip__name {
                 display: none;
@@ -1736,37 +1770,15 @@
         </header>
 
         <main class="app-main">
-            <!-- HOME PAGE -->
+            <!-- HOME PAGE (الملف الشخصي مدمج بالكامل هنا) -->
             <div class="page-view active" id="page-home">
                 <div class="page-header">
                     <h1 class="page-title">مرحباً، <span id="welcomeName">مستخدم</span> 👋</h1>
-                    <p class="page-subtitle" id="welcomeSubtitle">إليك نظرة عامة على حسابك</p>
+                    <p class="page-subtitle" id="welcomeSubtitle">الملف الشخصي الكامل وإحصائيات النشاط</p>
                 </div>
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-card__icon">🎮</div>
-                        <div class="stat-card__value" id="statSessions">0</div>
-                        <div class="stat-card__label">جلسات اللعب</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-card__icon">⏱️</div>
-                        <div class="stat-card__value" id="statHours">0</div>
-                        <div class="stat-card__label">ساعات نشطة</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-card__icon">🏆</div>
-                        <div class="stat-card__value" id="statAchievements">0</div>
-                        <div class="stat-card__label">إنجازات</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-card__icon">⭐</div>
-                        <div class="stat-card__value" id="statLevel">1</div>
-                        <div class="stat-card__label">المستوى</div>
-                    </div>
-                </div>
-
-                <div class="profile-card">
+                <!-- بطاقة الملف الشخصي الكاملة -->
+                <div class="profile-card" id="homeProfileCard">
                     <div class="profile-header">
                         <div class="profile-avatar" id="homeAvatar">K</div>
                         <div class="profile-info">
@@ -1778,52 +1790,20 @@
                             </div>
                         </div>
                         <div class="profile-actions">
-                            <button class="btn btn-primary" onclick="App.navigate('profile')">
-                                👤 عرض الملف الشخصي
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <h3 style="font-family: var(--font-tech); margin-bottom: var(--space-md);">📋 آخر النشاطات</h3>
-                <div class="activity-list" id="recentActivity">
-                    <div class="empty-state">
-                        <div class="empty-state__icon">📭</div>
-                        <div class="empty-state__title">لا توجد نشاطات بعد</div>
-                        <div class="empty-state__text">ابدأ اللعب لتظهر نشاطاتك هنا</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PROFILE PAGE -->
-            <div class="page-view" id="page-profile">
-                <div class="page-header">
-                    <h1 class="page-title">الملف <span>الشخصي</span></h1>
-                    <p class="page-subtitle">إدارة معلومات حسابك</p>
-                </div>
-
-                <div class="profile-card">
-                    <div class="profile-header">
-                        <div class="profile-avatar" id="profileAvatar">K</div>
-                        <div class="profile-info">
-                            <div class="profile-name" id="profileName">مستخدم</div>
-                            <div class="profile-username" id="profileUsername">@user</div>
-                            <div class="profile-meta">
-                                <div class="profile-meta-item">🆔 <span id="profileId">-</span></div>
-                                <div class="profile-meta-item">📅 انضم في <span id="profileJoinDate">-</span></div>
-                            </div>
-                        </div>
-                        <div class="profile-actions">
                             <button class="btn btn-primary" onclick="App.openEditProfile()">
-                                ✏️ تعديل
+                                ✏️ تعديل الملف
                             </button>
                             <button class="btn btn-secondary" onclick="App.exportData()">
                                 📥 تصدير
                             </button>
+                            <button class="reset-stats-btn" onclick="App.resetStats()" title="تصفير جلسات اللعب، الساعات، المستوى والإنجازات">
+                                🔄 تصفير الإحصائيات
+                            </button>
                         </div>
                     </div>
 
-                    <div class="profile-details">
+                    <!-- تفاصيل الملف الشخصي (كانت في صفحة profile) -->
+                    <div class="profile-details" id="homeProfileDetails">
                         <div class="detail-item">
                             <div class="detail-label">نوع الحساب</div>
                             <div class="detail-value" id="detailAccountType">-</div>
@@ -1874,6 +1854,7 @@
                         </div>
                     </div>
 
+                    <!-- إجراءات الحساب (محولة من صفحة profile) -->
                     <div class="account-actions">
                         <div class="account-actions__title">⚙️ إجراءات الحساب</div>
                         <div class="account-actions__list">
@@ -1912,7 +1893,40 @@
                     </div>
                 </div>
 
-                <h3 style="font-family: var(--font-tech); margin-bottom: var(--space-md);">📜 سجل النشاطات الكامل</h3>
+                <!-- الإحصائيات -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card__icon">🎮</div>
+                        <div class="stat-card__value" id="statSessions">0</div>
+                        <div class="stat-card__label">جلسات اللعب</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icon">⏱️</div>
+                        <div class="stat-card__value" id="statHours">0</div>
+                        <div class="stat-card__label">ساعات نشطة</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icon">🏆</div>
+                        <div class="stat-card__value" id="statAchievements">0</div>
+                        <div class="stat-card__label">إنجازات</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icon">⭐</div>
+                        <div class="stat-card__value" id="statLevel">1</div>
+                        <div class="stat-card__label">المستوى</div>
+                    </div>
+                </div>
+
+                <h3 style="font-family: var(--font-tech); margin-bottom: var(--space-md);">📋 آخر النشاطات</h3>
+                <div class="activity-list" id="recentActivity">
+                    <div class="empty-state">
+                        <div class="empty-state__icon">📭</div>
+                        <div class="empty-state__title">لا توجد نشاطات بعد</div>
+                        <div class="empty-state__text">ابدأ اللعب لتظهر نشاطاتك هنا</div>
+                    </div>
+                </div>
+
+                <h3 style="font-family: var(--font-tech); margin: var(--space-xl) 0 var(--space-md);">📜 سجل النشاطات الكامل</h3>
                 <div class="activity-list" id="fullActivity">
                     <div class="empty-state">
                         <div class="empty-state__icon">📭</div>
@@ -1921,7 +1935,7 @@
                 </div>
             </div>
 
-            <!-- ADMIN PANEL PAGE -->
+            <!-- ADMIN PANEL PAGE (تبقى كما هي) -->
             <div class="page-view" id="page-admin">
                 <div class="admin-panel-header">
                     <div class="admin-panel-header__content">
@@ -2031,10 +2045,6 @@
                 <span class="bottom-nav__icon">🏠</span>
                 <span>الرئيسية</span>
             </button>
-            <button class="bottom-nav__item" data-page="profile" onclick="App.navigate('profile')">
-                <span class="bottom-nav__icon">👤</span>
-                <span>الملف</span>
-            </button>
             <button class="bottom-nav__item admin-nav-item" data-page="admin" id="bottomAdminNav" style="display:none;" onclick="App.navigate('admin')">
                 <span class="bottom-nav__icon">🛡️</span>
                 <span>التحكم</span>
@@ -2074,7 +2084,7 @@
         </div>
     </div>
 
-    <!-- Account Switcher Modal -->
+    <!-- Account Switcher Modal (مع أزرار حذف لكل حساب) -->
     <div class="modal-overlay" id="accountSwitcherModal">
         <div class="modal">
             <div class="modal-header">
@@ -2148,10 +2158,10 @@
            ============================================ */
         const DB = {
             KEYS: {
-                USERS: 'kratos_users_v5',
-                CURRENT_USER_ID: 'kratos_current_user_id_v5',
-                SETTINGS: 'kratos_settings_v5',
-                ADMIN_LOGS: 'kratos_admin_logs_v5'
+                USERS: 'kratos_users_v6',
+                CURRENT_USER_ID: 'kratos_current_user_id_v6',
+                SETTINGS: 'kratos_settings_v6',
+                ADMIN_LOGS: 'kratos_admin_logs_v6'
             },
 
             init() {
@@ -2363,14 +2373,12 @@
                             if (userStr) {
                                 this.user = JSON.parse(decodeURIComponent(userStr));
                                 this.isBot = this.user.is_bot || false;
-
                                 console.log('✅ Telegram User Detected:', {
                                     id: this.user.id,
                                     username: this.user.username,
                                     first_name: this.user.first_name,
                                     is_bot: this.isBot
                                 });
-
                                 return true;
                             }
                         }
@@ -2378,14 +2386,12 @@
                         console.error('❌ Error parsing Telegram initData:', e);
                     }
                 }
-
                 console.log('⚠️ Telegram WebApp SDK غير متوفر أو initData غير موجود');
                 return false;
             },
 
             getUserData() {
                 if (!this.user) return null;
-
                 return {
                     telegramId: 'tg_' + this.user.id,
                     telegramUserId: this.user.id,
@@ -2498,10 +2504,6 @@
            ============================================ */
         const AdminPanel = {
             init() {
-                this.bindAdminEvents();
-            },
-
-            bindAdminEvents() {
                 document.getElementById('adminBroadcastForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.sendBroadcast();
@@ -2763,7 +2765,7 @@
                 App.closeModal('adminBroadcastModal');
                 Toast.show('📢 تم إرسال الإشعار لجميع المستخدمين', 'success');
                 this.renderAdminPanel();
-                App.renderActivity();
+                App.renderAll();
 
                 document.getElementById('broadcastTitle').value = '';
                 document.getElementById('broadcastMessage').value = '';
@@ -2825,53 +2827,37 @@
                 const currentUserId = DB.getCurrentUserId();
                 const currentUser = currentUserId ? DB.getUserByTgId(currentUserId) : null;
 
-                console.log('🔐 Auth Check:', {
-                    isTelegram,
-                    tgUserData: tgUserData ? tgUserData.telegramId : null,
-                    currentUserId,
-                    currentUser: currentUser ? currentUser.username : null
-                });
-
                 if (tgUserData) {
                     const newTgId = tgUserData.telegramId;
 
                     if (currentUser && currentUser.telegramId === newTgId) {
-                        console.log('✅ نفس المستخدم - تحديث الجلسة');
                         DB.updateUser(newTgId, { lastLogin: Date.now() });
                         this.enterApp(currentUser);
                     } else if (currentUser && currentUser.telegramId !== newTgId) {
-                        console.log('🔄 مستخدم مختلف! تبديل الحساب');
                         const newUser = DB.upsertUser(tgUserData);
                         DB.setCurrentUserId(newUser.telegramId);
-
                         DB.addActivity(newUser.telegramId, {
                             type: 'success',
                             title: 'تبديل حساب تلقائي',
                             description: `تم التبديل من حساب ${currentUser.username}`
                         });
-
                         this.showAccountSwitchInfo(currentUser, newUser);
                         setTimeout(() => this.enterApp(newUser), 1500);
                     } else {
-                        console.log('🆕 مستخدم جديد - إنشاء حساب');
                         const newUser = DB.upsertUser(tgUserData);
                         DB.setCurrentUserId(newUser.telegramId);
-
                         DB.addActivity(newUser.telegramId, {
                             type: 'success',
                             title: 'تسجيل دخول أول',
                             description: 'تم إنشاء الحساب بنجاح'
                         });
-
                         this.showAutoLoginBanner(tgUserData);
                         setTimeout(() => this.enterApp(newUser), 1500);
                     }
                 } else {
                     if (currentUser) {
-                        console.log('📱 دخول بالمستخدم المخزن (وضع الاختبار)');
                         this.enterApp(currentUser);
                     } else {
-                        console.log('🔐 عرض شاشة تسجيل الدخول');
                         this.showAuthGate();
                         this.showSimulatedAccounts();
                     }
@@ -2892,7 +2878,6 @@
                 const banner = document.getElementById('autoLoginBanner');
                 const title = document.getElementById('autoLoginTitle');
                 const text = document.getElementById('autoLoginText');
-
                 banner.style.display = 'block';
                 title.textContent = userData.isBot ? '🤖 تم الكشف عن بوت تلغرام' : '👤 تم الكشف عن حساب تلغرام';
                 text.textContent = `مرحباً ${userData.fullName || userData.username}! جاري تحميل بياناتك...`;
@@ -2902,7 +2887,6 @@
                 const banner = document.getElementById('autoLoginBanner');
                 const title = document.getElementById('autoLoginTitle');
                 const text = document.getElementById('autoLoginText');
-
                 banner.style.display = 'block';
                 title.textContent = '🔄 تم تبديل الحساب تلقائياً';
                 text.textContent = `من: ${oldUser.username} → إلى: ${newUser.username}`;
@@ -2912,7 +2896,6 @@
                 const switcher = document.getElementById('accountSwitcher');
                 const list = document.getElementById('accountsList');
                 const count = document.getElementById('accountsCount');
-
                 const allUsers = DB.getAllUsers();
 
                 if (allUsers.length > 0) {
@@ -2930,9 +2913,9 @@
                             </div>
                             ${isAdmin ? '<span class="account-item__badge account-item__badge--admin">مشرف</span>' : ''}
                             ${user.accountType === 'bot' ? '<span class="account-item__badge">BOT</span>' : ''}
+                            <button class="account-item__delete" onclick="event.stopPropagation(); Auth.deleteAccountFromList('${user.telegramId}')" title="حذف الحساب">🗑️</button>
                         </div>`;
                     }).join('');
-
                     switcher.style.display = 'block';
                 }
             },
@@ -2950,27 +2933,38 @@
                 }
             },
 
+            deleteAccountFromList(tgId) {
+                if (tgId === ADMIN_TELEGRAM_ID) {
+                    Toast.show('⛔ لا يمكن حذف حساب المشرف العام!', 'error');
+                    return;
+                }
+                const user = DB.getUserByTgId(tgId);
+                if (!user) return;
+                if (!confirm(`⚠️ هل أنت متأكد من حذف الحساب "${user.username}"؟\nسيتم حذف جميع بياناته.`)) return;
+                DB.deleteUser(tgId);
+                Toast.show(`🗑️ تم حذف الحساب ${user.username}`, 'warning');
+                this.showSimulatedAccounts();
+                if (DB.getCurrentUserId() === tgId) {
+                    DB.setCurrentUserId(null);
+                    setTimeout(() => location.reload(), 1000);
+                }
+            },
+
             async simulateLogin(accountNumber) {
                 const btn = document.getElementById('telegramLoginBtn');
                 btn.disabled = true;
                 btn.innerHTML = '<div class="spinner"></div><span>جاري تسجيل الدخول...</span>';
-
                 await new Promise(r => setTimeout(r, 1000));
-
                 const simulatedData = TelegramWebApp.getSimulatedData(accountNumber);
                 const user = DB.upsertUser(simulatedData);
                 DB.setCurrentUserId(user.telegramId);
-
                 DB.addActivity(user.telegramId, {
                     type: 'success',
                     title: 'تسجيل دخول (محاكاة)',
                     description: `حساب رقم ${accountNumber}`
                 });
-
                 btn.disabled = false;
-                btn.innerHTML =
-                    '<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>تسجيل الدخول عبر تلغرام</span>';
-
+                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>تسجيل الدخول عبر تلغرام</span>';
                 this.enterApp(user);
             },
 
@@ -2978,24 +2972,18 @@
                 const btn = document.getElementById('adminLoginBtn');
                 btn.disabled = true;
                 btn.innerHTML = '<div class="spinner"></div><span>جاري تسجيل دخول المشرف...</span>';
-
                 await new Promise(r => setTimeout(r, 1200));
-
                 const adminData = TelegramWebApp.getAdminSimulatedData();
                 const adminUser = DB.upsertUser(adminData);
                 DB.setCurrentUserId(adminUser.telegramId);
-
                 DB.addActivity(adminUser.telegramId, {
                     type: 'success',
                     title: '👑 تسجيل دخول المشرف',
                     description: 'تم الدخول إلى لوحة التحكم'
                 });
-
                 DB.addAdminLog({ action: 'admin_login', description: 'تسجيل دخول المشرف إلى لوحة التحكم' });
-
                 btn.disabled = false;
                 btn.innerHTML = '👑 <span>تسجيل دخول المشرف</span>';
-
                 this.enterApp(adminUser);
             },
 
@@ -3024,25 +3012,18 @@
                     document.getElementById('bottomAdminNav').style.display = 'flex';
                     document.getElementById('appHeader').classList.add('admin-active');
                     document.getElementById('userChip').classList.add('admin-chip');
-
-                    const greeting = '👑 مرحباً بك في لوحة تحكم المشرف، ' + (user.fullName || user.username) + '!';
-                    Toast.show(greeting, 'success', 5000);
+                    Toast.show('👑 مرحباً بك في لوحة تحكم المشرف، ' + (user.fullName || user.username) + '!', 'success', 5000);
                 } else {
                     document.getElementById('adminPanelBtn').style.display = 'none';
                     document.getElementById('bottomAdminNav').style.display = 'none';
                     document.getElementById('appHeader').classList.remove('admin-active');
                     document.getElementById('userChip').classList.remove('admin-chip');
-
-                    const greeting = user.accountType === 'bot' ?
-                        `مرحباً بالبوت ${user.fullName}!` :
-                        `مرحباً بعودتك، ${user.username}!`;
-                    Toast.show(greeting, 'success');
+                    Toast.show(user.accountType === 'bot' ? `مرحباً بالبوت ${user.fullName}!` : `مرحباً بعودتك، ${user.username}!`, 'success');
                 }
             },
 
             logout() {
                 if (!confirm('هل أنت متأكد من تسجيل الخروج من الحساب الحالي؟')) return;
-
                 const currentId = DB.getCurrentUserId();
                 if (currentId) {
                     DB.addActivity(currentId, {
@@ -3054,7 +3035,6 @@
                         DB.addAdminLog({ action: 'admin_logout', description: 'تسجيل خروج المشرف' });
                     }
                 }
-
                 DB.setCurrentUserId(null);
                 location.reload();
             },
@@ -3136,6 +3116,7 @@
 
                 const isAdmin = user.telegramId === ADMIN_TELEGRAM_ID || user.isAdmin === true;
 
+                // Header
                 document.getElementById('headerUserName').textContent = user.username;
                 const headerAvatar = document.getElementById('headerAvatar');
                 if (user.avatar) {
@@ -3144,11 +3125,13 @@
                     headerAvatar.textContent = user.username.charAt(0).toUpperCase();
                 }
 
+                // Welcome
                 document.getElementById('welcomeName').textContent = user.fullName || user.username;
                 document.getElementById('welcomeSubtitle').textContent = user.accountType === 'bot' ?
                     '🤖 حساب بوت تلغرام' :
-                    (isAdmin ? '👑 حساب المشرف العام - لديك صلاحيات كاملة' : 'إليك نظرة عامة على حسابك');
+                    (isAdmin ? '👑 حساب المشرف العام - لديك صلاحيات كاملة' : 'الملف الشخصي الكامل وإحصائيات النشاط');
 
+                // Home profile card
                 document.getElementById('homeName').textContent = user.fullName || user.username;
                 document.getElementById('homeUsername').textContent = '@' + user.username;
                 const homeAvatar = document.getElementById('homeAvatar');
@@ -3157,27 +3140,16 @@
                 } else {
                     homeAvatar.textContent = user.username.charAt(0).toUpperCase();
                 }
-                document.getElementById('homeJoinDate').textContent = new Date(user.createdAt).toLocaleDateString(
-                'ar');
+                document.getElementById('homeJoinDate').textContent = new Date(user.createdAt).toLocaleDateString('ar');
                 document.getElementById('homeStatus').textContent = user.status === 'active' ? 'نشط' : 'معلق';
 
+                // Stats
                 document.getElementById('statSessions').textContent = user.stats.sessions;
                 document.getElementById('statHours').textContent = user.stats.hours;
                 document.getElementById('statAchievements').textContent = user.stats.achievements;
                 document.getElementById('statLevel').textContent = user.stats.level;
 
-                document.getElementById('profileName').textContent = user.fullName || user.username;
-                document.getElementById('profileUsername').textContent = '@' + user.username;
-                const profileAvatar = document.getElementById('profileAvatar');
-                if (user.avatar) {
-                    profileAvatar.innerHTML = `<img src="${user.avatar}" alt="avatar">`;
-                } else {
-                    profileAvatar.textContent = user.username.charAt(0).toUpperCase();
-                }
-                document.getElementById('profileId').textContent = user.id.substr(0, 12) + '...';
-                document.getElementById('profileJoinDate').textContent = new Date(user.createdAt).toLocaleDateString(
-                'ar');
-
+                // Profile details (في الرئيسية)
                 document.getElementById('detailAccountType').innerHTML = user.accountType === 'bot' ?
                     '<span class="bot-badge">🤖 بوت تلغرام</span>' :
                     (isAdmin ? '<span class="admin-badge">👑 مشرف النظام</span>' : '👤 مستخدم عادي');
@@ -3187,8 +3159,7 @@
                 document.getElementById('detailPhone').textContent = user.phone || '-';
                 document.getElementById('detailLang').textContent = user.language === 'ar' ? 'العربية' : 'English';
                 document.getElementById('detailTimezone').textContent = user.timezone;
-                document.getElementById('detailLastLogin').textContent = new Date(user.lastLogin).toLocaleString(
-                'ar');
+                document.getElementById('detailLastLogin').textContent = new Date(user.lastLogin).toLocaleString('ar');
                 document.getElementById('detailTgId').textContent = user.telegramId;
                 document.getElementById('detailLoginCount').textContent = user.loginCount;
 
@@ -3198,15 +3169,12 @@
                     'admin_panel_login': '👑 لوحة تحكم المشرف',
                     'manual_code': '🔑 كود تفعيل'
                 };
-                document.getElementById('detailSource').textContent = sourceLabels[user.loginSource] || user
-                    .loginSource;
+                document.getElementById('detailSource').textContent = sourceLabels[user.loginSource] || user.loginSource;
 
                 if (user.accountType === 'bot' && user.botInfo) {
-                    document.getElementById('detailBotName').innerHTML =
-                        `<span class="bot-badge">🤖 ${user.botInfo.botName}</span>`;
+                    document.getElementById('detailBotName').innerHTML = `<span class="bot-badge">🤖 ${user.botInfo.botName}</span>`;
                 } else if (isAdmin) {
-                    document.getElementById('detailBotName').innerHTML =
-                        '<span class="admin-badge">👑 الحساب الرئيسي للمشرف</span>';
+                    document.getElementById('detailBotName').innerHTML = '<span class="admin-badge">👑 الحساب الرئيسي للمشرف</span>';
                 } else {
                     document.getElementById('detailBotName').textContent = '-';
                 }
@@ -3283,6 +3251,27 @@
                 this.renderActivity();
             },
 
+            resetStats() {
+                if (!confirm('⚠️ هل أنت متأكد من تصفير جميع الإحصائيات؟\n(جلسات اللعب، الساعات، المستوى، الإنجازات)')) return;
+                const defaultStats = {
+                    sessions: 0,
+                    hours: 0,
+                    achievements: 0,
+                    level: 1,
+                    xp: 0
+                };
+                DB.updateUser(this.currentUser.telegramId, { stats: defaultStats });
+                this.currentUser = DB.getUserByTgId(this.currentUser.telegramId);
+                this.renderAll();
+                DB.addActivity(this.currentUser.telegramId, {
+                    type: 'warning',
+                    title: 'تصفير الإحصائيات',
+                    description: 'تم إعادة تعيين جلسات اللعب، الساعات، المستوى والإنجازات'
+                });
+                this.renderActivity();
+                Toast.show('🔄 تم تصفير الإحصائيات بنجاح', 'warning');
+            },
+
             exportData() {
                 const user = this.currentUser;
                 const data = { exportedAt: new Date().toISOString(), user };
@@ -3299,7 +3288,6 @@
             deleteCurrentAccount() {
                 if (!confirm('⚠️ هل أنت متأكد من حذف هذا الحساب؟')) return;
                 if (!confirm('تأكيد: سيتم حذف جميع بيانات هذا الحساب!')) return;
-
                 const tgId = this.currentUser.telegramId;
                 if (tgId === ADMIN_TELEGRAM_ID) {
                     Toast.show('⛔ لا يمكن حذف حساب المشرف العام!', 'error');
@@ -3313,7 +3301,6 @@
             clearAllData() {
                 if (!confirm('⚠️ هل أنت متأكد؟ سيتم حذف جميع الحسابات!')) return;
                 if (!confirm('تأكيد أخير: هذا لا يمكن التراجع عنه!')) return;
-
                 DB.clearAll();
                 Toast.show('⚠️ تم مسح جميع البيانات', 'warning');
                 setTimeout(() => location.reload(), 1500);
@@ -3325,8 +3312,7 @@
                 const currentId = this.currentUser.telegramId;
 
                 if (allUsers.length === 0) {
-                    list.innerHTML =
-                        '<div class="empty-state"><div class="empty-state__icon">👥</div><div class="empty-state__title">لا توجد حسابات أخرى</div></div>';
+                    list.innerHTML = '<div class="empty-state"><div class="empty-state__icon">👥</div><div class="empty-state__title">لا توجد حسابات أخرى</div></div>';
                 } else {
                     list.innerHTML = allUsers.map(user => {
                         const isAdmin = user.telegramId === ADMIN_TELEGRAM_ID || user.isAdmin;
@@ -3342,11 +3328,30 @@
                             </div>
                             ${isAdmin ? '<span class="account-item__badge account-item__badge--admin">مشرف</span>' : ''}
                             ${user.accountType === 'bot' ? '<span class="account-item__badge">BOT</span>' : ''}
+                            <button class="account-item__delete" onclick="event.stopPropagation(); App.deleteAccountFromSwitcher('${user.telegramId}')" title="حذف الحساب">🗑️</button>
                         </div>`;
                     }).join('');
                 }
 
                 document.getElementById('accountSwitcherModal').classList.add('active');
+            },
+
+            deleteAccountFromSwitcher(tgId) {
+                if (tgId === ADMIN_TELEGRAM_ID) {
+                    Toast.show('⛔ لا يمكن حذف حساب المشرف العام!', 'error');
+                    return;
+                }
+                const user = DB.getUserByTgId(tgId);
+                if (!user) return;
+                if (!confirm(`⚠️ هل أنت متأكد من حذف الحساب "${user.username}"؟`)) return;
+                DB.deleteUser(tgId);
+                Toast.show(`🗑️ تم حذف الحساب ${user.username}`, 'warning');
+                if (this.currentUser.telegramId === tgId) {
+                    this.closeModal('accountSwitcherModal');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    this.showAccountSwitcher();
+                }
             },
 
             switchAccount(tgId) {
