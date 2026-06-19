@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <title>Kratos Bot • Chancy | منصة متعددة المستخدمين مع لوحة تحكم</title>
+    <title>Kratos Bot • Chancy | منصة متعددة المستخدمين</title>
 
     <!-- ==================== External Resources ==================== -->
     <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
@@ -86,6 +86,7 @@
             --container-padding: clamp(1rem, 3vw, 2rem);
             --header-height: 70px;
             --bottom-nav-height: 65px;
+            --sidebar-width: min(420px, 90vw);
 
             /* ---- Border Radius ---- */
             --radius-xs: 4px;
@@ -113,6 +114,7 @@
             --z-modal: 1000;
             --z-toast: 2000;
             --z-loader: 9999;
+            --z-sidebar: 1050;
 
             /* ---- Borders ---- */
             --border-subtle: 1px solid rgba(255, 255, 255, 0.08);
@@ -863,7 +865,7 @@
             box-shadow: 0 0 25px rgba(240, 192, 64, 0.6);
         }
 
-        /* ---- User Chip ---- */
+        /* ---- User Chip (clickable to open sidebar) ---- */
         .user-chip {
             display: flex;
             align-items: center;
@@ -879,11 +881,20 @@
 
         .user-chip:hover {
             background: rgba(127, 255, 0, 0.2);
+            transform: scale(1.03);
+        }
+        .user-chip:active {
+            transform: scale(0.97);
         }
 
         .user-chip.is-admin {
             background: rgba(240, 192, 64, 0.1);
             border: 1px solid rgba(240, 192, 64, 0.4);
+        }
+
+        .user-chip.is-admin:hover {
+            background: rgba(240, 192, 64, 0.2);
+            border-color: var(--color-admin-gold);
         }
 
         .user-avatar {
@@ -916,167 +927,104 @@
             white-space: nowrap;
         }
 
-        /* ---- Main Content Area ---- */
-        .app-main {
-            max-width: var(--container-max);
-            margin: 0 auto;
-            padding: var(--space-lg) var(--container-padding);
-            padding-bottom: calc(var(--bottom-nav-height) + var(--space-lg));
-        }
-
-        /* ---- Page Views ---- */
-        .page-view {
-            display: none;
-            animation: fadeInUp 0.4s ease;
-        }
-
-        .page-view.is-active {
-            display: block;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulseGlow {
-            0%,
-            100% {
-                box-shadow: 0 0 15px rgba(240, 192, 64, 0.4);
-            }
-            50% {
-                box-shadow: 0 0 30px rgba(240, 192, 64, 0.8);
-            }
-        }
-
-        @keyframes shimmer {
-            0% {
-                background-position: -200% 0;
-            }
-            100% {
-                background-position: 200% 0;
-            }
-        }
-
-        /* ---- Page Headers ---- */
-        .page-header {
-            margin-bottom: var(--space-xl);
-        }
-
-        .page-title {
-            font-family: var(--font-family-mono);
-            font-size: var(--text-2xl);
-            font-weight: 900;
-            margin-bottom: var(--space-xs);
-            line-height: 1.3;
-        }
-
-        .page-title span {
-            color: var(--color-accent-green);
-        }
-
-        .page-title.is-admin span {
-            color: var(--color-admin-gold);
-        }
-
-        .page-subtitle {
-            color: var(--color-text-secondary);
-            font-size: var(--text-sm);
-        }
-
         /* ============================================================
-           SECTION 7: Stats Grid (Removed - kept for admin panel)
+           SECTION 7: Left Sidebar (Profile Drawer)
            ============================================================ */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: var(--space-md);
-            margin-bottom: var(--space-xl);
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, rgba(17, 34, 64, 0.8), rgba(10, 22, 40, 0.9));
-            border: var(--border-green);
-            border-radius: var(--radius-md);
-            padding: var(--space-lg);
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: var(--z-sidebar);
+            opacity: 0;
+            visibility: hidden;
             transition: all var(--transition-base);
-            position: relative;
-            overflow: hidden;
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
+        .sidebar-overlay.is-active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar {
+            position: fixed;
             top: 0;
+            right: auto;
             left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--color-accent-green), var(--color-accent-blue));
+            bottom: 0;
+            width: var(--sidebar-width);
+            max-width: min(420px, 90vw);
+            background: linear-gradient(180deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+            border-left: 1px solid var(--border-green);
+            z-index: calc(var(--z-sidebar) + 1);
+            transform: translateX(-100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 4px 0 40px rgba(0, 0, 0, 0.6);
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--border-green-strong);
-            box-shadow: var(--shadow-md);
+        .sidebar.is-active {
+            transform: translateX(0);
         }
 
-        .stat-card.is-admin {
-            border-color: var(--color-admin-border);
-            background: linear-gradient(135deg, rgba(19, 39, 68, 0.9), rgba(13, 27, 51, 0.95));
+        .sidebar.is-admin {
+            border-left-color: var(--color-admin-gold);
         }
 
-        .stat-card.is-admin::before {
-            background: linear-gradient(90deg, var(--color-admin-gold), var(--color-admin-purple));
+        /* Sidebar Header */
+        .sidebar-header {
+            padding: var(--space-lg) var(--space-lg) var(--space-md);
+            border-bottom: var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            background: rgba(10, 22, 40, 0.5);
+            backdrop-filter: blur(10px);
         }
 
-        .stat-card.is-admin:hover {
-            border-color: rgba(240, 192, 64, 0.6);
-            box-shadow: 0 8px 30px rgba(240, 192, 64, 0.2);
-        }
-
-        .stat-card__icon {
-            font-size: 2rem;
-            margin-bottom: var(--space-sm);
-        }
-
-        .stat-card__value {
+        .sidebar-header__title {
             font-family: var(--font-family-mono);
-            font-size: var(--text-2xl);
-            font-weight: 900;
+            font-size: var(--text-base);
+            font-weight: 700;
             color: var(--color-accent-green);
-            margin-bottom: var(--space-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
         }
 
-        .stat-card.is-admin .stat-card__value {
-            color: var(--color-admin-gold);
-        }
-
-        .stat-card__label {
+        .sidebar-header__close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            transition: all var(--transition-base);
+            flex-shrink: 0;
             color: var(--color-text-secondary);
-            font-size: var(--text-sm);
         }
 
-        /* ============================================================
-           SECTION 8: Profile Card
-           ============================================================ */
-        .profile-card {
+        .sidebar-header__close:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--color-error);
+        }
+
+        /* Sidebar Body (scrollable) */
+        .sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-lg) var(--space-lg) var(--space-2xl);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* ---- Sidebar Profile Card ---- */
+        .sidebar-profile-card {
             background: linear-gradient(135deg, rgba(17, 34, 64, 0.8), rgba(10, 22, 40, 0.9));
             border: var(--border-green);
             border-radius: var(--radius-lg);
@@ -1086,19 +1034,19 @@
             overflow: hidden;
         }
 
-        .profile-card::before {
+        .sidebar-profile-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 100px;
+            height: 80px;
             background: linear-gradient(135deg, var(--color-accent-red), var(--color-accent-green));
-            opacity: 0.3;
+            opacity: 0.25;
             pointer-events: none;
         }
 
-        .profile-header {
+        .sidebar-profile-header {
             position: relative;
             z-index: 1;
             display: flex;
@@ -1108,50 +1056,50 @@
             flex-wrap: wrap;
         }
 
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
+        .sidebar-profile-avatar {
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 900;
             color: var(--color-primary);
-            border: 4px solid var(--color-primary);
+            border: 3px solid var(--color-primary);
             overflow: hidden;
             flex-shrink: 0;
             box-shadow: var(--shadow-glow-green);
         }
 
-        .profile-avatar img {
+        .sidebar-profile-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .profile-info {
+        .sidebar-profile-info {
             flex: 1;
-            min-width: 200px;
+            min-width: 150px;
         }
 
-        .profile-name {
+        .sidebar-profile-name {
             font-family: var(--font-family-mono);
-            font-size: var(--text-xl);
+            font-size: var(--text-lg);
             font-weight: 900;
             margin-bottom: var(--space-xs);
             line-height: 1.3;
         }
 
-        .profile-username {
+        .sidebar-profile-username {
             color: var(--color-accent-green);
             font-size: var(--text-sm);
             margin-bottom: var(--space-sm);
             font-family: var(--font-family-mono);
         }
 
-        .profile-meta {
+        .sidebar-profile-meta {
             display: flex;
             gap: var(--space-md);
             flex-wrap: wrap;
@@ -1159,60 +1107,319 @@
             color: var(--color-text-secondary);
         }
 
-        .profile-meta-item {
+        .sidebar-profile-meta-item {
             display: flex;
             align-items: center;
             gap: var(--space-xs);
         }
 
-        .profile-actions {
-            display: flex;
-            gap: var(--space-sm);
-            flex-wrap: wrap;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* ---- Profile Details Grid ---- */
-        .profile-details {
+        /* ---- Sidebar Stats Grid ---- */
+        .sidebar-stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--space-md);
-            margin-top: var(--space-lg);
-            padding-top: var(--space-lg);
-            border-top: var(--border-subtle);
-            position: relative;
-            z-index: 1;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xl);
         }
 
-        .detail-item {
-            padding: var(--space-md);
-            background: rgba(10, 22, 40, 0.5);
+        .sidebar-stat-card {
+            background: rgba(10, 22, 40, 0.6);
+            border: var(--border-green);
             border-radius: var(--radius-md);
+            padding: var(--space-md);
+            text-align: center;
+            transition: all var(--transition-base);
+        }
+
+        .sidebar-stat-card:hover {
+            border-color: var(--border-green-strong);
+            transform: translateY(-2px);
+        }
+
+        .sidebar-stat-card__icon {
+            font-size: 1.4rem;
+            margin-bottom: var(--space-xs);
+        }
+
+        .sidebar-stat-card__value {
+            font-family: var(--font-family-mono);
+            font-size: var(--text-xl);
+            font-weight: 900;
+            color: var(--color-accent-green);
+        }
+
+        .sidebar-stat-card__label {
+            color: var(--color-text-secondary);
+            font-size: var(--text-xs);
+        }
+
+        /* ---- Sidebar Profile Details ---- */
+        .sidebar-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xl);
+        }
+
+        .sidebar-detail-item {
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(10, 22, 40, 0.4);
+            border-radius: var(--radius-sm);
             border: var(--border-subtle);
         }
 
-        .detail-label {
+        .sidebar-detail-label {
             font-size: var(--text-xs);
             color: var(--color-text-secondary);
-            margin-bottom: var(--space-xs);
+            margin-bottom: 2px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             font-weight: 600;
         }
 
-        .detail-value {
-            font-size: var(--text-base);
+        .sidebar-detail-value {
+            font-size: var(--text-sm);
             font-weight: 600;
             word-break: break-word;
         }
 
-        /* ============================================================
-           SECTION 9: Activity Lists - REMOVED
-           ============================================================ */
+        /* ---- Sidebar Activity ---- */
+        .sidebar-section-title {
+            font-family: var(--font-family-mono);
+            font-size: var(--text-base);
+            font-weight: 700;
+            color: var(--color-accent-green);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-xs);
+            border-bottom: var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .sidebar-activity-list {
+            background: rgba(10, 22, 40, 0.4);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-bottom: var(--space-xl);
+        }
+
+        .sidebar-activity-item {
+            padding: var(--space-sm) var(--space-md);
+            border-bottom: var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            transition: background var(--transition-base);
+        }
+
+        .sidebar-activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-activity-item:hover {
+            background: rgba(127, 255, 0, 0.05);
+        }
+
+        .sidebar-activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(127, 255, 0, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar-activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sidebar-activity-title {
+            font-weight: 600;
+            font-size: var(--text-sm);
+            margin-bottom: 1px;
+        }
+
+        .sidebar-activity-time {
+            font-size: var(--text-xs);
+            color: var(--color-text-secondary);
+        }
+
+        /* ---- Sidebar Account Actions ---- */
+        .sidebar-account-actions {
+            background: rgba(10, 22, 40, 0.4);
+            border: var(--border-green);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .sidebar-account-actions__title {
+            font-family: var(--font-family-mono);
+            font-size: var(--text-base);
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: var(--border-subtle);
+            color: var(--color-accent-green);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .sidebar-action-btn {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-md);
+            transition: all var(--transition-base);
+            text-align: right;
+            margin-bottom: var(--space-xs);
+        }
+
+        .sidebar-action-btn:hover {
+            transform: translateX(-4px);
+        }
+
+        .sidebar-action-btn--primary {
+            background: rgba(127, 255, 0, 0.08);
+            border: 1px solid rgba(127, 255, 0, 0.2);
+            color: var(--color-text-primary);
+        }
+
+        .sidebar-action-btn--primary:hover {
+            background: rgba(127, 255, 0, 0.18);
+            border-color: var(--color-accent-green);
+        }
+
+        .sidebar-action-btn--danger {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--color-error);
+        }
+
+        .sidebar-action-btn--danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--color-error);
+        }
+
+        .sidebar-action-btn__content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sidebar-action-btn__label {
+            font-weight: 700;
+            font-size: var(--text-sm);
+        }
+
+        .sidebar-action-btn__desc {
+            font-size: var(--text-xs);
+            color: var(--color-text-secondary);
+            margin-top: 1px;
+        }
+
+        .sidebar-action-btn__icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar-empty-state {
+            text-align: center;
+            padding: var(--space-lg) var(--space-md);
+            color: var(--color-text-secondary);
+        }
+
+        .sidebar-empty-state__icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-sm);
+            opacity: 0.5;
+        }
+
+        .sidebar-empty-state__title {
+            font-size: var(--text-base);
+            margin-bottom: var(--space-xs);
+            color: var(--color-text-primary);
+        }
+
+        .sidebar-empty-state__text {
+            font-size: var(--text-sm);
+        }
 
         /* ============================================================
-           SECTION 10: Bottom Navigation
+           SECTION 8: Home Page (Empty)
+           ============================================================ */
+        .home-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - var(--header-height) - var(--bottom-nav-height) - 40px);
+            text-align: center;
+            padding: var(--space-2xl) var(--container-padding);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .home-empty__icon {
+            font-size: 5rem;
+            margin-bottom: var(--space-lg);
+            filter: drop-shadow(0 0 30px rgba(127, 255, 0, 0.3));
+            animation: floatIcon 4s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        .home-empty__title {
+            font-family: var(--font-family-mono);
+            font-size: var(--text-2xl);
+            font-weight: 900;
+            margin-bottom: var(--space-sm);
+        }
+
+        .home-empty__title span {
+            color: var(--color-accent-green);
+        }
+
+        .home-empty__subtitle {
+            color: var(--color-text-secondary);
+            font-size: var(--text-base);
+            max-width: 400px;
+            margin: 0 auto var(--space-lg);
+        }
+
+        .home-empty__hint {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md) var(--space-xl);
+            background: rgba(127, 255, 0, 0.06);
+            border: var(--border-green);
+            border-radius: var(--radius-full);
+            color: var(--color-text-secondary);
+            font-size: var(--text-sm);
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        .home-empty__hint span {
+            font-size: 1.2rem;
+        }
+
+        /* ============================================================
+           SECTION 9: Bottom Navigation
            ============================================================ */
         .bottom-nav {
             position: fixed;
@@ -1278,227 +1485,7 @@
         }
 
         /* ============================================================
-           SECTION 11: Buttons
-           ============================================================ */
-        .btn {
-            padding: var(--space-sm) var(--space-lg);
-            border-radius: var(--radius-md);
-            font-weight: 700;
-            font-size: var(--text-sm);
-            transition: all var(--transition-base);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-xs);
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .btn:active {
-            transform: scale(0.97);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-green-dark));
-            color: var(--color-primary);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-glow-green);
-        }
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--color-text-primary);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--color-accent-green);
-        }
-
-        .btn-full {
-            width: 100%;
-            padding: var(--space-md);
-        }
-
-        .btn-danger {
-            background: var(--color-error);
-            color: #fff;
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
-            box-shadow: 0 5px 20px rgba(239, 68, 68, 0.4);
-        }
-
-        .btn-admin {
-            background: linear-gradient(135deg, var(--color-admin-gold), var(--color-admin-gold-dark));
-            color: #1a1a1a;
-            font-weight: 700;
-        }
-
-        .btn-admin:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(240, 192, 64, 0.5);
-        }
-
-        .btn-admin-outline {
-            background: transparent;
-            border: 2px solid var(--color-admin-gold);
-            color: var(--color-admin-gold);
-        }
-
-        .btn-admin-outline:hover {
-            background: rgba(240, 192, 64, 0.1);
-            box-shadow: 0 0 20px rgba(240, 192, 64, 0.3);
-        }
-
-        /* ============================================================
-           SECTION 12: Modal System
-           ============================================================ */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            z-index: var(--z-modal);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: var(--container-padding);
-            opacity: 0;
-            visibility: hidden;
-            transition: all var(--transition-base);
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .modal-overlay.is-active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal {
-            background: var(--color-secondary);
-            border: var(--border-green);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            max-height: 90dvh;
-            overflow-y: auto;
-            transform: scale(0.9);
-            transition: transform var(--transition-base);
-            margin: auto;
-        }
-
-        .modal-overlay.is-active .modal {
-            transform: scale(1);
-        }
-
-        .modal.is-admin {
-            border-color: var(--color-admin-border);
-            background: var(--color-admin-bg);
-            max-width: 650px;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-lg);
-            padding-bottom: var(--space-md);
-            border-bottom: var(--border-subtle);
-            position: sticky;
-            top: 0;
-            background: inherit;
-            z-index: 2;
-        }
-
-        .modal-title {
-            font-family: var(--font-family-mono);
-            font-size: var(--text-xl);
-            font-weight: 700;
-        }
-
-        .modal-close {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all var(--transition-base);
-            flex-shrink: 0;
-        }
-
-        .modal-close:hover {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--color-error);
-        }
-
-        /* ============================================================
-           SECTION 13: Form Elements
-           ============================================================ */
-        .form-group {
-            margin-bottom: var(--space-md);
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: var(--space-xs);
-            font-size: var(--text-sm);
-            color: var(--color-text-secondary);
-            font-weight: 600;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: var(--space-sm) var(--space-md);
-            background: rgba(10, 22, 40, 0.8);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-md);
-            color: var(--color-text-primary);
-            font-size: var(--text-base);
-            transition: all var(--transition-base);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--color-accent-green);
-            box-shadow: 0 0 15px rgba(127, 255, 0, 0.2);
-        }
-
-        .form-input::placeholder {
-            color: var(--color-text-tertiary);
-        }
-
-        textarea.form-input {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        select.form-input {
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a0aec0' fill='none' stroke-width='2'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: left var(--space-md) center;
-            padding-left: var(--space-xl);
-        }
-
-        /* ============================================================
-           SECTION 14: Admin Panel Specific Styles
+           SECTION 10: Admin Panel (unchanged)
            ============================================================ */
         .admin-panel-header {
             background: linear-gradient(135deg, rgba(19, 39, 68, 0.95), rgba(13, 27, 51, 0.98));
@@ -1809,7 +1796,7 @@
         }
 
         /* ============================================================
-           SECTION 15: Toast Notifications
+           SECTION 11: Toast, Badges, Buttons, Modals, etc.
            ============================================================ */
         .toast-container {
             position: fixed;
@@ -1875,9 +1862,6 @@
             }
         }
 
-        /* ============================================================
-           SECTION 16: Badges & Labels
-           ============================================================ */
         .bot-badge {
             display: inline-flex;
             align-items: center;
@@ -1916,6 +1900,7 @@
             cursor: pointer;
             transition: all var(--transition-base);
             white-space: nowrap;
+            width: 100%;
         }
 
         .reset-stats-btn:hover {
@@ -1923,30 +1908,85 @@
             box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
         }
 
-        /* ---- Empty State ---- */
-        .empty-state {
-            text-align: center;
-            padding: var(--space-2xl) var(--space-md);
-            color: var(--color-text-secondary);
-        }
-
-        .empty-state__icon {
-            font-size: 4rem;
-            margin-bottom: var(--space-md);
-            opacity: 0.5;
-        }
-
-        .empty-state__title {
-            font-size: var(--text-lg);
-            margin-bottom: var(--space-sm);
-            color: var(--color-text-primary);
-        }
-
-        .empty-state__text {
+        .btn {
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-md);
+            font-weight: 700;
             font-size: var(--text-sm);
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            cursor: pointer;
+            white-space: nowrap;
         }
 
-        /* ---- Spinner ---- */
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-green-dark));
+            color: var(--color-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow-green);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--color-accent-green);
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: var(--space-md);
+        }
+
+        .btn-danger {
+            background: var(--color-error);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            box-shadow: 0 5px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-admin {
+            background: linear-gradient(135deg, var(--color-admin-gold), var(--color-admin-gold-dark));
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(240, 192, 64, 0.5);
+        }
+
+        .btn-admin-outline {
+            background: transparent;
+            border: 2px solid var(--color-admin-gold);
+            color: var(--color-admin-gold);
+        }
+
+        .btn-admin-outline:hover {
+            background: rgba(240, 192, 64, 0.1);
+            box-shadow: 0 0 20px rgba(240, 192, 64, 0.3);
+        }
+
         .spinner {
             width: 20px;
             height: 20px;
@@ -1962,178 +2002,271 @@
             }
         }
 
-        /* ============================================================
-           SECTION 17: Responsive Design - Media Queries
-           ============================================================ */
+        /* ---- Modals ---- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: var(--z-modal);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--container-padding);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
 
-        /* ---- Tablet & Desktop (> 768px) ---- */
+        .modal-overlay.is-active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--color-secondary);
+            border: var(--border-green);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            max-height: 90dvh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform var(--transition-base);
+            margin: auto;
+        }
+
+        .modal-overlay.is-active .modal {
+            transform: scale(1);
+        }
+
+        .modal.is-admin {
+            border-color: var(--color-admin-border);
+            background: var(--color-admin-bg);
+            max-width: 650px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: var(--border-subtle);
+            position: sticky;
+            top: 0;
+            background: inherit;
+            z-index: 2;
+        }
+
+        .modal-title {
+            font-family: var(--font-family-mono);
+            font-size: var(--text-xl);
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all var(--transition-base);
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--color-error);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-xs);
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(10, 22, 40, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: var(--color-text-primary);
+            font-size: var(--text-base);
+            transition: all var(--transition-base);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-accent-green);
+            box-shadow: 0 0 15px rgba(127, 255, 0, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: var(--color-text-tertiary);
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        select.form-input {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a0aec0' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left var(--space-md) center;
+            padding-left: var(--space-xl);
+        }
+
+        /* ============================================================
+           SECTION 12: Responsive Design
+           ============================================================ */
         @media (min-width: 769px) {
             .bottom-nav {
                 display: none;
             }
-
             .app-main {
                 padding-bottom: var(--space-2xl);
             }
-
-            .profile-header {
-                flex-wrap: nowrap;
+            .sidebar {
+                max-width: min(440px, 85vw);
             }
         }
 
-        /* ---- Mobile (< 768px) ---- */
         @media (max-width: 768px) {
             .user-chip__name {
                 display: none;
             }
-
-            .profile-header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .profile-actions {
-                justify-content: center;
-                width: 100%;
-            }
-
-            .profile-info {
-                text-align: center;
-            }
-
-            .profile-meta {
-                justify-content: center;
-            }
-
             .app-main {
                 padding-bottom: calc(var(--bottom-nav-height) + var(--space-lg) + env(safe-area-inset-bottom, 0px));
             }
-
             .admin-table th,
             .admin-table td {
                 padding: var(--space-sm);
                 font-size: var(--text-xs);
             }
-
             .admin-search input {
                 width: 120px;
             }
-
             .admin-panel-header__content {
                 flex-direction: column;
                 text-align: center;
             }
-
             .admin-quick-actions {
                 grid-template-columns: 1fr 1fr;
             }
-
-            .page-title {
-                font-size: var(--text-xl);
+            .sidebar-details-grid {
+                grid-template-columns: 1fr;
             }
-
-            .stats-grid {
+            .sidebar-profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .sidebar-profile-info {
+                text-align: center;
+            }
+            .sidebar-profile-meta {
+                justify-content: center;
+            }
+            .sidebar-stats-grid {
                 grid-template-columns: 1fr 1fr;
             }
-
             .modal {
                 max-width: 95vw;
                 padding: var(--space-lg);
                 border-radius: var(--radius-md);
             }
+            .home-empty__icon {
+                font-size: 3.5rem;
+            }
         }
 
-        /* ---- Small Mobile (< 480px) ---- */
         @media (max-width: 480px) {
-            .stats-grid {
+            .sidebar-stats-grid {
                 grid-template-columns: 1fr 1fr;
-                gap: var(--space-sm);
+                gap: var(--space-xs);
             }
-
-            .stat-card {
-                padding: var(--space-md);
+            .sidebar-stat-card {
+                padding: var(--space-sm);
             }
-
-            .stat-card__value {
-                font-size: var(--text-xl);
+            .sidebar-stat-card__value {
+                font-size: var(--text-lg);
             }
-
-            .stat-card__icon {
+            .sidebar-profile-avatar {
+                width: 64px;
+                height: 64px;
                 font-size: 1.5rem;
             }
-
-            .profile-avatar {
-                width: 80px;
-                height: 80px;
-                font-size: 2rem;
-            }
-
             .admin-quick-actions {
                 grid-template-columns: 1fr;
             }
-
-            .profile-details {
-                grid-template-columns: 1fr;
-            }
-
             .header-actions {
                 gap: var(--space-xs);
             }
-
             .icon-btn {
                 width: 36px;
                 height: 36px;
                 font-size: 16px;
             }
-
             .brand-logo__title {
                 font-size: 13px;
             }
+            .home-empty__title {
+                font-size: var(--text-xl);
+            }
         }
 
-        /* ---- Extra Small Mobile (< 360px) ---- */
         @media (max-width: 360px) {
-            .stats-grid {
+            .sidebar-stats-grid {
                 grid-template-columns: 1fr;
             }
-
             .header-inner {
                 gap: var(--space-xs);
             }
-
             .brand-logo__img {
                 width: 30px;
                 height: 30px;
             }
-
             .auth-container {
                 padding: 20px 15px;
             }
-
             .modal {
                 padding: var(--space-md);
             }
         }
 
-        /* ---- Large Desktop (> 1200px) ---- */
         @media (min-width: 1200px) {
-            .profile-details {
-                grid-template-columns: repeat(3, 1fr);
+            .sidebar-details-grid {
+                grid-template-columns: 1fr 1fr;
             }
-
             .admin-quick-actions {
                 grid-template-columns: repeat(4, 1fr);
             }
         }
 
-        /* ---- Dark Mode Preference ---- */
         @media (prefers-color-scheme: dark) {
             :root {
                 color-scheme: dark;
             }
         }
 
-        /* ---- Reduced Motion ---- */
         @media (prefers-reduced-motion: reduce) {
             *,
             *::before,
@@ -2145,21 +2278,20 @@
             }
         }
 
-        /* ---- Print Styles ---- */
         @media print {
             .app-header,
             .bottom-nav,
             .toast-container,
             .modal-overlay,
             .app-loader,
-            .auth-gate {
+            .auth-gate,
+            .sidebar-overlay,
+            .sidebar {
                 display: none !important;
             }
-
             .webapp {
                 padding-top: 0;
             }
-
             body {
                 background: #fff;
                 color: #000;
@@ -2198,7 +2330,6 @@
                 <p class="auth-subtitle">منصة متعددة المستخدمين مع لوحة تحكم المشرف</p>
             </div>
 
-            <!-- Auto Login Banner -->
             <div id="autoLoginBanner" style="display: none;">
                 <div class="auto-login-banner">
                     <div class="auto-login-banner__icon" aria-hidden="true">🤖</div>
@@ -2209,7 +2340,6 @@
                 </div>
             </div>
 
-            <!-- Account Switcher -->
             <div id="accountSwitcher" style="display: none;">
                 <div class="account-switcher">
                     <div class="account-switcher__title">
@@ -2220,7 +2350,6 @@
                 </div>
             </div>
 
-            <!-- Info Box -->
             <div class="info-box">
                 <div class="info-box__title">🔐 تسجيل دخول آمن عبر تلغرام</div>
                 <div class="info-box__text">
@@ -2230,7 +2359,6 @@
                 </div>
             </div>
 
-            <!-- Login Buttons -->
             <button class="telegram-btn" id="telegramLoginBtn" aria-label="تسجيل الدخول عبر تلغرام">
                 <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" aria-hidden="true">
                     <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
@@ -2242,7 +2370,6 @@
                 👑 <span>تسجيل دخول المشرف</span>
             </button>
 
-            <!-- How it works -->
             <div class="info-box">
                 <div class="info-box__title">📋 كيف يعمل تبديل الحسابات؟</div>
                 <div class="info-box__text">
@@ -2294,7 +2421,8 @@
             style="background: rgba(239, 68, 68, 0.15);">
             🚪
         </button>
-        <div class="user-chip" id="userChip" role="button" tabindex="0" aria-label="ملف المستخدم">
+        <!-- User Chip - Click to open sidebar -->
+        <div class="user-chip" id="userChip" role="button" tabindex="0" aria-label="فتح الملف الشخصي" title="👤 ملفي الشخصي">
             <div class="user-avatar" id="headerAvatar" aria-hidden="true">K</div>
             <span class="user-chip__name" id="headerUserName">مستخدم</span>
         </div>
@@ -2304,81 +2432,17 @@
 
 <!-- Main Content -->
 <main class="app-main" id="appMain" role="main">
-    <!-- HOME PAGE -->
+    <!-- HOME PAGE - Empty -->
     <div class="page-view is-active" id="page-home" aria-label="الصفحة الرئيسية">
-        <div class="page-header">
-            <h1 class="page-title">مرحباً، <span id="welcomeName">مستخدم</span> 👋</h1>
-            <p class="page-subtitle" id="welcomeSubtitle">الملف الشخصي الكامل</p>
-        </div>
-
-        <!-- Profile Card -->
-        <div class="profile-card" id="homeProfileCard">
-            <div class="profile-header">
-                <div class="profile-avatar" id="homeAvatar" aria-hidden="true">K</div>
-                <div class="profile-info">
-                    <div class="profile-name" id="homeName">مستخدم</div>
-                    <div class="profile-username" id="homeUsername">@user</div>
-                    <div class="profile-meta">
-                        <div class="profile-meta-item">📅 <span id="homeJoinDate">-</span></div>
-                        <div class="profile-meta-item">🟢 <span id="homeStatus">نشط</span></div>
-                    </div>
-                </div>
-                <!-- Removed action buttons: Edit, Export, Reset Stats -->
-            </div>
-
-            <!-- Profile Details -->
-            <div class="profile-details" id="homeProfileDetails">
-                <div class="detail-item">
-                    <div class="detail-label">نوع الحساب</div>
-                    <div class="detail-value" id="detailAccountType">-</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">الاسم الكامل</div>
-                    <div class="detail-value" id="detailFullName">-</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">اسم المستخدم</div>
-                    <div class="detail-value" id="detailUsername">-</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">البريد الإلكتروني</div>
-                    <div class="detail-value" id="detailEmail">-</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">رقم الهاتف</div>
-                    <div class="detail-value" id="detailPhone">-</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">اللغة المفضلة</div>
-                    <div class="detail-value" id="detailLang">العربية</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">المنطقة الزمنية</div>
-                    <div class="detail-value" id="detailTimezone">-</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">آخر تسجيل دخول</div>
-                    <div class="detail-value" id="detailLastLogin">-</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">معرف تلغرام (User ID)</div>
-                    <div class="detail-value" id="detailTgId" style="font-family: var(--font-family-mono); font-size: var(--text-xs);">-</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">عدد مرات الدخول</div>
-                    <div class="detail-value" id="detailLoginCount">0</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">مصدر الدخول</div>
-                    <div class="detail-value" id="detailSource">-</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">اسم البوت</div>
-                    <div class="detail-value" id="detailBotName">-</div>
-                </div>
+        <div class="home-empty">
+            <div class="home-empty__icon" aria-hidden="true">🚀</div>
+            <h1 class="home-empty__title">مرحباً، <span id="welcomeName">مستخدم</span> 👋</h1>
+            <p class="home-empty__subtitle" id="welcomeSubtitle">مرحباً بك في منصة KRATOS BOT. جميع معلوماتك موجودة في الملف الشخصي.</p>
+            <div class="home-empty__hint">
+                <span>👤</span>
+                <span>اضغط على صورتك في الأعلى لفتح الملف الشخصي</span>
             </div>
         </div>
-        <!-- Removed Stats Grid, Recent Activity, Full Activity -->
     </div>
 
     <!-- ADMIN PANEL PAGE -->
@@ -2393,7 +2457,6 @@
             </div>
         </div>
 
-        <!-- Admin Stats -->
         <div class="stats-grid" id="adminStatsGrid">
             <div class="stat-card is-admin">
                 <div class="stat-card__icon" aria-hidden="true">👥</div>
@@ -2417,7 +2480,6 @@
             </div>
         </div>
 
-        <!-- Admin Quick Actions -->
         <div class="admin-quick-actions">
             <div class="admin-quick-action-card" onclick="AdminPanel.refreshAll()" role="button" tabindex="0">
                 <div class="admin-quick-action-card__icon" aria-hidden="true">🔄</div>
@@ -2441,7 +2503,6 @@
             </div>
         </div>
 
-        <!-- Admin Users Table -->
         <div class="admin-table-container">
             <div class="admin-table-header">
                 <div class="admin-table-header__title">📋 قائمة المستخدمين</div>
@@ -2480,7 +2541,6 @@
             </div>
         </div>
 
-        <!-- Admin Global Activity -->
         <div class="admin-global-activity">
             <div class="admin-global-activity__header">📜 سجل النشاطات العام (آخر 50 نشاط)</div>
             <div class="admin-global-activity__list" id="adminGlobalActivity">
@@ -2509,7 +2569,53 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
 </nav>
 </div>
 
+<!-- ==================== LEFT SIDEBAR (Profile Drawer) ==================== -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<aside class="sidebar" id="profileSidebar" role="dialog" aria-labelledby="sidebarTitle" aria-modal="true">
+    <div class="sidebar-header">
+        <div class="sidebar-header__title" id="sidebarTitle">
+            <span>👤</span> ملفي الشخصي
+        </div>
+        <button class="sidebar-header__close" onclick="App.closeSidebar()" aria-label="إغلاق الملف الشخصي">✕</button>
+    </div>
+    <div class="sidebar-body" id="sidebarBody">
+        <!-- Rendered dynamically by JS -->
+    </div>
+</aside>
+
 <!-- ==================== Modals ==================== -->
+
+<!-- Edit Profile Modal -->
+<div class="modal-overlay" id="editProfileModal" role="dialog" aria-labelledby="editProfileTitle" aria-modal="true">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title" id="editProfileTitle">تعديل الملف الشخصي</h3>
+            <button class="modal-close" onclick="App.closeModal('editProfileModal')" aria-label="إغلاق">✕</button>
+        </div>
+        <form id="editProfileForm" novalidate>
+            <div class="form-group">
+                <label class="form-label" for="editFullName">الاسم الكامل</label>
+                <input type="text" class="form-input" id="editFullName" placeholder="أدخل اسمك الكامل" autocomplete="name">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="editEmail">البريد الإلكتروني</label>
+                <input type="email" class="form-input" id="editEmail" placeholder="example@email.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="editPhone">رقم الهاتف</label>
+                <input type="tel" class="form-input" id="editPhone" placeholder="+966..." autocomplete="tel">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="editBio">نبذة عنك</label>
+                <textarea class="form-input" id="editBio" rows="3" placeholder="اكتب شيئاً عنك..."></textarea>
+            </div>
+            <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-lg);">
+                <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="App.closeModal('editProfileModal')">إلغاء</button>
+                <button type="submit" class="btn btn-primary" style="flex: 1;">حفظ التغييرات</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <!-- Account Switcher Modal -->
 <div class="modal-overlay" id="accountSwitcherModal" role="dialog" aria-labelledby="switcherTitle" aria-modal="true">
@@ -2547,7 +2653,7 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
         </div>
         <form id="adminBroadcastForm" novalidate>
             <div class="form-group">
-                <label class="form-label" for="broadcastTitle">عنوان الإشعار</label>
+                <label class="form-label" for="broadcastTitleInput">عنوان الإشعار</label>
                 <input type="text" class="form-input" id="broadcastTitleInput" placeholder="عنوان الإشعار..." required>
             </div>
             <div class="form-group">
@@ -2594,19 +2700,9 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
        MODULE: Utility Helpers
        ============================================================ */
     const Util = {
-        /**
-         * Generate a unique identifier
-         * @returns {string}
-         */
         uid() {
             return Date.now().toString(36) + Math.random().toString(36).substring(2, 11);
         },
-
-        /**
-         * Format timestamp to relative time (Arabic)
-         * @param {number} timestamp
-         * @returns {string}
-         */
         timeAgo(timestamp) {
             const seconds = Math.floor((Date.now() - timestamp) / 1000);
             if (seconds < 60) return 'الآن';
@@ -2621,36 +2717,14 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             const years = Math.floor(months / 12);
             return `منذ ${years} سنة`;
         },
-
-        /**
-         * Safely parse JSON
-         * @param {string} str
-         * @param {*} fallback
-         * @returns {*}
-         */
         safeJSON(str, fallback = null) {
-            try {
-                return JSON.parse(str);
-            } catch (e) {
-                return fallback;
-            }
+            try { return JSON.parse(str); } catch (e) { return fallback; }
         },
-
-        /**
-         * Escape HTML entities
-         * @param {string} str
-         * @returns {string}
-         */
         escapeHTML(str) {
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
         },
-
-        /**
-         * Get device type
-         * @returns {'mobile'|'tablet'|'desktop'}
-         */
         getDeviceType() {
             const width = window.innerWidth;
             if (width < 768) return 'mobile';
@@ -2670,98 +2744,55 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             ADMIN_LOGS: 'kratos_admin_logs_v6'
         });
 
-        /**
-         * Initialize database with default values
-         */
         function init() {
-            if (!localStorage.getItem(KEYS.USERS)) {
-                localStorage.setItem(KEYS.USERS, '{}');
-            }
-            if (!localStorage.getItem(KEYS.ADMIN_LOGS)) {
-                localStorage.setItem(KEYS.ADMIN_LOGS, '[]');
-            }
+            if (!localStorage.getItem(KEYS.USERS)) localStorage.setItem(KEYS.USERS, '{}');
+            if (!localStorage.getItem(KEYS.ADMIN_LOGS)) localStorage.setItem(KEYS.ADMIN_LOGS, '[]');
             if (!localStorage.getItem(KEYS.SETTINGS)) {
-                const defaultSettings = {
+                localStorage.setItem(KEYS.SETTINGS, JSON.stringify({
                     botUsername: 'KratosChancyBot',
                     sessionDuration: CONFIG.SESSION_DURATION,
                     adminTelegramId: CONFIG.ADMIN_TELEGRAM_ID,
                     adminUserId: CONFIG.ADMIN_TELEGRAM_USER_ID
-                };
-                localStorage.setItem(KEYS.SETTINGS, JSON.stringify(defaultSettings));
+                }));
             }
         }
 
-        /** @returns {Object} */
-        function getUsers() {
-            return Util.safeJSON(localStorage.getItem(KEYS.USERS), {});
-        }
+        function getUsers() { return Util.safeJSON(localStorage.getItem(KEYS.USERS), {}); }
 
-        /** @param {Object} users */
         function saveUsers(users) {
-            try {
-                localStorage.setItem(KEYS.USERS, JSON.stringify(users));
-                return true;
-            } catch (e) {
-                console.error('Failed to save users:', e);
-                return false;
-            }
+            try { localStorage.setItem(KEYS.USERS, JSON.stringify(users)); return true; } catch (e) { return false; }
         }
 
-        /** @returns {string|null} */
-        function getCurrentUserId() {
-            return localStorage.getItem(KEYS.CURRENT_USER_ID);
-        }
+        function getCurrentUserId() { return localStorage.getItem(KEYS.CURRENT_USER_ID); }
 
-        /** @param {string|null} userId */
         function setCurrentUserId(userId) {
-            if (userId) {
-                localStorage.setItem(KEYS.CURRENT_USER_ID, userId);
-            } else {
-                localStorage.removeItem(KEYS.CURRENT_USER_ID);
-            }
+            if (userId) localStorage.setItem(KEYS.CURRENT_USER_ID, userId);
+            else localStorage.removeItem(KEYS.CURRENT_USER_ID);
         }
 
-        /** @returns {Array} */
-        function getAdminLogs() {
-            return Util.safeJSON(localStorage.getItem(KEYS.ADMIN_LOGS), []);
-        }
+        function getAdminLogs() { return Util.safeJSON(localStorage.getItem(KEYS.ADMIN_LOGS), []); }
 
-        /** @param {Object} log */
         function addAdminLog(log) {
             const logs = getAdminLogs();
-            logs.unshift({
-                id: Util.uid(),
-                ...log,
-                timestamp: Date.now()
-            });
-            if (logs.length > CONFIG.MAX_ADMIN_LOGS) {
-                logs.length = CONFIG.MAX_ADMIN_LOGS;
-            }
+            logs.unshift({ id: Util.uid(), ...log, timestamp: Date.now() });
+            if (logs.length > CONFIG.MAX_ADMIN_LOGS) logs.length = CONFIG.MAX_ADMIN_LOGS;
             localStorage.setItem(KEYS.ADMIN_LOGS, JSON.stringify(logs));
         }
 
-        /** @param {string} tgId */
         function getUserByTgId(tgId) {
             const users = getUsers();
             return users[tgId] || null;
         }
 
-        /** @returns {Object|null} */
         function getCurrentUser() {
             const currentId = getCurrentUserId();
             if (!currentId) return null;
             return getUserByTgId(currentId);
         }
 
-        /**
-         * Create or update a user
-         * @param {Object} userData
-         * @returns {Object}
-         */
         function upsertUser(userData) {
             const users = getUsers();
             const tgId = userData.telegramId;
-
             if (users[tgId]) {
                 users[tgId] = {
                     ...users[tgId],
@@ -2797,22 +2828,14 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                     status: 'active',
                     language: userData.languageCode || 'ar',
                     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    stats: {
-                        sessions: 0,
-                        hours: 0,
-                        achievements: 0,
-                        level: 1,
-                        xp: 0
-                    },
+                    stats: { sessions: 0, hours: 0, achievements: 0, level: 1, xp: 0 },
                     activity: []
                 };
             }
-
             saveUsers(users);
             return users[tgId];
         }
 
-        /** @param {string} tgId @param {Object} updates */
         function updateUser(tgId, updates) {
             const users = getUsers();
             if (!users[tgId]) return null;
@@ -2821,11 +2844,9 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             return users[tgId];
         }
 
-        /** @param {string} tgId @param {Object} activity */
         function addActivity(tgId, activity) {
             const users = getUsers();
             if (!users[tgId]) return;
-
             if (!users[tgId].activity) users[tgId].activity = [];
             users[tgId].activity.unshift({
                 id: Util.uid(),
@@ -2834,55 +2855,42 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                 description: activity.description || '',
                 timestamp: Date.now()
             });
-
             if (users[tgId].activity.length > CONFIG.MAX_ACTIVITIES_PER_USER) {
                 users[tgId].activity = users[tgId].activity.slice(0, CONFIG.MAX_ACTIVITIES_PER_USER);
             }
-
             saveUsers(users);
         }
 
-        /** @param {Object} activity */
         function addGlobalActivity(activity) {
             const allUsers = getUsers();
-            Object.keys(allUsers).forEach(tgId => {
-                addActivity(tgId, activity);
-            });
+            Object.keys(allUsers).forEach(tgId => { addActivity(tgId, activity); });
         }
 
-        /** @param {string} tgId @returns {boolean} */
         function deleteUser(tgId) {
             const users = getUsers();
             if (users[tgId]) {
                 delete users[tgId];
                 saveUsers(users);
-
-                if (getCurrentUserId() === tgId) {
-                    setCurrentUserId(null);
-                }
+                if (getCurrentUserId() === tgId) setCurrentUserId(null);
                 return true;
             }
             return false;
         }
 
-        /** @returns {Array} */
         function getAllUsers() {
             const users = getUsers();
             return Object.values(users).sort((a, b) => b.lastLogin - a.lastLogin);
         }
 
-        /** @returns {number} */
         function getTotalActivities() {
             const users = getUsers();
             return Object.values(users).reduce((sum, u) => sum + (u.activity ? u.activity.length : 0), 0);
         }
 
-        /** Clear all stored data */
         function clearAll() {
             Object.values(KEYS).forEach(key => localStorage.removeItem(key));
         }
 
-        // Public API
         return {
             KEYS,
             init,
@@ -2914,43 +2922,27 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
         let user = null;
         let isBot = false;
 
-        /**
-         * Initialize Telegram WebApp
-         * @returns {boolean}
-         */
         function init() {
             if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
                 webApp = window.Telegram.WebApp;
                 webApp.ready();
                 webApp.expand();
                 initData = webApp.initData;
-
                 try {
                     if (initData) {
                         const params = new URLSearchParams(initData);
                         const userStr = params.get('user');
-
                         if (userStr) {
                             user = JSON.parse(decodeURIComponent(userStr));
                             isBot = user.is_bot || false;
-                            console.log('✅ Telegram User Detected:', {
-                                id: user.id,
-                                username: user.username,
-                                first_name: user.first_name,
-                                is_bot: isBot
-                            });
                             return true;
                         }
                     }
-                } catch (e) {
-                    console.error('❌ Error parsing Telegram initData:', e);
-                }
+                } catch (e) { console.error('❌ Error parsing Telegram initData:', e); }
             }
-            console.log('⚠️ Telegram WebApp SDK غير متوفر');
             return false;
         }
 
-        /** @returns {Object|null} */
         function getUserData() {
             if (!user) return null;
             return {
@@ -2968,7 +2960,6 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             };
         }
 
-        /** @param {number} accountNumber @returns {Object} */
         function getSimulatedData(accountNumber = 1) {
             const accounts = [{
                 telegramId: 'tg_123456789',
@@ -3010,7 +3001,6 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             return accounts[(accountNumber - 1) % accounts.length];
         }
 
-        /** @returns {Object} */
         function getAdminSimulatedData() {
             return {
                 telegramId: CONFIG.ADMIN_TELEGRAM_ID,
@@ -3027,11 +3017,8 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             };
         }
 
-        /** @param {*} data */
         function sendData(data) {
-            if (webApp) {
-                webApp.sendData(JSON.stringify(data));
-            }
+            if (webApp) webApp.sendData(JSON.stringify(data));
         }
 
         return {
@@ -3049,46 +3036,24 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
        ============================================================ */
     const Toast = (() => {
         const container = () => document.getElementById('toastContainer');
-        const icons = Object.freeze({
-            success: '✅',
-            error: '❌',
-            info: 'ℹ️',
-            warning: '⚠️'
-        });
+        const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
 
-        /**
-         * Show a toast notification
-         * @param {string} message
-         * @param {'success'|'error'|'info'|'warning'} type
-         * @param {number} duration
-         */
         function show(message, type = 'info', duration = CONFIG.TOAST_DURATION) {
             const toastContainer = container();
             if (!toastContainer) return;
-
             const toast = document.createElement('div');
             toast.className = `toast toast--${type}`;
             toast.setAttribute('role', 'alert');
-            toast.innerHTML = `
-                <span class="toast-icon" aria-hidden="true">${icons[type] || icons.info}</span>
-                <span class="toast-message">${Util.escapeHTML(message)}</span>
-            `;
-
+            toast.innerHTML =
+                `<span class="toast-icon" aria-hidden="true">${icons[type] || icons.info}</span><span class="toast-message">${Util.escapeHTML(message)}</span>`;
             toastContainer.appendChild(toast);
-
-            // Animate out
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateY(-20px)';
                 toast.style.transition = 'all 0.3s ease';
-                setTimeout(() => {
-                    if (toast.parentNode) {
-                        toast.remove();
-                    }
-                }, 300);
+                setTimeout(() => { if (toast.parentNode) toast.remove(); }, 300);
             }, duration);
         }
-
         return { show };
     })();
 
@@ -3096,16 +3061,11 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
        MODULE: Admin Panel
        ============================================================ */
     const AdminPanel = (() => {
-        /**
-         * Check if current user has admin privileges
-         * @returns {boolean}
-         */
         function isCurrentUserAdmin() {
             const user = App.getCurrentUser();
             return user && (user.telegramId === CONFIG.ADMIN_TELEGRAM_ID || user.isAdmin === true);
         }
 
-        /** Initialize admin panel event listeners */
         function init() {
             const broadcastForm = document.getElementById('adminBroadcastForm');
             if (broadcastForm) {
@@ -3116,7 +3076,6 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             }
         }
 
-        /** Refresh all admin data */
         function refreshAll() {
             App.renderAll();
             renderAdminPanel();
@@ -3124,21 +3083,15 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             DB.addAdminLog({ action: 'refresh_all', description: 'تحديث كامل للوحة التحكم' });
         }
 
-        /** Render the admin panel dashboard */
         function renderAdminPanel() {
             if (!isCurrentUserAdmin()) return;
-
             const allUsers = DB.getAllUsers();
             const totalUsers = allUsers.length;
             const bots = allUsers.filter(u => u.accountType === 'bot').length;
             const active = allUsers.filter(u => u.status === 'active').length;
             const totalActivities = DB.getTotalActivities();
 
-            // Update stat values
-            const setText = (id, val) => {
-                const el = document.getElementById(id);
-                if (el) el.textContent = val;
-            };
+            const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
             setText('adminStatTotalUsers', totalUsers);
             setText('adminStatBots', bots);
             setText('adminStatActive', active);
@@ -3148,33 +3101,20 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             renderGlobalActivity(allUsers);
         }
 
-        /** @param {Array} users @param {string} [filter=''] */
         function renderUsersTable(users, filter = '') {
             const tbody = document.getElementById('adminUsersTableBody');
             if (!tbody) return;
-
-            const filteredUsers = filter ?
-                users.filter(u =>
+            const filteredUsers = filter ? users.filter(u =>
                     u.username.toLowerCase().includes(filter.toLowerCase()) ||
                     (u.fullName && u.fullName.toLowerCase().includes(filter.toLowerCase())) ||
                     u.telegramId.toLowerCase().includes(filter.toLowerCase())
                 ) :
                 users;
-
             if (filteredUsers.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7">
-                            <div class="empty-state">
-                                <div class="empty-state__icon" aria-hidden="true">🔍</div>
-                                <div class="empty-state__title">لا توجد نتائج</div>
-                                <div class="empty-state__text">لا يوجد مستخدمون مطابقون للبحث</div>
-                            </div>
-                        </td>
-                    </tr>`;
+                tbody.innerHTML =
+                    `<tr><td colspan="7"><div class="empty-state"><div class="empty-state__icon" aria-hidden="true">🔍</div><div class="empty-state__title">لا توجد نتائج</div><div class="empty-state__text">لا يوجد مستخدمون مطابقون للبحث</div></div></td></tr>`;
                 return;
             }
-
             tbody.innerHTML = filteredUsers.map(user => {
                 const isAdmin = user.telegramId === CONFIG.ADMIN_TELEGRAM_ID || user.isAdmin;
                 const avatarContent = user.avatar ?
@@ -3186,81 +3126,54 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                 const statusClass = user.status === 'active' ? 'status-dot--active' : 'status-dot--inactive';
                 const statusLabel = user.status === 'active' ? 'نشط' : 'غير نشط';
                 const safeTgId = Util.escapeHTML(user.telegramId);
-
                 return `
                     <tr>
-                        <td>
-                            <div class="user-cell">
-                                <div class="mini-avatar">${avatarContent}</div>
-                                <div>
-                                    <strong>${Util.escapeHTML(user.fullName || user.username)}</strong>
-                                    <br><small style="color:var(--color-text-secondary)">@${Util.escapeHTML(user.username)}</small>
-                                </div>
-                            </div>
-                        </td>
+                        <td><div class="user-cell"><div class="mini-avatar">${avatarContent}</div><div><strong>${Util.escapeHTML(user.fullName || user.username)}</strong><br><small style="color:var(--color-text-secondary)">@${Util.escapeHTML(user.username)}</small></div></div></td>
                         <td style="font-family:var(--font-family-mono);font-size:var(--text-xs);">${safeTgId.replace('tg_','')}</td>
                         <td>${typeLabel}</td>
                         <td><span class="status-dot ${statusClass}" aria-hidden="true"></span>${statusLabel}</td>
                         <td>${Util.timeAgo(user.lastLogin)}</td>
                         <td>${user.loginCount}</td>
-                        <td>
-                            <div class="admin-actions-cell">
-                                <button class="admin-action-btn admin-action-btn--view" onclick="AdminPanel.viewUserDetail('${safeTgId}')" title="عرض التفاصيل" aria-label="عرض تفاصيل المستخدم">👁️</button>
-                                <button class="admin-action-btn admin-action-btn--notify" onclick="AdminPanel.notifyUser('${safeTgId}')" title="إرسال إشعار" aria-label="إرسال إشعار للمستخدم">🔔</button>
-                                ${!isAdmin ? `<button class="admin-action-btn admin-action-btn--delete" onclick="AdminPanel.deleteUserAdmin('${safeTgId}')" title="حذف المستخدم" aria-label="حذف المستخدم">🗑️</button>` : ''}
-                            </div>
-                        </td>
+                        <td><div class="admin-actions-cell">
+                            <button class="admin-action-btn admin-action-btn--view" onclick="AdminPanel.viewUserDetail('${safeTgId}')" title="عرض التفاصيل" aria-label="عرض تفاصيل المستخدم">👁️</button>
+                            <button class="admin-action-btn admin-action-btn--notify" onclick="AdminPanel.notifyUser('${safeTgId}')" title="إرسال إشعار" aria-label="إرسال إشعار للمستخدم">🔔</button>
+                            ${!isAdmin ? `<button class="admin-action-btn admin-action-btn--delete" onclick="AdminPanel.deleteUserAdmin('${safeTgId}')" title="حذف المستخدم" aria-label="حذف المستخدم">🗑️</button>` : ''}
+                        </div></td>
                     </tr>`;
             }).join('');
         }
 
-        /** @param {Array} allUsers */
         function renderGlobalActivity(allUsers) {
             const container = document.getElementById('adminGlobalActivity');
             if (!container) return;
-
             const allActivities = [];
-
             allUsers.forEach(user => {
                 if (user.activity) {
                     user.activity.forEach(act => {
-                        allActivities.push({
-                            ...act,
-                            userName: user.fullName || user.username,
-                            userTgId: user.telegramId,
-                            userAvatar: user.avatar
-                        });
+                        allActivities.push({ ...act, userName: user.fullName || user.username,
+                            userTgId: user.telegramId, userAvatar: user.avatar });
                     });
                 }
             });
-
             allActivities.sort((a, b) => b.timestamp - a.timestamp);
             const recentActivities = allActivities.slice(0, CONFIG.MAX_GLOBAL_ACTIVITIES_DISPLAY);
-
             if (recentActivities.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state__icon" aria-hidden="true">📭</div>
-                        <div class="empty-state__title">لا توجد نشاطات عامة</div>
-                    </div>`;
+                container.innerHTML =
+                    `<div class="empty-state"><div class="empty-state__icon" aria-hidden="true">📭</div><div class="empty-state__title">لا توجد نشاطات عامة</div></div>`;
                 return;
             }
-
             const icons = { success: '✅', info: 'ℹ️', warning: '⚠️', error: '❌' };
             container.innerHTML = recentActivities.map(a => `
                 <div class="activity-item">
                     <div class="activity-icon" aria-hidden="true">${icons[a.type] || '📌'}</div>
                     <div class="activity-content">
-                        <div class="activity-title">
-                            <strong>${Util.escapeHTML(a.userName)}</strong> • ${Util.escapeHTML(a.title)}
-                        </div>
+                        <div class="activity-title"><strong>${Util.escapeHTML(a.userName)}</strong> • ${Util.escapeHTML(a.title)}</div>
                         <div class="activity-time">${Util.escapeHTML(a.description)} • ${Util.timeAgo(a.timestamp)}</div>
                     </div>
                 </div>
             `).join('');
         }
 
-        /** Filter users by search query */
         function filterUsers() {
             const input = document.getElementById('adminSearchInput');
             const query = input ? input.value : '';
@@ -3268,22 +3181,15 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             renderUsersTable(allUsers, query);
         }
 
-        /** @param {string} tgId */
         function viewUserDetail(tgId) {
             const user = DB.getUserByTgId(tgId);
-            if (!user) {
-                Toast.show('المستخدم غير موجود', 'error');
-                return;
-            }
-
+            if (!user) { Toast.show('المستخدم غير موجود', 'error'); return; }
             const isAdmin = user.telegramId === CONFIG.ADMIN_TELEGRAM_ID || user.isAdmin;
             const content = document.getElementById('adminUserDetailContent');
             if (!content) return;
-
             const safeTgId = Util.escapeHTML(user.telegramId);
             const safeUsername = Util.escapeHTML(user.username);
             const safeFullName = Util.escapeHTML(user.fullName || user.username);
-
             content.innerHTML = `
                 <div style="text-align:center;margin-bottom:var(--space-lg);">
                     <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent-green),var(--color-accent-blue));display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:var(--color-primary);margin:0 auto;overflow:hidden;">
@@ -3302,6 +3208,7 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                     <div class="detail-item"><div class="detail-label">عدد مرات الدخول</div><div class="detail-value">${user.loginCount}</div></div>
                     <div class="detail-item"><div class="detail-label">مصدر الدخول</div><div class="detail-value">${Util.escapeHTML(user.loginSource)}</div></div>
                     <div class="detail-item"><div class="detail-label">الحالة</div><div class="detail-value">${user.status === 'active' ? '🟢 نشط' : '🔴 غير نشط'}</div></div>
+                    <div class="detail-item"><div class="detail-label">الإحصائيات</div><div class="detail-value">🎮 ${user.stats.sessions} جلسة | ⭐ مستوى ${user.stats.level} | 🏆 ${user.stats.achievements} إنجاز</div></div>
                     <div class="detail-item"><div class="detail-label">عدد النشاطات</div><div class="detail-value">${user.activity ? user.activity.length : 0}</div></div>
                 </div>
                 <div style="display:flex;gap:var(--space-sm);margin-top:var(--space-lg);">
@@ -3309,108 +3216,61 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                     <button class="btn btn-secondary btn-full" onclick="App.closeModal('adminUserDetailModal')">إغلاق</button>
                 </div>
             `;
-
             const modal = document.getElementById('adminUserDetailModal');
             if (modal) modal.classList.add('is-active');
-
-            DB.addAdminLog({
-                action: 'view_user',
-                description: `عرض تفاصيل المستخدم: ${user.username}`,
-                targetUser: user.telegramId
-            });
+            DB.addAdminLog({ action: 'view_user', description: `عرض تفاصيل المستخدم: ${user.username}`,
+                targetUser: user.telegramId });
         }
 
-        /** @param {string} tgId */
         function deleteUserAdmin(tgId) {
-            if (tgId === CONFIG.ADMIN_TELEGRAM_ID) {
-                Toast.show('⚠️ لا يمكن حذف حساب المشرف العام!', 'error');
-                return;
-            }
-
+            if (tgId === CONFIG.ADMIN_TELEGRAM_ID) { Toast.show('⚠️ لا يمكن حذف حساب المشرف العام!', 'error'); return; }
             const user = DB.getUserByTgId(tgId);
             if (!user) return;
-
             if (!confirm(`⚠️ هل أنت متأكد من حذف المستخدم "${user.username}"؟\n\nسيتم حذف جميع بياناته نهائياً.`)) return;
             if (!confirm('تأكيد أخير: هذا الإجراء لا يمكن التراجع عنه!')) return;
-
             DB.deleteUser(tgId);
-            DB.addAdminLog({
-                action: 'delete_user',
-                description: `حذف المستخدم: ${user.username}`,
-                targetUser: tgId
-            });
+            DB.addAdminLog({ action: 'delete_user', description: `حذف المستخدم: ${user.username}`, targetUser: tgId });
             Toast.show(`🗑️ تم حذف المستخدم ${user.username}`, 'warning');
             renderAdminPanel();
         }
 
-        /** @param {string} tgId */
         function notifyUser(tgId) {
             const user = DB.getUserByTgId(tgId);
-            if (!user) {
-                Toast.show('المستخدم غير موجود', 'error');
-                return;
-            }
-
+            if (!user) { Toast.show('المستخدم غير موجود', 'error'); return; }
             const title = prompt('عنوان الإشعار:', 'إشعار من المشرف');
             if (!title) return;
-
             const message = prompt('نص الإشعار:', '');
             if (!message) return;
-
-            DB.addActivity(tgId, {
-                type: 'warning',
-                title: `📢 ${title}`,
-                description: message
-            });
-
-            DB.addAdminLog({
-                action: 'notify_user',
-                description: `إشعار للمستخدم ${user.username}: ${title}`,
-                targetUser: tgId
-            });
+            DB.addActivity(tgId, { type: 'warning', title: `📢 ${title}`, description: message });
+            DB.addAdminLog({ action: 'notify_user', description: `إشعار للمستخدم ${user.username}: ${title}`,
+                targetUser: tgId });
             Toast.show(`🔔 تم إرسال الإشعار إلى ${user.username}`, 'success');
             renderAdminPanel();
         }
 
-        /** Open broadcast modal */
         function broadcastNotification() {
             const modal = document.getElementById('adminBroadcastModal');
             if (modal) modal.classList.add('is-active');
         }
 
-        /** Send broadcast notification to all users */
         function sendBroadcast() {
             const titleInput = document.getElementById('broadcastTitleInput');
             const messageInput = document.getElementById('broadcastMessage');
             const typeSelect = document.getElementById('broadcastType');
-
             const title = titleInput ? titleInput.value.trim() : '';
             const message = messageInput ? messageInput.value.trim() : '';
             const type = typeSelect ? typeSelect.value : 'info';
-
-            if (!title || !message) {
-                Toast.show('يرجى ملء جميع الحقول', 'error');
-                return;
-            }
-
-            DB.addGlobalActivity({
-                type: type,
-                title: `📢 ${title}`,
-                description: message
-            });
-
+            if (!title || !message) { Toast.show('يرجى ملء جميع الحقول', 'error'); return; }
+            DB.addGlobalActivity({ type: type, title: `📢 ${title}`, description: message });
             DB.addAdminLog({ action: 'broadcast', description: `إشعار عام: ${title}` });
             App.closeModal('adminBroadcastModal');
             Toast.show('📢 تم إرسال الإشعار لجميع المستخدمين', 'success');
             renderAdminPanel();
             App.renderAll();
-
-            // Reset form
             if (titleInput) titleInput.value = '';
             if (messageInput) messageInput.value = '';
         }
 
-        /** Export all data as JSON file */
         function exportAllData() {
             const allData = {
                 exportedAt: new Date().toISOString(),
@@ -3420,7 +3280,6 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                 adminLogs: DB.getAdminLogs(),
                 settings: Util.safeJSON(localStorage.getItem(DB.KEYS.SETTINGS), {})
             };
-
             const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -3430,12 +3289,10 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-
             DB.addAdminLog({ action: 'export_all', description: 'تصدير كامل للبيانات' });
             Toast.show('📥 تم تصدير جميع البيانات بنجاح', 'success');
         }
 
-        /** Remove inactive users (> 30 days) */
         function clearInactiveUsers() {
             const allUsers = DB.getAllUsers();
             const thirtyDaysAgo = Date.now() - (CONFIG.INACTIVE_DAYS_THRESHOLD * 24 * 60 * 60 * 1000);
@@ -3444,25 +3301,15 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                 u.lastLogin < thirtyDaysAgo &&
                 u.accountType !== 'bot'
             );
-
-            if (inactiveUsers.length === 0) {
-                Toast.show('✅ لا يوجد مستخدمون غير نشطين (أكثر من 30 يوم)', 'info');
-                return;
-            }
-
-            if (!confirm(`⚠️ تم العثور على ${inactiveUsers.length} مستخدم غير نشط.\n\nهل تريد حذفهم جميعاً؟`)) return;
+            if (inactiveUsers.length === 0) { Toast.show('✅ لا يوجد مستخدمون غير نشطين (أكثر من 30 يوم)', 'info'); return; }
+            if (!confirm(`⚠️ تم العثور على ${inactiveUsers.length} مستخدم غير نشط.\n\nهل تريد حذفهم جميعاً?`)) return;
             if (!confirm('تأكيد أخير: سيتم حذف جميع الحسابات غير النشطة!')) return;
-
             inactiveUsers.forEach(u => DB.deleteUser(u.telegramId));
-            DB.addAdminLog({
-                action: 'clear_inactive',
-                description: `حذف ${inactiveUsers.length} مستخدم غير نشط`
-            });
+            DB.addAdminLog({ action: 'clear_inactive', description: `حذف ${inactiveUsers.length} مستخدم غير نشط` });
             Toast.show(`🧹 تم حذف ${inactiveUsers.length} مستخدم غير نشط`, 'warning');
             renderAdminPanel();
         }
 
-        // Public API
         return {
             init,
             isCurrentUserAdmin,
@@ -3483,9 +3330,6 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
        MODULE: Authentication
        ============================================================ */
     const Auth = (() => {
-        /**
-         * Initialize authentication
-         */
         function init() {
             const isTelegram = TelegramWebApp.init();
             const tgUserData = isTelegram ? TelegramWebApp.getUserData() : null;
@@ -3494,36 +3338,25 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
 
             if (tgUserData) {
                 const newTgId = tgUserData.telegramId;
-
                 if (currentUser && currentUser.telegramId === newTgId) {
-                    // Same user returning
                     DB.updateUser(newTgId, { lastLogin: Date.now() });
                     enterApp(currentUser);
                 } else if (currentUser && currentUser.telegramId !== newTgId) {
-                    // Different Telegram account detected
                     const newUser = DB.upsertUser(tgUserData);
                     DB.setCurrentUserId(newUser.telegramId);
-                    DB.addActivity(newUser.telegramId, {
-                        type: 'success',
-                        title: 'تبديل حساب تلقائي',
-                        description: `تم التبديل من حساب ${currentUser.username}`
-                    });
+                    DB.addActivity(newUser.telegramId, { type: 'success', title: 'تبديل حساب تلقائي',
+                        description: `تم التبديل من حساب ${currentUser.username}` });
                     showAccountSwitchInfo(currentUser, newUser);
                     setTimeout(() => enterApp(newUser), 1500);
                 } else {
-                    // First time login
                     const newUser = DB.upsertUser(tgUserData);
                     DB.setCurrentUserId(newUser.telegramId);
-                    DB.addActivity(newUser.telegramId, {
-                        type: 'success',
-                        title: 'تسجيل دخول أول',
-                        description: 'تم إنشاء الحساب بنجاح'
-                    });
+                    DB.addActivity(newUser.telegramId, { type: 'success', title: 'تسجيل دخول أول',
+                        description: 'تم إنشاء الحساب بنجاح' });
                     showAutoLoginBanner(tgUserData);
                     setTimeout(() => enterApp(newUser), 1500);
                 }
             } else {
-                // No Telegram data available
                 if (currentUser) {
                     enterApp(currentUser);
                 } else {
@@ -3533,57 +3366,44 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             }
         }
 
-        /** Show the authentication gate */
         function showAuthGate() {
             const gate = document.getElementById('authGate');
-            if (gate) {
-                gate.classList.remove('is-hidden');
-            }
+            if (gate) gate.classList.remove('is-hidden');
             document.body.style.overflow = 'hidden';
         }
 
-        /** Hide the authentication gate */
         function hideAuthGate() {
             const gate = document.getElementById('authGate');
-            if (gate) {
-                gate.classList.add('is-hidden');
-            }
+            if (gate) gate.classList.add('is-hidden');
             document.body.style.overflow = '';
         }
 
-        /** @param {Object} userData */
         function showAutoLoginBanner(userData) {
             const banner = document.getElementById('autoLoginBanner');
             const title = document.getElementById('autoLoginTitle');
             const text = document.getElementById('autoLoginText');
             if (!banner || !title || !text) return;
-
             banner.style.display = 'block';
             title.textContent = userData.isBot ? '🤖 تم الكشف عن بوت تلغرام' : '👤 تم الكشف عن حساب تلغرام';
             text.textContent = `مرحباً ${userData.fullName || userData.username}! جاري تحميل بياناتك...`;
         }
 
-        /** @param {Object} oldUser @param {Object} newUser */
         function showAccountSwitchInfo(oldUser, newUser) {
             const banner = document.getElementById('autoLoginBanner');
             const title = document.getElementById('autoLoginTitle');
             const text = document.getElementById('autoLoginText');
             if (!banner || !title || !text) return;
-
             banner.style.display = 'block';
             title.textContent = '🔄 تم تبديل الحساب تلقائياً';
             text.textContent = `من: ${oldUser.username} → إلى: ${newUser.username}`;
         }
 
-        /** Display simulated accounts for demo mode */
         function showSimulatedAccounts() {
             const switcher = document.getElementById('accountSwitcher');
             const list = document.getElementById('accountsList');
             const count = document.getElementById('accountsCount');
             if (!switcher || !list || !count) return;
-
             const allUsers = DB.getAllUsers();
-
             if (allUsers.length > 0) {
                 count.textContent = allUsers.length;
                 list.innerHTML = allUsers.map(user => {
@@ -3609,26 +3429,18 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             }
         }
 
-        /** @param {string} tgId */
         function switchToAccount(tgId) {
             const user = DB.getUserByTgId(tgId);
             if (user) {
                 DB.setCurrentUserId(tgId);
-                DB.addActivity(tgId, {
-                    type: 'info',
-                    title: 'تبديل حساب يدوي',
-                    description: 'تم التبديل إلى هذا الحساب من قائمة الحسابات'
-                });
+                DB.addActivity(tgId, { type: 'info', title: 'تبديل حساب يدوي',
+                    description: 'تم التبديل إلى هذا الحساب من قائمة الحسابات' });
                 enterApp(user);
             }
         }
 
-        /** @param {string} tgId */
         function deleteAccountFromList(tgId) {
-            if (tgId === CONFIG.ADMIN_TELEGRAM_ID) {
-                Toast.show('⛔ لا يمكن حذف حساب المشرف العام!', 'error');
-                return;
-            }
+            if (tgId === CONFIG.ADMIN_TELEGRAM_ID) { Toast.show('⛔ لا يمكن حذف حساب المشرف العام!', 'error'); return; }
             const user = DB.getUserByTgId(tgId);
             if (!user) return;
             if (!confirm(`⚠️ هل أنت متأكد من حذف الحساب "${user.username}"؟\nسيتم حذف جميع بياناته.`)) return;
@@ -3641,82 +3453,55 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             }
         }
 
-        /** @param {number} accountNumber */
+        let simulatedAccountNumber = 1;
+
         async function simulateLogin(accountNumber) {
             const btn = document.getElementById('telegramLoginBtn');
             if (!btn) return;
-
             btn.disabled = true;
             btn.innerHTML = '<div class="spinner"></div><span>جاري تسجيل الدخول...</span>';
             await new Promise(r => setTimeout(r, 1000));
-
             const simulatedData = TelegramWebApp.getSimulatedData(accountNumber);
             const user = DB.upsertUser(simulatedData);
             DB.setCurrentUserId(user.telegramId);
-            DB.addActivity(user.telegramId, {
-                type: 'success',
-                title: 'تسجيل دخول (محاكاة)',
-                description: `حساب رقم ${accountNumber}`
-            });
-
-            // Restore button
+            DB.addActivity(user.telegramId, { type: 'success', title: 'تسجيل دخول (محاكاة)',
+                description: `حساب رقم ${accountNumber}` });
             btn.disabled = false;
-            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>تسجيل الدخول عبر تلغرام</span>`;
-
+            btn.innerHTML =
+                `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>تسجيل الدخول عبر تلغرام</span>`;
             enterApp(user);
         }
 
-        /** Simulate admin login */
         async function simulateAdminLogin() {
             const btn = document.getElementById('adminLoginBtn');
             if (!btn) return;
-
             btn.disabled = true;
             btn.innerHTML = '<div class="spinner"></div><span>جاري تسجيل دخول المشرف...</span>';
             await new Promise(r => setTimeout(r, 1200));
-
             const adminData = TelegramWebApp.getAdminSimulatedData();
             const adminUser = DB.upsertUser(adminData);
             DB.setCurrentUserId(adminUser.telegramId);
-            DB.addActivity(adminUser.telegramId, {
-                type: 'success',
-                title: '👑 تسجيل دخول المشرف',
-                description: 'تم الدخول إلى لوحة التحكم'
-            });
+            DB.addActivity(adminUser.telegramId, { type: 'success', title: '👑 تسجيل دخول المشرف',
+                description: 'تم الدخول إلى لوحة التحكم' });
             DB.addAdminLog({ action: 'admin_login', description: 'تسجيل دخول المشرف إلى لوحة التحكم' });
-
             btn.disabled = false;
             btn.innerHTML = '👑 <span>تسجيل دخول المشرف</span>';
-
             enterApp(adminUser);
         }
 
-        /**
-         * Enter the main application
-         * @param {Object} user
-         */
         function enterApp(user) {
-            if (!user) {
-                showAuthGate();
-                return;
-            }
-
-            // Ensure admin flag
+            if (!user) { showAuthGate(); return; }
             const isAdmin = user.telegramId === CONFIG.ADMIN_TELEGRAM_ID || user.isAdmin === true;
             if (isAdmin && !user.isAdmin) {
                 DB.updateUser(user.telegramId, { isAdmin: true });
                 user.isAdmin = true;
             }
-
             hideAuthGate();
-
             const webapp = document.getElementById('webapp');
             if (webapp) webapp.classList.add('is-active');
             document.body.style.overflow = '';
-
             App.setCurrentUser(user);
             App.renderAll();
-
             if (isAdmin) {
                 AdminPanel.renderAdminPanel();
                 const adminBtn = document.getElementById('adminPanelBtn');
@@ -3727,8 +3512,7 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                 if (bottomAdmin) bottomAdmin.style.display = 'flex';
                 if (header) header.classList.add('is-admin');
                 if (chip) chip.classList.add('is-admin');
-                Toast.show('👑 مرحباً بك في لوحة تحكم المشرف، ' + (user.fullName || user.username) + '!',
-                    'success', 5000);
+                Toast.show('👑 مرحباً بك في لوحة تحكم المشرف، ' + (user.fullName || user.username) + '!', 'success', 5000);
             } else {
                 const adminBtn = document.getElementById('adminPanelBtn');
                 const bottomAdmin = document.getElementById('bottomAdminNav');
@@ -3747,16 +3531,12 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             }
         }
 
-        /** Logout current user */
         function logout() {
             if (!confirm('هل أنت متأكد من تسجيل الخروج من الحساب الحالي؟')) return;
             const currentId = DB.getCurrentUserId();
             if (currentId) {
-                DB.addActivity(currentId, {
-                    type: 'info',
-                    title: 'تسجيل خروج',
-                    description: 'تم تسجيل الخروج من الحساب'
-                });
+                DB.addActivity(currentId, { type: 'info', title: 'تسجيل خروج',
+                description: 'تم تسجيل الخروج من الحساب' });
                 if (currentId === CONFIG.ADMIN_TELEGRAM_ID) {
                     DB.addAdminLog({ action: 'admin_logout', description: 'تسجيل خروج المشرف' });
                 }
@@ -3765,13 +3545,11 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             location.reload();
         }
 
-        /** Logout and show auth gate for switching */
         function logoutAndSwitch() {
             App.closeModal('accountSwitcherModal');
             logout();
         }
 
-        // Public API
         return {
             init,
             showAuthGate,
@@ -3792,127 +3570,212 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
        ============================================================ */
     const App = (() => {
         let currentUser = null;
-        let simulatedAccountNumber = 1;
 
-        /** @returns {Object|null} */
-        function getCurrentUser() {
-            return currentUser;
-        }
+        function getCurrentUser() { return currentUser; }
 
-        /** @param {Object} user */
-        function setCurrentUser(user) {
-            currentUser = user;
-        }
+        function setCurrentUser(user) { currentUser = user; }
 
-        /** Initialize the application */
         function init() {
             DB.init();
             AdminPanel.init();
             bindEvents();
+            // Click on user chip opens sidebar
+            document.getElementById('userChip')?.addEventListener('click', openSidebar);
+            // Click on overlay closes sidebar
+            document.getElementById('sidebarOverlay')?.addEventListener('click', closeSidebar);
         }
 
-        /** Bind all DOM event listeners */
         function bindEvents() {
-            // Telegram login button
             const tgBtn = document.getElementById('telegramLoginBtn');
             if (tgBtn) {
                 tgBtn.addEventListener('click', () => {
-                    Auth.simulateLogin(simulatedAccountNumber);
-                    simulatedAccountNumber = (simulatedAccountNumber % CONFIG.ACCOUNT_SIMULATION_COUNT) + 1;
+                    Auth.simulateLogin((Math.floor(Math.random() * CONFIG.ACCOUNT_SIMULATION_COUNT) + 1));
                 });
             }
-
-            // Admin login button
             const adminBtn = document.getElementById('adminLoginBtn');
-            if (adminBtn) {
-                adminBtn.addEventListener('click', () => Auth.simulateAdminLogin());
-            }
+            if (adminBtn) adminBtn.addEventListener('click', () => Auth.simulateAdminLogin());
 
-            // Switch account button
             const switchBtn = document.getElementById('switchAccountBtn');
-            if (switchBtn) {
-                switchBtn.addEventListener('click', () => showAccountSwitcher());
-            }
+            if (switchBtn) switchBtn.addEventListener('click', () => showAccountSwitcher());
 
-            // Logout button
             const logoutBtn = document.getElementById('logoutBtnHeader');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', () => Auth.logout());
-            }
+            if (logoutBtn) logoutBtn.addEventListener('click', () => Auth.logout());
 
-            // Hide loader after page load
+            const editForm = document.getElementById('editProfileForm');
+            if (editForm) editForm.addEventListener('submit', (e) => { e.preventDefault();
+                saveProfile(); });
+
             window.addEventListener('load', () => {
                 const loader = document.getElementById('appLoader');
-                if (loader) {
-                    setTimeout(() => loader.classList.add('is-hidden'), 1200);
-                }
+                if (loader) setTimeout(() => loader.classList.add('is-hidden'), 1200);
             });
 
-            // Close modals on overlay click
             document.querySelectorAll('.modal-overlay').forEach(overlay => {
-                overlay.addEventListener('click', (e) => {
-                    if (e.target === overlay) {
-                        overlay.classList.remove('is-active');
-                    }
-                });
+                overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove(
+                        'is-active'); });
             });
 
-            // Close modals on Escape key
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     const activeModal = document.querySelector('.modal-overlay.is-active');
-                    if (activeModal) {
-                        activeModal.classList.remove('is-active');
+                    if (activeModal) activeModal.classList.remove('is-active');
+                    if (document.getElementById('profileSidebar')?.classList.contains('is-active')) {
+                        closeSidebar();
                     }
                 }
             });
         }
 
-        /**
-         * Navigate to a specific page
-         * @param {'home'|'admin'} page
-         */
         function navigate(page) {
             const isAdmin = currentUser &&
                 (currentUser.telegramId === CONFIG.ADMIN_TELEGRAM_ID || currentUser.isAdmin);
+            if (page === 'admin' && !isAdmin) { Toast.show('⛔ هذه الصفحة مخصصة للمشرف فقط!', 'error'); return; }
 
-            if (page === 'admin' && !isAdmin) {
-                Toast.show('⛔ هذه الصفحة مخصصة للمشرف فقط!', 'error');
-                return;
-            }
-
-            // Update page views
             document.querySelectorAll('.page-view').forEach(p => p.classList.remove('is-active'));
             const targetPage = document.getElementById(`page-${page}`);
             if (targetPage) targetPage.classList.add('is-active');
 
-            // Update bottom nav
             document.querySelectorAll('.bottom-nav__item').forEach(item => {
                 const isActive = item.dataset.page === page;
                 item.classList.toggle('is-active', isActive);
                 if (item.id === 'bottomAdminNav') {
                     item.classList.toggle('is-admin-active', isActive && page === 'admin');
                 }
-                if (isActive) {
-                    item.setAttribute('aria-current', 'page');
-                } else {
-                    item.removeAttribute('aria-current');
-                }
+                if (isActive) item.setAttribute('aria-current', 'page');
+                else item.removeAttribute('aria-current');
             });
 
-            // Refresh admin panel if needed
-            if (page === 'admin' && isAdmin) {
-                AdminPanel.renderAdminPanel();
-            }
-
+            if (page === 'admin' && isAdmin) AdminPanel.renderAdminPanel();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        /** Render all UI components with current user data */
+        /* ===== SIDEBAR ===== */
+        function openSidebar() {
+            if (!currentUser) return;
+            const sidebar = document.getElementById('profileSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) {
+                renderSidebarContent();
+                sidebar.classList.add('is-active');
+                if (overlay) overlay.classList.add('is-active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('profileSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) sidebar.classList.remove('is-active');
+            if (overlay) overlay.classList.remove('is-active');
+            document.body.style.overflow = '';
+        }
+
+        function renderSidebarContent() {
+            const user = currentUser;
+            if (!user) return;
+            const container = document.getElementById('sidebarBody');
+            if (!container) return;
+
+            const isAdmin = user.telegramId === CONFIG.ADMIN_TELEGRAM_ID || user.isAdmin === true;
+            const avatarContent = user.avatar ?
+                `<img src="${Util.escapeHTML(user.avatar)}" alt="" loading="lazy">` :
+                (user.username || 'U').charAt(0).toUpperCase();
+
+            // Build activity HTML
+            const activities = user.activity || [];
+            let activityHTML = '';
+            if (activities.length === 0) {
+                activityHTML =
+                    `<div class="sidebar-empty-state"><div class="sidebar-empty-state__icon" aria-hidden="true">📭</div><div class="sidebar-empty-state__title">لا توجد نشاطات</div><div class="sidebar-empty-state__text">ابدأ الاستخدام لتظهر نشاطاتك هنا</div></div>`;
+            } else {
+                const icons = { success: '✅', info: 'ℹ️', warning: '⚠️', error: '❌' };
+                const recent = activities.slice(0, 10);
+                activityHTML = recent.map(a => `
+                    <div class="sidebar-activity-item">
+                        <div class="sidebar-activity-icon" aria-hidden="true">${icons[a.type] || '📌'}</div>
+                        <div class="sidebar-activity-content">
+                            <div class="sidebar-activity-title">${Util.escapeHTML(a.title)}</div>
+                            <div class="sidebar-activity-time">${Util.escapeHTML(a.description)} • ${Util.timeAgo(a.timestamp)}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            container.innerHTML = `
+                <!-- Profile Card -->
+                <div class="sidebar-profile-card">
+                    <div class="sidebar-profile-header">
+                        <div class="sidebar-profile-avatar">${avatarContent}</div>
+                        <div class="sidebar-profile-info">
+                            <div class="sidebar-profile-name">${Util.escapeHTML(user.fullName || user.username)}</div>
+                            <div class="sidebar-profile-username">@${Util.escapeHTML(user.username)}</div>
+                            <div class="sidebar-profile-meta">
+                                <div class="sidebar-profile-meta-item">📅 ${new Date(user.createdAt).toLocaleDateString('ar')}</div>
+                                <div class="sidebar-profile-meta-item">🟢 ${user.status === 'active' ? 'نشط' : 'معلق'}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:var(--space-sm);position:relative;z-index:1;">
+                        <button class="btn btn-primary" onclick="App.openEditProfile();App.closeSidebar();" style="flex:1;min-width:100px;">✏️ تعديل</button>
+                        <button class="btn btn-secondary" onclick="App.exportData();App.closeSidebar();" style="flex:1;min-width:100px;">📥 تصدير</button>
+                        <button class="reset-stats-btn" onclick="App.resetStats();App.closeSidebar();">🔄 تصفير الإحصائيات</button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="sidebar-stats-grid">
+                    <div class="sidebar-stat-card"><div class="sidebar-stat-card__icon" aria-hidden="true">🎮</div><div class="sidebar-stat-card__value">${user.stats.sessions}</div><div class="sidebar-stat-card__label">جلسات</div></div>
+                    <div class="sidebar-stat-card"><div class="sidebar-stat-card__icon" aria-hidden="true">⏱️</div><div class="sidebar-stat-card__value">${user.stats.hours}</div><div class="sidebar-stat-card__label">ساعات</div></div>
+                    <div class="sidebar-stat-card"><div class="sidebar-stat-card__icon" aria-hidden="true">🏆</div><div class="sidebar-stat-card__value">${user.stats.achievements}</div><div class="sidebar-stat-card__label">إنجازات</div></div>
+                    <div class="sidebar-stat-card"><div class="sidebar-stat-card__icon" aria-hidden="true">⭐</div><div class="sidebar-stat-card__value">${user.stats.level}</div><div class="sidebar-stat-card__label">المستوى</div></div>
+                </div>
+
+                <!-- Profile Details -->
+                <div class="sidebar-details-grid">
+                    <div class="sidebar-detail-item"><div class="sidebar-detail-label">نوع الحساب</div><div class="sidebar-detail-value">${user.accountType === 'bot' ? '<span class="bot-badge">🤖 بوت</span>' : (isAdmin ? '<span class="admin-badge">👑 مشرف</span>' : '👤 مستخدم')}</div></div>
+                    <div class="sidebar-detail-item"><div class="sidebar-detail-label">الاسم الكامل</div><div class="sidebar-detail-value">${Util.escapeHTML(user.fullName || '-')}</div></div>
+                    <div class="sidebar-detail-item"><div class="sidebar-detail-label">البريد الإلكتروني</div><div class="sidebar-detail-value">${Util.escapeHTML(user.email || '-')}</div></div>
+                    <div class="sidebar-detail-item"><div class="sidebar-detail-label">رقم الهاتف</div><div class="sidebar-detail-value">${Util.escapeHTML(user.phone || '-')}</div></div>
+                    <div class="sidebar-detail-item"><div class="sidebar-detail-label">اللغة</div><div class="sidebar-detail-value">${user.language === 'ar' ? 'العربية' : 'English'}</div></div>
+                    <div class="sidebar-detail-item"><div class="sidebar-detail-label">المنطقة الزمنية</div><div class="sidebar-detail-value">${user.timezone || '-'}</div></div>
+                    <div class="sidebar-detail-item"><div class="sidebar-detail-label">آخر دخول</div><div class="sidebar-detail-value">${new Date(user.lastLogin).toLocaleString('ar')}</div></div>
+                    <div class="sidebar-detail-item"><div class="sidebar-detail-label">معرف تلغرام</div><div class="sidebar-detail-value" style="font-family:var(--font-family-mono);font-size:var(--text-xs);">${Util.escapeHTML(user.telegramId)}</div></div>
+                    <div class="sidebar-detail-item"><div class="sidebar-detail-label">عدد الدخول</div><div class="sidebar-detail-value">${user.loginCount}</div></div>
+                    <div class="sidebar-detail-item"><div class="sidebar-detail-label">مصدر الدخول</div><div class="sidebar-detail-value">${Util.escapeHTML(user.loginSource)}</div></div>
+                    ${user.accountType === 'bot' && user.botInfo ? `<div class="sidebar-detail-item"><div class="sidebar-detail-label">اسم البوت</div><div class="sidebar-detail-value"><span class="bot-badge">🤖 ${Util.escapeHTML(user.botInfo.botName)}</span></div></div>` : ''}
+                </div>
+
+                <!-- Activity -->
+                <div class="sidebar-section-title">📋 آخر النشاطات</div>
+                <div class="sidebar-activity-list">${activityHTML}</div>
+
+                <!-- Account Actions -->
+                <div class="sidebar-account-actions">
+                    <div class="sidebar-account-actions__title">⚙️ إجراءات الحساب</div>
+                    <button class="sidebar-action-btn sidebar-action-btn--primary" onclick="App.showAccountSwitcher();App.closeSidebar();">
+                        <div class="sidebar-action-btn__content"><div class="sidebar-action-btn__label">🔄 تبديل الحساب</div><div class="sidebar-action-btn__desc">التبديل بين الحسابات المسجلة</div></div>
+                        <span class="sidebar-action-btn__icon" aria-hidden="true">→</span>
+                    </button>
+                    <button class="sidebar-action-btn sidebar-action-btn--primary" onclick="Auth.logout();App.closeSidebar();">
+                        <div class="sidebar-action-btn__content"><div class="sidebar-action-btn__label">🚪 تسجيل الخروج</div><div class="sidebar-action-btn__desc">الخروج من الحساب الحالي</div></div>
+                        <span class="sidebar-action-btn__icon" aria-hidden="true">→</span>
+                    </button>
+                    <button class="sidebar-action-btn sidebar-action-btn--danger" onclick="App.deleteCurrentAccount();App.closeSidebar();">
+                        <div class="sidebar-action-btn__content"><div class="sidebar-action-btn__label">🗑️ حذف الحساب الحالي</div><div class="sidebar-action-btn__desc">إزالة بيانات هذا الحساب فقط</div></div>
+                        <span class="sidebar-action-btn__icon" aria-hidden="true">→</span>
+                    </button>
+                    <button class="sidebar-action-btn sidebar-action-btn--danger" onclick="App.clearAllData();App.closeSidebar();">
+                        <div class="sidebar-action-btn__content"><div class="sidebar-action-btn__label">⚠️ مسح جميع البيانات</div><div class="sidebar-action-btn__desc">حذف كل الحسابات والبيانات</div></div>
+                        <span class="sidebar-action-btn__icon" aria-hidden="true">→</span>
+                    </button>
+                </div>
+            `;
+        }
+
+        /* ===== RENDER ===== */
         function renderAll() {
             const user = currentUser;
             if (!user) return;
-
             const isAdmin = user.telegramId === CONFIG.ADMIN_TELEGRAM_ID || user.isAdmin === true;
 
             // Header
@@ -3927,85 +3790,126 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                 }
             }
 
-            // Welcome
+            // Welcome on home page (empty)
             const welcomeName = document.getElementById('welcomeName');
             const welcomeSubtitle = document.getElementById('welcomeSubtitle');
             if (welcomeName) welcomeName.textContent = user.fullName || user.username;
             if (welcomeSubtitle) {
                 welcomeSubtitle.textContent = user.accountType === 'bot' ?
                     '🤖 حساب بوت تلغرام' :
-                    (isAdmin ? '👑 حساب المشرف العام - لديك صلاحيات كاملة' : 'الملف الشخصي الكامل');
+                    (isAdmin ? '👑 حساب المشرف العام - لديك صلاحيات كاملة' : 'مرحباً بك في منصة KRATOS BOT');
             }
 
-            // Home profile
-            const homeName = document.getElementById('homeName');
-            const homeUsername = document.getElementById('homeUsername');
-            const homeAvatar = document.getElementById('homeAvatar');
-            const homeJoinDate = document.getElementById('homeJoinDate');
-            const homeStatus = document.getElementById('homeStatus');
-            if (homeName) homeName.textContent = user.fullName || user.username;
-            if (homeUsername) homeUsername.textContent = '@' + user.username;
-            if (homeAvatar) {
-                if (user.avatar) {
-                    homeAvatar.innerHTML = `<img src="${Util.escapeHTML(user.avatar)}" alt="" loading="lazy">`;
-                } else {
-                    homeAvatar.textContent = user.username.charAt(0).toUpperCase();
-                }
-            }
-            if (homeJoinDate) homeJoinDate.textContent = new Date(user.createdAt).toLocaleDateString('ar');
-            if (homeStatus) homeStatus.textContent = user.status === 'active' ? 'نشط' : 'معلق';
-
-            // Profile details
-            const setDetail = (id, val) => {
-                const el = document.getElementById(id);
-                if (el) el.innerHTML = val;
-            };
-            setDetail('detailAccountType', user.accountType === 'bot' ?
-                '<span class="bot-badge">🤖 بوت تلغرام</span>' :
-                (isAdmin ? '<span class="admin-badge">👑 مشرف النظام</span>' : '👤 مستخدم عادي'));
-            setDetail('detailFullName', Util.escapeHTML(user.fullName || '-'));
-            setDetail('detailUsername', '@' + Util.escapeHTML(user.username));
-            setDetail('detailEmail', Util.escapeHTML(user.email || '-'));
-            setDetail('detailPhone', Util.escapeHTML(user.phone || '-'));
-            setDetail('detailLang', user.language === 'ar' ? 'العربية' : 'English');
-            setDetail('detailTimezone', user.timezone || '-');
-            setDetail('detailLastLogin', new Date(user.lastLogin).toLocaleString('ar'));
-            setDetail('detailTgId', Util.escapeHTML(user.telegramId));
-            setDetail('detailLoginCount', user.loginCount);
-
-            const sourceLabels = {
-                'telegram_webapp': '📱 Telegram WebApp',
-                'telegram_webapp_simulated': '💻 محاكاة',
-                'admin_panel_login': '👑 لوحة تحكم المشرف',
-                'manual_code': '🔑 كود تفعيل'
-            };
-            setDetail('detailSource', sourceLabels[user.loginSource] || Util.escapeHTML(user.loginSource));
-
-            if (user.accountType === 'bot' && user.botInfo) {
-                setDetail('detailBotName', `<span class="bot-badge">🤖 ${Util.escapeHTML(user.botInfo.botName)}</span>`);
-            } else if (isAdmin) {
-                setDetail('detailBotName', '<span class="admin-badge">👑 الحساب الرئيسي للمشرف</span>');
-            } else {
-                setDetail('detailBotName', '-');
+            // Update sidebar if open
+            if (document.getElementById('profileSidebar')?.classList.contains('is-active')) {
+                renderSidebarContent();
             }
 
-            // Removed stats and activity rendering
+            // Admin badge in header
+            const chip = document.getElementById('userChip');
+            if (chip) {
+                if (isAdmin) chip.classList.add('is-admin');
+                else chip.classList.remove('is-admin');
+            }
         }
 
-        /** @param {string} modalId */
+        /* ===== MODALS ===== */
+        function openEditProfile() {
+            const user = currentUser;
+            if (!user) return;
+            const fullNameInput = document.getElementById('editFullName');
+            const emailInput = document.getElementById('editEmail');
+            const phoneInput = document.getElementById('editPhone');
+            const bioInput = document.getElementById('editBio');
+            if (fullNameInput) fullNameInput.value = user.fullName || '';
+            if (emailInput) emailInput.value = user.email || '';
+            if (phoneInput) phoneInput.value = user.phone || '';
+            if (bioInput) bioInput.value = user.bio || '';
+            const modal = document.getElementById('editProfileModal');
+            if (modal) modal.classList.add('is-active');
+        }
+
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.classList.remove('is-active');
         }
 
-        /** Show account switcher modal */
+        function saveProfile() {
+            if (!currentUser) return;
+            const fullNameInput = document.getElementById('editFullName');
+            const emailInput = document.getElementById('editEmail');
+            const phoneInput = document.getElementById('editPhone');
+            const bioInput = document.getElementById('editBio');
+            const updates = {
+                fullName: fullNameInput ? fullNameInput.value.trim() : '',
+                email: emailInput ? emailInput.value.trim() : '',
+                phone: phoneInput ? phoneInput.value.trim() : '',
+                bio: bioInput ? bioInput.value.trim() : ''
+            };
+            DB.updateUser(currentUser.telegramId, updates);
+            currentUser = DB.getUserByTgId(currentUser.telegramId);
+            renderAll();
+            closeModal('editProfileModal');
+            Toast.show('✅ تم حفظ التغييرات بنجاح', 'success');
+            DB.addActivity(currentUser.telegramId, { type: 'info', title: 'تحديث الملف الشخصي',
+                description: 'تم تحديث معلومات الحساب' });
+            // Refresh sidebar if open
+            if (document.getElementById('profileSidebar')?.classList.contains('is-active')) renderSidebarContent();
+        }
+
+        function resetStats() {
+            if (!currentUser) return;
+            if (!confirm('⚠️ هل أنت متأكد من تصفير جميع الإحصائيات؟\n(جلسات اللعب، الساعات، المستوى، الإنجازات)')) return;
+            const defaultStats = { sessions: 0, hours: 0, achievements: 0, level: 1, xp: 0 };
+            DB.updateUser(currentUser.telegramId, { stats: defaultStats });
+            currentUser = DB.getUserByTgId(currentUser.telegramId);
+            renderAll();
+            DB.addActivity(currentUser.telegramId, { type: 'warning', title: 'تصفير الإحصائيات',
+                description: 'تم إعادة تعيين جلسات اللعب، الساعات، المستوى والإنجازات' });
+            Toast.show('🔄 تم تصفير الإحصائيات بنجاح', 'warning');
+            if (document.getElementById('profileSidebar')?.classList.contains('is-active')) renderSidebarContent();
+        }
+
+        function exportData() {
+            if (!currentUser) return;
+            const data = { exportedAt: new Date().toISOString(), user: currentUser };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `kratos_${currentUser.username}_${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            Toast.show('📥 تم تصدير البيانات', 'success');
+        }
+
+        function deleteCurrentAccount() {
+            if (!currentUser) return;
+            const tgId = currentUser.telegramId;
+            if (tgId === CONFIG.ADMIN_TELEGRAM_ID) { Toast.show('⛔ لا يمكن حذف حساب المشرف العام!', 'error'); return; }
+            if (!confirm('⚠️ هل أنت متأكد من حذف هذا الحساب؟')) return;
+            if (!confirm('تأكيد: سيتم حذف جميع بيانات هذا الحساب!')) return;
+            DB.deleteUser(tgId);
+            Toast.show('🗑️ تم حذف الحساب', 'warning');
+            setTimeout(() => location.reload(), 1500);
+        }
+
+        function clearAllData() {
+            if (!confirm('⚠️ هل أنت متأكد؟ سيتم حذف جميع الحسابات!')) return;
+            if (!confirm('تأكيد أخير: هذا لا يمكن التراجع عنه!')) return;
+            DB.clearAll();
+            Toast.show('⚠️ تم مسح جميع البيانات', 'warning');
+            setTimeout(() => location.reload(), 1500);
+        }
+
+        /* ===== ACCOUNT SWITCHER ===== */
         function showAccountSwitcher() {
             const allUsers = DB.getAllUsers();
             const list = document.getElementById('modalAccountsList');
             if (!list) return;
-
             const currentId = currentUser ? currentUser.telegramId : null;
-
             if (allUsers.length === 0) {
                 list.innerHTML =
                     '<div class="empty-state"><div class="empty-state__icon" aria-hidden="true">👥</div><div class="empty-state__title">لا توجد حسابات أخرى</div></div>';
@@ -4031,17 +3935,12 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                         </div>`;
                 }).join('');
             }
-
             const modal = document.getElementById('accountSwitcherModal');
             if (modal) modal.classList.add('is-active');
         }
 
-        /** @param {string} tgId */
         function deleteAccountFromSwitcher(tgId) {
-            if (tgId === CONFIG.ADMIN_TELEGRAM_ID) {
-                Toast.show('⛔ لا يمكن حذف حساب المشرف العام!', 'error');
-                return;
-            }
+            if (tgId === CONFIG.ADMIN_TELEGRAM_ID) { Toast.show('⛔ لا يمكن حذف حساب المشرف العام!', 'error'); return; }
             const user = DB.getUserByTgId(tgId);
             if (!user) return;
             if (!confirm(`⚠️ هل أنت متأكد من حذف الحساب "${user.username}"؟`)) return;
@@ -4055,17 +3954,12 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
             }
         }
 
-        /** @param {string} tgId */
         function switchAccount(tgId) {
             const user = DB.getUserByTgId(tgId);
             if (user && currentUser && user.telegramId !== currentUser.telegramId) {
                 const oldUsername = currentUser.username;
                 DB.setCurrentUserId(tgId);
-                DB.addActivity(tgId, {
-                    type: 'info',
-                    title: 'تبديل حساب',
-                    description: `من ${oldUsername}`
-                });
+                DB.addActivity(tgId, { type: 'info', title: 'تبديل حساب', description: `من ${oldUsername}` });
                 closeModal('accountSwitcherModal');
                 currentUser = user;
                 renderAll();
@@ -4089,33 +3983,36 @@ onclick="App.navigate('admin')" aria-label="لوحة التحكم">
                     if (chip) chip.classList.remove('is-admin');
                     navigate('home');
                 }
-
                 Toast.show(`🔄 تم التبديل إلى ${user.username}`, 'success');
+                if (document.getElementById('profileSidebar')?.classList.contains('is-active')) renderSidebarContent();
             } else {
                 closeModal('accountSwitcherModal');
             }
         }
 
-        /** Logout (delegates to Auth) */
-        function logout() {
-            Auth.logout();
-        }
+        function logout() { Auth.logout(); }
 
-        function logoutAndSwitch() {
-            Auth.logoutAndSwitch();
-        }
+        function logoutAndSwitch() { Auth.logoutAndSwitch(); }
 
-        // Public API
         return {
             init,
             getCurrentUser,
             setCurrentUser,
             navigate,
+            renderAll,
+            openSidebar,
+            closeSidebar,
+            renderSidebarContent,
+            openEditProfile,
             closeModal,
+            saveProfile,
+            resetStats,
+            exportData,
+            deleteCurrentAccount,
+            clearAllData,
             showAccountSwitcher,
             deleteAccountFromSwitcher,
             switchAccount,
-            renderAll,
             logout,
             logoutAndSwitch
         };
