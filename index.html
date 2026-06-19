@@ -1,19 +1,4 @@
-
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body {
-                  background-color: white; /* Ensure the iframe has a white background */
-                }
-
-                
-              </style>
-                        </head>
-                        <body>
-                            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -588,49 +573,6 @@
         .activity-title { font-weight: 600; font-size: var(--text-sm); margin-bottom: 2px; }
         .activity-time { font-size: var(--text-xs); color: var(--color-text-muted); }
 
-        .settings-section {
-            background: rgba(17, 34, 64, 0.6);
-            border: 1px solid rgba(127, 255, 0, 0.15);
-            border-radius: var(--radius-md);
-            padding: var(--space-lg);
-            margin-bottom: var(--space-md);
-        }
-        .settings-title {
-            font-family: var(--font-tech);
-            font-size: var(--text-lg);
-            font-weight: 700;
-            margin-bottom: var(--space-md);
-            padding-bottom: var(--space-sm);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .setting-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: var(--space-sm) 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-        }
-        .setting-item:last-child { border-bottom: none; }
-        .setting-label { font-weight: 600; font-size: var(--text-sm); }
-        .setting-desc { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: 2px; }
-
-        .toggle {
-            position: relative;
-            width: 50px; height: 26px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 13px;
-            cursor: pointer;
-            transition: background var(--transition-base);
-            flex-shrink: 0;
-        }
-        .toggle.active { background: var(--color-accent-green); }
-        .toggle::after {
-            content: '';
-            position: absolute; top: 3px; right: 3px;
-            width: 20px; height: 20px;
-            background: white; border-radius: 50%;
-            transition: transform var(--transition-base);
-        }
-        .toggle.active::after { transform: translateX(-24px); }
-
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(10, 22, 40, 0.98);
@@ -785,18 +727,59 @@
             font-weight: 700;
         }
 
-        .session-info {
-            background: rgba(42, 171, 238, 0.1);
-            border: 1px solid var(--color-telegram);
+        /* Account Actions (بديل للإعدادات) */
+        .account-actions {
+            background: rgba(17, 34, 64, 0.6);
+            border: 1px solid rgba(127, 255, 0, 0.15);
             border-radius: var(--radius-md);
-            padding: var(--space-sm) var(--space-md);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+        .account-actions__title {
+            font-family: var(--font-tech);
+            font-size: var(--text-lg);
+            font-weight: 700;
             margin-bottom: var(--space-md);
-            font-size: var(--text-xs);
-            color: var(--color-telegram);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .account-actions__list {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: var(--space-sm);
         }
+        .account-action-btn {
+            width: 100%;
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-md);
+            transition: all var(--transition-base);
+            text-align: right;
+        }
+        .account-action-btn:hover { transform: translateX(-5px); }
+        .account-action-btn--primary {
+            background: rgba(127, 255, 0, 0.1);
+            border: 1px solid rgba(127, 255, 0, 0.3);
+            color: var(--color-text-light);
+        }
+        .account-action-btn--primary:hover {
+            background: rgba(127, 255, 0, 0.2);
+        }
+        .account-action-btn--danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--color-error);
+        }
+        .account-action-btn--danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+        .account-action-btn__content { flex: 1; }
+        .account-action-btn__label { font-weight: 700; font-size: var(--text-sm); }
+        .account-action-btn__desc { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: 2px; }
+        .account-action-btn__icon { font-size: 1.5rem; }
 
         @media (max-width: 768px) {
             .user-chip__name { display: none; }
@@ -848,25 +831,19 @@
                 </div>
             </div>
 
-            <!-- Account Switcher (shows when multiple accounts exist) -->
+            <!-- Account Switcher -->
             <div id="accountSwitcher" style="display: none;">
                 <div class="account-switcher">
                     <div class="account-switcher__title">
-                        <span>👥 الحسابات المسجلة على هذا الجهاز</span>
+                        <span> الحسابات المسجلة على هذا الجهاز</span>
                         <span id="accountsCount">0</span>
                     </div>
                     <div id="accountsList"></div>
                 </div>
             </div>
 
-            <!-- Session Info -->
-            <div id="sessionInfo" class="session-info" style="display: none;">
-                <span>ℹ️</span>
-                <span id="sessionInfoText"></span>
-            </div>
-
             <div class="info-box">
-                <div class="info-box__title">🔐 تسجيل دخول آمن عبر تلغرام</div>
+                <div class="info-box__title"> تسجيل دخول آمن عبر تلغرام</div>
                 <div class="info-box__text">
                     هذا التطبيق يدعم حسابات متعددة. في كل مرة تفتح فيها التطبيق، سيتم التعرف على حساب تلغرام الحالي تلقائياً.
                     <br><br>
@@ -884,10 +861,10 @@
             <div class="info-box">
                 <div class="info-box__title">📋 كيف يعمل تبديل الحسابات؟</div>
                 <div class="info-box__text">
-                    1️⃣ عند فتح التطبيق، يتم قراءة بيانات حساب تلغرام الحالي<br>
+                    1️ عند فتح التطبيق، يتم قراءة بيانات حساب تلغرام الحالي<br>
                     2️⃣ إذا كان الحساب مختلفاً عن الأخير، يتم تحميل بياناته تلقائياً<br>
                     3️ كل حساب له ملف شخصي وإحصائيات منفصلة تماماً<br>
-                    4️⃣ يمكنك التبديل بين الحسابات من قائمة الحسابات أعلاه
+                    4️ يمكنك التبديل بين الحسابات من زر التبديل في الأعلى
                 </div>
             </div>
         </div>
@@ -915,6 +892,9 @@
                     <button class="icon-btn" id="notifBtn" aria-label="الإشعارات">
                         🔔
                         <span class="badge" id="notifBadge">0</span>
+                    </button>
+                    <button class="icon-btn" id="logoutBtnHeader" aria-label="تسجيل الخروج" title="تسجيل الخروج" style="background: rgba(239, 68, 68, 0.15);">
+                        🚪
                     </button>
                     <div class="user-chip" id="userChip">
                         <div class="user-avatar" id="headerAvatar">K</div>
@@ -945,7 +925,7 @@
                         <div class="stat-card__label">ساعات نشطة</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-card__icon"></div>
+                        <div class="stat-card__icon">🏆</div>
                         <div class="stat-card__value" id="statAchievements">0</div>
                         <div class="stat-card__label">إنجازات</div>
                     </div>
@@ -964,7 +944,7 @@
                             <div class="profile-username" id="homeUsername">@user</div>
                             <div class="profile-meta">
                                 <div class="profile-meta-item">📅 <span id="homeJoinDate">-</span></div>
-                                <div class="profile-meta-item">🔐 <span id="homeStatus">نشط</span></div>
+                                <div class="profile-meta-item"> <span id="homeStatus">نشط</span></div>
                             </div>
                         </div>
                         <div class="profile-actions">
@@ -999,8 +979,8 @@
                             <div class="profile-name" id="profileName">مستخدم</div>
                             <div class="profile-username" id="profileUsername">@user</div>
                             <div class="profile-meta">
-                                <div class="profile-meta-item">🆔 <span id="profileId">-</span></div>
-                                <div class="profile-meta-item">📅 انضم في <span id="profileJoinDate">-</span></div>
+                                <div class="profile-meta-item"> <span id="profileId">-</span></div>
+                                <div class="profile-meta-item"> انضم في <span id="profileJoinDate">-</span></div>
                             </div>
                         </div>
                         <div class="profile-actions">
@@ -1008,7 +988,7 @@
                                 ✏️ تعديل
                             </button>
                             <button class="btn btn-secondary" onclick="App.exportData()">
-                                📥 تصدير
+                                 تصدير
                             </button>
                         </div>
                     </div>
@@ -1063,129 +1043,65 @@
                             <div class="detail-value" id="detailBotName">-</div>
                         </div>
                     </div>
+
+                    <!-- Account Actions (بديل للإعدادات) -->
+                    <div class="account-actions">
+                        <div class="account-actions__title"> إجراءات الحساب</div>
+                        <div class="account-actions__list">
+                            <button class="account-action-btn account-action-btn--primary" onclick="App.showAccountSwitcher()">
+                                <div class="account-action-btn__content">
+                                    <div class="account-action-btn__label">🔄 تبديل الحساب</div>
+                                    <div class="account-action-btn__desc">التبديل بين الحسابات المسجلة على هذا الجهاز</div>
+                                </div>
+                                <div class="account-action-btn__icon">→</div>
+                            </button>
+                            
+                            <button class="account-action-btn account-action-btn--primary" onclick="App.logout()">
+                                <div class="account-action-btn__content">
+                                    <div class="account-action-btn__label">🚪 تسجيل الخروج</div>
+                                    <div class="account-action-btn__desc">الخروج من الحساب الحالي فقط</div>
+                                </div>
+                                <div class="account-action-btn__icon">→</div>
+                            </button>
+                            
+                            <button class="account-action-btn account-action-btn--danger" onclick="App.deleteCurrentAccount()">
+                                <div class="account-action-btn__content">
+                                    <div class="account-action-btn__label">️ حذف الحساب الحالي</div>
+                                    <div class="account-action-btn__desc">إزالة بيانات هذا الحساب فقط من الجهاز</div>
+                                </div>
+                                <div class="account-action-btn__icon">→</div>
+                            </button>
+                            
+                            <button class="account-action-btn account-action-btn--danger" onclick="App.clearAllData()">
+                                <div class="account-action-btn__content">
+                                    <div class="account-action-btn__label">⚠️ مسح جميع البيانات</div>
+                                    <div class="account-action-btn__desc">حذف كل الحسابات والبيانات نهائياً</div>
+                                </div>
+                                <div class="account-action-btn__icon">→</div>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <h3 style="font-family: var(--font-tech); margin-bottom: var(--space-md);">سجل النشاطات الكامل</h3>
                 <div class="activity-list" id="fullActivity">
                     <div class="empty-state">
-                        <div class="empty-state__icon"></div>
+                        <div class="empty-state__icon">📭</div>
                         <div class="empty-state__title">لا توجد نشاطات</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SETTINGS PAGE -->
-            <div class="page-view" id="page-settings">
-                <div class="page-header">
-                    <h1 class="page-title">الإعدادات</h1>
-                    <p class="page-subtitle">تخصيص تجربتك في التطبيق</p>
-                </div>
-
-                <div class="settings-section">
-                    <div class="settings-title">🔔 الإشعارات</div>
-                    <div class="setting-item">
-                        <div>
-                            <div class="setting-label">إشعارات الدفع</div>
-                            <div class="setting-desc">استلام إشعارات فورية</div>
-                        </div>
-                        <div class="toggle active" data-setting="pushNotif" onclick="App.toggleSetting(this)"></div>
-                    </div>
-                    <div class="setting-item">
-                        <div>
-                            <div class="setting-label">إشعارات البريد</div>
-                            <div class="setting-desc">استلام تحديثات عبر البريد</div>
-                        </div>
-                        <div class="toggle" data-setting="emailNotif" onclick="App.toggleSetting(this)"></div>
-                    </div>
-                    <div class="setting-item">
-                        <div>
-                            <div class="setting-label">أصوات التطبيق</div>
-                            <div class="setting-desc">تشغيل الأصوات والتأثيرات</div>
-                        </div>
-                        <div class="toggle active" data-setting="sounds" onclick="App.toggleSetting(this)"></div>
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <div class="settings-title">🔒 الخصوصية والأمان</div>
-                    <div class="setting-item">
-                        <div>
-                            <div class="setting-label">المصادقة الثنائية</div>
-                            <div class="setting-desc">طبقة حماية إضافية</div>
-                        </div>
-                        <div class="toggle" data-setting="twoFA" onclick="App.toggleSetting(this)"></div>
-                    </div>
-                    <div class="setting-item">
-                        <div>
-                            <div class="setting-label">إظهار الحالة</div>
-                            <div class="setting-desc">السماح للآخرين برؤية حالتك</div>
-                        </div>
-                        <div class="toggle active" data-setting="showStatus" onclick="App.toggleSetting(this)"></div>
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <div class="settings-title">🎨 المظهر</div>
-                    <div class="setting-item">
-                        <div>
-                            <div class="setting-label">الوضع الداكن</div>
-                            <div class="setting-desc">مفعّل افتراضيًا</div>
-                        </div>
-                        <div class="toggle active" data-setting="darkMode" onclick="App.toggleSetting(this)"></div>
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <div class="settings-title"> إدارة الحسابات</div>
-                    <div class="setting-item">
-                        <div>
-                            <div class="setting-label">عرض جميع الحسابات</div>
-                            <div class="setting-desc">التبديل بين الحسابات المسجلة</div>
-                        </div>
-                        <button class="btn btn-secondary" onclick="App.showAccountSwitcher()">عرض</button>
-                    </div>
-                    <div class="setting-item">
-                        <div>
-                            <div class="setting-label">حذف الحساب الحالي</div>
-                            <div class="setting-desc">إزالة بيانات هذا الحساب فقط</div>
-                        </div>
-                        <button class="btn btn-danger" onclick="App.deleteCurrentAccount()">حذف</button>
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <div class="settings-title">️ منطقة الخطر</div>
-                    <div class="setting-item">
-                        <div>
-                            <div class="setting-label">مسح جميع البيانات</div>
-                            <div class="setting-desc">حذف كل الحسابات والبيانات</div>
-                        </div>
-                        <button class="btn btn-danger" onclick="App.clearAllData()">مسح الكل</button>
-                    </div>
-                    <div class="setting-item">
-                        <div>
-                            <div class="setting-label">تسجيل الخروج</div>
-                            <div class="setting-desc">الخروج من الحساب الحالي فقط</div>
-                        </div>
-                        <button class="btn btn-danger" onclick="App.logout()">خروج</button>
                     </div>
                 </div>
             </div>
         </main>
 
-        <!-- Bottom Navigation -->
+        <!-- Bottom Navigation (بدون إعدادات) -->
         <nav class="bottom-nav">
             <button class="bottom-nav__item active" data-page="home" onclick="App.navigate('home')">
-                <span class="bottom-nav__icon"></span>
+                <span class="bottom-nav__icon">🏠</span>
                 <span>الرئيسية</span>
             </button>
             <button class="bottom-nav__item" data-page="profile" onclick="App.navigate('profile')">
-                <span class="bottom-nav__icon">👤</span>
+                <span class="bottom-nav__icon"></span>
                 <span>الملف</span>
-            </button>
-            <button class="bottom-nav__item" data-page="settings" onclick="App.navigate('settings')">
-                <span class="bottom-nav__icon">⚙️</span>
-                <span>الإعدادات</span>
             </button>
         </nav>
     </div>
@@ -1243,13 +1159,7 @@
 
         /* ============================================
            DATABASE MODULE - Multi-User System
-           ============================================
-           النقاط الحرجة:
-           1. كل مستخدم له معرف فريد (telegramId) كمفتاح رئيسي
-           2. البيانات مفصولة تماماً بين المستخدمين
-           3. currentUserId يحفظ فقط معرف المستخدم الحالي
-           4. عند فتح التطبيق، نتحقق من initData ونقارن مع currentUserId
-        ============================================ */
+           ============================================ */
         const DB = {
             KEYS: {
                 USERS: 'kratos_users_v4',
@@ -1280,7 +1190,6 @@
                 } catch (e) { return false; }
             },
 
-            // الحصول على المستخدم الحالي
             getCurrentUserId() {
                 return localStorage.getItem(this.KEYS.CURRENT_USER_ID);
             },
@@ -1293,15 +1202,11 @@
                 }
             },
 
-            // إنشاء أو تحديث مستخدم
-            // النقطة الحرجة: نستخدم telegramId كمفتاح رئيسي
             upsertUser(userData) {
                 const users = this.getUsers();
                 const tgId = userData.telegramId;
                 
-                // التحقق من وجود المستخدم
                 if (users[tgId]) {
-                    // تحديث بيانات المستخدم الحالي
                     users[tgId] = {
                         ...users[tgId],
                         ...userData,
@@ -1310,7 +1215,6 @@
                         updatedAt: Date.now()
                     };
                 } else {
-                    // إنشاء مستخدم جديد
                     users[tgId] = {
                         id: this.uid(),
                         telegramId: tgId,
@@ -1334,16 +1238,8 @@
                         loginCount: 1,
                         loginSource: userData.loginSource || 'telegram_webapp',
                         status: 'active',
-                        settings: {
-                            pushNotif: true,
-                            emailNotif: false,
-                            sounds: true,
-                            twoFA: false,
-                            showStatus: true,
-                            darkMode: true,
-                            language: userData.languageCode || 'ar',
-                            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-                        },
+                        language: userData.languageCode || 'ar',
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                         stats: {
                             sessions: 0,
                             hours: 0,
@@ -1359,20 +1255,17 @@
                 return users[tgId];
             },
 
-            // الحصول على مستخدم بواسطة telegramId
             getUserByTgId(tgId) {
                 const users = this.getUsers();
                 return users[tgId] || null;
             },
 
-            // الحصول على المستخدم الحالي
             getCurrentUser() {
                 const currentId = this.getCurrentUserId();
                 if (!currentId) return null;
                 return this.getUserByTgId(currentId);
             },
 
-            // تحديث مستخدم
             updateUser(tgId, updates) {
                 const users = this.getUsers();
                 if (!users[tgId]) return null;
@@ -1381,7 +1274,6 @@
                 return users[tgId];
             },
 
-            // إضافة نشاط
             addActivity(tgId, activity) {
                 const users = this.getUsers();
                 if (!users[tgId]) return;
@@ -1402,14 +1294,12 @@
                 this.saveUsers(users);
             },
 
-            // حذف مستخدم
             deleteUser(tgId) {
                 const users = this.getUsers();
                 if (users[tgId]) {
                     delete users[tgId];
                     this.saveUsers(users);
                     
-                    // إذا كان المستخدم المحذوف هو الحالي، امسح currentUserId
                     if (this.getCurrentUserId() === tgId) {
                         this.setCurrentUserId(null);
                     }
@@ -1418,13 +1308,11 @@
                 return false;
             },
 
-            // الحصول على جميع المستخدمين
             getAllUsers() {
                 const users = this.getUsers();
                 return Object.values(users).sort((a, b) => b.lastLogin - a.lastLogin);
             },
 
-            // مسح جميع البيانات
             clearAll() {
                 localStorage.removeItem(this.KEYS.USERS);
                 localStorage.removeItem(this.KEYS.CURRENT_USER_ID);
@@ -1436,12 +1324,7 @@
 
         /* ============================================
            TELEGRAM WEB APP MODULE
-           ============================================
-           النقاط الحرجة:
-           1. initData يتم قراءته في كل مرة يفتح فيها التطبيق
-           2. user.id هو المعرف الفريد الذي لا يتغير
-           3. يجب التحقق من صحة initData (في الإنتاج الحقيقي عبر الخادم)
-        ============================================ */
+           ============================================ */
         const TelegramWebApp = {
             webApp: null,
             initData: null,
@@ -1449,20 +1332,14 @@
             isBot: false,
 
             init() {
-                // التحقق من وجود Telegram WebApp SDK
                 if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
                     this.webApp = window.Telegram.WebApp;
-                    
-                    // إخبار تلغرام أن التطبيق جاهز
                     this.webApp.ready();
                     this.webApp.expand();
-                    
-                    // حفظ initData للتحقق لاحقاً
                     this.initData = this.webApp.initData;
                     
                     console.log('🔍 initData:', this.initData ? 'متوفر' : 'غير متوفر');
                     
-                    // استخراج بيانات المستخدم من initData
                     try {
                         if (this.initData) {
                             const params = new URLSearchParams(this.initData);
@@ -1509,7 +1386,6 @@
                 };
             },
 
-            // محاكاة بيانات للاختبار خارج تلغرام
             getSimulatedData(accountNumber = 1) {
                 const accounts = [
                     {
@@ -1592,52 +1468,33 @@
 
         /* ============================================
            AUTH MODULE - Multi-User Logic
-           ============================================
-           النقاط الحرجة لحل المشكلة:
-           1. في كل تحميل، نقرأ initData من تلغرام
-           2. نستخرج telegramId من initData
-           3. نقارنه مع currentUserId المخزن
-           4. إذا اختلف: نحدث currentUserId ونحمل بيانات المستخدم الجديد
-           5. إذا تطابق: نكمل الجلسة الحالية
-        ============================================ */
+           ============================================ */
         const Auth = {
             init() {
-                // الخطوة 1: تهيئة Telegram WebApp وقراءة initData
                 const isTelegram = TelegramWebApp.init();
-                
-                // الخطوة 2: الحصول على بيانات المستخدم من تلغرام
                 const tgUserData = isTelegram ? TelegramWebApp.getUserData() : null;
-                
-                // الخطوة 3: الحصول على المستخدم الحالي المخزن
                 const currentUserId = DB.getCurrentUserId();
                 const currentUser = currentUserId ? DB.getUserByTgId(currentUserId) : null;
                 
-                console.log(' Auth Check:', {
+                console.log('🔐 Auth Check:', {
                     isTelegram,
                     tgUserData: tgUserData ? tgUserData.telegramId : null,
                     currentUserId,
                     currentUser: currentUser ? currentUser.username : null
                 });
 
-                // الخطوة 4: منطق التبديل
                 if (tgUserData) {
-                    // تم فتح التطبيق من تلغرام
                     const newTgId = tgUserData.telegramId;
                     
                     if (currentUser && currentUser.telegramId === newTgId) {
-                        // نفس المستخدم - تحديث lastLogin فقط
                         console.log('✅ نفس المستخدم - تحديث الجلسة');
                         DB.updateUser(newTgId, { lastLogin: Date.now() });
                         this.enterApp(currentUser);
                     } else if (currentUser && currentUser.telegramId !== newTgId) {
-                        // مستخدم مختلف! - هذه هي المشكلة التي تم حلها
-                        console.log('🔄 مستخدم مختلف! تبديل الحساب من', currentUser.username, 'إلى', tgUserData.username);
-                        
-                        // إنشاء/تحديث المستخدم الجديد
+                        console.log('🔄 مستخدم مختلف! تبديل الحساب');
                         const newUser = DB.upsertUser(tgUserData);
                         DB.setCurrentUserId(newUser.telegramId);
                         
-                        // إضافة نشاط
                         DB.addActivity(newUser.telegramId, {
                             type: 'success',
                             title: 'تبديل حساب تلقائي',
@@ -1647,7 +1504,6 @@
                         this.showAccountSwitchInfo(currentUser, newUser);
                         setTimeout(() => this.enterApp(newUser), 1500);
                     } else {
-                        // لا يوجد مستخدم حالي - إنشاء حساب جديد
                         console.log('🆕 مستخدم جديد - إنشاء حساب');
                         const newUser = DB.upsertUser(tgUserData);
                         DB.setCurrentUserId(newUser.telegramId);
@@ -1662,13 +1518,10 @@
                         setTimeout(() => this.enterApp(newUser), 1500);
                     }
                 } else {
-                    // لم يتم الفتح من تلغرام
                     if (currentUser) {
-                        // يوجد مستخدم مخزن - الدخول به (للاختبار)
                         console.log('📱 دخول بالمستخدم المخزن (وضع الاختبار)');
                         this.enterApp(currentUser);
                     } else {
-                        // لا يوجد مستخدم - عرض شاشة تسجيل الدخول
                         console.log('🔐 عرض شاشة تسجيل الدخول');
                         this.showAuthGate();
                         this.showSimulatedAccounts();
@@ -1707,7 +1560,6 @@
             },
 
             showSimulatedAccounts() {
-                // عرض الحسابات المحاكاة للاختبار
                 const switcher = document.getElementById('accountSwitcher');
                 const list = document.getElementById('accountsList');
                 const count = document.getElementById('accountsCount');
@@ -1753,7 +1605,6 @@
 
                 await new Promise(r => setTimeout(r, 1000));
 
-                // محاكاة حساب مختلف في كل مرة
                 const simulatedData = TelegramWebApp.getSimulatedData(accountNumber);
                 const user = DB.upsertUser(simulatedData);
                 DB.setCurrentUserId(user.telegramId);
@@ -1824,24 +1675,24 @@
             },
 
             bindEvents() {
-                // زر تسجيل الدخول - يحاكي حساب مختلف في كل ضغطة
                 document.getElementById('telegramLoginBtn').addEventListener('click', () => {
                     Auth.simulateLogin(this.simulatedAccountNumber);
                     this.simulatedAccountNumber = (this.simulatedAccountNumber % 3) + 1;
                 });
 
-                // زر تبديل الحساب في الهيدر
                 document.getElementById('switchAccountBtn').addEventListener('click', () => {
                     this.showAccountSwitcher();
                 });
 
-                // نموذج تعديل الملف الشخصي
+                document.getElementById('logoutBtnHeader').addEventListener('click', () => {
+                    Auth.logout();
+                });
+
                 document.getElementById('editProfileForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.saveProfile();
                 });
 
-                // إخفاء Loader
                 window.addEventListener('load', () => {
                     setTimeout(() => document.getElementById('appLoader').classList.add('hidden'), 1200);
                 });
@@ -1862,7 +1713,6 @@
                 const user = this.currentUser;
                 if (!user) return;
 
-                // Header
                 document.getElementById('headerUserName').textContent = user.username;
                 const headerAvatar = document.getElementById('headerAvatar');
                 if (user.avatar) {
@@ -1871,7 +1721,6 @@
                     headerAvatar.textContent = user.username.charAt(0).toUpperCase();
                 }
 
-                // Home
                 document.getElementById('welcomeName').textContent = user.fullName || user.username;
                 document.getElementById('welcomeSubtitle').textContent = user.accountType === 'bot' 
                     ? '🤖 حساب بوت تلغرام' 
@@ -1888,13 +1737,11 @@
                 document.getElementById('homeJoinDate').textContent = new Date(user.createdAt).toLocaleDateString('ar');
                 document.getElementById('homeStatus').textContent = user.status === 'active' ? 'نشط' : 'معلق';
 
-                // Stats
                 document.getElementById('statSessions').textContent = user.stats.sessions;
                 document.getElementById('statHours').textContent = user.stats.hours;
                 document.getElementById('statAchievements').textContent = user.stats.achievements;
                 document.getElementById('statLevel').textContent = user.stats.level;
 
-                // Profile
                 document.getElementById('profileName').textContent = user.fullName || user.username;
                 document.getElementById('profileUsername').textContent = '@' + user.username;
                 const profileAvatar = document.getElementById('profileAvatar');
@@ -1906,24 +1753,23 @@
                 document.getElementById('profileId').textContent = user.id.substr(0, 12) + '...';
                 document.getElementById('profileJoinDate').textContent = new Date(user.createdAt).toLocaleDateString('ar');
 
-                // Details
                 document.getElementById('detailAccountType').innerHTML = user.accountType === 'bot' 
                     ? '<span class="bot-badge">🤖 بوت تلغرام</span>' 
-                    : ' مستخدم عادي';
+                    : '👤 مستخدم عادي';
                 document.getElementById('detailFullName').textContent = user.fullName || '-';
                 document.getElementById('detailUsername').textContent = '@' + user.username;
                 document.getElementById('detailEmail').textContent = user.email || '-';
                 document.getElementById('detailPhone').textContent = user.phone || '-';
-                document.getElementById('detailLang').textContent = user.settings.language === 'ar' ? 'العربية' : 'English';
-                document.getElementById('detailTimezone').textContent = user.settings.timezone;
+                document.getElementById('detailLang').textContent = user.language === 'ar' ? 'العربية' : 'English';
+                document.getElementById('detailTimezone').textContent = user.timezone;
                 document.getElementById('detailLastLogin').textContent = new Date(user.lastLogin).toLocaleString('ar');
                 document.getElementById('detailTgId').textContent = user.telegramId;
                 document.getElementById('detailLoginCount').textContent = user.loginCount;
                 
                 const sourceLabels = {
-                    'telegram_webapp': ' Telegram WebApp',
-                    'telegram_webapp_simulated': '🧪 محاكاة',
-                    'manual_code': ' كود تفعيل'
+                    'telegram_webapp': '📱 Telegram WebApp',
+                    'telegram_webapp_simulated': ' محاكاة',
+                    'manual_code': '🔑 كود تفعيل'
                 };
                 document.getElementById('detailSource').textContent = sourceLabels[user.loginSource] || user.loginSource;
                 
@@ -1934,7 +1780,6 @@
                 }
 
                 this.renderActivity();
-                this.renderSettings();
             },
 
             renderActivity() {
@@ -1954,7 +1799,7 @@
                     }
 
                     const items = limit ? activities.slice(0, limit) : activities;
-                    const icons = { success: '✅', info: 'ℹ️', warning: '⚠️', error: '❌' };
+                    const icons = { success: '✅', info: '️', warning: '⚠️', error: '❌' };
                     
                     container.innerHTML = items.map(a => `
                         <div class="activity-item">
@@ -1969,27 +1814,6 @@
 
                 renderList('recentActivity', 5);
                 renderList('fullActivity', null);
-            },
-
-            renderSettings() {
-                const user = this.currentUser;
-                if (!user) return;
-                
-                document.querySelectorAll('.toggle').forEach(toggle => {
-                    const key = toggle.dataset.setting;
-                    if (user.settings[key] !== undefined) {
-                        toggle.classList.toggle('active', user.settings[key]);
-                    }
-                });
-            },
-
-            toggleSetting(el) {
-                const key = el.dataset.setting;
-                const user = this.currentUser;
-                user.settings[key] = !user.settings[key];
-                DB.updateUser(user.telegramId, { settings: user.settings });
-                el.classList.toggle('active');
-                Toast.show('تم تحديث الإعدادات', 'success');
             },
 
             openEditProfile() {
@@ -2041,7 +1865,7 @@
             },
 
             deleteCurrentAccount() {
-                if (!confirm('️ هل أنت متأكد من حذف هذا الحساب؟')) return;
+                if (!confirm('⚠️ هل أنت متأكد من حذف هذا الحساب؟')) return;
                 if (!confirm('تأكيد: سيتم حذف جميع بيانات هذا الحساب!')) return;
                 
                 const tgId = this.currentUser.telegramId;
@@ -2051,7 +1875,7 @@
             },
 
             clearAllData() {
-                if (!confirm('⚠️ هل أنت متأكد؟ سيتم حذف جميع الحسابات!')) return;
+                if (!confirm('️ هل أنت متأكد؟ سيتم حذف جميع الحسابات!')) return;
                 if (!confirm('تأكيد أخير: هذا لا يمكن التراجع عنه!')) return;
                 
                 DB.clearAll();
@@ -2133,24 +1957,3 @@
 </body>
 </html>
 
-
-
-              <script>
-                              // بدلاً من مصفوفة users[]، نستخدم كائن users{} بمفتاح telegramId
-{
-  "tg_123456789": { userData... },
-  "tg_987654321": { userData... },
-  "tg_bot_111222333": { userData... }
-}
-
-// في Auth.init():
-1. قراءة initData من Telegram WebApp
-2. استخراج user.id
-3. مقارنة مع currentUserId المخزن
-4. إذا اختلف → تبديل الحساب تلقائياً
-
-
-              </script>
-                        </body>
-                        </html>
-                    
