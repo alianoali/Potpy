@@ -1,16 +1,32 @@
-<!DOCTYPE html>
+
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>
+                body {
+                  background-color: white; /* Ensure the iframe has a white background */
+                }
+
+                
+              </style>
+                        </head>
+                        <body>
+                            <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <meta name="description" content="Kratos Bot Web App - مساعدك الذكي في عالم الألعاب">
+    <meta name="description" content="Kratos Bot Web App - Multi-User Telegram Mini App">
     <meta name="theme-color" content="#0a1628">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Kratos Bot - Chancy | Web App</title>
+    <title>Kratos Bot - Chancy | Multi-User Mini App</title>
     
+    <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,7 +65,6 @@
             --text-lg: clamp(1rem, 0.95rem + 0.5vw, 1.15rem);
             --text-xl: clamp(1.2rem, 1.1rem + 0.6vw, 1.4rem);
             --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
-            --text-3xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
             
             --space-xs: 0.25rem;
             --space-sm: 0.5rem;
@@ -104,6 +119,7 @@
         ::-webkit-scrollbar-track { background: var(--color-dark); }
         ::-webkit-scrollbar-thumb { background: var(--color-accent-green); border-radius: 4px; }
 
+        /* Loader */
         .app-loader {
             position: fixed; inset: 0;
             background: var(--color-primary);
@@ -149,6 +165,7 @@
             100% { width: 100%; }
         }
 
+        /* Auth Gate */
         .auth-gate {
             position: fixed; inset: 0;
             z-index: calc(var(--z-loader) - 1);
@@ -201,22 +218,6 @@
         .auth-title span { color: var(--color-accent-green); }
         .auth-subtitle { color: var(--color-text-muted); font-size: var(--text-sm); }
 
-        .step-indicator { display: flex; justify-content: center; gap: 10px; margin-bottom: var(--space-lg); }
-        .step-dot {
-            width: 10px; height: 10px; border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: all var(--transition-base);
-        }
-        .step-dot.active {
-            background: var(--color-accent-green);
-            box-shadow: 0 0 10px rgba(127, 255, 0, 0.5);
-            transform: scale(1.3);
-        }
-        .step-dot.completed { background: var(--color-success); }
-
-        .auth-step { display: none; animation: fadeInUp 0.4s ease; }
-        .auth-step.active { display: block; }
-
         .telegram-btn {
             width: 100%; padding: var(--space-md);
             background: linear-gradient(135deg, var(--color-telegram), var(--color-telegram-dark));
@@ -233,94 +234,6 @@
         .telegram-btn svg { width: 24px; height: 24px; }
         .telegram-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-        .code-input-group {
-            display: flex; gap: 8px; justify-content: center;
-            margin: var(--space-lg) 0; direction: ltr;
-        }
-        .code-input {
-            width: 48px; height: 58px;
-            background: rgba(10, 22, 40, 0.8);
-            border: 2px solid rgba(127, 255, 0, 0.3);
-            border-radius: var(--radius-md);
-            color: var(--color-text-light);
-            font-size: var(--text-2xl); font-weight: 900;
-            text-align: center; font-family: var(--font-tech);
-            transition: all var(--transition-base);
-        }
-        .code-input:focus {
-            outline: none; border-color: var(--color-accent-green);
-            box-shadow: 0 0 15px rgba(127, 255, 0, 0.3);
-            transform: scale(1.05);
-        }
-        .code-input.filled { border-color: var(--color-accent-green); background: rgba(127, 255, 0, 0.1); }
-        .code-input.error { border-color: var(--color-error); animation: shake 0.5s ease; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        .form-group { margin-bottom: var(--space-md); }
-        .form-label {
-            display: block; margin-bottom: var(--space-xs);
-            font-size: var(--text-sm); color: var(--color-text-muted);
-            font-weight: 600;
-        }
-        .form-input {
-            width: 100%; padding: var(--space-sm) var(--space-md);
-            background: rgba(10, 22, 40, 0.8);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-md);
-            color: var(--color-text-light);
-            font-size: var(--text-base);
-            transition: all var(--transition-base);
-        }
-        .form-input:focus {
-            outline: none; border-color: var(--color-accent-green);
-            box-shadow: 0 0 15px rgba(127, 255, 0, 0.2);
-        }
-
-        .btn {
-            padding: var(--space-sm) var(--space-lg);
-            border-radius: var(--radius-md);
-            font-weight: 700; font-size: var(--text-sm);
-            transition: all var(--transition-base);
-            display: inline-flex; align-items: center; justify-content: center;
-            gap: var(--space-xs);
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-green-dark));
-            color: var(--color-primary);
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(127, 255, 0, 0.4); }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--color-text-light);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--color-accent-green); }
-        .btn-full { width: 100%; padding: var(--space-md); }
-        .btn-danger { background: var(--color-error); color: white; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-icon {
-            width: 36px; height: 36px;
-            padding: 0;
-            border-radius: var(--radius-sm);
-        }
-
-        .alert {
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-md);
-            font-size: var(--text-sm);
-            display: flex; align-items: center; gap: var(--space-sm);
-            animation: fadeInDown 0.3s ease;
-        }
-        .alert-success { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--color-success); color: var(--color-success); }
-        .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--color-error); color: var(--color-error); }
-        .alert-info { background: rgba(42, 171, 238, 0.15); border: 1px solid var(--color-telegram); color: var(--color-telegram); }
-
         .info-box {
             background: rgba(10, 22, 40, 0.6);
             border: 1px solid rgba(127, 255, 0, 0.2);
@@ -333,21 +246,6 @@
             color: var(--color-accent-green); font-size: var(--text-sm);
         }
         .info-box__text { color: var(--color-text-muted); font-size: var(--text-xs); line-height: 1.8; }
-        .info-box__code {
-            font-family: var(--font-tech);
-            background: rgba(127, 255, 0, 0.1);
-            padding: 2px 8px; border-radius: 4px;
-            color: var(--color-accent-green);
-            direction: ltr; display: inline-block;
-        }
-
-        .link-btn {
-            color: var(--color-accent-green);
-            font-size: var(--text-sm); cursor: pointer;
-            transition: color var(--transition-base);
-            background: none; border: none; padding: var(--space-xs);
-        }
-        .link-btn:hover { color: var(--color-text-light); text-decoration: underline; }
 
         .spinner {
             width: 20px; height: 20px;
@@ -362,11 +260,8 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
 
+        /* Auto-login banner */
         .auto-login-banner {
             background: linear-gradient(135deg, rgba(42, 171, 238, 0.2), rgba(127, 255, 0, 0.1));
             border: 1px solid var(--color-telegram);
@@ -378,26 +273,85 @@
             gap: var(--space-md);
             animation: fadeInUp 0.5s ease;
         }
-        .auto-login-banner__icon {
-            font-size: 2rem;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
+        .auto-login-banner__icon { font-size: 2rem; }
         .auto-login-banner__content { flex: 1; }
         .auto-login-banner__title {
-            font-weight: 700;
-            color: var(--color-telegram);
-            margin-bottom: 4px;
-            font-size: var(--text-sm);
+            font-weight: 700; color: var(--color-telegram);
+            margin-bottom: 4px; font-size: var(--text-sm);
         }
-        .auto-login-banner__text {
+        .auto-login-banner__text { font-size: var(--text-xs); color: var(--color-text-muted); }
+
+        /* Account Switcher */
+        .account-switcher {
+            background: rgba(10, 22, 40, 0.6);
+            border: 1px solid rgba(127, 255, 0, 0.2);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .account-switcher__title {
+            font-weight: 700;
+            color: var(--color-accent-green);
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .account-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            margin-bottom: 4px;
+            border: 1px solid transparent;
+        }
+        .account-item:hover {
+            background: rgba(127, 255, 0, 0.1);
+            border-color: rgba(127, 255, 0, 0.3);
+        }
+        .account-item.active {
+            background: rgba(127, 255, 0, 0.15);
+            border-color: var(--color-accent-green);
+        }
+        .account-item__avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; color: var(--color-primary);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .account-item__avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .account-item__info { flex: 1; min-width: 0; }
+        .account-item__name {
+            font-weight: 600;
+            font-size: var(--text-sm);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .account-item__id {
             font-size: var(--text-xs);
             color: var(--color-text-muted);
+            font-family: var(--font-tech);
+        }
+        .account-item__badge {
+            font-size: var(--text-xs);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            background: var(--color-accent-green);
+            color: var(--color-primary);
+            font-weight: 700;
         }
 
+        /* Web App */
         .webapp { display: none; min-height: 100vh; padding-top: var(--header-height); }
         .webapp.active { display: block; }
 
@@ -501,7 +455,7 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: var(--space-md);
             margin-bottom: var(--space-xl);
         }
@@ -600,7 +554,6 @@
             background: rgba(10, 22, 40, 0.5);
             border-radius: var(--radius-md);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            position: relative;
         }
         .detail-label {
             font-size: var(--text-xs);
@@ -610,26 +563,6 @@
             letter-spacing: 1px;
         }
         .detail-value { font-size: var(--text-base); font-weight: 600; word-break: break-word; }
-
-        .copy-btn {
-            position: absolute;
-            top: var(--space-sm);
-            left: var(--space-sm);
-            width: 28px; height: 28px;
-            background: rgba(127, 255, 0, 0.15);
-            border-radius: var(--radius-sm);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px;
-            transition: all var(--transition-base);
-            cursor: pointer;
-        }
-        .copy-btn:hover {
-            background: rgba(127, 255, 0, 0.3);
-            transform: scale(1.1);
-        }
-        .copy-btn.copied {
-            background: var(--color-success);
-        }
 
         .activity-list {
             background: rgba(17, 34, 64, 0.6);
@@ -745,6 +678,7 @@
         .toast.success { border-color: var(--color-success); }
         .toast.error { border-color: var(--color-error); }
         .toast.info { border-color: var(--color-info); }
+        .toast.warning { border-color: var(--color-warning); }
         .toast-icon { font-size: 1.3rem; }
         .toast-message { flex: 1; font-size: var(--text-sm); }
         @keyframes slideIn {
@@ -791,6 +725,49 @@
         }
         .modal-close:hover { background: rgba(239, 68, 68, 0.2); color: var(--color-error); }
 
+        .form-group { margin-bottom: var(--space-md); }
+        .form-label {
+            display: block; margin-bottom: var(--space-xs);
+            font-size: var(--text-sm); color: var(--color-text-muted);
+            font-weight: 600;
+        }
+        .form-input {
+            width: 100%; padding: var(--space-sm) var(--space-md);
+            background: rgba(10, 22, 40, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: var(--color-text-light);
+            font-size: var(--text-base);
+            transition: all var(--transition-base);
+        }
+        .form-input:focus {
+            outline: none; border-color: var(--color-accent-green);
+            box-shadow: 0 0 15px rgba(127, 255, 0, 0.2);
+        }
+
+        .btn {
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-md);
+            font-weight: 700; font-size: var(--text-sm);
+            transition: all var(--transition-base);
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: var(--space-xs);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-green-dark));
+            color: var(--color-primary);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(127, 255, 0, 0.4); }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-text-light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--color-accent-green); }
+        .btn-full { width: 100%; padding: var(--space-md); }
+        .btn-danger { background: var(--color-error); color: white; }
+        .btn-danger:hover { background: #dc2626; }
+
         .empty-state { text-align: center; padding: var(--space-2xl) var(--space-md); color: var(--color-text-muted); }
         .empty-state__icon { font-size: 4rem; margin-bottom: var(--space-md); opacity: 0.5; }
         .empty-state__title { font-size: var(--text-lg); margin-bottom: var(--space-sm); color: var(--color-text-light); }
@@ -806,104 +783,19 @@
             border-radius: var(--radius-full);
             font-size: var(--text-xs);
             font-weight: 700;
-            margin-right: var(--space-sm);
         }
 
-        .telegram-id-display {
-            background: rgba(42, 171, 238, 0.15);
+        .session-info {
+            background: rgba(42, 171, 238, 0.1);
             border: 1px solid var(--color-telegram);
             border-radius: var(--radius-md);
-            padding: var(--space-md);
+            padding: var(--space-sm) var(--space-md);
             margin-bottom: var(--space-md);
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-        }
-        .telegram-id-display__icon {
-            font-size: 2rem;
-        }
-        .telegram-id-display__content { flex: 1; }
-        .telegram-id-display__label {
             font-size: var(--text-xs);
-            color: var(--color-text-muted);
-            margin-bottom: 4px;
-        }
-        .telegram-id-display__value {
-            font-family: var(--font-tech);
-            font-size: var(--text-base);
-            font-weight: 700;
             color: var(--color-telegram);
-            direction: ltr;
-            text-align: left;
-        }
-
-        .accounts-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-md);
-        }
-        .account-card {
-            background: rgba(17, 34, 64, 0.6);
-            border: 1px solid rgba(127, 255, 0, 0.15);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
             display: flex;
             align-items: center;
-            gap: var(--space-md);
-            transition: all var(--transition-base);
-            cursor: pointer;
-        }
-        .account-card:hover {
-            border-color: rgba(127, 255, 0, 0.4);
-            transform: translateX(-5px);
-        }
-        .account-card.active {
-            border-color: var(--color-accent-green);
-            background: rgba(127, 255, 0, 0.05);
-        }
-        .account-card__avatar {
-            width: 50px; height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: var(--text-lg);
-            color: var(--color-primary);
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-        .account-card__avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .account-card__info { flex: 1; min-width: 0; }
-        .account-card__name {
-            font-weight: 700;
-            font-size: var(--text-base);
-            margin-bottom: 4px;
-        }
-        .account-card__username {
-            font-size: var(--text-xs);
-            color: var(--color-accent-green);
-            font-family: var(--font-tech);
-            margin-bottom: 4px;
-        }
-        .account-card__tg-id {
-            font-size: var(--text-xs);
-            color: var(--color-text-muted);
-            font-family: var(--font-tech);
-            direction: ltr;
-            text-align: left;
-        }
-        .account-card__badge {
-            padding: 4px 8px;
-            border-radius: var(--radius-sm);
-            font-size: var(--text-xs);
-            font-weight: 600;
-        }
-        .account-card__badge.current {
-            background: var(--color-accent-green);
-            color: var(--color-primary);
-        }
-        .account-card__badge.bot {
-            background: var(--color-telegram);
-            color: white;
+            gap: var(--space-sm);
         }
 
         @media (max-width: 768px) {
@@ -919,7 +811,6 @@
             .stat-card { padding: var(--space-md); }
             .stat-card__value { font-size: var(--text-xl); }
             .profile-avatar { width: 80px; height: 80px; font-size: 2rem; }
-            .code-input { width: 40px; height: 50px; font-size: var(--text-xl); }
         }
         @media (max-width: 360px) { .stats-grid { grid-template-columns: 1fr; } }
         @media (prefers-reduced-motion: reduce) {
@@ -928,6 +819,7 @@
     </style>
 </head>
 <body>
+    <!-- App Loader -->
     <div class="app-loader" id="appLoader">
         <div class="loader__content">
             <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Logo" class="loader__logo">
@@ -936,109 +828,77 @@
         </div>
     </div>
 
+    <!-- Auth Gate -->
     <div class="auth-gate" id="authGate">
         <div class="auth-container">
             <div class="auth-header">
                 <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Logo" class="auth-logo">
                 <h1 class="auth-title">KRATOS<span>BOT</span></h1>
-                <p class="auth-subtitle">تسجيل الدخول عبر تلغرام</p>
+                <p class="auth-subtitle">Multi-User Telegram Mini App</p>
             </div>
 
+            <!-- Auto-login banner -->
             <div id="autoLoginBanner" style="display: none;">
                 <div class="auto-login-banner">
                     <div class="auto-login-banner__icon">🤖</div>
                     <div class="auto-login-banner__content">
-                        <div class="auto-login-banner__title">تم الكشف عن بوت تلغرام</div>
+                        <div class="auto-login-banner__title" id="autoLoginTitle">تم الكشف عن حساب تلغرام</div>
                         <div class="auto-login-banner__text" id="autoLoginText">جاري تسجيل الدخول التلقائي...</div>
                     </div>
                 </div>
             </div>
 
-            <div class="step-indicator">
-                <div class="step-dot active" data-step="1"></div>
-                <div class="step-dot" data-step="2"></div>
-                <div class="step-dot" data-step="3"></div>
-            </div>
-
-            <div class="auth-step active" id="step1">
-                <div class="info-box">
-                    <div class="info-box__title">🔐 تسجيل دخول آمن</div>
-                    <div class="info-box__text">
-                        للوصول إلى التطبيق، يجب عليك التفاعل مع بوت تلغرام الرسمي للحصول على كود التفعيل.
+            <!-- Account Switcher (shows when multiple accounts exist) -->
+            <div id="accountSwitcher" style="display: none;">
+                <div class="account-switcher">
+                    <div class="account-switcher__title">
+                        <span>👥 الحسابات المسجلة على هذا الجهاز</span>
+                        <span id="accountsCount">0</span>
                     </div>
-                </div>
-
-                <button class="telegram-btn" id="telegramLoginBtn">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                    </svg>
-                    <span>تسجيل الدخول عبر تلغرام</span>
-                </button>
-
-                <div class="info-box">
-                    <div class="info-box__title">📋 خطوات التسجيل</div>
-                    <div class="info-box__text">
-                        1️⃣ اضغط على الزر أعلاه<br>
-                        2️⃣ سيفتح بوت تلغرام تلقائيًا<br>
-                        3️⃣ اكتب <span class="info-box__code">/start</span> في المحادثة<br>
-                        4️⃣ سيرسل لك البوت كود التفعيل<br>
-                        5️⃣ أدخل الكود في الخطوة التالية
-                    </div>
+                    <div id="accountsList"></div>
                 </div>
             </div>
 
-            <div class="auth-step" id="step2">
-                <div class="alert alert-info" id="telegramStatus">
-                    <span>✓</span>
-                    <span>تم فتح تلغرام. أدخل كود التفعيل الذي أرسله البوت.</span>
-                </div>
+            <!-- Session Info -->
+            <div id="sessionInfo" class="session-info" style="display: none;">
+                <span>ℹ️</span>
+                <span id="sessionInfoText"></span>
+            </div>
 
-                <div class="form-group">
-                    <label class="form-label">اسم المستخدم (اختياري)</label>
-                    <input type="text" class="form-input" id="usernameInput" placeholder="أدخل اسمك">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">كود التفعيل (6 أرقام)</label>
-                    <div class="code-input-group" id="codeInputs">
-                        <input type="text" class="code-input" maxlength="1" data-index="0" inputmode="numeric">
-                        <input type="text" class="code-input" maxlength="1" data-index="1" inputmode="numeric">
-                        <input type="text" class="code-input" maxlength="1" data-index="2" inputmode="numeric">
-                        <input type="text" class="code-input" maxlength="1" data-index="3" inputmode="numeric">
-                        <input type="text" class="code-input" maxlength="1" data-index="4" inputmode="numeric">
-                        <input type="text" class="code-input" maxlength="1" data-index="5" inputmode="numeric">
-                    </div>
-                </div>
-
-                <div id="codeAlert"></div>
-
-                <button class="btn btn-primary btn-full" id="verifyCodeBtn" disabled>
-                    <span>تحقق من الكود</span>
-                </button>
-
-                <div style="text-align: center; margin-top: var(--space-md);">
-                    <button class="link-btn" id="backToStep1">← العودة للخطوة السابقة</button>
-                </div>
-
-                <div style="text-align: center; margin-top: var(--space-sm);">
-                    <button class="link-btn" id="resendCodeBtn">إعادة إرسال الكود</button>
+            <div class="info-box">
+                <div class="info-box__title">🔐 تسجيل دخول آمن عبر تلغرام</div>
+                <div class="info-box__text">
+                    هذا التطبيق يدعم حسابات متعددة. في كل مرة تفتح فيها التطبيق، سيتم التعرف على حساب تلغرام الحالي تلقائياً.
+                    <br><br>
+                    <strong>ملاحظة:</strong> بيانات كل حساب معزولة تماماً عن الآخرين.
                 </div>
             </div>
 
-            <div class="auth-step" id="step3">
-                <div style="text-align: center; padding: var(--space-lg) 0;">
-                    <div style="font-size: 4rem; margin-bottom: var(--space-md);">✅</div>
-                    <h2 style="font-family: var(--font-tech); font-size: var(--text-2xl); margin-bottom: var(--space-sm); color: var(--color-accent-green);">تم التسجيل بنجاح!</h2>
-                    <p style="color: var(--color-text-muted); margin-bottom: var(--space-lg);">جاري دخولك إلى التطبيق...</p>
-                    <div class="spinner" style="margin: 0 auto; border-top-color: var(--color-accent-green);"></div>
+            <button class="telegram-btn" id="telegramLoginBtn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+                <span>تسجيل الدخول عبر تلغرام</span>
+            </button>
+
+            <div class="info-box">
+                <div class="info-box__title">📋 كيف يعمل تبديل الحسابات؟</div>
+                <div class="info-box__text">
+                    1️⃣ عند فتح التطبيق، يتم قراءة بيانات حساب تلغرام الحالي<br>
+                    2️⃣ إذا كان الحساب مختلفاً عن الأخير، يتم تحميل بياناته تلقائياً<br>
+                    3️ كل حساب له ملف شخصي وإحصائيات منفصلة تماماً<br>
+                    4️⃣ يمكنك التبديل بين الحسابات من قائمة الحسابات أعلاه
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- Web App (After Login) -->
     <div class="webapp" id="webapp">
+        <!-- Header -->
         <header class="app-header">
             <div class="header-inner">
                 <div class="brand-logo" onclick="App.navigate('home')">
@@ -1049,11 +909,14 @@
                 </div>
 
                 <div class="header-actions">
+                    <button class="icon-btn" id="switchAccountBtn" aria-label="تبديل الحساب" title="تبديل الحساب">
+                        
+                    </button>
                     <button class="icon-btn" id="notifBtn" aria-label="الإشعارات">
                         🔔
                         <span class="badge" id="notifBadge">0</span>
                     </button>
-                    <div class="user-chip" id="userChip" onclick="App.navigate('accounts')">
+                    <div class="user-chip" id="userChip">
                         <div class="user-avatar" id="headerAvatar">K</div>
                         <span class="user-chip__name" id="headerUserName">مستخدم</span>
                     </div>
@@ -1061,20 +924,13 @@
             </div>
         </header>
 
+        <!-- Main Content -->
         <main class="app-main">
+            <!-- HOME PAGE -->
             <div class="page-view active" id="page-home">
                 <div class="page-header">
                     <h1 class="page-title">مرحباً، <span id="welcomeName">مستخدم</span> 👋</h1>
                     <p class="page-subtitle" id="welcomeSubtitle">إليك نظرة عامة على حسابك</p>
-                </div>
-
-                <div class="telegram-id-display">
-                    <div class="telegram-id-display__icon">📱</div>
-                    <div class="telegram-id-display__content">
-                        <div class="telegram-id-display__label">معرف تلغرام الخاص بك</div>
-                        <div class="telegram-id-display__value" id="homeTgId">-</div>
-                    </div>
-                    <button class="btn btn-icon btn-secondary" onclick="App.copyTgId()" title="نسخ"></button>
                 </div>
 
                 <div class="stats-grid">
@@ -1129,19 +985,11 @@
                 </div>
             </div>
 
+            <!-- PROFILE PAGE -->
             <div class="page-view" id="page-profile">
                 <div class="page-header">
                     <h1 class="page-title">الملف <span>الشخصي</span></h1>
                     <p class="page-subtitle">إدارة معلومات حسابك</p>
-                </div>
-
-                <div class="telegram-id-display">
-                    <div class="telegram-id-display__icon">🆔</div>
-                    <div class="telegram-id-display__content">
-                        <div class="telegram-id-display__label">معرف تلغرام الخاص بك</div>
-                        <div class="telegram-id-display__value" id="profileTgId">-</div>
-                    </div>
-                    <button class="btn btn-icon btn-secondary" onclick="App.copyTgId()" title="نسخ">📋</button>
                 </div>
 
                 <div class="profile-card">
@@ -1199,9 +1047,8 @@
                             <div class="detail-value" id="detailLastLogin">-</div>
                         </div>
                         <div class="detail-item">
-                            <div class="detail-label">معرف تلغرام</div>
-                            <div class="detail-value" id="detailTgId" style="font-family: var(--font-tech); font-size: var(--text-sm);">-</div>
-                            <button class="copy-btn" onclick="App.copyTgId()" title="نسخ">📋</button>
+                            <div class="detail-label">معرف تلغرام (User ID)</div>
+                            <div class="detail-value" id="detailTgId" style="font-family: var(--font-tech); font-size: var(--text-xs);">-</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">عدد مرات الدخول</div>
@@ -1221,29 +1068,13 @@
                 <h3 style="font-family: var(--font-tech); margin-bottom: var(--space-md);">سجل النشاطات الكامل</h3>
                 <div class="activity-list" id="fullActivity">
                     <div class="empty-state">
-                        <div class="empty-state__icon">📭</div>
+                        <div class="empty-state__icon"></div>
                         <div class="empty-state__title">لا توجد نشاطات</div>
                     </div>
                 </div>
             </div>
 
-            <div class="page-view" id="page-accounts">
-                <div class="page-header">
-                    <h1 class="page-title">الحسابات <span>المسجلة</span></h1>
-                    <p class="page-subtitle">جميع الحسابات التي سجلت دخولها على هذا الجهاز</p>
-                </div>
-
-                <div class="info-box">
-                    <div class="info-box__title"> معلومات</div>
-                    <div class="info-box__text">
-                        كل حساب له ملفه الشخصي المستقل وبياناته الخاصة. اضغط على أي حساب للتبديل إليه.
-                    </div>
-                </div>
-
-                <div class="accounts-list" id="accountsList">
-                </div>
-            </div>
-
+            <!-- SETTINGS PAGE -->
             <div class="page-view" id="page-settings">
                 <div class="page-header">
                     <h1 class="page-title">الإعدادات</h1>
@@ -1276,7 +1107,7 @@
                 </div>
 
                 <div class="settings-section">
-                    <div class="settings-title"> الخصوصية والأمان</div>
+                    <div class="settings-title">🔒 الخصوصية والأمان</div>
                     <div class="setting-item">
                         <div>
                             <div class="setting-label">المصادقة الثنائية</div>
@@ -1305,18 +1136,36 @@
                 </div>
 
                 <div class="settings-section">
-                    <div class="settings-title">⚠️ منطقة الخطر</div>
+                    <div class="settings-title"> إدارة الحسابات</div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">عرض جميع الحسابات</div>
+                            <div class="setting-desc">التبديل بين الحسابات المسجلة</div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="App.showAccountSwitcher()">عرض</button>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">حذف الحساب الحالي</div>
+                            <div class="setting-desc">إزالة بيانات هذا الحساب فقط</div>
+                        </div>
+                        <button class="btn btn-danger" onclick="App.deleteCurrentAccount()">حذف</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">️ منطقة الخطر</div>
                     <div class="setting-item">
                         <div>
                             <div class="setting-label">مسح جميع البيانات</div>
-                            <div class="setting-desc">حذف كل بياناتك المحلية</div>
+                            <div class="setting-desc">حذف كل الحسابات والبيانات</div>
                         </div>
-                        <button class="btn btn-danger" onclick="App.clearAllData()">مسح</button>
+                        <button class="btn btn-danger" onclick="App.clearAllData()">مسح الكل</button>
                     </div>
                     <div class="setting-item">
                         <div>
                             <div class="setting-label">تسجيل الخروج</div>
-                            <div class="setting-desc">الخروج من الحساب الحالي</div>
+                            <div class="setting-desc">الخروج من الحساب الحالي فقط</div>
                         </div>
                         <button class="btn btn-danger" onclick="App.logout()">خروج</button>
                     </div>
@@ -1324,6 +1173,7 @@
             </div>
         </main>
 
+        <!-- Bottom Navigation -->
         <nav class="bottom-nav">
             <button class="bottom-nav__item active" data-page="home" onclick="App.navigate('home')">
                 <span class="bottom-nav__icon"></span>
@@ -1333,10 +1183,6 @@
                 <span class="bottom-nav__icon">👤</span>
                 <span>الملف</span>
             </button>
-            <button class="bottom-nav__item" data-page="accounts" onclick="App.navigate('accounts')">
-                <span class="bottom-nav__icon">👥</span>
-                <span>الحسابات</span>
-            </button>
             <button class="bottom-nav__item" data-page="settings" onclick="App.navigate('settings')">
                 <span class="bottom-nav__icon">⚙️</span>
                 <span>الإعدادات</span>
@@ -1344,6 +1190,7 @@
         </nav>
     </div>
 
+    <!-- Edit Profile Modal -->
     <div class="modal-overlay" id="editProfileModal">
         <div class="modal">
             <div class="modal-header">
@@ -1375,127 +1222,172 @@
         </div>
     </div>
 
+    <!-- Account Switcher Modal -->
+    <div class="modal-overlay" id="accountSwitcherModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">👥 تبديل الحساب</h3>
+                <button class="modal-close" onclick="App.closeModal('accountSwitcherModal')">✕</button>
+            </div>
+            <div id="modalAccountsList"></div>
+            <div style="margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid rgba(255,255,255,0.1);">
+                <button class="btn btn-secondary btn-full" onclick="App.logoutAndSwitch()">
+                    🔄 تسجيل خروج ودخول بحساب آخر
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         'use strict';
 
+        /* ============================================
+           DATABASE MODULE - Multi-User System
+           ============================================
+           النقاط الحرجة:
+           1. كل مستخدم له معرف فريد (telegramId) كمفتاح رئيسي
+           2. البيانات مفصولة تماماً بين المستخدمين
+           3. currentUserId يحفظ فقط معرف المستخدم الحالي
+           4. عند فتح التطبيق، نتحقق من initData ونقارن مع currentUserId
+        ============================================ */
         const DB = {
             KEYS: {
                 USERS: 'kratos_users_v4',
-                SESSIONS: 'kratos_sessions_v4',
-                CURRENT_SESSION: 'kratos_current_session_v4',
-                CODES: 'kratos_codes_v4',
+                CURRENT_USER_ID: 'kratos_current_user_id_v4',
                 SETTINGS: 'kratos_settings_v4'
             },
 
             init() {
-                if (!localStorage.getItem(this.KEYS.USERS)) localStorage.setItem(this.KEYS.USERS, '[]');
-                if (!localStorage.getItem(this.KEYS.SESSIONS)) localStorage.setItem(this.KEYS.SESSIONS, '[]');
-                if (!localStorage.getItem(this.KEYS.CODES)) localStorage.setItem(this.KEYS.CODES, '[]');
+                if (!localStorage.getItem(this.KEYS.USERS)) localStorage.setItem(this.KEYS.USERS, '{}');
                 if (!localStorage.getItem(this.KEYS.SETTINGS)) {
                     localStorage.setItem(this.KEYS.SETTINGS, JSON.stringify({
                         botUsername: 'KratosChancyBot',
-                        sessionDuration: 24 * 60 * 60 * 1000,
-                        maxAttempts: 5,
-                        codeExpiry: 10 * 60 * 1000
+                        sessionDuration: 24 * 60 * 60 * 1000
                     }));
                 }
             },
 
-            get(key) {
+            getUsers() {
                 try {
-                    const d = localStorage.getItem(key);
-                    return d ? JSON.parse(d) : null;
-                } catch (e) { return null; }
+                    return JSON.parse(localStorage.getItem(this.KEYS.USERS)) || {};
+                } catch (e) { return {}; }
             },
 
-            set(key, val) {
+            saveUsers(users) {
                 try {
-                    localStorage.setItem(key, JSON.stringify(val));
+                    localStorage.setItem(this.KEYS.USERS, JSON.stringify(users));
                     return true;
                 } catch (e) { return false; }
             },
 
-            createUser(data) {
-                const users = this.get(this.KEYS.USERS) || [];
-                const existing = users.find(u => u.telegramId === data.telegramId);
-                if (existing) return existing;
-
-                const user = {
-                    id: this.uid(),
-                    telegramId: data.telegramId,
-                    username: data.username || ('user_' + data.telegramId.toString().substr(-6)),
-                    fullName: data.fullName || data.firstName || '',
-                    email: data.email || '',
-                    phone: data.phone || '',
-                    bio: data.bio || '',
-                    avatar: data.photoUrl || null,
-                    accountType: data.isBot ? 'bot' : 'user',
-                    botInfo: data.isBot ? {
-                        botName: data.botName || data.username,
-                        botUsername: data.username,
-                        botId: data.telegramId,
-                        isBot: true
-                    } : null,
-                    createdAt: Date.now(),
-                    lastLogin: Date.now(),
-                    loginCount: 1,
-                    loginSource: data.loginSource || 'manual',
-                    status: 'active',
-                    settings: {
-                        pushNotif: true,
-                        emailNotif: false,
-                        sounds: true,
-                        twoFA: false,
-                        showStatus: true,
-                        darkMode: true,
-                        language: 'ar',
-                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-                    },
-                    stats: {
-                        sessions: 0,
-                        hours: 0,
-                        achievements: 0,
-                        level: 1,
-                        xp: 0
-                    },
-                    activity: []
-                };
-
-                users.push(user);
-                this.set(this.KEYS.USERS, users);
-                return user;
+            // الحصول على المستخدم الحالي
+            getCurrentUserId() {
+                return localStorage.getItem(this.KEYS.CURRENT_USER_ID);
             },
 
-            getUser(id) {
-                const users = this.get(this.KEYS.USERS) || [];
-                return users.find(u => u.id === id);
+            setCurrentUserId(userId) {
+                if (userId) {
+                    localStorage.setItem(this.KEYS.CURRENT_USER_ID, userId);
+                } else {
+                    localStorage.removeItem(this.KEYS.CURRENT_USER_ID);
+                }
             },
 
-            getUserByTg(tgId) {
-                const users = this.get(this.KEYS.USERS) || [];
-                return users.find(u => u.telegramId === tgId);
-            },
-
-            getAllUsers() {
-                return this.get(this.KEYS.USERS) || [];
-            },
-
-            updateUser(id, updates) {
-                const users = this.get(this.KEYS.USERS) || [];
-                const idx = users.findIndex(u => u.id === id);
-                if (idx === -1) return null;
-                users[idx] = { ...users[idx], ...updates, updatedAt: Date.now() };
-                this.set(this.KEYS.USERS, users);
-                return users[idx];
-            },
-
-            addActivity(userId, activity) {
-                const users = this.get(this.KEYS.USERS) || [];
-                const idx = users.findIndex(u => u.id === userId);
-                if (idx === -1) return;
+            // إنشاء أو تحديث مستخدم
+            // النقطة الحرجة: نستخدم telegramId كمفتاح رئيسي
+            upsertUser(userData) {
+                const users = this.getUsers();
+                const tgId = userData.telegramId;
                 
-                if (!users[idx].activity) users[idx].activity = [];
-                users[idx].activity.unshift({
+                // التحقق من وجود المستخدم
+                if (users[tgId]) {
+                    // تحديث بيانات المستخدم الحالي
+                    users[tgId] = {
+                        ...users[tgId],
+                        ...userData,
+                        lastLogin: Date.now(),
+                        loginCount: (users[tgId].loginCount || 0) + 1,
+                        updatedAt: Date.now()
+                    };
+                } else {
+                    // إنشاء مستخدم جديد
+                    users[tgId] = {
+                        id: this.uid(),
+                        telegramId: tgId,
+                        username: userData.username || ('user_' + tgId.toString().substr(-6)),
+                        fullName: userData.fullName || userData.firstName || '',
+                        firstName: userData.firstName || '',
+                        lastName: userData.lastName || '',
+                        email: userData.email || '',
+                        phone: userData.phone || '',
+                        bio: userData.bio || '',
+                        avatar: userData.photoUrl || null,
+                        accountType: userData.isBot ? 'bot' : 'user',
+                        botInfo: userData.isBot ? {
+                            botName: userData.botName || userData.username,
+                            botUsername: userData.username,
+                            botId: tgId,
+                            isBot: true
+                        } : null,
+                        createdAt: Date.now(),
+                        lastLogin: Date.now(),
+                        loginCount: 1,
+                        loginSource: userData.loginSource || 'telegram_webapp',
+                        status: 'active',
+                        settings: {
+                            pushNotif: true,
+                            emailNotif: false,
+                            sounds: true,
+                            twoFA: false,
+                            showStatus: true,
+                            darkMode: true,
+                            language: userData.languageCode || 'ar',
+                            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                        },
+                        stats: {
+                            sessions: 0,
+                            hours: 0,
+                            achievements: 0,
+                            level: 1,
+                            xp: 0
+                        },
+                        activity: []
+                    };
+                }
+
+                this.saveUsers(users);
+                return users[tgId];
+            },
+
+            // الحصول على مستخدم بواسطة telegramId
+            getUserByTgId(tgId) {
+                const users = this.getUsers();
+                return users[tgId] || null;
+            },
+
+            // الحصول على المستخدم الحالي
+            getCurrentUser() {
+                const currentId = this.getCurrentUserId();
+                if (!currentId) return null;
+                return this.getUserByTgId(currentId);
+            },
+
+            // تحديث مستخدم
+            updateUser(tgId, updates) {
+                const users = this.getUsers();
+                if (!users[tgId]) return null;
+                users[tgId] = { ...users[tgId], ...updates, updatedAt: Date.now() };
+                this.saveUsers(users);
+                return users[tgId];
+            },
+
+            // إضافة نشاط
+            addActivity(tgId, activity) {
+                const users = this.getUsers();
+                if (!users[tgId]) return;
+                
+                if (!users[tgId].activity) users[tgId].activity = [];
+                users[tgId].activity.unshift({
                     id: this.uid(),
                     type: activity.type || 'info',
                     title: activity.title,
@@ -1503,120 +1395,99 @@
                     timestamp: Date.now()
                 });
                 
-                if (users[idx].activity.length > 50) {
-                    users[idx].activity = users[idx].activity.slice(0, 50);
+                if (users[tgId].activity.length > 50) {
+                    users[tgId].activity = users[tgId].activity.slice(0, 50);
                 }
                 
-                this.set(this.KEYS.USERS, users);
+                this.saveUsers(users);
             },
 
-            createSession(userId, tgId) {
-                const sessions = this.get(this.KEYS.SESSIONS) || [];
-                const settings = this.get(this.KEYS.SETTINGS);
-                const filtered = sessions.filter(s => s.userId !== userId);
-                
-                const session = {
-                    id: this.uid(),
-                    userId, telegramId: tgId,
-                    token: this.token(),
-                    createdAt: Date.now(),
-                    expiresAt: Date.now() + settings.sessionDuration,
-                    isActive: true,
-                    device: navigator.userAgent,
-                    lastActivity: Date.now()
-                };
-
-                filtered.push(session);
-                this.set(this.KEYS.SESSIONS, filtered);
-                this.set(this.KEYS.CURRENT_SESSION, session);
-                return session;
+            // حذف مستخدم
+            deleteUser(tgId) {
+                const users = this.getUsers();
+                if (users[tgId]) {
+                    delete users[tgId];
+                    this.saveUsers(users);
+                    
+                    // إذا كان المستخدم المحذوف هو الحالي، امسح currentUserId
+                    if (this.getCurrentUserId() === tgId) {
+                        this.setCurrentUserId(null);
+                    }
+                    return true;
+                }
+                return false;
             },
 
-            getCurrentSession() {
-                const s = this.get(this.KEYS.CURRENT_SESSION);
-                if (!s) return null;
-                if (s.expiresAt < Date.now()) { this.clearSession(); return null; }
-                s.lastActivity = Date.now();
-                this.set(this.KEYS.CURRENT_SESSION, s);
-                return s;
+            // الحصول على جميع المستخدمين
+            getAllUsers() {
+                const users = this.getUsers();
+                return Object.values(users).sort((a, b) => b.lastLogin - a.lastLogin);
             },
 
-            clearSession() { localStorage.removeItem(this.KEYS.CURRENT_SESSION); },
-
-            generateCode(tgId) {
-                const codes = this.get(this.KEYS.CODES) || [];
-                const settings = this.get(this.KEYS.SETTINGS);
-                const active = codes.filter(c => c.expiresAt > Date.now() && c.telegramId === tgId && !c.used);
-                
-                const code = Math.floor(100000 + Math.random() * 900000).toString();
-                active.push({
-                    code, telegramId: tgId,
-                    createdAt: Date.now(),
-                    expiresAt: Date.now() + settings.codeExpiry,
-                    attempts: 0, maxAttempts: settings.maxAttempts,
-                    used: false
-                });
-                this.set(this.KEYS.CODES, active);
-                return code;
+            // مسح جميع البيانات
+            clearAll() {
+                localStorage.removeItem(this.KEYS.USERS);
+                localStorage.removeItem(this.KEYS.CURRENT_USER_ID);
+                localStorage.removeItem(this.KEYS.SETTINGS);
             },
 
-            verifyCode(tgId, code) {
-                const codes = this.get(this.KEYS.CODES) || [];
-                const c = codes.find(x => 
-                    x.telegramId === tgId && x.code === code && 
-                    !x.used && x.expiresAt > Date.now() && x.attempts < x.maxAttempts
-                );
-
-                if (!c) return { success: false, message: 'كود غير صالح أو منتهي الصلاحية' };
-
-                c.used = true;
-                this.set(this.KEYS.CODES, codes);
-                return { success: true };
-            },
-
-            uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 9); },
-            token() { return Array.from({length: 32}, () => Math.floor(Math.random() * 16).toString(16)).join(''); }
+            uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 9); }
         };
 
+        /* ============================================
+           TELEGRAM WEB APP MODULE
+           ============================================
+           النقاط الحرجة:
+           1. initData يتم قراءته في كل مرة يفتح فيها التطبيق
+           2. user.id هو المعرف الفريد الذي لا يتغير
+           3. يجب التحقق من صحة initData (في الإنتاج الحقيقي عبر الخادم)
+        ============================================ */
         const TelegramWebApp = {
             webApp: null,
             initData: null,
             user: null,
             isBot: false,
-            botInfo: null,
 
             init() {
+                // التحقق من وجود Telegram WebApp SDK
                 if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
                     this.webApp = window.Telegram.WebApp;
+                    
+                    // إخبار تلغرام أن التطبيق جاهز
                     this.webApp.ready();
                     this.webApp.expand();
                     
+                    // حفظ initData للتحقق لاحقاً
                     this.initData = this.webApp.initData;
                     
+                    console.log('🔍 initData:', this.initData ? 'متوفر' : 'غير متوفر');
+                    
+                    // استخراج بيانات المستخدم من initData
                     try {
-                        const params = new URLSearchParams(this.initData);
-                        const userStr = params.get('user');
-                        
-                        if (userStr) {
-                            this.user = JSON.parse(userStr);
-                            this.isBot = this.user.is_bot || false;
+                        if (this.initData) {
+                            const params = new URLSearchParams(this.initData);
+                            const userStr = params.get('user');
                             
-                            if (this.isBot) {
-                                this.botInfo = {
-                                    botName: this.user.first_name || this.user.username,
-                                    botUsername: this.user.username,
-                                    botId: this.user.id,
-                                    photoUrl: this.user.photo_url || null
-                                };
+                            if (userStr) {
+                                this.user = JSON.parse(decodeURIComponent(userStr));
+                                this.isBot = this.user.is_bot || false;
+                                
+                                console.log('✅ Telegram User Detected:', {
+                                    id: this.user.id,
+                                    username: this.user.username,
+                                    first_name: this.user.first_name,
+                                    is_bot: this.isBot
+                                });
+                                
+                                return true;
                             }
-                            
-                            return true;
                         }
                     } catch (e) {
-                        console.error('Error parsing Telegram initData:', e);
+                        console.error('❌ Error parsing Telegram initData:', e);
                     }
                 }
                 
+                console.log('⚠️ Telegram WebApp SDK غير متوفر أو initData غير موجود');
                 return false;
             },
 
@@ -1625,7 +1496,8 @@
                 
                 return {
                     telegramId: 'tg_' + this.user.id,
-                    username: this.user.username || ('user_' + this.user.id),
+                    telegramUserId: this.user.id,
+                    username: this.user.username || null,
                     firstName: this.user.first_name || '',
                     lastName: this.user.last_name || '',
                     fullName: [this.user.first_name, this.user.last_name].filter(Boolean).join(' '),
@@ -1635,9 +1507,68 @@
                     botName: this.isBot ? (this.user.first_name || this.user.username) : null,
                     loginSource: 'telegram_webapp'
                 };
+            },
+
+            // محاكاة بيانات للاختبار خارج تلغرام
+            getSimulatedData(accountNumber = 1) {
+                const accounts = [
+                    {
+                        telegramId: 'tg_123456789',
+                        telegramUserId: 123456789,
+                        username: 'AhmadUser',
+                        firstName: 'أحمد',
+                        lastName: 'محمد',
+                        fullName: 'أحمد محمد',
+                        photoUrl: null,
+                        languageCode: 'ar',
+                        isBot: false,
+                        botName: null,
+                        loginSource: 'telegram_webapp_simulated'
+                    },
+                    {
+                        telegramId: 'tg_987654321',
+                        telegramUserId: 987654321,
+                        username: 'SaraUser',
+                        firstName: 'سارة',
+                        lastName: 'علي',
+                        fullName: 'سارة علي',
+                        photoUrl: null,
+                        languageCode: 'ar',
+                        isBot: false,
+                        botName: null,
+                        loginSource: 'telegram_webapp_simulated'
+                    },
+                    {
+                        telegramId: 'tg_bot_111222333',
+                        telegramUserId: 111222333,
+                        username: 'KratosChancyBot',
+                        firstName: 'Kratos Chancy Bot',
+                        lastName: '',
+                        fullName: 'Kratos Chancy Bot',
+                        photoUrl: 'https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png',
+                        languageCode: 'ar',
+                        isBot: true,
+                        botName: 'Kratos Chancy Bot',
+                        loginSource: 'telegram_webapp_simulated'
+                    }
+                ];
+                return accounts[(accountNumber - 1) % accounts.length];
+            },
+
+            sendData(data) {
+                if (this.webApp) {
+                    this.webApp.sendData(JSON.stringify(data));
+                }
+            },
+
+            close() {
+                if (this.webApp) this.webApp.close();
             }
         };
 
+        /* ============================================
+           TOAST NOTIFICATIONS
+           ============================================ */
         const Toast = {
             show(message, type = 'info', duration = 3500) {
                 const container = document.getElementById('toastContainer');
@@ -1659,171 +1590,193 @@
             }
         };
 
+        /* ============================================
+           AUTH MODULE - Multi-User Logic
+           ============================================
+           النقاط الحرجة لحل المشكلة:
+           1. في كل تحميل، نقرأ initData من تلغرام
+           2. نستخرج telegramId من initData
+           3. نقارنه مع currentUserId المخزن
+           4. إذا اختلف: نحدث currentUserId ونحمل بيانات المستخدم الجديد
+           5. إذا تطابق: نكمل الجلسة الحالية
+        ============================================ */
         const Auth = {
-            currentStep: 1,
-            telegramId: null,
-            activationCode: null,
-
             init() {
-                const isTelegramWebApp = TelegramWebApp.init();
+                // الخطوة 1: تهيئة Telegram WebApp وقراءة initData
+                const isTelegram = TelegramWebApp.init();
                 
-                const session = DB.getCurrentSession();
-                if (session) {
-                    this.enterApp(session);
-                    return;
-                }
+                // الخطوة 2: الحصول على بيانات المستخدم من تلغرام
+                const tgUserData = isTelegram ? TelegramWebApp.getUserData() : null;
+                
+                // الخطوة 3: الحصول على المستخدم الحالي المخزن
+                const currentUserId = DB.getCurrentUserId();
+                const currentUser = currentUserId ? DB.getUserByTgId(currentUserId) : null;
+                
+                console.log(' Auth Check:', {
+                    isTelegram,
+                    tgUserData: tgUserData ? tgUserData.telegramId : null,
+                    currentUserId,
+                    currentUser: currentUser ? currentUser.username : null
+                });
 
-                if (isTelegramWebApp && TelegramWebApp.user) {
-                    this.showAutoLoginBanner();
-                    this.autoLoginFromTelegram();
+                // الخطوة 4: منطق التبديل
+                if (tgUserData) {
+                    // تم فتح التطبيق من تلغرام
+                    const newTgId = tgUserData.telegramId;
+                    
+                    if (currentUser && currentUser.telegramId === newTgId) {
+                        // نفس المستخدم - تحديث lastLogin فقط
+                        console.log('✅ نفس المستخدم - تحديث الجلسة');
+                        DB.updateUser(newTgId, { lastLogin: Date.now() });
+                        this.enterApp(currentUser);
+                    } else if (currentUser && currentUser.telegramId !== newTgId) {
+                        // مستخدم مختلف! - هذه هي المشكلة التي تم حلها
+                        console.log('🔄 مستخدم مختلف! تبديل الحساب من', currentUser.username, 'إلى', tgUserData.username);
+                        
+                        // إنشاء/تحديث المستخدم الجديد
+                        const newUser = DB.upsertUser(tgUserData);
+                        DB.setCurrentUserId(newUser.telegramId);
+                        
+                        // إضافة نشاط
+                        DB.addActivity(newUser.telegramId, {
+                            type: 'success',
+                            title: 'تبديل حساب تلقائي',
+                            description: `تم التبديل من حساب ${currentUser.username}`
+                        });
+                        
+                        this.showAccountSwitchInfo(currentUser, newUser);
+                        setTimeout(() => this.enterApp(newUser), 1500);
+                    } else {
+                        // لا يوجد مستخدم حالي - إنشاء حساب جديد
+                        console.log('🆕 مستخدم جديد - إنشاء حساب');
+                        const newUser = DB.upsertUser(tgUserData);
+                        DB.setCurrentUserId(newUser.telegramId);
+                        
+                        DB.addActivity(newUser.telegramId, {
+                            type: 'success',
+                            title: 'تسجيل دخول أول',
+                            description: 'تم إنشاء الحساب بنجاح'
+                        });
+                        
+                        this.showAutoLoginBanner(tgUserData);
+                        setTimeout(() => this.enterApp(newUser), 1500);
+                    }
                 } else {
-                    document.getElementById('authGate').classList.remove('hidden');
-                    document.body.style.overflow = 'hidden';
+                    // لم يتم الفتح من تلغرام
+                    if (currentUser) {
+                        // يوجد مستخدم مخزن - الدخول به (للاختبار)
+                        console.log('📱 دخول بالمستخدم المخزن (وضع الاختبار)');
+                        this.enterApp(currentUser);
+                    } else {
+                        // لا يوجد مستخدم - عرض شاشة تسجيل الدخول
+                        console.log('🔐 عرض شاشة تسجيل الدخول');
+                        this.showAuthGate();
+                        this.showSimulatedAccounts();
+                    }
                 }
             },
 
-            showAutoLoginBanner() {
+            showAuthGate() {
+                document.getElementById('authGate').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            },
+
+            hideAuthGate() {
+                document.getElementById('authGate').classList.add('hidden');
+                document.body.style.overflow = '';
+            },
+
+            showAutoLoginBanner(userData) {
                 const banner = document.getElementById('autoLoginBanner');
+                const title = document.getElementById('autoLoginTitle');
                 const text = document.getElementById('autoLoginText');
+                
                 banner.style.display = 'block';
+                title.textContent = userData.isBot ? '🤖 تم الكشف عن بوت تلغرام' : '👤 تم الكشف عن حساب تلغرام';
+                text.textContent = `مرحباً ${userData.fullName || userData.username}! جاري تحميل بياناتك...`;
+            },
+
+            showAccountSwitchInfo(oldUser, newUser) {
+                const banner = document.getElementById('autoLoginBanner');
+                const title = document.getElementById('autoLoginTitle');
+                const text = document.getElementById('autoLoginText');
                 
-                if (TelegramWebApp.isBot) {
-                    text.textContent = `تم الكشف عن البوت: ${TelegramWebApp.user.first_name || TelegramWebApp.user.username}`;
-                } else {
-                    text.textContent = `مرحباً ${TelegramWebApp.user.first_name || 'مستخدم'}! جاري تسجيل الدخول...`;
+                banner.style.display = 'block';
+                title.textContent = '🔄 تم تبديل الحساب تلقائياً';
+                text.textContent = `من: ${oldUser.username} → إلى: ${newUser.username}`;
+            },
+
+            showSimulatedAccounts() {
+                // عرض الحسابات المحاكاة للاختبار
+                const switcher = document.getElementById('accountSwitcher');
+                const list = document.getElementById('accountsList');
+                const count = document.getElementById('accountsCount');
+                
+                const allUsers = DB.getAllUsers();
+                
+                if (allUsers.length > 0) {
+                    count.textContent = allUsers.length;
+                    list.innerHTML = allUsers.map(user => `
+                        <div class="account-item" onclick="Auth.switchToAccount('${user.telegramId}')">
+                            <div class="account-item__avatar">
+                                ${user.avatar ? `<img src="${user.avatar}" alt="avatar">` : user.username.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="account-item__info">
+                                <div class="account-item__name">${user.fullName || user.username}</div>
+                                <div class="account-item__id">@${user.username} • ${user.telegramId}</div>
+                            </div>
+                            ${user.accountType === 'bot' ? '<span class="account-item__badge">BOT</span>' : ''}
+                        </div>
+                    `).join('');
+                    
+                    switcher.style.display = 'block';
                 }
             },
 
-            async autoLoginFromTelegram() {
-                const userData = TelegramWebApp.getUserData();
-                if (!userData) return;
-
-                const banner = document.getElementById('autoLoginBanner');
-                const text = document.getElementById('autoLoginText');
-                text.textContent = 'جاري إنشاء الجلسة...';
-
-                await new Promise(r => setTimeout(r, 1500));
-
-                const user = DB.createUser({
-                    ...userData,
-                    isBot: TelegramWebApp.isBot,
-                    botName: TelegramWebApp.isBot ? userData.fullName : null
-                });
-
-                DB.updateUser(user.id, {
-                    lastLogin: Date.now(),
-                    loginCount: (user.loginCount || 0) + 1,
-                    loginSource: 'telegram_webapp'
-                });
-
-                DB.addActivity(user.id, {
-                    type: 'success',
-                    title: TelegramWebApp.isBot ? 'تسجيل دخول البوت' : 'تسجيل دخول تلقائي',
-                    description: TelegramWebApp.isBot 
-                        ? `تم تسجيل دخول البوت ${userData.fullName} تلقائياً`
-                        : `تم تسجيل الدخول عبر Telegram WebApp`
-                });
-
-                const session = DB.createSession(user.id, userData.telegramId);
-
-                text.textContent = 'تم بنجاح! جاري الدخول...';
-                await new Promise(r => setTimeout(r, 800));
-
-                this.enterApp(session);
+            switchToAccount(tgId) {
+                const user = DB.getUserByTgId(tgId);
+                if (user) {
+                    DB.setCurrentUserId(tgId);
+                    DB.addActivity(tgId, {
+                        type: 'info',
+                        title: 'تبديل حساب يدوي',
+                        description: 'تم التبديل إلى هذا الحساب من قائمة الحسابات'
+                    });
+                    this.enterApp(user);
+                }
             },
 
-            goToStep(step) {
-                document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
-                document.getElementById(`step${step}`).classList.add('active');
-                document.querySelectorAll('.step-dot').forEach((dot, idx) => {
-                    dot.classList.remove('active', 'completed');
-                    if (idx + 1 < step) dot.classList.add('completed');
-                    if (idx + 1 === step) dot.classList.add('active');
-                });
-                this.currentStep = step;
-            },
-
-            async startLogin() {
+            async simulateLogin(accountNumber) {
                 const btn = document.getElementById('telegramLoginBtn');
                 btn.disabled = true;
-                btn.innerHTML = '<div class="spinner"></div><span>جاري فتح تلغرام...</span>';
-
-                this.telegramId = 'tg_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 6);
-
-                window.open('https://t.me/KratosChancyBot', '_blank');
-
-                setTimeout(async () => {
-                    const code = DB.generateCode(this.telegramId);
-                    this.activationCode = code;
-                    
-                    setTimeout(() => {
-                        Toast.show(`كود التفعيل (للتجربة): ${code}`, 'info', 6000);
-                    }, 500);
-                    
-                    this.goToStep(2);
-                    setTimeout(() => document.querySelector('.code-input[data-index="0"]').focus(), 300);
-                    
-                    btn.disabled = false;
-                    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>تسجيل الدخول عبر تلغرام</span>';
-                }, 2000);
-            },
-
-            async verifyCode() {
-                const inputs = document.querySelectorAll('.code-input');
-                const code = Array.from(inputs).map(i => i.value).join('');
-                
-                if (code.length !== 6) {
-                    Toast.show('يرجى إدخال الكود كاملاً (6 أرقام)', 'error');
-                    return;
-                }
-
-                const btn = document.getElementById('verifyCodeBtn');
-                btn.disabled = true;
-                btn.innerHTML = '<div class="spinner"></div><span>جاري التحقق...</span>';
+                btn.innerHTML = '<div class="spinner"></div><span>جاري تسجيل الدخول...</span>';
 
                 await new Promise(r => setTimeout(r, 1000));
 
-                const result = DB.verifyCode(this.telegramId, code);
+                // محاكاة حساب مختلف في كل مرة
+                const simulatedData = TelegramWebApp.getSimulatedData(accountNumber);
+                const user = DB.upsertUser(simulatedData);
+                DB.setCurrentUserId(user.telegramId);
+                
+                DB.addActivity(user.telegramId, {
+                    type: 'success',
+                    title: 'تسجيل دخول (محاكاة)',
+                    description: `حساب رقم ${accountNumber}`
+                });
 
-                if (result.success) {
-                    const username = document.getElementById('usernameInput').value;
-                    const user = DB.createUser({
-                        telegramId: this.telegramId,
-                        username: username || undefined,
-                        loginSource: 'manual_code'
-                    });
-
-                    DB.updateUser(user.id, {
-                        lastLogin: Date.now(),
-                        loginCount: (user.loginCount || 0) + 1
-                    });
-
-                    DB.addActivity(user.id, {
-                        type: 'success',
-                        title: 'تسجيل دخول جديد',
-                        description: 'تم تسجيل الدخول بنجاح عبر كود التفعيل'
-                    });
-
-                    const session = DB.createSession(user.id, this.telegramId);
-                    this.goToStep(3);
-
-                    setTimeout(() => this.enterApp(session), 2000);
-                } else {
-                    Toast.show(result.message, 'error');
-                    inputs.forEach(i => {
-                        i.classList.add('error');
-                        setTimeout(() => i.classList.remove('error'), 500);
-                    });
-                    btn.disabled = false;
-                    btn.innerHTML = '<span>تحقق من الكود</span>';
-                }
+                btn.disabled = false;
+                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>تسجيل الدخول عبر تلغرام</span>';
+                
+                this.enterApp(user);
             },
 
-            enterApp(session) {
-                const user = DB.getUser(session.userId);
-                if (!user) { DB.clearSession(); location.reload(); return; }
+            enterApp(user) {
+                if (!user) {
+                    this.showAuthGate();
+                    return;
+                }
 
-                document.getElementById('authGate').classList.add('hidden');
+                this.hideAuthGate();
                 document.getElementById('webapp').classList.add('active');
                 document.body.style.overflow = '';
 
@@ -1837,29 +1790,33 @@
             },
 
             logout() {
-                if (!confirm('هل أنت متأكد من تسجيل الخروج؟')) return;
-                DB.clearSession();
+                if (!confirm('هل أنت متأكد من تسجيل الخروج من الحساب الحالي؟')) return;
+                
+                const currentId = DB.getCurrentUserId();
+                if (currentId) {
+                    DB.addActivity(currentId, {
+                        type: 'info',
+                        title: 'تسجيل خروج',
+                        description: 'تم تسجيل الخروج من الحساب'
+                    });
+                }
+                
+                DB.setCurrentUserId(null);
                 location.reload();
             },
 
-            async resendCode() {
-                if (!this.telegramId) return;
-                const btn = document.getElementById('resendCodeBtn');
-                btn.disabled = true;
-                btn.textContent = 'جاري الإرسال...';
-
-                const code = DB.generateCode(this.telegramId);
-                this.activationCode = code;
-                
-                setTimeout(() => Toast.show(`كود جديد: ${code}`, 'info', 5000), 300);
-                
-                btn.disabled = false;
-                btn.textContent = 'إعادة إرسال الكود';
+            logoutAndSwitch() {
+                App.closeModal('accountSwitcherModal');
+                this.logout();
             }
         };
 
+        /* ============================================
+           APP MODULE
+           ============================================ */
         const App = {
             currentUser: null,
+            simulatedAccountNumber: 1,
 
             init() {
                 DB.init();
@@ -1867,57 +1824,27 @@
             },
 
             bindEvents() {
-                document.getElementById('telegramLoginBtn').addEventListener('click', () => Auth.startLogin());
-                document.getElementById('verifyCodeBtn').addEventListener('click', () => Auth.verifyCode());
-                document.getElementById('backToStep1').addEventListener('click', () => Auth.goToStep(1));
-                document.getElementById('resendCodeBtn').addEventListener('click', () => Auth.resendCode());
-
-                const inputs = document.querySelectorAll('.code-input');
-                inputs.forEach((input, idx) => {
-                    input.addEventListener('input', (e) => {
-                        const val = e.target.value;
-                        if (!/^\d*$/.test(val)) { e.target.value = ''; return; }
-                        if (val) {
-                            e.target.classList.add('filled');
-                            if (idx < inputs.length - 1) inputs[idx + 1].focus();
-                        } else {
-                            e.target.classList.remove('filled');
-                        }
-                        this.checkCodeComplete();
-                    });
-
-                    input.addEventListener('keydown', (e) => {
-                        if (e.key === 'Backspace' && !e.target.value && idx > 0) inputs[idx - 1].focus();
-                        if (e.key === 'Enter') document.getElementById('verifyCodeBtn').click();
-                    });
-
-                    input.addEventListener('paste', (e) => {
-                        e.preventDefault();
-                        const data = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-                        data.split('').forEach((char, i) => {
-                            if (inputs[i]) { inputs[i].value = char; inputs[i].classList.add('filled'); }
-                        });
-                        if (inputs[data.length]) inputs[data.length].focus();
-                        this.checkCodeComplete();
-                    });
-
-                    input.addEventListener('focus', () => input.select());
+                // زر تسجيل الدخول - يحاكي حساب مختلف في كل ضغطة
+                document.getElementById('telegramLoginBtn').addEventListener('click', () => {
+                    Auth.simulateLogin(this.simulatedAccountNumber);
+                    this.simulatedAccountNumber = (this.simulatedAccountNumber % 3) + 1;
                 });
 
+                // زر تبديل الحساب في الهيدر
+                document.getElementById('switchAccountBtn').addEventListener('click', () => {
+                    this.showAccountSwitcher();
+                });
+
+                // نموذج تعديل الملف الشخصي
                 document.getElementById('editProfileForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.saveProfile();
                 });
 
+                // إخفاء Loader
                 window.addEventListener('load', () => {
                     setTimeout(() => document.getElementById('appLoader').classList.add('hidden'), 1200);
                 });
-            },
-
-            checkCodeComplete() {
-                const inputs = document.querySelectorAll('.code-input');
-                const code = Array.from(inputs).map(i => i.value).join('');
-                document.getElementById('verifyCodeBtn').disabled = code.length !== 6;
             },
 
             navigate(page) {
@@ -1928,10 +1855,6 @@
                     item.classList.toggle('active', item.dataset.page === page);
                 });
 
-                if (page === 'accounts') {
-                    this.renderAccounts();
-                }
-
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
 
@@ -1939,6 +1862,7 @@
                 const user = this.currentUser;
                 if (!user) return;
 
+                // Header
                 document.getElementById('headerUserName').textContent = user.username;
                 const headerAvatar = document.getElementById('headerAvatar');
                 if (user.avatar) {
@@ -1947,6 +1871,7 @@
                     headerAvatar.textContent = user.username.charAt(0).toUpperCase();
                 }
 
+                // Home
                 document.getElementById('welcomeName').textContent = user.fullName || user.username;
                 document.getElementById('welcomeSubtitle').textContent = user.accountType === 'bot' 
                     ? '🤖 حساب بوت تلغرام' 
@@ -1963,15 +1888,13 @@
                 document.getElementById('homeJoinDate').textContent = new Date(user.createdAt).toLocaleDateString('ar');
                 document.getElementById('homeStatus').textContent = user.status === 'active' ? 'نشط' : 'معلق';
 
-                // Telegram ID display
-                document.getElementById('homeTgId').textContent = user.telegramId;
-                document.getElementById('profileTgId').textContent = user.telegramId;
-
+                // Stats
                 document.getElementById('statSessions').textContent = user.stats.sessions;
                 document.getElementById('statHours').textContent = user.stats.hours;
                 document.getElementById('statAchievements').textContent = user.stats.achievements;
                 document.getElementById('statLevel').textContent = user.stats.level;
 
+                // Profile
                 document.getElementById('profileName').textContent = user.fullName || user.username;
                 document.getElementById('profileUsername').textContent = '@' + user.username;
                 const profileAvatar = document.getElementById('profileAvatar');
@@ -1983,6 +1906,7 @@
                 document.getElementById('profileId').textContent = user.id.substr(0, 12) + '...';
                 document.getElementById('profileJoinDate').textContent = new Date(user.createdAt).toLocaleDateString('ar');
 
+                // Details
                 document.getElementById('detailAccountType').innerHTML = user.accountType === 'bot' 
                     ? '<span class="bot-badge">🤖 بوت تلغرام</span>' 
                     : ' مستخدم عادي';
@@ -1997,134 +1921,20 @@
                 document.getElementById('detailLoginCount').textContent = user.loginCount;
                 
                 const sourceLabels = {
-                    'telegram_webapp': ' Telegram WebApp (تلقائي)',
-                    'telegram_bot_simulated': '🤖 بوت تلغرام (محاكاة)',
-                    'manual_code': '🔑 كود تفعيل يدوي'
+                    'telegram_webapp': ' Telegram WebApp',
+                    'telegram_webapp_simulated': '🧪 محاكاة',
+                    'manual_code': ' كود تفعيل'
                 };
                 document.getElementById('detailSource').textContent = sourceLabels[user.loginSource] || user.loginSource;
                 
                 if (user.accountType === 'bot' && user.botInfo) {
-                    document.getElementById('detailBotName').innerHTML = `
-                        <span class="bot-badge">🤖 ${user.botInfo.botName}</span>
-                    `;
+                    document.getElementById('detailBotName').innerHTML = `<span class="bot-badge">🤖 ${user.botInfo.botName}</span>`;
                 } else {
                     document.getElementById('detailBotName').textContent = '-';
                 }
 
                 this.renderActivity();
                 this.renderSettings();
-            },
-
-            renderAccounts() {
-                const users = DB.getAllUsers();
-                const container = document.getElementById('accountsList');
-                
-                if (users.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-state__icon">👥</div>
-                            <div class="empty-state__title">لا توجد حسابات مسجلة</div>
-                            <div class="empty-state__text">سجل دخولك لإنشاء حساب جديد</div>
-                        </div>`;
-                    return;
-                }
-
-                container.innerHTML = users.map(user => {
-                    const isCurrent = user.id === this.currentUser.id;
-                    const avatarContent = user.avatar 
-                        ? `<img src="${user.avatar}" alt="avatar">`
-                        : user.username.charAt(0).toUpperCase();
-                    
-                    const badges = [];
-                    if (isCurrent) badges.push('<span class="account-card__badge current">الحالي</span>');
-                    if (user.accountType === 'bot') badges.push('<span class="account-card__badge bot">🤖 بوت</span>');
-                    
-                    return `
-                        <div class="account-card ${isCurrent ? 'active' : ''}" onclick="App.switchAccount('${user.id}')">
-                            <div class="account-card__avatar">${avatarContent}</div>
-                            <div class="account-card__info">
-                                <div class="account-card__name">${user.fullName || user.username}</div>
-                                <div class="account-card__username">@${user.username}</div>
-                                <div class="account-card__tg-id">🆔 ${user.telegramId}</div>
-                            </div>
-                            <div>${badges.join('')}</div>
-                        </div>
-                    `;
-                }).join('');
-            },
-
-            switchAccount(userId) {
-                if (userId === this.currentUser.id) {
-                    Toast.show('أنت بالفعل في هذا الحساب', 'info');
-                    return;
-                }
-
-                const user = DB.getUser(userId);
-                if (!user) {
-                    Toast.show('الحساب غير موجود', 'error');
-                    return;
-                }
-
-                if (!confirm(`هل تريد التبديل إلى حساب "${user.username}"؟`)) return;
-
-                DB.updateUser(user.id, {
-                    lastLogin: Date.now(),
-                    loginCount: (user.loginCount || 0) + 1
-                });
-
-                DB.addActivity(user.id, {
-                    type: 'info',
-                    title: 'تبديل الحساب',
-                    description: 'تم التبديل إلى هذا الحساب'
-                });
-
-                const session = DB.createSession(user.id, user.telegramId);
-                this.currentUser = user;
-                this.renderAll();
-                this.navigate('home');
-                Toast.show(`تم التبديل إلى ${user.username}`, 'success');
-            },
-
-            copyTgId() {
-                if (!this.currentUser) return;
-                
-                const tgId = this.currentUser.telegramId;
-                
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(tgId).then(() => {
-                        Toast.show('تم نسخ معرف تلغرام', 'success');
-                        
-                        const copyBtns = document.querySelectorAll('.copy-btn');
-                        copyBtns.forEach(btn => {
-                            btn.classList.add('copied');
-                            btn.textContent = '✓';
-                            setTimeout(() => {
-                                btn.classList.remove('copied');
-                                btn.textContent = '';
-                            }, 2000);
-                        });
-                    }).catch(() => {
-                        this.fallbackCopy(tgId);
-                    });
-                } else {
-                    this.fallbackCopy(tgId);
-                }
-            },
-
-            fallbackCopy(text) {
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                textarea.style.position = 'fixed';
-                textarea.style.opacity = '0';
-                document.body.appendChild(textarea);
-                textarea.select();
-                try {
-                    document.execCommand('copy');
-                    Toast.show('تم نسخ معرف تلغرام', 'success');
-                } catch (err) {
-                    Toast.show('فشل النسخ', 'error');
-                }
-                document.body.removeChild(textarea);
             },
 
             renderActivity() {
@@ -2144,11 +1954,11 @@
                     }
 
                     const items = limit ? activities.slice(0, limit) : activities;
-                    const icons = { success: '✅', info: 'ℹ️', warning: '⚠️', error: '', login: '🔐', game: '🎮', bot: '🤖' };
+                    const icons = { success: '✅', info: 'ℹ️', warning: '⚠️', error: '❌' };
                     
                     container.innerHTML = items.map(a => `
                         <div class="activity-item">
-                            <div class="activity-icon">${icons[a.type] || ''}</div>
+                            <div class="activity-icon">${icons[a.type] || '📌'}</div>
                             <div class="activity-content">
                                 <div class="activity-title">${a.title}</div>
                                 <div class="activity-time">${a.description} • ${this.timeAgo(a.timestamp)}</div>
@@ -2177,7 +1987,7 @@
                 const key = el.dataset.setting;
                 const user = this.currentUser;
                 user.settings[key] = !user.settings[key];
-                DB.updateUser(user.id, { settings: user.settings });
+                DB.updateUser(user.telegramId, { settings: user.settings });
                 el.classList.toggle('active');
                 Toast.show('تم تحديث الإعدادات', 'success');
             },
@@ -2203,13 +2013,13 @@
                     bio: document.getElementById('editBio').value.trim()
                 };
 
-                DB.updateUser(this.currentUser.id, updates);
-                this.currentUser = DB.getUser(this.currentUser.id);
+                DB.updateUser(this.currentUser.telegramId, updates);
+                this.currentUser = DB.getUserByTgId(this.currentUser.telegramId);
                 this.renderAll();
                 this.closeModal('editProfileModal');
                 Toast.show('تم حفظ التغييرات بنجاح', 'success');
 
-                DB.addActivity(this.currentUser.id, {
+                DB.addActivity(this.currentUser.telegramId, {
                     type: 'info',
                     title: 'تحديث الملف الشخصي',
                     description: 'تم تحديث معلومات الحساب'
@@ -2219,31 +2029,87 @@
 
             exportData() {
                 const user = this.currentUser;
-                const data = {
-                    exportedAt: new Date().toISOString(),
-                    user: user
-                };
+                const data = { exportedAt: new Date().toISOString(), user };
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `kratos_profile_${user.username}_${Date.now()}.json`;
+                a.download = `kratos_${user.username}_${Date.now()}.json`;
                 a.click();
                 URL.revokeObjectURL(url);
-                Toast.show('تم تصدير البيانات بنجاح', 'success');
+                Toast.show('تم تصدير البيانات', 'success');
+            },
+
+            deleteCurrentAccount() {
+                if (!confirm('️ هل أنت متأكد من حذف هذا الحساب؟')) return;
+                if (!confirm('تأكيد: سيتم حذف جميع بيانات هذا الحساب!')) return;
+                
+                const tgId = this.currentUser.telegramId;
+                DB.deleteUser(tgId);
+                Toast.show('تم حذف الحساب', 'warning');
+                setTimeout(() => location.reload(), 1500);
             },
 
             clearAllData() {
-                if (!confirm('️ هل أنت متأكد؟ سيتم حذف جميع بياناتك بشكل نهائي!')) return;
-                if (!confirm('تأكيد أخير: هذا الإجراء لا يمكن التراجع عنه!')) return;
+                if (!confirm('⚠️ هل أنت متأكد؟ سيتم حذف جميع الحسابات!')) return;
+                if (!confirm('تأكيد أخير: هذا لا يمكن التراجع عنه!')) return;
                 
-                localStorage.clear();
+                DB.clearAll();
                 Toast.show('تم مسح جميع البيانات', 'warning');
                 setTimeout(() => location.reload(), 1500);
             },
 
+            showAccountSwitcher() {
+                const allUsers = DB.getAllUsers();
+                const list = document.getElementById('modalAccountsList');
+                const currentId = this.currentUser.telegramId;
+                
+                if (allUsers.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><div class="empty-state__icon">👥</div><div class="empty-state__title">لا توجد حسابات أخرى</div></div>';
+                } else {
+                    list.innerHTML = allUsers.map(user => `
+                        <div class="account-item ${user.telegramId === currentId ? 'active' : ''}" 
+                             onclick="App.switchAccount('${user.telegramId}')">
+                            <div class="account-item__avatar">
+                                ${user.avatar ? `<img src="${user.avatar}" alt="avatar">` : user.username.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="account-item__info">
+                                <div class="account-item__name">${user.fullName || user.username} ${user.telegramId === currentId ? '(الحالي)' : ''}</div>
+                                <div class="account-item__id">@${user.username} • ${user.telegramId}</div>
+                            </div>
+                            ${user.accountType === 'bot' ? '<span class="account-item__badge">BOT</span>' : ''}
+                        </div>
+                    `).join('');
+                }
+                
+                document.getElementById('accountSwitcherModal').classList.add('active');
+            },
+
+            switchAccount(tgId) {
+                const user = DB.getUserByTgId(tgId);
+                if (user && user.telegramId !== this.currentUser.telegramId) {
+                    const oldUsername = this.currentUser.username;
+                    DB.setCurrentUserId(tgId);
+                    DB.addActivity(tgId, {
+                        type: 'info',
+                        title: 'تبديل حساب',
+                        description: `من ${oldUsername}`
+                    });
+                    this.closeModal('accountSwitcherModal');
+                    this.currentUser = user;
+                    this.renderAll();
+                    Toast.show(`تم التبديل إلى ${user.username}`, 'success');
+                } else {
+                    this.closeModal('accountSwitcherModal');
+                }
+            },
+
             logout() {
                 Auth.logout();
+            },
+
+            logoutAndSwitch() {
+                Auth.logoutAndSwitch();
             },
 
             timeAgo(ts) {
@@ -2258,6 +2124,7 @@
             }
         };
 
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             App.init();
             Auth.init();
@@ -2266,3 +2133,24 @@
 </body>
 </html>
 
+
+
+              <script>
+                              // بدلاً من مصفوفة users[]، نستخدم كائن users{} بمفتاح telegramId
+{
+  "tg_123456789": { userData... },
+  "tg_987654321": { userData... },
+  "tg_bot_111222333": { userData... }
+}
+
+// في Auth.init():
+1. قراءة initData من Telegram WebApp
+2. استخراج user.id
+3. مقارنة مع currentUserId المخزن
+4. إذا اختلف → تبديل الحساب تلقائياً
+
+
+              </script>
+                        </body>
+                        </html>
+                    
