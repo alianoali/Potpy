@@ -3,76 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="Kratos Bot Web App - مساعدك الذكي في عالم الألعاب">
     <meta name="theme-color" content="#0a1628">
-    <title>Kratos Bot - Web App</title>
-    
-    <!-- Telegram Web App SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Kratos Bot - Chancy | Web App</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://image.qwenlm.ai">
+    
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Cairo:wght@400;600;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
+        /* ============================================
+           1. CSS VARIABLES & DESIGN TOKENS
+           ============================================ */
         :root {
             --color-primary: #0a1628;
             --color-secondary: #112240;
             --color-dark: #050d1a;
+            --color-surface: #1a2d4a;
             --color-accent-red: #c41e3a;
             --color-accent-green: #7fff00;
             --color-accent-green-dark: #5cbf00;
             --color-accent-blue: #00d4ff;
             --color-telegram: #2AABEE;
+            --color-telegram-dark: #1e88c9;
             --color-text-light: #ffffff;
             --color-text-muted: #a0aec0;
+            --color-text-dim: #6b7a90;
             --color-success: #10b981;
             --color-error: #ef4444;
             --color-warning: #f59e0b;
+            --color-info: #3b82f6;
             
             --font-arabic: 'Cairo', sans-serif;
             --font-display: 'Anton', sans-serif;
             --font-tech: 'Orbitron', sans-serif;
             
-            --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-            --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
-            --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
-            --text-lg: clamp(1.125rem, 1rem + 0.6vw, 1.25rem);
-            --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+            --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.8rem);
+            --text-sm: clamp(0.8rem, 0.75rem + 0.3vw, 0.9rem);
+            --text-base: clamp(0.9rem, 0.85rem + 0.4vw, 1rem);
+            --text-lg: clamp(1rem, 0.95rem + 0.5vw, 1.15rem);
+            --text-xl: clamp(1.2rem, 1.1rem + 0.6vw, 1.4rem);
             --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
             --text-3xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
             --text-hero-title: clamp(3rem, 1.5rem + 7vw, 9rem);
             --text-hero-sub: clamp(1.8rem, 1rem + 4vw, 5rem);
             
-            --space-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem);
-            --space-sm: clamp(0.5rem, 0.4rem + 0.5vw, 1rem);
-            --space-md: clamp(1rem, 0.8rem + 1vw, 1.5rem);
-            --space-lg: clamp(1.5rem, 1rem + 2vw, 3rem);
-            --space-xl: clamp(2rem, 1.5rem + 3vw, 5rem);
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
             
             --container-max: 1400px;
-            --container-padding: clamp(1rem, 2vw + 1rem, 4rem);
+            --container-padding: clamp(1rem, 3vw, 2rem);
             --header-height: 70px;
             
             --radius-sm: 6px;
-            --radius-md: 10px;
+            --radius-md: 12px;
             --radius-lg: 20px;
+            --radius-xl: 28px;
             --radius-full: 9999px;
             
             --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
             --shadow-md: 0 5px 20px rgba(0, 0, 0, 0.5);
             --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 20px rgba(127, 255, 0, 0.4);
             
+            --transition-fast: 0.15s ease;
             --transition-base: 0.3s ease;
+            --transition-slow: 0.5s ease;
             
             --z-base: 1;
             --z-header: 100;
             --z-modal: 1000;
+            --z-overlay: 999;
+            --z-toast: 2000;
             --z-loader: 9999;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        /* ============================================
+           2. RESET & BASE
+           ============================================ */
+        *, *::before, *::after {
+            margin: 0; padding: 0; box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
         body {
             font-family: var(--font-arabic);
             font-size: var(--text-base);
@@ -83,501 +108,525 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
+
         img { max-width: 100%; height: auto; display: block; }
         a { color: inherit; text-decoration: none; }
-        button { font-family: inherit; cursor: pointer; border: none; background: none; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
         ul { list-style: none; }
-        input, textarea { font-family: inherit; }
+        input, textarea, select { font-family: inherit; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--color-accent-green); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-accent-green-dark); }
 
         /* ============================================
-           BLOCKED SCREEN (Non-Telegram Access)
+           3. LOADER
            ============================================ */
-        .blocked-screen {
-            position: fixed;
-            inset: 0;
-            z-index: var(--z-loader);
-            background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-primary) 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: var(--container-padding);
-            text-align: center;
-        }
-
-        .blocked-screen.hidden { display: none; }
-
-        .blocked-content {
-            max-width: 500px;
-        }
-
-        .blocked-icon {
-            font-size: 5rem;
-            margin-bottom: var(--space-lg);
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .blocked-title {
-            font-family: var(--font-tech);
-            font-size: var(--text-2xl);
-            font-weight: 900;
-            margin-bottom: var(--space-md);
-            color: var(--color-error);
-        }
-
-        .blocked-text {
-            color: var(--color-text-muted);
-            font-size: var(--text-base);
-            margin-bottom: var(--space-lg);
-            line-height: 1.8;
-        }
-
-        .blocked-btn {
-            padding: var(--space-md) var(--space-xl);
-            background: linear-gradient(135deg, var(--color-telegram), #1e88c9);
-            color: white;
-            border-radius: var(--radius-md);
-            font-size: var(--text-base);
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-sm);
-            transition: all var(--transition-base);
-        }
-
-        .blocked-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(42, 171, 238, 0.5);
-        }
-
-        /* ============================================
-           LOADER
-           ============================================ */
-        .loader {
-            position: fixed;
-            inset: 0;
+        .app-loader {
+            position: fixed; inset: 0;
             background: var(--color-primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
             z-index: var(--z-loader);
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
 
-        .loader.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
+        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
         .loader__content { text-align: center; }
 
         .loader__logo {
-            width: clamp(60px, 15vw, 100px);
-            animation: loaderSpin 2s ease-in-out infinite;
+            width: clamp(70px, 15vw, 110px);
+            animation: loaderPulse 2s ease-in-out infinite;
             margin: 0 auto;
+            filter: drop-shadow(0 0 20px rgba(127, 255, 0, 0.6));
         }
 
-        @keyframes loaderSpin {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.1) rotate(5deg); }
+        @keyframes loaderPulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
         }
 
         .loader__text {
             font-family: var(--font-tech);
-            font-size: clamp(18px, 3vw, 24px);
+            font-size: clamp(16px, 3vw, 22px);
             font-weight: 900;
             margin-top: var(--space-md);
-            letter-spacing: 5px;
+            letter-spacing: 4px;
             color: var(--color-accent-green);
-            animation: loaderPulse 1.5s ease-in-out infinite;
         }
 
-        @keyframes loaderPulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-
-        /* ============================================
-           HEADER
-           ============================================ */
-        .site-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            width: 100%;
-            z-index: var(--z-header);
-            padding: var(--space-sm) var(--container-padding);
-            background: rgba(10, 22, 40, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(127, 255, 0, 0.1);
-            height: var(--header-height);
-            display: flex;
-            align-items: center;
-        }
-
-        .header-inner {
-            max-width: var(--container-max);
-            width: 100%;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            flex-shrink: 0;
-        }
-
-        .brand-logo__img {
-            width: clamp(35px, 8vw, 45px);
-            height: clamp(35px, 8vw, 45px);
-            filter: drop-shadow(0 0 10px rgba(127, 255, 0, 0.5));
-        }
-
-        .brand-logo__title {
-            font-family: var(--font-tech);
-            font-size: clamp(14px, 3vw, 18px);
-            font-weight: 900;
-            letter-spacing: 1px;
-        }
-
-        .brand-logo__title span { color: var(--color-accent-green); }
-
-        .user-chip {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-            padding: 6px 12px;
-            background: rgba(127, 255, 0, 0.1);
-            border: 1px solid rgba(127, 255, 0, 0.3);
-            border-radius: var(--radius-full);
-            font-size: var(--text-xs);
-            font-weight: 600;
-        }
-
-        .user-chip__avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 900;
-            color: var(--color-primary);
-        }
-
-        /* ============================================
-           HERO SECTION
-           ============================================ */
-        .hero {
-            width: 100%;
-            min-height: 100vh;
-            height: 100vh;
-            height: 100dvh;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .loader__bar {
+            width: 200px; height: 3px;
+            background: rgba(127, 255, 0, 0.2);
+            border-radius: 3px;
+            margin: var(--space-md) auto 0;
             overflow: hidden;
         }
 
-        .hero__background {
-            position: absolute;
-            inset: 0;
-            background-image: url('https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1ee2a5e6d-65d1-4459-9aaa-a98ae6fd75ae.png');
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-        }
-
-        .hero__overlay {
-            position: absolute;
-            inset: 0;
-            background: 
-                linear-gradient(to bottom, rgba(10, 22, 40, 0.4) 0%, rgba(10, 22, 40, 0.1) 40%, rgba(10, 22, 40, 0.6) 100%),
-                radial-gradient(ellipse at center, transparent 40%, rgba(10, 22, 40, 0.7) 100%);
-            pointer-events: none;
-        }
-
-        .hero__content {
-            position: relative;
-            z-index: var(--z-base);
-            text-align: center;
-            padding: var(--container-padding);
-            width: 100%;
-        }
-
-        .hero__badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: clamp(6px, 1vw, 10px) clamp(15px, 2vw, 25px);
-            background: rgba(127, 255, 0, 0.1);
-            border: 1px solid rgba(127, 255, 0, 0.3);
-            border-radius: var(--radius-full);
-            margin-bottom: var(--space-lg);
-            backdrop-filter: blur(10px);
-        }
-
-        .hero__badge-dot {
-            width: 8px;
-            height: 8px;
+        .loader__bar-fill {
+            height: 100%;
             background: var(--color-accent-green);
-            border-radius: 50%;
-            animation: pulseDot 2s ease-in-out infinite;
+            border-radius: 3px;
+            animation: loadBar 1.5s ease-in-out infinite;
         }
 
-        @keyframes pulseDot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.5); }
+        @keyframes loadBar {
+            0% { width: 0; margin-right: 0; }
+            50% { width: 70%; }
+            100% { width: 100%; margin-right: 0; }
         }
 
-        .hero__badge-text {
-            font-size: clamp(11px, 2vw, 14px);
-            color: var(--color-accent-green);
+        /* ============================================
+           4. AUTH GATE (LOGIN)
+           ============================================ */
+        .auth-gate {
+            position: fixed; inset: 0;
+            z-index: calc(var(--z-loader) - 1);
+            background: 
+                linear-gradient(135deg, rgba(10, 22, 40, 0.97) 0%, rgba(5, 13, 26, 0.99) 100%),
+                url('https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1ee2a5e6d-65d1-4459-9aaa-a98ae6fd75ae.png');
+            background-size: cover;
+            background-position: center;
+            display: flex; justify-content: center; align-items: center;
+            padding: var(--container-padding);
+            overflow-y: auto;
+        }
+
+        .auth-gate.hidden { display: none; }
+
+        .auth-container {
+            width: 100%; max-width: 460px;
+            background: rgba(17, 34, 64, 0.85);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(127, 255, 0, 0.2);
+            border-radius: var(--radius-lg);
+            padding: clamp(25px, 5vw, 40px);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-container::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--color-accent-red), var(--color-accent-green), var(--color-telegram));
+        }
+
+        .auth-header { text-align: center; margin-bottom: var(--space-lg); }
+
+        .auth-logo {
+            width: 75px; height: 75px;
+            margin: 0 auto var(--space-md);
+            filter: drop-shadow(0 0 15px rgba(127, 255, 0, 0.5));
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(127, 255, 0, 0.5)); }
+            50% { filter: drop-shadow(0 0 25px rgba(127, 255, 0, 0.8)); }
+        }
+
+        .auth-title {
+            font-family: var(--font-tech);
+            font-size: var(--text-2xl);
+            font-weight: 900;
+            margin-bottom: var(--space-xs);
+            letter-spacing: 2px;
+        }
+
+        .auth-title span { color: var(--color-accent-green); }
+
+        .auth-subtitle {
+            color: var(--color-text-muted);
+            font-size: var(--text-sm);
+        }
+
+        .step-indicator {
+            display: flex; justify-content: center;
+            gap: 10px; margin-bottom: var(--space-lg);
+        }
+
+        .step-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all var(--transition-base);
+        }
+
+        .step-dot.active {
+            background: var(--color-accent-green);
+            box-shadow: 0 0 10px rgba(127, 255, 0, 0.5);
+            transform: scale(1.3);
+        }
+
+        .step-dot.completed { background: var(--color-success); }
+
+        .auth-step { display: none; animation: fadeInUp 0.4s ease; }
+        .auth-step.active { display: block; }
+
+        /* Telegram Button */
+        .telegram-btn {
+            width: 100%; padding: var(--space-md);
+            background: linear-gradient(135deg, var(--color-telegram), var(--color-telegram-dark));
+            color: white; border-radius: var(--radius-md);
+            font-size: var(--text-base); font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            gap: var(--space-sm);
+            transition: all var(--transition-base);
+            margin-bottom: var(--space-md);
+            box-shadow: 0 5px 20px rgba(42, 171, 238, 0.3);
+        }
+
+        .telegram-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(42, 171, 238, 0.5); }
+        .telegram-btn:active { transform: translateY(0); }
+        .telegram-btn svg { width: 24px; height: 24px; }
+        .telegram-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* Code Input */
+        .code-input-group {
+            display: flex; gap: 8px; justify-content: center;
+            margin: var(--space-lg) 0; direction: ltr;
+        }
+
+        .code-input {
+            width: 48px; height: 58px;
+            background: rgba(10, 22, 40, 0.8);
+            border: 2px solid rgba(127, 255, 0, 0.3);
+            border-radius: var(--radius-md);
+            color: var(--color-text-light);
+            font-size: var(--text-2xl); font-weight: 900;
+            text-align: center; font-family: var(--font-tech);
+            transition: all var(--transition-base);
+        }
+
+        .code-input:focus {
+            outline: none; border-color: var(--color-accent-green);
+            box-shadow: 0 0 15px rgba(127, 255, 0, 0.3);
+            transform: scale(1.05);
+        }
+
+        .code-input.filled {
+            border-color: var(--color-accent-green);
+            background: rgba(127, 255, 0, 0.1);
+        }
+
+        .code-input.error {
+            border-color: var(--color-error);
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Form */
+        .form-group { margin-bottom: var(--space-md); }
+        .form-label {
+            display: block; margin-bottom: var(--space-xs);
+            font-size: var(--text-sm); color: var(--color-text-muted);
             font-weight: 600;
-            letter-spacing: 1px;
         }
 
-        .hero__title {
-            font-family: var(--font-display);
-            font-size: var(--text-hero-title);
-            font-weight: 900;
-            letter-spacing: clamp(5px, 1vw, 15px);
-            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 0, 0, 0.7);
-            line-height: 1;
-            margin-bottom: clamp(5px, 1vw, 15px);
-            animation: fadeInUp 1s ease 0.3s both;
+        .form-input {
+            width: 100%; padding: var(--space-sm) var(--space-md);
+            background: rgba(10, 22, 40, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: var(--color-text-light);
+            font-size: var(--text-base);
+            transition: all var(--transition-base);
         }
 
-        .hero__subtitle {
-            font-family: var(--font-display);
-            font-size: var(--text-hero-sub);
-            font-weight: 900;
+        .form-input:focus {
+            outline: none; border-color: var(--color-accent-green);
+            box-shadow: 0 0 15px rgba(127, 255, 0, 0.2);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-md);
+            font-weight: 700; font-size: var(--text-sm);
+            transition: all var(--transition-base);
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: var(--space-xs);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-green-dark));
+            color: var(--color-primary);
+        }
+
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(127, 255, 0, 0.4); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-text-light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--color-accent-green); }
+
+        .btn-full { width: 100%; padding: var(--space-md); }
+        .btn-danger { background: var(--color-error); color: white; }
+        .btn-danger:hover { background: #dc2626; }
+
+        /* Alert */
+        .alert {
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            font-size: var(--text-sm);
+            display: flex; align-items: center; gap: var(--space-sm);
+            animation: fadeInDown 0.3s ease;
+        }
+
+        .alert-success { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--color-success); color: var(--color-success); }
+        .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--color-error); color: var(--color-error); }
+        .alert-info { background: rgba(42, 171, 238, 0.15); border: 1px solid var(--color-telegram); color: var(--color-telegram); }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(10, 22, 40, 0.6);
+            border: 1px solid rgba(127, 255, 0, 0.2);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .info-box__title {
+            font-weight: 700; margin-bottom: var(--space-xs);
+            color: var(--color-accent-green); font-size: var(--text-sm);
+        }
+
+        .info-box__text {
+            color: var(--color-text-muted);
+            font-size: var(--text-xs); line-height: 1.8;
+        }
+
+        .info-box__code {
+            font-family: var(--font-tech);
+            background: rgba(127, 255, 0, 0.1);
+            padding: 2px 8px; border-radius: 4px;
             color: var(--color-accent-green);
-            letter-spacing: clamp(10px, 2vw, 25px);
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9), 0 0 20px rgba(127, 255, 0, 0.4);
-            animation: fadeInUp 1s ease 0.6s both;
+            direction: ltr; display: inline-block;
         }
+
+        .link-btn {
+            color: var(--color-accent-green);
+            font-size: var(--text-sm); cursor: pointer;
+            transition: color var(--transition-base);
+            background: none; border: none; padding: var(--space-xs);
+        }
+
+        .link-btn:hover { color: var(--color-text-light); text-decoration: underline; }
+
+        .spinner {
+            width: 20px; height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         /* ============================================
-           COMMANDS PANEL
+           5. WEB APP LAYOUT
            ============================================ */
-        .commands-panel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: var(--z-header);
-            background: rgba(10, 22, 40, 0.98);
+        .webapp {
+            display: none;
+            min-height: 100vh;
+            padding-top: var(--header-height);
+        }
+
+        .webapp.active { display: block; }
+
+        /* Header */
+        .app-header {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--header-height);
+            background: rgba(10, 22, 40, 0.95);
             backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(127, 255, 0, 0.2);
-            padding: var(--space-sm) var(--container-padding);
-            padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0));
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(127, 255, 0, 0.15);
+            z-index: var(--z-header);
+            padding: 0 var(--container-padding);
         }
 
-        .commands-grid {
+        .header-inner {
             max-width: var(--container-max);
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: var(--space-xs);
+            height: 100%; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: var(--space-md);
         }
 
-        .command-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: var(--space-sm) var(--space-xs);
-            background: rgba(127, 255, 0, 0.05);
-            border: 1px solid rgba(127, 255, 0, 0.15);
-            border-radius: var(--radius-md);
-            color: var(--color-text-light);
-            font-size: 10px;
-            font-weight: 600;
+        .brand-logo {
+            display: flex; align-items: center; gap: var(--space-sm);
+            cursor: pointer; transition: transform var(--transition-base);
+        }
+
+        .brand-logo:hover { transform: scale(1.05); }
+
+        .brand-logo__img {
+            width: clamp(35px, 4.5vw, 45px);
+            height: clamp(35px, 4.5vw, 45px);
+            filter: drop-shadow(0 0 8px rgba(127, 255, 0, 0.5));
+        }
+
+        .brand-logo__text {
+            display: flex; flex-direction: column; line-height: 1;
+        }
+
+        .brand-logo__title {
+            font-family: var(--font-tech);
+            font-size: clamp(14px, 1.5vw, 18px);
+            font-weight: 900; letter-spacing: 1.5px;
+        }
+
+        .brand-logo__title span { color: var(--color-accent-green); }
+
+        .header-actions {
+            display: flex; align-items: center; gap: var(--space-sm);
+        }
+
+        .icon-btn {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex; align-items: center; justify-content: center;
             transition: all var(--transition-base);
-            text-align: center;
+            position: relative;
+            font-size: 18px;
         }
 
-        .command-btn:hover, .command-btn:active {
+        .icon-btn:hover {
             background: rgba(127, 255, 0, 0.15);
-            border-color: var(--color-accent-green);
             transform: translateY(-2px);
         }
 
-        .command-btn__icon {
-            font-size: 20px;
-        }
-
-        .command-btn__label {
-            font-size: 9px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-        }
-
-        /* ============================================
-           MODAL
-           ============================================ */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: var(--z-modal);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: var(--container-padding);
-            opacity: 0;
-            visibility: hidden;
-            transition: all var(--transition-base);
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal {
-            background: var(--color-secondary);
-            border: 1px solid rgba(127, 255, 0, 0.2);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            max-width: 500px;
-            width: 100%;
-            max-height: 80vh;
-            overflow-y: auto;
-            transform: scale(0.9);
-            transition: transform var(--transition-base);
-        }
-
-        .modal-overlay.active .modal {
-            transform: scale(1);
-        }
-
-        .modal__header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-md);
-            padding-bottom: var(--space-sm);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .modal__title {
-            font-family: var(--font-tech);
-            font-size: var(--text-xl);
-            font-weight: 900;
-        }
-
-        .modal__close {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            transition: all var(--transition-base);
-        }
-
-        .modal__close:hover {
+        .icon-btn .badge {
+            position: absolute; top: -2px; right: -2px;
             background: var(--color-error);
+            color: white; font-size: 10px; font-weight: 700;
+            min-width: 18px; height: 18px;
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0 4px;
         }
 
-        .modal__body {
-            color: var(--color-text-muted);
-            line-height: 1.8;
-        }
-
-        .modal__body h3 {
-            color: var(--color-accent-green);
-            margin: var(--space-md) 0 var(--space-xs);
-            font-size: var(--text-base);
-        }
-
-        .modal__body p {
-            margin-bottom: var(--space-sm);
-        }
-
-        .modal__body ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .modal__body li {
-            padding: var(--space-xs) 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .modal__body li:last-child {
-            border-bottom: none;
-        }
-
-        .command-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--space-sm);
-            background: rgba(10, 22, 40, 0.5);
-            border-radius: var(--radius-sm);
-            margin-bottom: var(--space-xs);
-            cursor: pointer;
-            transition: all var(--transition-base);
-        }
-
-        .command-item:hover {
+        .user-chip {
+            display: flex; align-items: center; gap: var(--space-sm);
+            padding: 4px 12px 4px 4px;
             background: rgba(127, 255, 0, 0.1);
+            border: 1px solid rgba(127, 255, 0, 0.3);
+            border-radius: var(--radius-full);
+            cursor: pointer; transition: all var(--transition-base);
         }
 
-        .command-item__name {
+        .user-chip:hover { background: rgba(127, 255, 0, 0.2); }
+
+        .user-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: var(--text-sm);
+            color: var(--color-primary);
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        .user-chip__name {
+            font-size: var(--text-sm); font-weight: 600;
+            max-width: 100px; overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap;
+        }
+
+        /* Main Content */
+        .app-main {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: var(--space-lg) var(--container-padding);
+            padding-bottom: 100px;
+        }
+
+        /* Page Views */
+        .page-view {
+            display: none;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .page-view.active { display: block; }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: var(--space-xl);
+        }
+
+        .page-title {
             font-family: var(--font-tech);
-            color: var(--color-accent-green);
-            font-weight: 700;
-            font-size: var(--text-sm);
+            font-size: var(--text-2xl);
+            font-weight: 900;
+            margin-bottom: var(--space-xs);
         }
 
-        .command-item__desc {
-            font-size: var(--text-xs);
+        .page-title span { color: var(--color-accent-green); }
+
+        .page-subtitle {
             color: var(--color-text-muted);
+            font-size: var(--text-sm);
         }
 
         /* Stats Cards */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-sm);
-            margin-top: var(--space-md);
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
         }
 
         .stat-card {
-            background: rgba(10, 22, 40, 0.6);
-            border: 1px solid rgba(127, 255, 0, 0.2);
+            background: linear-gradient(135deg, rgba(17, 34, 64, 0.8), rgba(10, 22, 40, 0.9));
+            border: 1px solid rgba(127, 255, 0, 0.15);
             border-radius: var(--radius-md);
-            padding: var(--space-md);
-            text-align: center;
+            padding: var(--space-lg);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--color-accent-green), var(--color-accent-blue));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(127, 255, 0, 0.4);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card__icon {
+            font-size: 2rem; margin-bottom: var(--space-sm);
         }
 
         .stat-card__value {
@@ -589,31 +638,51 @@
         }
 
         .stat-card__label {
-            font-size: var(--text-xs);
             color: var(--color-text-muted);
+            font-size: var(--text-sm);
         }
 
         /* Profile Card */
         .profile-card {
-            text-align: center;
-            padding: var(--space-lg) 0;
+            background: linear-gradient(135deg, rgba(17, 34, 64, 0.8), rgba(10, 22, 40, 0.9));
+            border: 1px solid rgba(127, 255, 0, 0.15);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 100px;
+            background: linear-gradient(135deg, var(--color-accent-red), var(--color-accent-green));
+            opacity: 0.3;
+        }
+
+        .profile-header {
+            position: relative; z-index: 1;
+            display: flex; align-items: center; gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            flex-wrap: wrap;
         }
 
         .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
+            width: 100px; height: 100px; border-radius: 50%;
             background: linear-gradient(135deg, var(--color-accent-green), var(--color-accent-blue));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            font-weight: 900;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; font-weight: 900;
             color: var(--color-primary);
-            margin: 0 auto var(--space-md);
-            border: 3px solid var(--color-accent-green);
-            box-shadow: 0 0 30px rgba(127, 255, 0, 0.3);
+            border: 4px solid var(--color-primary);
+            overflow: hidden;
+            flex-shrink: 0;
         }
+
+        .profile-avatar img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        .profile-info { flex: 1; min-width: 200px; }
 
         .profile-name {
             font-family: var(--font-tech);
@@ -622,98 +691,307 @@
             margin-bottom: var(--space-xs);
         }
 
-        .profile-id {
+        .profile-username {
+            color: var(--color-accent-green);
             font-size: var(--text-sm);
-            color: var(--color-text-muted);
+            margin-bottom: var(--space-sm);
             font-family: var(--font-tech);
-            direction: ltr;
+        }
+
+        .profile-meta {
+            display: flex; gap: var(--space-md); flex-wrap: wrap;
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+        }
+
+        .profile-meta-item {
+            display: flex; align-items: center; gap: var(--space-xs);
+        }
+
+        .profile-actions {
+            display: flex; gap: var(--space-sm);
+            flex-wrap: wrap;
+        }
+
+        /* Profile Details Grid */
+        .profile-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+            padding-top: var(--space-lg);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .detail-item {
+            padding: var(--space-md);
+            background: rgba(10, 22, 40, 0.5);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-label {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-xs);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-value {
+            font-size: var(--text-base);
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        /* Activity List */
+        .activity-list {
+            background: rgba(17, 34, 64, 0.6);
+            border: 1px solid rgba(127, 255, 0, 0.15);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .activity-item {
+            padding: var(--space-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex; align-items: center; gap: var(--space-md);
+            transition: background var(--transition-base);
+        }
+
+        .activity-item:last-child { border-bottom: none; }
+        .activity-item:hover { background: rgba(127, 255, 0, 0.05); }
+
+        .activity-icon {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(127, 255, 0, 0.15);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
+        }
+
+        .activity-content { flex: 1; min-width: 0; }
+
+        .activity-title {
+            font-weight: 600; font-size: var(--text-sm);
+            margin-bottom: 2px;
+        }
+
+        .activity-time {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+        }
+
+        /* Settings */
+        .settings-section {
+            background: rgba(17, 34, 64, 0.6);
+            border: 1px solid rgba(127, 255, 0, 0.15);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
             margin-bottom: var(--space-md);
         }
 
-        .profile-info {
-            background: rgba(10, 22, 40, 0.6);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            text-align: right;
-        }
-
-        .profile-info__row {
-            display: flex;
-            justify-content: space-between;
-            padding: var(--space-xs) 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .profile-info__row:last-child {
-            border-bottom: none;
-        }
-
-        .profile-info__label {
-            color: var(--color-text-muted);
-            font-size: var(--text-sm);
-        }
-
-        .profile-info__value {
-            color: var(--color-accent-green);
+        .settings-title {
+            font-family: var(--font-tech);
+            font-size: var(--text-lg);
             font-weight: 700;
-            font-size: var(--text-sm);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* Footer */
-        .site-footer {
-            background: var(--color-dark);
-            padding: var(--space-lg) var(--container-padding) calc(100px + var(--space-lg));
-            text-align: center;
-            border-top: 1px solid rgba(127, 255, 0, 0.1);
+        .setting-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
         }
 
-        .footer__copyright {
+        .setting-item:last-child { border-bottom: none; }
+
+        .setting-label {
+            font-weight: 600; font-size: var(--text-sm);
+        }
+
+        .setting-desc {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            margin-top: 2px;
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            position: relative;
+            width: 50px; height: 26px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background var(--transition-base);
+            flex-shrink: 0;
+        }
+
+        .toggle.active { background: var(--color-accent-green); }
+
+        .toggle::after {
+            content: '';
+            position: absolute; top: 3px; right: 3px;
+            width: 20px; height: 20px;
+            background: white; border-radius: 50%;
+            transition: transform var(--transition-base);
+        }
+
+        .toggle.active::after { transform: translateX(-24px); }
+
+        /* Bottom Navigation (Mobile) */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(10, 22, 40, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(127, 255, 0, 0.15);
+            display: flex; justify-content: space-around;
+            padding: var(--space-sm) 0;
+            z-index: var(--z-header);
+        }
+
+        .bottom-nav__item {
+            flex: 1;
+            display: flex; flex-direction: column;
+            align-items: center; gap: 4px;
+            padding: var(--space-xs);
             color: var(--color-text-muted);
             font-size: var(--text-xs);
+            transition: all var(--transition-base);
+            cursor: pointer;
+            border: none; background: none;
         }
 
-        .footer__copyright span { color: var(--color-accent-green); }
+        .bottom-nav__item.active {
+            color: var(--color-accent-green);
+        }
+
+        .bottom-nav__item:hover { color: var(--color-accent-green); }
+
+        .bottom-nav__icon {
+            font-size: 1.4rem;
+        }
 
         /* Toast Notifications */
         .toast-container {
-            position: fixed;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: calc(var(--z-modal) + 1);
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-sm);
+            position: fixed; top: calc(var(--header-height) + 10px);
+            left: 50%; transform: translateX(-50%);
+            z-index: var(--z-toast);
+            display: flex; flex-direction: column; gap: var(--space-sm);
             pointer-events: none;
+            width: 90%; max-width: 400px;
         }
 
         .toast {
-            background: var(--color-secondary);
+            background: rgba(17, 34, 64, 0.98);
+            backdrop-filter: blur(20px);
             border: 1px solid rgba(127, 255, 0, 0.3);
             border-radius: var(--radius-md);
-            padding: var(--space-sm) var(--space-md);
-            color: var(--color-text-light);
-            font-size: var(--text-sm);
+            padding: var(--space-md);
+            display: flex; align-items: center; gap: var(--space-sm);
             box-shadow: var(--shadow-lg);
-            animation: toastIn 0.3s ease;
+            animation: slideIn 0.3s ease;
             pointer-events: auto;
-            max-width: 90vw;
         }
 
         .toast.success { border-color: var(--color-success); }
         .toast.error { border-color: var(--color-error); }
-        .toast.warning { border-color: var(--color-warning); }
+        .toast.info { border-color: var(--color-info); }
 
-        @keyframes toastIn {
+        .toast-icon { font-size: 1.3rem; }
+        .toast-message { flex: 1; font-size: var(--text-sm); }
+
+        @keyframes slideIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: var(--z-modal);
+            display: flex; justify-content: center; align-items: center;
+            padding: var(--container-padding);
+            opacity: 0; visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal {
+            background: var(--color-secondary);
+            border: 1px solid rgba(127, 255, 0, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            max-width: 500px; width: 100%;
+            max-height: 90vh; overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform var(--transition-base);
+        }
+
+        .modal-overlay.active .modal { transform: scale(1); }
+
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .modal-title {
+            font-family: var(--font-tech);
+            font-size: var(--text-xl);
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            transition: all var(--transition-base);
+        }
+
+        .modal-close:hover { background: rgba(239, 68, 68, 0.2); color: var(--color-error); }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center; padding: var(--space-2xl) var(--space-md);
+            color: var(--color-text-muted);
+        }
+
+        .empty-state__icon { font-size: 4rem; margin-bottom: var(--space-md); opacity: 0.5; }
+        .empty-state__title { font-size: var(--text-lg); margin-bottom: var(--space-sm); color: var(--color-text-light); }
+        .empty-state__text { font-size: var(--text-sm); }
+
         /* Responsive */
+        @media (max-width: 768px) {
+            .user-chip__name { display: none; }
+            .profile-header { flex-direction: column; text-align: center; }
+            .profile-actions { justify-content: center; }
+            .bottom-nav { display: flex; }
+            .app-main { padding-bottom: 120px; }
+        }
+
+        @media (min-width: 769px) {
+            .bottom-nav { display: none; }
+        }
+
         @media (max-width: 480px) {
-            .commands-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stat-card { padding: var(--space-md); }
+            .stat-card__value { font-size: var(--text-xl); }
+            .profile-avatar { width: 80px; height: 80px; font-size: 2rem; }
+            .code-input { width: 40px; height: 50px; font-size: var(--text-xl); }
+        }
+
+        @media (max-width: 360px) {
+            .stats-grid { grid-template-columns: 1fr; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -725,118 +1003,398 @@
     </style>
 </head>
 <body>
-    <!-- Blocked Screen (Non-Telegram) -->
-    <div class="blocked-screen" id="blockedScreen">
-        <div class="blocked-content">
-            <div class="blocked-icon">🔒</div>
-            <h1 class="blocked-title">الوصول مرفوض</h1>
-            <p class="blocked-text">
-                هذا الموقع يعمل حصرياً عبر بوت تلغرام.<br>
-                لا يمكن الوصول إليه من المتصفح مباشرة.
-            </p>
-            <a href="https://t.me/KratosChancyBot" class="blocked-btn" target="_blank">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                </svg>
-                <span>فتح البوت في تلغرام</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- Loader -->
-    <div class="loader" id="loader">
+    <!-- App Loader -->
+    <div class="app-loader" id="appLoader">
         <div class="loader__content">
             <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Logo" class="loader__logo">
             <div class="loader__text">KRATOS BOT</div>
+            <div class="loader__bar"><div class="loader__bar-fill"></div></div>
+        </div>
+    </div>
+
+    <!-- Auth Gate -->
+    <div class="auth-gate" id="authGate">
+        <div class="auth-container">
+            <div class="auth-header">
+                <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Logo" class="auth-logo">
+                <h1 class="auth-title">KRATOS<span>BOT</span></h1>
+                <p class="auth-subtitle">تسجيل الدخول عبر تلغرام</p>
+            </div>
+
+            <div class="step-indicator">
+                <div class="step-dot active" data-step="1"></div>
+                <div class="step-dot" data-step="2"></div>
+                <div class="step-dot" data-step="3"></div>
+            </div>
+
+            <!-- Step 1: Telegram Login -->
+            <div class="auth-step active" id="step1">
+                <div class="info-box">
+                    <div class="info-box__title">🔐 تسجيل دخول آمن</div>
+                    <div class="info-box__text">
+                        للوصول إلى التطبيق، يجب عليك التفاعل مع بوت تلغرام الرسمي للحصول على كود التفعيل.
+                    </div>
+                </div>
+
+                <button class="telegram-btn" id="telegramLoginBtn">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                    <span>تسجيل الدخول عبر تلغرام</span>
+                </button>
+
+                <div class="info-box">
+                    <div class="info-box__title"> خطوات التسجيل</div>
+                    <div class="info-box__text">
+                        1️⃣ اضغط على الزر أعلاه<br>
+                        2️⃣ سيفتح بوت تلغرام تلقائيًا<br>
+                        3️⃣ اكتب <span class="info-box__code">/start</span> في المحادثة<br>
+                        4️⃣ سيرسل لك البوت كود التفعيل<br>
+                        5️⃣ أدخل الكود في الخطوة التالية
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Enter Code -->
+            <div class="auth-step" id="step2">
+                <div class="alert alert-info" id="telegramStatus">
+                    <span>✓</span>
+                    <span>تم فتح تلغرام. أدخل كود التفعيل الذي أرسله البوت.</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">اسم المستخدم (اختياري)</label>
+                    <input type="text" class="form-input" id="usernameInput" placeholder="أدخل اسمك">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">كود التفعيل (6 أرقام)</label>
+                    <div class="code-input-group" id="codeInputs">
+                        <input type="text" class="code-input" maxlength="1" data-index="0" inputmode="numeric">
+                        <input type="text" class="code-input" maxlength="1" data-index="1" inputmode="numeric">
+                        <input type="text" class="code-input" maxlength="1" data-index="2" inputmode="numeric">
+                        <input type="text" class="code-input" maxlength="1" data-index="3" inputmode="numeric">
+                        <input type="text" class="code-input" maxlength="1" data-index="4" inputmode="numeric">
+                        <input type="text" class="code-input" maxlength="1" data-index="5" inputmode="numeric">
+                    </div>
+                </div>
+
+                <div id="codeAlert"></div>
+
+                <button class="btn btn-primary btn-full" id="verifyCodeBtn" disabled>
+                    <span>تحقق من الكود</span>
+                </button>
+
+                <div style="text-align: center; margin-top: var(--space-md);">
+                    <button class="link-btn" id="backToStep1">← العودة للخطوة السابقة</button>
+                </div>
+
+                <div style="text-align: center; margin-top: var(--space-sm);">
+                    <button class="link-btn" id="resendCodeBtn">إعادة إرسال الكود</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Success -->
+            <div class="auth-step" id="step3">
+                <div style="text-align: center; padding: var(--space-lg) 0;">
+                    <div style="font-size: 4rem; margin-bottom: var(--space-md);">✅</div>
+                    <h2 style="font-family: var(--font-tech); font-size: var(--text-2xl); margin-bottom: var(--space-sm); color: var(--color-accent-green);">تم التسجيل بنجاح!</h2>
+                    <p style="color: var(--color-text-muted); margin-bottom: var(--space-lg);">جاري دخولك إلى التطبيق...</p>
+                    <div class="spinner" style="margin: 0 auto; border-top-color: var(--color-accent-green);"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Header -->
-    <header class="site-header">
-        <div class="header-inner">
-            <div class="brand-logo">
-                <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Logo" class="brand-logo__img">
-                <div class="brand-logo__title">KRATOS<span>BOT</span></div>
-            </div>
-            <div class="user-chip" id="userChip">
-                <div class="user-chip__avatar" id="userAvatar">K</div>
-                <span id="userName">مستخدم</span>
-            </div>
-        </div>
-    </header>
-
-    <!-- Hero -->
-    <main>
-        <section class="hero">
-            <div class="hero__background"></div>
-            <div class="hero__overlay"></div>
-            <div class="hero__content">
-                <div class="hero__badge">
-                    <div class="hero__badge-dot"></div>
-                    <span class="hero__badge-text" id="welcomeText">متصل الآن</span>
+    <!-- Web App (After Login) -->
+    <div class="webapp" id="webapp">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-inner">
+                <div class="brand-logo" onclick="App.navigate('home')">
+                    <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" alt="Logo" class="brand-logo__img">
+                    <div class="brand-logo__text">
+                        <div class="brand-logo__title">KRATOS<span>BOT</span></div>
+                    </div>
                 </div>
-                <h1 class="hero__title">KRATOS</h1>
-                <h2 class="hero__subtitle">B O T</h2>
-            </div>
-        </section>
-    </main>
 
-    <!-- Commands Panel -->
-    <div class="commands-panel">
-        <div class="commands-grid">
-            <button class="command-btn" data-command="/start">
-                <span class="command-btn__icon">🏠</span>
-                <span class="command-btn__label">الرئيسية</span>
+                <div class="header-actions">
+                    <button class="icon-btn" id="notifBtn" aria-label="الإشعارات">
+                        🔔
+                        <span class="badge" id="notifBadge">0</span>
+                    </button>
+                    <div class="user-chip" id="userChip">
+                        <div class="user-avatar" id="headerAvatar">K</div>
+                        <span class="user-chip__name" id="headerUserName">مستخدم</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- HOME PAGE -->
+            <div class="page-view active" id="page-home">
+                <div class="page-header">
+                    <h1 class="page-title">مرحباً، <span id="welcomeName">مستخدم</span> 👋</h1>
+                    <p class="page-subtitle">إليك نظرة عامة على حسابك</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card__icon">🎮</div>
+                        <div class="stat-card__value" id="statSessions">0</div>
+                        <div class="stat-card__label">جلسات اللعب</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icon">⏱️</div>
+                        <div class="stat-card__value" id="statHours">0</div>
+                        <div class="stat-card__label">ساعات نشطة</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icon">🏆</div>
+                        <div class="stat-card__value" id="statAchievements">0</div>
+                        <div class="stat-card__label">إنجازات</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icon">⭐</div>
+                        <div class="stat-card__value" id="statLevel">1</div>
+                        <div class="stat-card__label">المستوى</div>
+                    </div>
+                </div>
+
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="homeAvatar">K</div>
+                        <div class="profile-info">
+                            <div class="profile-name" id="homeName">مستخدم</div>
+                            <div class="profile-username" id="homeUsername">@user</div>
+                            <div class="profile-meta">
+                                <div class="profile-meta-item"> <span id="homeJoinDate">-</span></div>
+                                <div class="profile-meta-item">🔐 <span id="homeStatus">نشط</span></div>
+                            </div>
+                        </div>
+                        <div class="profile-actions">
+                            <button class="btn btn-primary" onclick="App.navigate('profile')">
+                                عرض الملف الشخصي
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="font-family: var(--font-tech); margin-bottom: var(--space-md);">آخر النشاطات</h3>
+                <div class="activity-list" id="recentActivity">
+                    <div class="empty-state">
+                        <div class="empty-state__icon">📭</div>
+                        <div class="empty-state__title">لا توجد نشاطات بعد</div>
+                        <div class="empty-state__text">ابدأ اللعب لتظهر نشاطاتك هنا</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE PAGE -->
+            <div class="page-view" id="page-profile">
+                <div class="page-header">
+                    <h1 class="page-title">الملف <span>الشخصي</span></h1>
+                    <p class="page-subtitle">إدارة معلومات حسابك</p>
+                </div>
+
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="profileAvatar">K</div>
+                        <div class="profile-info">
+                            <div class="profile-name" id="profileName">مستخدم</div>
+                            <div class="profile-username" id="profileUsername">@user</div>
+                            <div class="profile-meta">
+                                <div class="profile-meta-item"> <span id="profileId">-</span></div>
+                                <div class="profile-meta-item">📅 انضم في <span id="profileJoinDate">-</span></div>
+                            </div>
+                        </div>
+                        <div class="profile-actions">
+                            <button class="btn btn-primary" onclick="App.openEditProfile()">
+                                ✏️ تعديل
+                            </button>
+                            <button class="btn btn-secondary" onclick="App.exportData()">
+                                📥 تصدير
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="profile-details">
+                        <div class="detail-item">
+                            <div class="detail-label">الاسم الكامل</div>
+                            <div class="detail-value" id="detailFullName">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">البريد الإلكتروني</div>
+                            <div class="detail-value" id="detailEmail">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">رقم الهاتف</div>
+                            <div class="detail-value" id="detailPhone">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">اللغة المفضلة</div>
+                            <div class="detail-value" id="detailLang">العربية</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">المنطقة الزمنية</div>
+                            <div class="detail-value" id="detailTimezone">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">آخر تسجيل دخول</div>
+                            <div class="detail-value" id="detailLastLogin">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">معرف تلغرام</div>
+                            <div class="detail-value" id="detailTgId" style="font-family: var(--font-tech); font-size: var(--text-xs);">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">عدد مرات الدخول</div>
+                            <div class="detail-value" id="detailLoginCount">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="font-family: var(--font-tech); margin-bottom: var(--space-md);">سجل النشاطات الكامل</h3>
+                <div class="activity-list" id="fullActivity">
+                    <div class="empty-state">
+                        <div class="empty-state__icon">📭</div>
+                        <div class="empty-state__title">لا توجد نشاطات</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SETTINGS PAGE -->
+            <div class="page-view" id="page-settings">
+                <div class="page-header">
+                    <h1 class="page-title">الإعدادات</h1>
+                    <p class="page-subtitle">تخصيص تجربتك في التطبيق</p>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title"> الإشعارات</div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">إشعارات الدفع</div>
+                            <div class="setting-desc">استلام إشعارات فورية</div>
+                        </div>
+                        <div class="toggle active" data-setting="pushNotif" onclick="App.toggleSetting(this)"></div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">إشعارات البريد</div>
+                            <div class="setting-desc">استلام تحديثات عبر البريد</div>
+                        </div>
+                        <div class="toggle" data-setting="emailNotif" onclick="App.toggleSetting(this)"></div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">أصوات التطبيق</div>
+                            <div class="setting-desc">تشغيل الأصوات والتأثيرات</div>
+                        </div>
+                        <div class="toggle active" data-setting="sounds" onclick="App.toggleSetting(this)"></div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">🔒 الخصوصية والأمان</div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">المصادقة الثنائية</div>
+                            <div class="setting-desc">طبقة حماية إضافية</div>
+                        </div>
+                        <div class="toggle" data-setting="twoFA" onclick="App.toggleSetting(this)"></div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">إظهار الحالة</div>
+                            <div class="setting-desc">السماح للآخرين برؤية حالتك</div>
+                        </div>
+                        <div class="toggle active" data-setting="showStatus" onclick="App.toggleSetting(this)"></div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">🎨 المظهر</div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">الوضع الداكن</div>
+                            <div class="setting-desc">مفعّل افتراضيًا</div>
+                        </div>
+                        <div class="toggle active" data-setting="darkMode" onclick="App.toggleSetting(this)"></div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">⚠️ منطقة الخطر</div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">مسح جميع البيانات</div>
+                            <div class="setting-desc">حذف كل بياناتك المحلية</div>
+                        </div>
+                        <button class="btn btn-danger" onclick="App.clearAllData()">مسح</button>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">تسجيل الخروج</div>
+                            <div class="setting-desc">الخروج من الحساب الحالي</div>
+                        </div>
+                        <button class="btn btn-danger" onclick="App.logout()">خروج</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="bottom-nav__item active" data-page="home" onclick="App.navigate('home')">
+                <span class="bottom-nav__icon"></span>
+                <span>الرئيسية</span>
             </button>
-            <button class="command-btn" data-command="/profile">
-                <span class="command-btn__icon"></span>
-                <span class="command-btn__label">الملف</span>
+            <button class="bottom-nav__item" data-page="profile" onclick="App.navigate('profile')">
+                <span class="bottom-nav__icon">👤</span>
+                <span>الملف</span>
             </button>
-            <button class="command-btn" data-command="/stats">
-                <span class="command-btn__icon">📊</span>
-                <span class="command-btn__label">إحصائيات</span>
+            <button class="bottom-nav__item" data-page="settings" onclick="App.navigate('settings')">
+                <span class="bottom-nav__icon">⚙️</span>
+                <span>الإعدادات</span>
             </button>
-            <button class="command-btn" data-command="/games">
-                <span class="command-btn__icon">🎮</span>
-                <span class="command-btn__label">ألعاب</span>
-            </button>
-            <button class="command-btn" data-command="/help">
-                <span class="command-btn__icon">❓</span>
-                <span class="command-btn__label">مساعدة</span>
-            </button>
-            <button class="command-btn" data-command="/settings">
-                <span class="command-btn__icon">️</span>
-                <span class="command-btn__label">إعدادات</span>
-            </button>
-            <button class="command-btn" data-command="/vip">
-                <span class="command-btn__icon">👑</span>
-                <span class="command-btn__label">VIP</span>
-            </button>
-            <button class="command-btn" data-command="/support">
-                <span class="command-btn__icon">💬</span>
-                <span class="command-btn__label">دعم</span>
-            </button>
-        </div>
+        </nav>
     </div>
 
-    <!-- Footer -->
-    <footer class="site-footer">
-        <p class="footer__copyright">© 2026 <span>Kratos Bot</span> by Chancy</p>
-    </footer>
-
-    <!-- Modal -->
-    <div class="modal-overlay" id="modalOverlay">
+    <!-- Edit Profile Modal -->
+    <div class="modal-overlay" id="editProfileModal">
         <div class="modal">
-            <div class="modal__header">
-                <h2 class="modal__title" id="modalTitle">عنوان</h2>
-                <button class="modal__close" id="modalClose">✕</button>
+            <div class="modal-header">
+                <h3 class="modal-title">تعديل الملف الشخصي</h3>
+                <button class="modal-close" onclick="App.closeModal('editProfileModal')">✕</button>
             </div>
-            <div class="modal__body" id="modalBody">
-                محتوى
-            </div>
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label class="form-label">الاسم الكامل</label>
+                    <input type="text" class="form-input" id="editFullName" placeholder="أدخل اسمك الكامل">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">البريد الإلكتروني</label>
+                    <input type="email" class="form-input" id="editEmail" placeholder="example@email.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">رقم الهاتف</label>
+                    <input type="tel" class="form-input" id="editPhone" placeholder="+966...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">نبذة عنك</label>
+                    <textarea class="form-input" id="editBio" rows="3" placeholder="اكتب شيئًا عنك..."></textarea>
+                </div>
+                <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-lg);">
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="App.closeModal('editProfileModal')">إلغاء</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">حفظ التغييرات</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -844,183 +1402,235 @@
         'use strict';
 
         /* ============================================
-           TELEGRAM WEB APP INITIALIZATION
+           DATABASE MODULE
            ============================================ */
-        const tg = window.Telegram?.WebApp;
-
-        /* ============================================
-           DATABASE MODULE (Encrypted LocalStorage)
-           ============================================ */
-        const Database = {
+        const DB = {
             KEYS: {
-                USERS: 'kb_users',
-                SESSIONS: 'kb_sessions',
-                CURRENT_USER: 'kb_current_user',
-                SETTINGS: 'kb_settings',
-                GAMES: 'kb_games',
-                VIP: 'kb_vip'
+                USERS: 'kratos_users_v2',
+                SESSIONS: 'kratos_sessions_v2',
+                CURRENT_SESSION: 'kratos_current_session_v2',
+                CODES: 'kratos_codes_v2',
+                SETTINGS: 'kratos_settings_v2'
             },
 
             init() {
-                if (!this.get(this.KEYS.USERS)) this.set(this.KEYS.USERS, []);
-                if (!this.get(this.KEYS.SESSIONS)) this.set(this.KEYS.SESSIONS, []);
-                if (!this.get(this.KEYS.SETTINGS)) {
-                    this.set(this.KEYS.SETTINGS, {
-                        version: '1.0.0',
-                        maintenance: false,
-                        minAppVersion: '1.0.0'
-                    });
+                if (!localStorage.getItem(this.KEYS.USERS)) localStorage.setItem(this.KEYS.USERS, '[]');
+                if (!localStorage.getItem(this.KEYS.SESSIONS)) localStorage.setItem(this.KEYS.SESSIONS, '[]');
+                if (!localStorage.getItem(this.KEYS.CODES)) localStorage.setItem(this.KEYS.CODES, '[]');
+                if (!localStorage.getItem(this.KEYS.SETTINGS)) {
+                    localStorage.setItem(this.KEYS.SETTINGS, JSON.stringify({
+                        botUsername: 'KratosChancyBot',
+                        sessionDuration: 24 * 60 * 60 * 1000,
+                        maxAttempts: 5,
+                        codeExpiry: 10 * 60 * 1000
+                    }));
                 }
-                if (!this.get(this.KEYS.GAMES)) {
-                    this.set(this.KEYS.GAMES, [
-                        { id: 1, name: 'God of War', category: 'Action', rating: 9.5 },
-                        { id: 2, name: 'Elden Ring', category: 'RPG', rating: 9.8 },
-                        { id: 3, name: 'Cyberpunk 2077', category: 'RPG', rating: 9.0 },
-                        { id: 4, name: 'FIFA 2026', category: 'Sports', rating: 8.5 }
-                    ]);
-                }
-                if (!this.get(this.KEYS.VIP)) this.set(this.KEYS.VIP, []);
             },
 
             get(key) {
                 try {
-                    const data = localStorage.getItem(key);
-                    return data ? JSON.parse(data) : null;
+                    const d = localStorage.getItem(key);
+                    return d ? JSON.parse(d) : null;
                 } catch (e) { return null; }
             },
 
-            set(key, value) {
+            set(key, val) {
                 try {
-                    localStorage.setItem(key, JSON.stringify(value));
+                    localStorage.setItem(key, JSON.stringify(val));
                     return true;
                 } catch (e) { return false; }
             },
 
-            createOrUpdateUser(userData) {
+            // Users
+            createUser(data) {
                 const users = this.get(this.KEYS.USERS) || [];
-                let user = users.find(u => u.telegramId === userData.telegramId);
-                
-                if (user) {
-                    user.lastLogin = Date.now();
-                    user.loginCount = (user.loginCount || 0) + 1;
-                    if (userData.username) user.username = userData.username;
-                    if (userData.firstName) user.firstName = userData.firstName;
-                } else {
-                    user = {
-                        id: this.generateId(),
-                        telegramId: userData.telegramId,
-                        username: userData.username || 'user_' + userData.telegramId,
-                        firstName: userData.firstName || 'مستخدم',
-                        lastName: userData.lastName || '',
-                        languageCode: userData.languageCode || 'ar',
-                        createdAt: Date.now(),
-                        lastLogin: Date.now(),
-                        loginCount: 1,
-                        isVip: false,
-                        vipExpiry: null,
-                        status: 'active'
-                    };
-                    users.push(user);
-                }
+                const existing = users.find(u => u.telegramId === data.telegramId);
+                if (existing) return existing;
 
+                const user = {
+                    id: this.uid(),
+                    telegramId: data.telegramId,
+                    username: data.username || ('user_' + data.telegramId.substr(-6)),
+                    fullName: data.fullName || '',
+                    email: data.email || '',
+                    phone: data.phone || '',
+                    bio: data.bio || '',
+                    avatar: null,
+                    createdAt: Date.now(),
+                    lastLogin: Date.now(),
+                    loginCount: 1,
+                    status: 'active',
+                    settings: {
+                        pushNotif: true,
+                        emailNotif: false,
+                        sounds: true,
+                        twoFA: false,
+                        showStatus: true,
+                        darkMode: true,
+                        language: 'ar',
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                    },
+                    stats: {
+                        sessions: 0,
+                        hours: 0,
+                        achievements: 0,
+                        level: 1,
+                        xp: 0
+                    },
+                    activity: []
+                };
+
+                users.push(user);
                 this.set(this.KEYS.USERS, users);
-                this.set(this.KEYS.CURRENT_USER, user);
                 return user;
             },
 
-            getCurrentUser() {
-                return this.get(this.KEYS.CURRENT_USER);
-            },
-
-            clearCurrentUser() {
-                localStorage.removeItem(this.KEYS.CURRENT_USER);
-            },
-
-            getStats() {
+            getUser(id) {
                 const users = this.get(this.KEYS.USERS) || [];
-                const vip = this.get(this.KEYS.VIP) || [];
-                return {
-                    totalUsers: users.length,
-                    activeToday: users.filter(u => Date.now() - u.lastLogin < 86400000).length,
-                    totalLogins: users.reduce((sum, u) => sum + (u.loginCount || 0), 0),
-                    vipUsers: vip.length
-                };
+                return users.find(u => u.id === id);
             },
 
-            generateId() {
-                return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
-            }
-        };
-
-        /* ============================================
-           AUTH MODULE
-           ============================================ */
-        const Auth = {
-            init() {
-                // Check if running inside Telegram
-                if (!tg || !tg.initData) {
-                    this.blockAccess();
-                    return false;
-                }
-
-                // Verify initData (basic check)
-                try {
-                    const user = tg.initDataUnsafe?.user;
-                    if (!user) {
-                        this.blockAccess();
-                        return false;
-                    }
-
-                    // Store user in database
-                    const dbUser = Database.createOrUpdateUser({
-                        telegramId: user.id.toString(),
-                        username: user.username,
-                        firstName: user.first_name,
-                        lastName: user.last_name,
-                        languageCode: user.language_code
-                    });
-
-                    this.updateUI(dbUser);
-                    return true;
-                } catch (e) {
-                    console.error('Auth error:', e);
-                    this.blockAccess();
-                    return false;
-                }
+            getUserByTg(tgId) {
+                const users = this.get(this.KEYS.USERS) || [];
+                return users.find(u => u.telegramId === tgId);
             },
 
-            blockAccess() {
-                document.getElementById('blockedScreen').classList.remove('hidden');
-                document.getElementById('loader').classList.add('hidden');
+            updateUser(id, updates) {
+                const users = this.get(this.KEYS.USERS) || [];
+                const idx = users.findIndex(u => u.id === id);
+                if (idx === -1) return null;
+                users[idx] = { ...users[idx], ...updates, updatedAt: Date.now() };
+                this.set(this.KEYS.USERS, users);
+                return users[idx];
             },
 
-            updateUI(user) {
-                const displayName = user.username || user.firstName || 'مستخدم';
-                document.getElementById('userName').textContent = displayName;
-                document.getElementById('userAvatar').textContent = (user.firstName || 'K').charAt(0).toUpperCase();
-                document.getElementById('welcomeText').textContent = `مرحباً ${displayName}`;
-            }
-        };
-
-        /* ============================================
-           UI MODULES
-           ============================================ */
-        const Loader = {
-            init() {
-                window.addEventListener('load', () => {
-                    setTimeout(() => {
-                        document.getElementById('loader').classList.add('hidden');
-                    }, 1000);
+            addActivity(userId, activity) {
+                const users = this.get(this.KEYS.USERS) || [];
+                const idx = users.findIndex(u => u.id === userId);
+                if (idx === -1) return;
+                
+                if (!users[idx].activity) users[idx].activity = [];
+                users[idx].activity.unshift({
+                    id: this.uid(),
+                    type: activity.type || 'info',
+                    title: activity.title,
+                    description: activity.description || '',
+                    timestamp: Date.now()
                 });
-            }
+                
+                // Keep only last 50 activities
+                if (users[idx].activity.length > 50) {
+                    users[idx].activity = users[idx].activity.slice(0, 50);
+                }
+                
+                this.set(this.KEYS.USERS, users);
+            },
+
+            // Sessions
+            createSession(userId, tgId) {
+                const sessions = this.get(this.KEYS.SESSIONS) || [];
+                const settings = this.get(this.KEYS.SETTINGS);
+                const filtered = sessions.filter(s => s.userId !== userId);
+                
+                const session = {
+                    id: this.uid(),
+                    userId, telegramId: tgId,
+                    token: this.token(),
+                    createdAt: Date.now(),
+                    expiresAt: Date.now() + settings.sessionDuration,
+                    isActive: true,
+                    device: navigator.userAgent,
+                    lastActivity: Date.now()
+                };
+
+                filtered.push(session);
+                this.set(this.KEYS.SESSIONS, filtered);
+                this.set(this.KEYS.CURRENT_SESSION, session);
+                return session;
+            },
+
+            getCurrentSession() {
+                const s = this.get(this.KEYS.CURRENT_SESSION);
+                if (!s) return null;
+                if (s.expiresAt < Date.now()) { this.clearSession(); return null; }
+                s.lastActivity = Date.now();
+                this.set(this.KEYS.CURRENT_SESSION, s);
+                return s;
+            },
+
+            clearSession() { localStorage.removeItem(this.KEYS.CURRENT_SESSION); },
+
+            // Activation Codes
+            generateCode(tgId) {
+                const codes = this.get(this.KEYS.CODES) || [];
+                const settings = this.get(this.KEYS.SETTINGS);
+                const active = codes.filter(c => c.expiresAt > Date.now() && c.telegramId === tgId && !c.used);
+                
+                const code = Math.floor(100000 + Math.random() * 900000).toString();
+                active.push({
+                    code, telegramId: tgId,
+                    createdAt: Date.now(),
+                    expiresAt: Date.now() + settings.codeExpiry,
+                    attempts: 0, maxAttempts: settings.maxAttempts,
+                    used: false
+                });
+                this.set(this.KEYS.CODES, active);
+                return code;
+            },
+
+            verifyCode(tgId, code) {
+                const codes = this.get(this.KEYS.CODES) || [];
+                const c = codes.find(x => 
+                    x.telegramId === tgId && x.code === code && 
+                    !x.used && x.expiresAt > Date.now() && x.attempts < x.maxAttempts
+                );
+
+                if (!c) return { success: false, message: 'كود غير صالح أو منتهي الصلاحية' };
+
+                c.used = true;
+                this.set(this.KEYS.CODES, codes);
+                return { success: true };
+            },
+
+            uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 9); },
+            token() { return Array.from({length: 32}, () => Math.floor(Math.random() * 16).toString(16)).join(''); }
         };
 
+        /* ============================================
+           TELEGRAM BOT MODULE
+           ============================================ */
+        const TelegramBot = {
+            BOT_USERNAME: 'KratosChancyBot',
+            
+            async openBot() {
+                window.open(`https://t.me/${this.BOT_USERNAME}`, '_blank');
+                return true;
+            },
+
+            async sendCode(tgId) {
+                const code = DB.generateCode(tgId);
+                await this.delay(1500);
+                return { success: true, code };
+            },
+
+            delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+        };
+
+        /* ============================================
+           TOAST NOTIFICATIONS
+           ============================================ */
         const Toast = {
-            show(message, type = 'success', duration = 3000) {
+            show(message, type = 'info', duration = 3500) {
                 const container = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
-                toast.textContent = message;
+                
+                const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
+                toast.innerHTML = `
+                    <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+                    <span class="toast-message">${message}</span>
+                `;
+                
                 container.appendChild(toast);
                 setTimeout(() => {
                     toast.style.opacity = '0';
@@ -1030,387 +1640,404 @@
             }
         };
 
-        const Modal = {
-            open(title, content) {
-                document.getElementById('modalTitle').textContent = title;
-                document.getElementById('modalBody').innerHTML = content;
-                document.getElementById('modalOverlay').classList.add('active');
-            },
-
-            close() {
-                document.getElementById('modalOverlay').classList.remove('active');
-            },
+        /* ============================================
+           AUTH MODULE
+           ============================================ */
+        const Auth = {
+            currentStep: 1,
+            telegramId: null,
+            activationCode: null,
 
             init() {
-                document.getElementById('modalClose').addEventListener('click', () => this.close());
-                document.getElementById('modalOverlay').addEventListener('click', (e) => {
-                    if (e.target === e.currentTarget) this.close();
+                const session = DB.getCurrentSession();
+                if (session) {
+                    this.enterApp(session);
+                } else {
+                    document.getElementById('authGate').classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                }
+            },
+
+            goToStep(step) {
+                document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
+                document.getElementById(`step${step}`).classList.add('active');
+                document.querySelectorAll('.step-dot').forEach((dot, idx) => {
+                    dot.classList.remove('active', 'completed');
+                    if (idx + 1 < step) dot.classList.add('completed');
+                    if (idx + 1 === step) dot.classList.add('active');
                 });
+                this.currentStep = step;
+            },
+
+            async startLogin() {
+                const btn = document.getElementById('telegramLoginBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<div class="spinner"></div><span>جاري فتح تلغرام...</span>';
+
+                this.telegramId = 'tg_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 6);
+
+                await TelegramBot.openBot();
+
+                setTimeout(async () => {
+                    const result = await TelegramBot.sendCode(this.telegramId);
+                    if (result.success) {
+                        this.activationCode = result.code;
+                        setTimeout(() => {
+                            Toast.show(`كود التفعيل (للتجربة): ${result.code}`, 'info', 6000);
+                        }, 500);
+                        this.goToStep(2);
+                        setTimeout(() => document.querySelector('.code-input[data-index="0"]').focus(), 300);
+                    }
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>تسجيل الدخول عبر تلغرام</span>';
+                }, 2000);
+            },
+
+            async verifyCode() {
+                const inputs = document.querySelectorAll('.code-input');
+                const code = Array.from(inputs).map(i => i.value).join('');
+                
+                if (code.length !== 6) {
+                    Toast.show('يرجى إدخال الكود كاملاً (6 أرقام)', 'error');
+                    return;
+                }
+
+                const btn = document.getElementById('verifyCodeBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<div class="spinner"></div><span>جاري التحقق...</span>';
+
+                await TelegramBot.delay(1000);
+
+                const result = DB.verifyCode(this.telegramId, code);
+
+                if (result.success) {
+                    const username = document.getElementById('usernameInput').value;
+                    const user = DB.createUser({
+                        telegramId: this.telegramId,
+                        username: username || undefined
+                    });
+
+                    DB.updateUser(user.id, {
+                        lastLogin: Date.now(),
+                        loginCount: (user.loginCount || 0) + 1
+                    });
+
+                    DB.addActivity(user.id, {
+                        type: 'success',
+                        title: 'تسجيل دخول جديد',
+                        description: 'تم تسجيل الدخول بنجاح إلى التطبيق'
+                    });
+
+                    const session = DB.createSession(user.id, this.telegramId);
+                    this.goToStep(3);
+
+                    setTimeout(() => this.enterApp(session), 2000);
+                } else {
+                    Toast.show(result.message, 'error');
+                    inputs.forEach(i => {
+                        i.classList.add('error');
+                        setTimeout(() => i.classList.remove('error'), 500);
+                    });
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>تحقق من الكود</span>';
+                }
+            },
+
+            enterApp(session) {
+                const user = DB.getUser(session.userId);
+                if (!user) { DB.clearSession(); location.reload(); return; }
+
+                document.getElementById('authGate').classList.add('hidden');
+                document.getElementById('webapp').classList.add('active');
+                document.body.style.overflow = '';
+
+                App.currentUser = user;
+                App.renderAll();
+                Toast.show(`مرحباً بعودتك، ${user.username}!`, 'success');
+            },
+
+            logout() {
+                if (!confirm('هل أنت متأكد من تسجيل الخروج؟')) return;
+                DB.clearSession();
+                location.reload();
+            },
+
+            async resendCode() {
+                if (!this.telegramId) return;
+                const btn = document.getElementById('resendCodeBtn');
+                btn.disabled = true;
+                btn.textContent = 'جاري الإرسال...';
+
+                const result = await TelegramBot.sendCode(this.telegramId);
+                if (result.success) {
+                    this.activationCode = result.code;
+                    setTimeout(() => Toast.show(`كود جديد: ${result.code}`, 'info', 5000), 300);
+                }
+                btn.disabled = false;
+                btn.textContent = 'إعادة إرسال الكود';
             }
         };
 
         /* ============================================
-           COMMANDS HANDLER
+           APP MODULE
            ============================================ */
-        const Commands = {
-            handlers: {
-                '/start': () => {
-                    const user = Database.getCurrentUser();
-                    Modal.open('مرحباً بك!', `
-                        <div class="profile-card">
-                            <div class="profile-avatar">${(user.firstName || 'K').charAt(0).toUpperCase()}</div>
-                            <h2 class="profile-name">${user.firstName || user.username}</h2>
-                            <p class="profile-id">ID: ${user.telegramId}</p>
-                            <p>مرحباً بك في Kratos Bot! 👋</p>
-                            <p>أنا مساعدك الذكي في عالم الألعاب. استخدم الأزرار في الأسفل للتنقل.</p>
-                        </div>
-                    `);
-                },
+        const App = {
+            currentUser: null,
 
-                '/profile': () => {
-                    const user = Database.getCurrentUser();
-                    const joinDate = new Date(user.createdAt).toLocaleDateString('ar', {
-                        year: 'numeric', month: 'long', day: 'numeric'
+            init() {
+                DB.init();
+                this.bindEvents();
+            },
+
+            bindEvents() {
+                // Auth events
+                document.getElementById('telegramLoginBtn').addEventListener('click', () => Auth.startLogin());
+                document.getElementById('verifyCodeBtn').addEventListener('click', () => Auth.verifyCode());
+                document.getElementById('backToStep1').addEventListener('click', () => Auth.goToStep(1));
+                document.getElementById('resendCodeBtn').addEventListener('click', () => Auth.resendCode());
+
+                // Code inputs
+                const inputs = document.querySelectorAll('.code-input');
+                inputs.forEach((input, idx) => {
+                    input.addEventListener('input', (e) => {
+                        const val = e.target.value;
+                        if (!/^\d*$/.test(val)) { e.target.value = ''; return; }
+                        if (val) {
+                            e.target.classList.add('filled');
+                            if (idx < inputs.length - 1) inputs[idx + 1].focus();
+                        } else {
+                            e.target.classList.remove('filled');
+                        }
+                        this.checkCodeComplete();
                     });
-                    const lastLogin = new Date(user.lastLogin).toLocaleString('ar');
 
-                    Modal.open('الملف الشخصي', `
-                        <div class="profile-card">
-                            <div class="profile-avatar">${(user.firstName || 'K').charAt(0).toUpperCase()}</div>
-                            <h2 class="profile-name">${user.firstName || user.username}</h2>
-                            <p class="profile-id">@${user.username || 'غير محدد'}</p>
-                            <div class="profile-info">
-                                <div class="profile-info__row">
-                                    <span class="profile-info__label">معرف تلغرام</span>
-                                    <span class="profile-info__value">${user.telegramId}</span>
-                                </div>
-                                <div class="profile-info__row">
-                                    <span class="profile-info__label">اللغة</span>
-                                    <span class="profile-info__value">${user.languageCode?.toUpperCase() || 'AR'}</span>
-                                </div>
-                                <div class="profile-info__row">
-                                    <span class="profile-info__label">تاريخ الانضمام</span>
-                                    <span class="profile-info__value">${joinDate}</span>
-                                </div>
-                                <div class="profile-info__row">
-                                    <span class="profile-info__label">آخر دخول</span>
-                                    <span class="profile-info__value">${lastLogin}</span>
-                                </div>
-                                <div class="profile-info__row">
-                                    <span class="profile-info__label">عدد الزيارات</span>
-                                    <span class="profile-info__value">${user.loginCount}</span>
-                                </div>
-                                <div class="profile-info__row">
-                                    <span class="profile-info__label">حالة VIP</span>
-                                    <span class="profile-info__value">${user.isVip ? '👑 نشط' : 'غير مفعل'}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `);
-                },
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Backspace' && !e.target.value && idx > 0) inputs[idx - 1].focus();
+                        if (e.key === 'Enter') document.getElementById('verifyCodeBtn').click();
+                    });
 
-                '/stats': () => {
-                    const stats = Database.getStats();
-                    Modal.open('إحصائيات الموقع', `
-                        <p>إحصائيات Kratos Bot حتى الآن:</p>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-card__value">${stats.totalUsers}</div>
-                                <div class="stat-card__label">إجمالي المستخدمين</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-card__value">${stats.activeToday}</div>
-                                <div class="stat-card__label">نشط اليوم</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-card__value">${stats.totalLogins}</div>
-                                <div class="stat-card__label">إجمالي الدخول</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-card__value">${stats.vipUsers}</div>
-                                <div class="stat-card__label">مستخدمي VIP</div>
-                            </div>
-                        </div>
-                    `);
-                },
+                    input.addEventListener('paste', (e) => {
+                        e.preventDefault();
+                        const data = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+                        data.split('').forEach((char, i) => {
+                            if (inputs[i]) { inputs[i].value = char; inputs[i].classList.add('filled'); }
+                        });
+                        if (inputs[data.length]) inputs[data.length].focus();
+                        this.checkCodeComplete();
+                    });
 
-                '/games': () => {
-                    const games = Database.get(Database.KEYS.GAMES) || [];
-                    const gamesList = games.map(g => `
-                        <div class="command-item">
-                            <div>
-                                <div class="command-item__name">${g.name}</div>
-                                <div class="command-item__desc">${g.category} • تقييم: ${g.rating}/10</div>
+                    input.addEventListener('focus', () => input.select());
+                });
+
+                // Edit profile form
+                document.getElementById('editProfileForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveProfile();
+                });
+
+                // Loader hide
+                window.addEventListener('load', () => {
+                    setTimeout(() => document.getElementById('appLoader').classList.add('hidden'), 1200);
+                });
+            },
+
+            checkCodeComplete() {
+                const inputs = document.querySelectorAll('.code-input');
+                const code = Array.from(inputs).map(i => i.value).join('');
+                document.getElementById('verifyCodeBtn').disabled = code.length !== 6;
+            },
+
+            navigate(page) {
+                document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+                document.getElementById(`page-${page}`).classList.add('active');
+                
+                document.querySelectorAll('.bottom-nav__item').forEach(item => {
+                    item.classList.toggle('active', item.dataset.page === page);
+                });
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            renderAll() {
+                const user = this.currentUser;
+                if (!user) return;
+
+                // Header
+                document.getElementById('headerUserName').textContent = user.username;
+                document.getElementById('headerAvatar').textContent = user.username.charAt(0).toUpperCase();
+
+                // Home
+                document.getElementById('welcomeName').textContent = user.username;
+                document.getElementById('homeName').textContent = user.fullName || user.username;
+                document.getElementById('homeUsername').textContent = '@' + user.username;
+                document.getElementById('homeAvatar').textContent = user.username.charAt(0).toUpperCase();
+                document.getElementById('homeJoinDate').textContent = new Date(user.createdAt).toLocaleDateString('ar');
+                document.getElementById('homeStatus').textContent = user.status === 'active' ? 'نشط' : 'معلق';
+
+                // Stats
+                document.getElementById('statSessions').textContent = user.stats.sessions;
+                document.getElementById('statHours').textContent = user.stats.hours;
+                document.getElementById('statAchievements').textContent = user.stats.achievements;
+                document.getElementById('statLevel').textContent = user.stats.level;
+
+                // Profile
+                document.getElementById('profileName').textContent = user.fullName || user.username;
+                document.getElementById('profileUsername').textContent = '@' + user.username;
+                document.getElementById('profileAvatar').textContent = user.username.charAt(0).toUpperCase();
+                document.getElementById('profileId').textContent = user.id.substr(0, 12) + '...';
+                document.getElementById('profileJoinDate').textContent = new Date(user.createdAt).toLocaleDateString('ar');
+
+                document.getElementById('detailFullName').textContent = user.fullName || '-';
+                document.getElementById('detailEmail').textContent = user.email || '-';
+                document.getElementById('detailPhone').textContent = user.phone || '-';
+                document.getElementById('detailLang').textContent = user.settings.language === 'ar' ? 'العربية' : 'English';
+                document.getElementById('detailTimezone').textContent = user.settings.timezone;
+                document.getElementById('detailLastLogin').textContent = new Date(user.lastLogin).toLocaleString('ar');
+                document.getElementById('detailTgId').textContent = user.telegramId;
+                document.getElementById('detailLoginCount').textContent = user.loginCount;
+
+                // Activity
+                this.renderActivity();
+
+                // Settings
+                this.renderSettings();
+            },
+
+            renderActivity() {
+                const user = this.currentUser;
+                const activities = user.activity || [];
+                
+                const renderList = (containerId, limit) => {
+                    const container = document.getElementById(containerId);
+                    if (activities.length === 0) {
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-state__icon">📭</div>
+                                <div class="empty-state__title">لا توجد نشاطات</div>
+                                <div class="empty-state__text">ابدأ الاستخدام لتظهر نشاطاتك هنا</div>
+                            </div>`;
+                        return;
+                    }
+
+                    const items = limit ? activities.slice(0, limit) : activities;
+                    const icons = { success: '✅', info: 'ℹ️', warning: '⚠️', error: '', login: '🔐', game: '🎮' };
+                    
+                    container.innerHTML = items.map(a => `
+                        <div class="activity-item">
+                            <div class="activity-icon">${icons[a.type] || ''}</div>
+                            <div class="activity-content">
+                                <div class="activity-title">${a.title}</div>
+                                <div class="activity-time">${a.description} • ${this.timeAgo(a.timestamp)}</div>
                             </div>
                         </div>
                     `).join('');
+                };
 
-                    Modal.open('الألعاب المتاحة', `
-                        <p>قائمة الألعاب المدعومة:</p>
-                        ${gamesList}
-                        <p style="margin-top: 1rem; color: var(--color-accent-green);">
-                            💡 قريباً: المزيد من الألعاب والميزات!
-                        </p>
-                    `);
-                },
-
-                '/help': () => {
-                    Modal.open('المساعدة والأوامر', `
-                        <h3>📋 قائمة الأوامر المتاحة:</h3>
-                        <div class="command-item">
-                            <div>
-                                <div class="command-item__name">/start</div>
-                                <div class="command-item__desc">الصفحة الرئيسية وترحيب</div>
-                            </div>
-                        </div>
-                        <div class="command-item">
-                            <div>
-                                <div class="command-item__name">/profile</div>
-                                <div class="command-item__desc">عرض الملف الشخصي</div>
-                            </div>
-                        </div>
-                        <div class="command-item">
-                            <div>
-                                <div class="command-item__name">/stats</div>
-                                <div class="command-item__desc">إحصائيات الموقع</div>
-                            </div>
-                        </div>
-                        <div class="command-item">
-                            <div>
-                                <div class="command-item__name">/games</div>
-                                <div class="command-item__desc">قائمة الألعاب</div>
-                            </div>
-                        </div>
-                        <div class="command-item">
-                            <div>
-                                <div class="command-item__name">/vip</div>
-                                <div class="command-item__desc">اشتراك VIP المميزات</div>
-                            </div>
-                        </div>
-                        <div class="command-item">
-                            <div>
-                                <div class="command-item__name">/settings</div>
-                                <div class="command-item__desc">إعدادات التطبيق</div>
-                            </div>
-                        </div>
-                        <div class="command-item">
-                            <div>
-                                <div class="command-item__name">/support</div>
-                                <div class="command-item__desc">الدعم الفني</div>
-                            </div>
-                        </div>
-                        <div class="command-item">
-                            <div>
-                                <div class="command-item__name">/help</div>
-                                <div class="command-item__desc">عرض المساعدة</div>
-                            </div>
-                        </div>
-                    `);
-                },
-
-                '/settings': () => {
-                    const user = Database.getCurrentUser();
-                    Modal.open('الإعدادات', `
-                        <h3>⚙️ إعدادات الحساب</h3>
-                        <div class="command-item" onclick="Commands.handlers.toggleNotifications()">
-                            <div>
-                                <div class="command-item__name">الإشعارات</div>
-                                <div class="command-item__desc">تفعيل/إيقاف الإشعارات</div>
-                            </div>
-                        </div>
-                        <div class="command-item" onclick="Commands.handlers.changeLanguage()">
-                            <div>
-                                <div class="command-item__name">اللغة</div>
-                                <div class="command-item__desc">${user.languageCode?.toUpperCase() || 'AR'}</div>
-                            </div>
-                        </div>
-                        <div class="command-item" onclick="Commands.handlers.clearCache()">
-                            <div>
-                                <div class="command-item__name">مسح البيانات</div>
-                                <div class="command-item__desc">مسح البيانات المحلية</div>
-                            </div>
-                        </div>
-                        <div class="command-item" onclick="Commands.handlers.about()">
-                            <div>
-                                <div class="command-item__name">حول التطبيق</div>
-                                <div class="command-item__desc">معلومات عن Kratos Bot</div>
-                            </div>
-                        </div>
-                    `);
-                },
-
-                '/vip': () => {
-                    const user = Database.getCurrentUser();
-                    Modal.open('اشتراك VIP ', `
-                        <div style="text-align: center; padding: 1rem 0;">
-                            <div style="font-size: 4rem; margin-bottom: 1rem;">👑</div>
-                            <h3 style="color: var(--color-accent-green); margin-bottom: 1rem;">
-                                ${user.isVip ? 'أنت عضو VIP!' : 'ترقية إلى VIP'}
-                            </h3>
-                            <p>${user.isVip 
-                                ? 'اشتراكك نشط حتى: ' + (user.vipExpiry ? new Date(user.vipExpiry).toLocaleDateString('ar') : 'غير محدد')
-                                : 'احصل على ميزات حصرية ومحتوى مميز!'}</p>
-                            
-                            <h3 style="margin-top: 1.5rem; color: var(--color-accent-green);">مميزات VIP:</h3>
-                            <ul style="text-align: right; margin-top: 1rem;">
-                                <li>✅ محتوى حصري غير متاح للمستخدمين العاديين</li>
-                                <li>✅ أولوية في الدعم الفني</li>
-                                <li>✅ ألعاب وميزات متقدمة</li>
-                                <li>✅ إزالة الإعلانات</li>
-                                <li>✅ تحديثات مبكرة</li>
-                            </ul>
-
-                            ${!user.isVip ? `
-                                <button class="command-btn" style="margin-top: 1.5rem; width: 100%; padding: 1rem;" onclick="Commands.handlers.subscribeVip()">
-                                    <span class="command-btn__icon">💎</span>
-                                    <span class="command-btn__label" style="font-size: 14px;">اشترك الآن - $9.99/شهر</span>
-                                </button>
-                            ` : ''}
-                        </div>
-                    `);
-                },
-
-                '/support': () => {
-                    Modal.open('الدعم الفني', `
-                        <div style="text-align: center; padding: 1rem 0;">
-                            <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
-                            <h3 style="color: var(--color-accent-green);">تواصل معنا</h3>
-                            <p>فريق الدعم متاح 24/7 لمساعدتك</p>
-                            
-                            <div class="command-item" style="margin-top: 1.5rem;" onclick="window.open('https://t.me/KratosChancyBot', '_blank')">
-                                <div>
-                                    <div class="command-item__name"> بوت تلغرام</div>
-                                    <div class="command-item__desc">@KratosChancyBot</div>
-                                </div>
-                            </div>
-                            <div class="command-item" onclick="window.open('https://t.me/KratosSupport', '_blank')">
-                                <div>
-                                    <div class="command-item__name"> قناة الدعم</div>
-                                    <div class="command-item__desc">انضم لقناة الدعم</div>
-                                </div>
-                            </div>
-                            <div class="command-item" onclick="Commands.handlers.sendFeedback()">
-                                <div>
-                                    <div class="command-item__name">️ إرسال ملاحظة</div>
-                                    <div class="command-item__desc">أخبرنا برأيك</div>
-                                </div>
-                            </div>
-                        </div>
-                    `);
-                },
-
-                toggleNotifications: () => {
-                    Toast.show('تم تحديث إعدادات الإشعارات', 'success');
-                },
-
-                changeLanguage: () => {
-                    Toast.show('اللغة: العربية', 'success');
-                },
-
-                clearCache: () => {
-                    if (confirm('هل أنت متأكد من مسح جميع البيانات المحلية؟')) {
-                        localStorage.clear();
-                        Toast.show('تم مسح البيانات', 'warning');
-                        setTimeout(() => location.reload(), 1500);
-                    }
-                },
-
-                about: () => {
-                    Modal.open('حول Kratos Bot', `
-                        <div style="text-align: center;">
-                            <img src="https://image.qwenlm.ai/public_source/cfaf052a-76de-4d8c-b30b-b8eae8f867f3/1bff17953-1ecf-4189-8d07-796e1504f729.png" style="width: 80px; margin: 0 auto 1rem;">
-                            <h3 style="color: var(--color-accent-green);">Kratos Bot v1.0.0</h3>
-                            <p>مساعدك الذكي في عالم الألعاب</p>
-                            <p style="margin-top: 1rem;">صُنع بواسطة Chancy © 2026</p>
-                        </div>
-                    `);
-                },
-
-                subscribeVip: () => {
-                    const user = Database.getCurrentUser();
-                    user.isVip = true;
-                    user.vipExpiry = Date.now() + (30 * 24 * 60 * 60 * 1000); // 30 days
-                    
-                    const users = Database.get(Database.KEYS.USERS);
-                    const idx = users.findIndex(u => u.id === user.id);
-                    if (idx !== -1) {
-                        users[idx] = user;
-                        Database.set(Database.KEYS.USERS, users);
-                        Database.set(Database.KEYS.CURRENT_USER, user);
-                        
-                        const vip = Database.get(Database.KEYS.VIP);
-                        vip.push({ userId: user.id, subscribedAt: Date.now(), expiresAt: user.vipExpiry });
-                        Database.set(Database.KEYS.VIP, vip);
-                    }
-                    
-                    Toast.show('🎉 تم تفعيل اشتراك VIP!', 'success');
-                    setTimeout(() => Commands.handlers.vip(), 1500);
-                },
-
-                sendFeedback: () => {
-                    const feedback = prompt('اكتب ملاحظتك أو اقتراحك:');
-                    if (feedback) {
-                        Toast.show('تم إرسال ملاحظتك بنجاح! شكراً لك', 'success');
-                    }
-                }
+                renderList('recentActivity', 5);
+                renderList('fullActivity', null);
             },
 
-            execute(command) {
-                const handler = this.handlers[command];
-                if (handler) {
-                    handler();
-                    // Send to Telegram bot
-                    if (tg) {
-                        tg.sendData(JSON.stringify({ command, timestamp: Date.now() }));
+            renderSettings() {
+                const user = this.currentUser;
+                if (!user) return;
+                
+                document.querySelectorAll('.toggle').forEach(toggle => {
+                    const key = toggle.dataset.setting;
+                    if (user.settings[key] !== undefined) {
+                        toggle.classList.toggle('active', user.settings[key]);
                     }
-                } else {
-                    Toast.show('أمر غير معروف: ' + command, 'error');
-                }
+                });
+            },
+
+            toggleSetting(el) {
+                const key = el.dataset.setting;
+                const user = this.currentUser;
+                user.settings[key] = !user.settings[key];
+                DB.updateUser(user.id, { settings: user.settings });
+                el.classList.toggle('active');
+                Toast.show('تم تحديث الإعدادات', 'success');
+            },
+
+            openEditProfile() {
+                const user = this.currentUser;
+                document.getElementById('editFullName').value = user.fullName || '';
+                document.getElementById('editEmail').value = user.email || '';
+                document.getElementById('editPhone').value = user.phone || '';
+                document.getElementById('editBio').value = user.bio || '';
+                document.getElementById('editProfileModal').classList.add('active');
+            },
+
+            closeModal(id) {
+                document.getElementById(id).classList.remove('active');
+            },
+
+            saveProfile() {
+                const updates = {
+                    fullName: document.getElementById('editFullName').value.trim(),
+                    email: document.getElementById('editEmail').value.trim(),
+                    phone: document.getElementById('editPhone').value.trim(),
+                    bio: document.getElementById('editBio').value.trim()
+                };
+
+                DB.updateUser(this.currentUser.id, updates);
+                this.currentUser = DB.getUser(this.currentUser.id);
+                this.renderAll();
+                this.closeModal('editProfileModal');
+                Toast.show('تم حفظ التغييرات بنجاح', 'success');
+
+                DB.addActivity(this.currentUser.id, {
+                    type: 'info',
+                    title: 'تحديث الملف الشخصي',
+                    description: 'تم تحديث معلومات الحساب'
+                });
+                this.renderActivity();
+            },
+
+            exportData() {
+                const user = this.currentUser;
+                const data = {
+                    exportedAt: new Date().toISOString(),
+                    user: user
+                };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `kratos_profile_${user.username}_${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                Toast.show('تم تصدير البيانات بنجاح', 'success');
+            },
+
+            clearAllData() {
+                if (!confirm('⚠️ هل أنت متأكد؟ سيتم حذف جميع بياناتك بشكل نهائي!')) return;
+                if (!confirm('تأكيد أخير: هذا الإجراء لا يمكن التراجع عنه!')) return;
+                
+                localStorage.clear();
+                Toast.show('تم مسح جميع البيانات', 'warning');
+                setTimeout(() => location.reload(), 1500);
+            },
+
+            logout() {
+                Auth.logout();
+            },
+
+            timeAgo(ts) {
+                const seconds = Math.floor((Date.now() - ts) / 1000);
+                if (seconds < 60) return 'الآن';
+                const minutes = Math.floor(seconds / 60);
+                if (minutes < 60) return `منذ ${minutes} دقيقة`;
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `منذ ${hours} ساعة`;
+                const days = Math.floor(hours / 24);
+                return `منذ ${days} يوم`;
             }
         };
 
-        /* ============================================
-           INITIALIZATION
-           ============================================ */
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize database
-            Database.init();
-
-            // Initialize Telegram Web App
-            if (tg) {
-                tg.ready();
-                tg.expand();
-                
-                // Set header color
-                tg.setHeaderColor('#0a1628');
-                tg.setBackgroundColor('#0a1628');
-                
-                // Enable closing confirmation
-                tg.enableClosingConfirmation();
-            }
-
-            // Initialize auth (checks Telegram)
-            const isAuth = Auth.init();
-
-            // Initialize UI
-            Loader.init();
-            Modal.init();
-
-            // Bind command buttons
-            document.querySelectorAll('.command-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const command = btn.getAttribute('data-command');
-                    Commands.execute(command);
-                });
-            });
-
-            // Show welcome message
-            if (isAuth) {
-                setTimeout(() => {
-                    const user = Database.getCurrentUser();
-                    Toast.show(`مرحباً ${user.firstName || user.username}! 👋`, 'success');
-                }, 1500);
-            }
+            App.init();
+            Auth.init();
         });
     </script>
 </body>
