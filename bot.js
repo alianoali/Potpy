@@ -129,9 +129,11 @@ app.get('/api/transactions', (req, res) => {
     res.json({ success: true, transactions: transactions });
 });
 
-// الصفحة الرئيسية
+// ============================================
+// ⭐ هذا هو التعديل المهم - يفتح تطبيق الويب
+// ============================================
 app.get('/', (req, res) => {
-    res.send('✅ البوت يعمل! هذا تطبيق ويب لتلغرام.');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // ============================================
@@ -144,9 +146,8 @@ app.listen(PORT, () => {
 });
 
 // ============================================
-// رابط تطبيق الويب - Railway يضبطه تلقائياً
+// رابط تطبيق الويب
 // ============================================
-// بعد النشر على Railway، استبدل الرابط بالرابط الحقيقي
 let WEB_APP_URL = process.env.RAILWAY_PUBLIC_URL || 'https://telegram-bot-production.up.railway.app';
 
 // ============================================
@@ -177,7 +178,7 @@ bot.onText(/\/start/, (msg) => {
         chatId,
         `👋 مرحباً ${firstName}!\n\n` +
         `💰 رصيدك الحالي: **${user.balance.toFixed(2)}**\n\n` +
-        `اضغط على الزر لفتح التطبيق أو اختر من القائمة:`,
+        `اضغط على الزر لفتح التطبيق:`,
         { ...options, parse_mode: 'Markdown' }
     );
 });
@@ -373,27 +374,6 @@ bot.on('web_app_data', (msg) => {
     try {
         const data = JSON.parse(msg.web_app_data.data);
         
-        // طلب الرصيد
-        if (data.action === 'get_balance') {
-            const db = readDB();
-            const user = db.users[userId];
-            const balance = user ? user.balance.toFixed(2) : '0.00';
-            return bot.sendMessage(chatId, `💰 رصيدك الحالي: **${balance}**`);
-        }
-        
-        // طلب كشف الحساب
-        if (data.action === 'get_history') {
-            const transactions = getTransactions(userId, 5);
-            if (transactions.length === 0) return bot.sendMessage(chatId, '📋 لا توجد معاملات.');
-            let text = '📋 **آخر المعاملات:**\n\n';
-            transactions.forEach(t => {
-                const sign = t.amount >= 0 ? '+' : '';
-                text += `• ${t.description}: ${sign}${t.amount.toFixed(2)}\n`;
-            });
-            return bot.sendMessage(chatId, text);
-        }
-        
-        // عملية شراء
         if (data.action === 'purchase') {
             const amount = parseFloat(data.amount) || 0;
             const description = data.description || 'عملية شراء';
@@ -417,17 +397,10 @@ bot.on('web_app_data', (msg) => {
             }
         }
         
-        // ردود عادية
         let replyText = '';
         switch(data.action) {
             case 'request_consultation':
                 replyText = '✅ تم استلام طلب الاستشارة.\nفريقنا سيتواصل معك قريباً.';
-                break;
-            case 'book_appointment':
-                replyText = '📅 تم استلام طلب الحجز.\nسنرسل لك تأكيداً بالموعد.';
-                break;
-            case 'get_info':
-                replyText = 'ℹ️ نحن فريق تطوير تطبيقات.\nنقدم خدمات برمجية متنوعة.';
                 break;
             case 'feedback':
                 replyText = '💬 شكراً على ملاحظاتك!\nنقدر وقتك وآرائك.';
@@ -439,7 +412,7 @@ bot.on('web_app_data', (msg) => {
         bot.sendMessage(chatId, replyText);
         
         if (data.name && data.name.trim() !== '') {
-            bot.sendMessage(chatId, `👤 شكراً ${data.name}! تم تسجيل اسمك مع الطلب.`);
+            bot.sendMessage(chatId, `👤 شكراً ${data.name}!`);
         }
         
         if (data.message && data.message.trim() !== '') {
@@ -447,7 +420,7 @@ bot.on('web_app_data', (msg) => {
         }
         
     } catch (error) {
-        console.error('خطأ في تحليل البيانات:', error);
+        console.error('خطأ:', error);
         bot.sendMessage(chatId, '❌ حدث خطأ. حاول مرة أخرى.');
     }
 });
@@ -460,7 +433,7 @@ bot.on('message', (msg) => {
     
     bot.sendMessage(
         msg.chat.id,
-        '👋 أهلاً!\n\nاستخدم /start لرؤية القائمة الرئيسية وفتح التطبيق.\nأو استخدم /help لرؤية جميع الأوامر.'
+        '👋 أهلاً!\n\nاستخدم /start لرؤية القائمة الرئيسية وفتح التطبيق.'
     );
 });
 
