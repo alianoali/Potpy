@@ -148,7 +148,7 @@ app.listen(PORT, () => {
 // ============================================
 // رابط تطبيق الويب
 // ============================================
-let WEB_APP_URL = process.env.RAILWAY_PUBLIC_URL || 'https://telegram-bot-production.up.railway.app';
+let WEB_APP_URL = process.env.RAILWAY_PUBLIC_URL || 'https://potpy-production.up.railway.app';
 
 // ============================================
 // أمر /start
