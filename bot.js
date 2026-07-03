@@ -90,6 +90,13 @@ function getTransactions(userId, limit = 10) {
 }
 
 // ============================================
+// ⭐ فتح تطبيق الويب (هذا هو المهم)
+// ============================================
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// ============================================
 // API للموقع
 // ============================================
 app.get('/api/user', (req, res) => {
@@ -127,13 +134,6 @@ app.get('/api/transactions', (req, res) => {
     
     const transactions = getTransactions(userId, limit);
     res.json({ success: true, transactions: transactions });
-});
-
-// ============================================
-// ⭐ هذا هو التعديل المهم - يفتح تطبيق الويب
-// ============================================
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // ============================================
