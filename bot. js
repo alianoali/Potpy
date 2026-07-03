@@ -1,4 +1,3 @@
-
 const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 const path = require('path');
@@ -13,7 +12,8 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const DB_FILE = path.join(__dirname, 'database.json');
+// استخدام ملف JSON بدل SQLite
+const DB_FILE = 'database.json';
 
 function readDB() {
     try {
@@ -52,18 +52,31 @@ function getUser(userId, firstName, username) {
 
 function updateBalance(userId, amount, type, description) {
     const db = readDB();
-    if (!db.users[userId]) return { success: false, message: 'المستخدم غير موجود', balance: 0 };
+    if (!db.users[userId]) return { success: false, message: '❌ المستخدم غير موجود', balance: 0 };
+    
     const newBalance = (db.users[userId].balance || 0) + amount;
-    if (newBalance < 0 && amount < 0) return { success: false, message: 'رصيد غير كافي', balance: db.users[userId].balance };
+    if (newBalance < 0 && amount < 0) {
+        return { success: false, message: '❌ رصيد غير كافي', balance: db.users[userId].balance };
+    }
+    
     db.users[userId].balance = newBalance;
-    db.transactions.push({ user_id: userId, type, amount, description, created_at: new Date().toISOString() });
+    db.transactions.push({
+        user_id: userId,
+        type: type,
+        amount: amount,
+        description: description,
+        created_at: new Date().toISOString()
+    });
     writeDB(db);
     return { success: true, balance: newBalance };
 }
 
 function getTransactions(userId, limit = 10) {
     const db = readDB();
-    return db.transactions.filter(t => t.user_id == userId).reverse().slice(0, limit);
+    return db.transactions
+        .filter(t => t.user_id == userId)
+        .reverse()
+        .slice(0, limit);
 }
 
 app.get('/api/user', (req, res) => {
@@ -72,7 +85,7 @@ app.get('/api/user', (req, res) => {
     const db = readDB();
     const user = db.users[userId];
     if (!user) return res.json({ success: false });
-    res.json({ success: true, user });
+    res.json({ success: true, user: user });
 });
 
 app.get('/api/transactions', (req, res) => {
@@ -81,14 +94,10 @@ app.get('/api/transactions', (req, res) => {
     res.json({ success: true, transactions: getTransactions(userId, req.query.limit || 10) });
 });
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 app.listen(PORT, () => console.log(`✅ يعمل على ${PORT}`));
 
-let WEB_APP_URL = process.env.RAILWAY_PUBLIC_URL || 'https://your-app.up.railway.app';
+let WEB_APP_URL = 'https://xxxx.sse.codesandbox.io';
 
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
@@ -118,7 +127,9 @@ bot.onText(/\/addbalance (.+)/, (msg, match) => {
 
 bot.onText(/\/users/, (msg) => {
     if (!ADMIN_IDS.includes(msg.from.id)) return bot.sendMessage(msg.chat.id, '❌ للمشرف فقط');
-    bot.sendMessage(msg.chat.id, `👥 المستخدمين: ${Object.keys(readDB().users).length}`);
+    const db = readDB();
+    const count = Object.keys(db.users).length;
+    bot.sendMessage(msg.chat.id, `👥 عدد المستخدمين: ${count}`);
 });
 
 bot.on('callback_query', (query) => {
@@ -137,20 +148,21 @@ bot.on('callback_query', (query) => {
 });
 
 bot.on('web_app_data', (msg) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
     try {
         const data = JSON.parse(msg.web_app_data.data);
         if (data.action === 'purchase') {
-            const result = updateBalance(msg.from.id, -parseFloat(data.amount || 0), 'deduct', data.description || 'شراء');
-            return bot.sendMessage(msg.chat.id, result.success ? `✅ تم!\n💰 المتبقي: ${result.balance.toFixed(2)}` : result.message);
+            const amount = parseFloat(data.amount) || 0;
+            const result = updateBalance(userId, -amount, 'deduct', data.description || 'شراء');
+            return bot.sendMessage(chatId, result.success ? `✅ تم الشراء!\n💰 المتبقي: ${result.balance.toFixed(2)}` : result.message);
         }
-        bot.sendMessage(msg.chat.id, `✅ تم: ${data.action}`);
-        if (data.name) bot.sendMessage(msg.chat.id, `👤 شكراً ${data.name}!`);
-    } catch(e) { bot.sendMessage(msg.chat.id, '❌ خطأ'); }
+        let reply = { request_consultation: '✅ تم استلام طلب الاستشارة', feedback: '💬 شكراً على ملاحظاتك' };
+        bot.sendMessage(chatId, reply[data.action] || `✅ تم: ${data.action}`);
+        if (data.name) bot.sendMessage(chatId, `👤 شكراً ${data.name}!`);
+    } catch (e) {
+        bot.sendMessage(chatId, '❌ خطأ');
+    }
 });
 
-bot.on('message', (msg) => {
-    if (msg.text && msg.text.startsWith('/')) return;
-    bot.sendMessage(msg.chat.id, '👋 استخدم /start');
-});
-
-console.log('🚀 جاهز');
+console.log('🚀 البوت جاهز');
